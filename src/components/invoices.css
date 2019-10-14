@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+.show-invoice-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+    width: 100%;
+}
+
+.show-invoice-title,
+.invoice-row-small-b,
+.invoice-amount-container {
+    grid-column-end: span 2;
+}
+
+
+.show-invoice-title,
+.invoice-amount-container {
+    text-align: center;
+}
+
+.show-invoice-title {
+    font-size: 30px;
+}
+
+.invoice-row-small-a,
+.invoice-row-small-b,
+.invoice-amount-container,
+.showproposal-container {
+    font-size: 20px;
+}
+
+.basic-link-regular {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+}
+
+.basic-link-regular {
+    color: #000000;
+}
+
+.main-button {
+    border: 0px;
+    background-color: #FFFFFF;
+    padding: 0px;
+}
+
+.main-button {
+    width: 280px;
+}
+
+@media screen and (min-width:721px) {
+    .main-button {
+        width: 310px;
+
+    }
+    .show-invoice-title {
+        font-size: 36px;
+    }
+    .invoice-row-small-a,
+    .showproposal-container {
+        grid-column-end: span 3;
+    }
+    .show-invoice-title,
+    .invoice-row-small-b,
+    .invoice-amount-container {
+        grid-column-end: span 6;
+    }
+    .show-invoice-container {
+        grid-template-columns: 17% 17% 16% 16% 17% 17%;
+    }
+    .invoice-row-small-a,
+    .invoice-row-small-b,
+    .invoice-amount-container,
+    .showproposal-container {
+        font-size: 24px;
+    }
+}
+
+@media screen and (min-width:1081px) {
+    .main-button {
+        width: 330px;
+
+    }
+    .invoice-row-large-a {
+        grid-column-end: span 3;
+    }
+    .invoice-row-large-b,
+    .showproposal-container {
+        grid-column-end: span 6;
+    }
+    .invoice-row-large-a,
+    .invoice-row-large-b,
+    .invoice-amount-container,
+    .showproposal-container {
+        font-size: 30px;
+    }
+    .show-invoice-title {
+        font-size: 40px;
+    }
+    .show-invoice-title,
+    .invoice-amount-container {
+        grid-column-end: span 12;
+    }
+    .show-invoice-container {
+        grid-template-columns: 8% 8% 9% 8% 8% 9% 8% 8% 9% 8% 8% 9%;
+    }
+
+}

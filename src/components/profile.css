@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+.myprofile-container {
+    display: grid;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-template-columns: 50% 50%;
+    grid-row-gap: 15px;
+    grid-column-gap: 30px;
+    width: 100%;
+
+}
+
+.profile-titlerow,
+.profile-topheader,
+.profile-main {
+    grid-column-end: span 2;
+
+}
+
+.profile-titlerow,
+.showprofilemenu-container,
+.profile-main {
+    font-size: 30px;
+}
+
+.showprofilemenu-container {
+    background-color: #006778;
+}
+
+.profile-menu-font {
+    color: #FFFFFF;
+    -webkit-text-stroke: 1px #000000;
+}
+
+.profile-element-a,
+.profile-element-b,
+.profilepicture-container,
+.showprofilemenu-container,
+.profile-element-b-field {
+    grid-column-end: span 2;
+}
+
+.profilepicture-label,
+.profile-fieldlabel,
+.profile-element-b-field,
+.profile-element-b-field-half,
+.profilepicture-buttoncontainer,
+.profile-topheader {
+    font-size: 20px;
+}
+
+.profilepicture-label,
+.profile-titlerow,
+.profile-topheader,
+.showprofilemenu-container,
+.profile-element-b-field {
+    text-align: center;
+}
+
+.profilepicture-buttoncontainer {
+    text-align: right;
+}
+
+#btn-uploadprofile {
+    border: 0px;
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+.profilepicture-buttoncontainer {
+    width: 50%;
+    margin: auto;
+}
+
+.profilepicture-container,
+.showprofilemenu-container {
+    border: 1px solid;
+}
+
+.profile-element-b {
+    display: grid;
+    grid-template-columns: 17% 17% 17% 17% 16% auto;
+    grid-row-gap: 30px;
+    grid-column-gap: 30px;
+}
+
+.profilepicture-container {
+    width: 250px;
+    max-height: 250px;
+    margin: auto;
+    overflow: hidden;
+    padding: 0px;
+}
+
+
+
+.profile-element-b-field-half {
+    grid-column-end: span 3;
+}
+
+
+
+.btn-saveprofile,
+.btnstripeconnect {
+    width: 100%;
+    max-width: 305px;
+    background-color: #FFFFFF;
+    border: 0px;
+}
+
+.stripebutton {
+    width: 100%;
+    max-width: 296px;
+    height: auto;
+}
+
+.profile-img {
+    width: 100%;
+    height: auto;
+    padding: 0px;
+    margin: 0px;
+}
+
+.btn-updatepassword {
+    width: 100%;
+    max-width: 285px;
+    margin: auto;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    padding: 0px;
+    border: 0px;
+}
+
+@media screen and (min-width:721px) {
+    .btn-updatepassword {
+        max-width: 330px;
+    }
+    .btn-saveprofile,
+    .btnstripeconnect {
+        max-width: 385px;
+    }
+    .myprofile-container {
+        grid-template-columns: 17% 17% 17% 17% 16% 16%;
+        grid-row-gap: 30px;
+        grid-column-gap: 30px;
+
+    }
+    .profile-element-b-field {
+        grid-column-end: span 3;
+    }
+    .profile-element-b-field,
+    .showprofilemenu-container {
+        grid-column-end: span 3;
+    }
+
+
+    .profile-element-a,
+    .profile-element-b,
+    .profilepicture-container,
+    .profile-element-b-field {
+        grid-column-end: span 6;
+    }
+    #btn-uploadprofile {
+        width: 266px;
+    }
+    .profilepicture-buttoncontainer {
+        text-align: center;
+    }
+    .profile-titlerow,
+    .showprofilemenu-container,
+    .profile-main {
+        font-size: 36px;
+    }
+    .profilepicture-label,
+    .profile-fieldlabel,
+    .profile-element-b-field,
+    .profile-element-b-field-half,
+    .profilepicture-buttoncontainer,
+    .profile-topheader {
+        font-size: 24px;
+    }
+    .profile-element-a,
+    .profile-element-b,
+    .profile-topheader,
+    .profile-main {
+        grid-column-end: span 6;
+    }
+    .profile-titlerow {
+        grid-column-end: span 6;
+    }
+
+    .profilepicture-container {
+        width: 375px;
+        max-height: 375px;
+    }
+
+}
+
+@media screen and (min-width:1081px) {
+    .btn-saveprofile,
+    .btnstripeconnect {
+        max-width: 435px;
+    }
+    .profile-field {
+        grid-column-end: span 4;
+    }
+    .profile-label {
+        grid-column-end: span 2;
+    }
+    .profile-link {
+        color: #FFFFFF;
+    }
+    .showprofilemenu-container,
+    .profile-element-b-field-half {
+        grid-column-end: span 6;
+    }
+    .showprofilemenu-container,
+    .profile-main {
+        font-size: 40px;
+    }
+    .profile-element-b {
+        grid-row-gap: 30px;
+        grid-column-gap: 30px;
+    }
+
+    .profilepicture-container {
+        width: 500px;
+        max-height: 500px;
+        margin: auto;
+        overflow: hidden;
+    }
+    .profilepicture-label,
+    .profile-fieldlabel,
+    .profile-element-b-field,
+    .profile-element-b-field-half,
+    .profilepicture-buttoncontainer,
+    .profile-topheader {
+        font-size: 30px;
+    }
+    .profile-titlerow,
+    .profile-topheader,
+    .profile-main,
+    .profile-element-b-field {
+        grid-column-end: span 12;
+
+    }
+
+    .myprofile-container {
+        grid-template-columns: 8% 8% 9% 8% 8% 9% 8% 8% 9% 8% 8% 9%;
+
+    }
+
+}

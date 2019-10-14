@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700');
+.no-decorate {
+    text-decoration: none;
+}
+
+.create-invoice {
+    display: grid;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+    grid-template-columns: 50% 50%;
+}
+
+.inv-row-4a,
+.inv-row-4b {
+    grid-column-end: span 2;
+    text-align: center;
+}
+
+.inv-row-3a,
+.inv-row-3b,
+.remove-invoiceid,
+.remove-proposalid {
+    grid-column-end: span 2;
+}
+
+.remove-invoiceid,
+.remove-proposalid {
+    text-align: right;
+}
+
+.btn-removeinvoice {
+    border: 0px;
+    width: 100%;
+    max-width: 100px;
+    padding: 0px;
+    background-color: #FFFFFF;
+}
+
+.input-two-a,
+.input-two-b,
+.input-two-c {
+    grid-column-end: span 2;
+    text-align: center;
+}
+
+.total-amount-label {
+    text-align: center;
+}
+
+.centertext {
+    text-align: center;
+}
+
+.inv-span-all,
+.show-invoiceid,
+.show-proposalid {
+    grid-column-end: span 2;
+}
+
+.create-invoice-button,
+.create-proposal-button {
+    width: 380px;
+    height: 55px;
+    border: 1px solid;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    margin: auto;
+}
+
+.create-proposal-button {
+    color: #99c2c9;
+}
+
+.create-invoice-button {
+    color: #A62152;
+}
+
+.create-invoice-button:hover,
+.create-proposal-button:hover {
+    cursor: pointer;
+}
+
+.show-invoiceid,
+.show-proposalid {
+    text-align: center;
+    margin: 0px 0px 10px 10px;
+    border-radius: 5px;
+    border: 1px solid;
+}
+
+.show-proposalid {
+    color: #99c2c9;
+
+}
+
+.show-invoiceid {
+    color: #A62152;
+}
+.active-proposal,.proposal-pressbutton {
+    background-color: #DFF1F7;
+}
+.active-invoice,
+.invoice-pressbutton {
+    background-color: #F774A7;
+}
+
+@media screen and (min-width:721px) {
+    .create-invoice {
+        display: grid;
+        grid-template-columns: 17% 16% auto 17% 16% 17%;
+    }
+
+
+    .input-two-a,
+    .input-two-b {
+        grid-column-end: span 3;
+        text-align: left;
+    }
+
+    .input-two-c {
+        grid-column-end: span 6;
+        text-align: left;
+    }
+    .inv-row-3a,
+    .inv-row-3b {
+        grid-column-end: span 3;
+    }
+    .total-amount-label {
+        grid-column-end: span 4;
+        text-align: right;
+        margin-right: 2%;
+    }
+
+    .total-amount {
+        grid-column-end: span 2;
+    }
+
+    .inv-span-all {
+        grid-column-end: span 6;
+    }
+
+    .inv-row-4a,
+    .inv-row-4b {
+        grid-column-end: span 3;
+    }
+    .show-invoiceid,
+    .show-proposalid {
+        grid-column-end: span 5;
+    }
+    .remove-invoiceid,
+    .remove-proposalid {
+        grid-column-end: auto;
+        text-align: left;
+    }
+    .btn-removeinvoice {
+        max-width: 120px;
+    }
+}
+
+@media screen and (min-width:1081px) {
+
+    .create-invoice {
+        display: grid;
+        grid-template-columns: 9% 8% 8% 9% 8% auto 8% 8% 9% 8% 8% 9%;
+    }
+    .show-invoiceid,
+    .show-proposalid {
+        grid-column-end: span 10;
+    }
+    .remove-invoiceid,
+    .remove-proposalid {
+        grid-column-end: span 2;
+    }
+
+
+
+    .total-amount-label {
+        grid-column-end: span 9;
+    }
+
+    .total-amount {
+        grid-column-end: span 3;
+    }
+    .inv-row-4a {
+        grid-column-end: span 8;
+        text-align: right;
+    }
+    .inv-row-4b {
+        grid-column-end: span 4;
+    }
+    .inv-row-3a,
+    .inv-row-3b {
+        grid-column-end: span 6;
+    }
+
+    .input-two-a {
+        grid-column-end: span 4;
+    }
+    .input-two-b {
+        grid-column-end: span 8;
+    }
+
+    .input-two-c {
+        grid-column-end: span 12;
+    }
+
+    .inv-span-all {
+        grid-column-end: span 12;
+    }
+
+
+
+}

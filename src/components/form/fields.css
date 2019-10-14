@@ -1,0 +1,405 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+button {
+    padding: 0px;
+}
+
+.schedulelaborid {
+    border: 1px solid;
+    width: 98%;
+    margin: auto;
+}
+
+
+.touch-projectid {
+    width: 90%;
+    margin: auto;
+    border: 0px;
+    vertical-align: middle;
+    margin-top: 10px;
+}
+
+.description-container {
+    display: grid;
+    grid-template-columns: auto;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px;
+}
+
+.date-grid {
+    display: grid;
+    grid-template-columns: 17% 17% 17% 17% 16% 16%;
+
+}
+
+.date-filter,
+.date-label {
+    grid-column-end: span 6;
+}
+
+
+
+.basic {
+    background-color: #e6e6e6;
+}
+
+.mousedown {
+    background-color: #cccccc;
+}
+
+
+.wiggle {
+    transform: rotate(0.35deg);
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.nobullets {
+    list-style-type: none;
+}
+
+.inv-row-2,
+.inv-row-2a {
+    grid-column-end: span 2;
+}
+
+.invoice-id {
+    text-align: center;
+}
+
+
+
+
+.labor-rate-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-column-gap: 15px;
+    grid-row-gap: 15px;
+}
+
+.labor-rate-element-1,
+.labor-rate-element-2,
+.labor-rate-element-3 {
+    grid-column-end: span 2;
+}
+
+.field-container {
+    display: grid;
+}
+
+.field-element {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px;
+}
+
+.profile-view {
+    display: grid;
+
+}
+
+.profile-view-element {
+    border: 1px solid;
+}
+
+.date-filter {
+    margin-left: 1%;
+}
+
+#Role {
+    border: 1px solid;
+}
+
+
+.providersearch {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    font-size: 12px;
+}
+
+.providersearch-element {
+    border: 1px solid;
+}
+
+.thumbnail {
+    grid-row-end: span 2;
+
+}
+
+.field-element {
+    padding: 3px;
+}
+
+.displaynone {
+    display: none;
+}
+
+.proposalgrid {
+    display: grid;
+    grid-template-columns: 30% auto;
+}
+
+.milestonegrid-element,
+.proposalgrid-element {
+    padding: 3px;
+    border: 1px solid;
+}
+
+
+input[type="submit"],
+input[type="button"] {
+    padding: 3px;
+    width: 90%;
+}
+
+#city,
+#sta,
+#budget,
+#phone,
+#milestonestartdate,
+#milestoneenddate {
+    width: 60%;
+    padding: 3px;
+}
+
+.message {
+    padding: 5px;
+    width: 90%;
+    margin: auto;
+}
+
+#delete-schedule-labor {
+    background-color: #CBDBD7;
+
+}
+
+#insert-schedule-labor {
+    background-color: #91AAB4;
+
+}
+
+.schedule-button {
+    border: 0px;
+    border-radius: 5px;
+    width: 90%;
+    margin: auto;
+}
+
+
+
+#firstname,
+#lastname,
+#occupation,
+#jobtitle,
+#company,
+#address,
+#team,
+#communication,
+#schedule,
+#emailaddress,
+#pass,
+#Role,
+#milestone,
+.project-field {
+    width: 90%;
+    padding: 3px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px;
+}
+
+.scopeofwork {
+    height: 200px;
+    width: 90%;
+}
+
+.active-provider,
+.active {
+    background-color: #CCCCCC;
+    opacity: 0.8;
+}
+
+.active-labor-id {
+    background-color: #91AAB4;
+}
+
+.active-actuallabor-id {
+    background-color: #BF567B;
+}
+
+.field-element-label,
+.field-element-content,
+.field-element-err {
+    grid-column-end: span 6;
+    padding: 3px;
+}
+
+.show-field-container {
+    display: grid;
+    grid-template-columns: 16% 17% 17% 17% 17% 16%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px;
+}
+
+#laborrate {
+    width: 90%;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 20px;
+}
+
+
+.project-field-content,
+.project-field-label,
+.project-field-validate {
+    grid-column-end: span 2;
+}
+
+.component-container {
+    display: grid;
+    grid-template-columns: 50% auto;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+    font-size: 20px;
+    font-family: 'Nunito Sans', sans-serif;
+    width: 100%;
+}
+
+.component-element {
+    padding: 3px;
+    text-align: center;
+    background-color: #E6E2AF;
+}
+
+.provider-component-element {
+    padding: 3px;
+    text-align: center;
+    background-color: #FFD34E;
+}
+
+.project-field-label,
+.project-field-content,
+.component-container,
+.profile-field {
+    font-size: 20px;
+}
+
+.uploadprofileimage {
+    border: 0px;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 309px;
+    padding: 0px;
+    background-color: #FFFFFF;
+
+}
+
+.project-scope {
+    height: 250px;
+}
+
+.active-button {
+    padding: 1px;
+}
+
+@media screen and (min-width:721px) {
+    .component-container,
+    .profile-field {
+        font-size: 24px;
+    }
+
+    .project-field-content {
+        grid-column-end: span 4;
+    }
+    .project-field-label {
+        grid-column-end: span 2;
+    }
+
+    .project-field-validate {
+        grid-column-end: span 6;
+    }
+    #laborrate {
+        width: 50%;
+    }
+    .labor-rate-container {
+        grid-template-columns: 16% 17% 17% 17% 17% 16%;
+    }
+    .labor-rate-element-1 {
+        grid-column-end: span 2;
+    }
+    .labor-rate-element-2 {
+        grid-column-end: span 4;
+    }
+    .labor-rate-element-3 {
+        grid-column-end: span 6;
+    }
+
+    .field-element-label {
+        grid-row-end: span 2;
+    }
+    .field-element-content {
+        grid-row-end: span 4;
+    }
+    .field-element-err,
+    .project-field-validate {
+        grid-row-end: span 6;
+    }
+    .date-label {
+        grid-column-end: span 2;
+    }
+    .date-filter {
+        grid-column-end: span 4;
+    }
+    .inv-row-2,
+    .inv-row-2a {
+        grid-column-end: span 6;
+    }
+
+    .project-field-label,
+    .project-field-content {
+        font-size: 24px;
+    }
+    .project-scope {
+        height: 200px;
+    }
+}
+
+
+@media screen and (min-width:1081px) {
+    .project-scope {
+        height: 150px;
+    }
+    .project-field-content,
+    .project-component-link,
+    .project-field-label,
+    .component-container,
+    .profile-field {
+        font-size: 30px;
+    }
+    .project-field-content {
+        grid-column-end: span 10;
+    }
+
+    .project-field-label {
+        grid-column-end: span 2;
+    }
+    .show-field-container {
+        font-size: 24px;
+    }
+    .field-element {
+        font-size: 24px;
+    }
+    .invoice-id {
+        text-align: left;
+        width: 50%
+    }
+    .field-container {
+        grid-template-columns: auto 60% 20%;
+
+    }
+    .project-field-validate {
+        grid-column-end: span 12;
+    }
+    .scopeofwork {
+        height: 200px;
+    }
+
+}

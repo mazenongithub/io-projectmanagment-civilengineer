@@ -1,0 +1,108 @@
+.join-container {
+    display: grid;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-template-columns: 50% 50%;
+    grid-row-gap: 15px;
+    grid-column-gap: 30px;
+    width: 98%;
+    margin: auto;
+}
+
+.dontunderlinelink {
+    text-decoration: none;
+}
+
+.join-titlerow,
+.join-spanall {
+    grid-column-end: span 2;
+}
+
+.join-titlerow {
+    text-align: center;
+}
+
+.join-titlerow {
+    font-size: 30px;
+}
+
+.join-spanall,
+.register-label {
+    font-size: 20px;
+}
+
+.btnregister {
+    width: 100%;
+    max-width: 334px;
+    border: 0px;
+    background-color: #FFFFFF;
+    margin: auto;
+}
+
+.loginbuttonrow {
+    grid-column-end: span 2;
+}
+
+@media screen and (min-width:721px) {
+    .loginbuttonrow {
+        grid-column-end: span 3;
+    }
+    .join-spanall,
+    .join-titlerow {
+        grid-column-end: span 6;
+    }
+
+    .join-spanall,
+    .register-label {
+        font-size: 24px;
+    }
+    .join-titlerow {
+        font-size: 40px;
+    }
+    .join-container {
+        grid-template-columns: 17% 17% 16% 17% 16% 17%;
+        grid-row-gap: 30px;
+
+    }
+
+}
+
+.register-label,
+.register-buttoncontainer {
+    grid-column-end: span 3;
+}
+
+.registerbutton {
+    width: 329px;
+    border: 0px;
+    background-color: #FFFFFF;
+    text-decoration: none;
+}
+
+@media screen and (min-width:1081px) {
+    .register-label {
+        grid-column-end: span 4;
+    }
+    .register-buttoncontainer {
+        grid-column-end: span 8;
+    }
+
+    .loginbuttonrow {
+        grid-column-end: span 4;
+    }
+    .join-spanall,
+    .register-label {
+        font-size: 30px;
+    }
+    .join-container {
+        grid-template-columns: 8% 8% 9% 8% 8% 9% 8% 8% 9% 8% 8% 9%;
+        grid-row-gap: 15px;
+        grid-column-gap: 15px;
+        width: 90%;
+        margin-left: 1%;
+    }
+    .join-spanall,
+    .join-titlerow {
+        grid-column-end: span 12;
+    }
+
+}

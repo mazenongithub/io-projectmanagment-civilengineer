@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+.register-container {
+    display: grid;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-template-columns: 50% 50%;
+    grid-row-gap: 15px;
+    grid-column-gap: 30px;
+    margin: auto;
+}
+
+.register-titlerow,
+.register-spanall,
+.register-buttoncontainer-1,
+.register-providerid-container,
+.register-button-container {
+    grid-column-end: span 2;
+
+}
+
+.profile-icon-container {
+    width: 63px;
+}
+
+.register-titlerow {
+    font-size: 30px;
+    text-align: center;
+}
+
+.register-spanall,
+.project-field,
+.register-errmessage,
+.register-providerid-container,
+.register-button-container {
+    font-size: 20px;
+}
+
+
+.register-errmessage,
+.register-button-container {
+    text-align: center;
+}
+
+.button-completeprofile {
+    width: 281px;
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+#btnregisteremail {
+    width: 281px;
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+.register-field-err {
+    font-size: 18px;
+}
+
+.register-errmessage {
+    color: #CC1D1D;
+}
+
+@media screen and (min-width:721px) {
+    .button-completeprofile {
+        width: 310px;
+    }
+
+
+    #btnregisteremail {
+        width: 345px;
+        float: right;
+    }
+    .register-field,
+    .register-providerid-container {
+        grid-column-end: span 3;
+    }
+    .register-spanall,
+    .register-field,
+    .register-errmessage,
+    .register-providerid-container,
+    .register-button-container {
+        font-size: 24px;
+    }
+    .register-titlerow {
+        font-size: 40px;
+    }
+    .register-titlerow,
+    .register-spanall,
+    .register-buttoncontainer-1,
+    .register-button-container {
+        grid-column-end: span 6;
+
+    }
+    .register-container {
+        grid-template-columns: 17% 17% auto 17% 16% 17%;
+        grid-row-gap: 30px;
+    }
+    .register-field-err {
+        font-size: 20px;
+    }
+}
+
+@media screen and (min-width:1081px) {
+    .button-completeprofile {
+        width: 345px;
+    }
+    .register-container {
+
+        grid-template-columns: 8% 8% 9% 8% 8% auto 8% 8% 9% 8% 8% 9%;
+        grid-row-gap: 15px;
+        grid-column-gap: 15px;
+
+    }
+    .register-field-err {
+        font-size: 24px;
+    }
+    .register-field,
+    .register-providerid-container {
+        grid-column-end: span 6;
+    }
+    .register-spanall,
+    .register-field,
+    .register-errmessage,
+    .register-providerid-container,
+    .register-button-container {
+        font-size: 30px;
+    }
+
+    .register-titlerow,
+    .register-spanall,
+    .register-button-container {
+        grid-column-end: span 12;
+
+    }
+
+}

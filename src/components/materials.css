@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+.active-schedule-calendar {
+    background-color: #00b0cf;
+}
+
+.active-actual-calendar {
+    background-color: #ff6b6b;
+}
+
+.calendar-element {
+    border: 1px solid;
+}
+
+.material-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+}
+
+.materials-main,
+.displaydate,
+.material-titlerow,
+.material-small-c {
+    grid-column-end: span 2;
+}
+
+.material-titlerow {
+    font-size: 30px;
+}
+
+.datein-element-1a {
+    grid-column-end: span 5;
+}
+
+.calendar-hidden {
+    display: none;
+}
+
+.materials-main,
+.datein-element-1b,
+.material-buttonrow,
+.displaydate,
+.material-element,
+.show-material,
+.project-field-numeric {
+    font-size: 20px;
+}
+
+.material-titlerow,
+.displaydate,
+.material-buttonrow,
+.material-element,
+.project-field-numeric,
+.calendar-element {
+    text-align: center;
+}
+
+
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 15% 14% 14% 14% 14% 14% 15%;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+}
+
+.datein-container {
+    display: grid;
+    grid-template-columns: 17% 17% 17% 17% 16% 16%;
+    grid-row-gap: 10px;
+}
+
+.datebutton {
+    width: 54px;
+}
+
+.datebutton {
+    height: auto;
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+.dateincalendar-container {
+    grid-column-end: span 6;
+    width: 95%;
+    margin: auto
+}
+
+@media screen and (min-width:721px) {
+    .material-container {
+        grid-template-columns: 17% 17% 16% 16% 17% 17%;
+    }
+    .material-titlerow,
+    .materials-main,
+    .material-small-c {
+        grid-column-end: span 6;
+    }
+    .material-titlerow {
+        font-size: 36px;
+    }
+    .material-small-a {
+        grid-column-end: span 2;
+    }
+    .material-small-b {
+        grid-column-end: span 4;
+    }
+
+    .materials-main,
+    .datein-element-1b,
+    .material-buttonrow,
+    .displaydate,
+    .material-element,
+    .show-material,
+    .project-field-numeric {
+        font-size: 24px;
+    }
+    .material-element,
+    .material-small-d {
+        grid-column-end: span 3;
+    }
+    .datebutton {
+        width: 54px;
+    }
+}
+
+@media screen and (min-width:1081px) {
+    .material-container {
+        grid-template-columns: 9% 8% 8% 9% 8% 8% 9% 8% 8% 9% 8% 8%;
+    }
+    .material-element,
+    .material-large-a {
+        grid-column-end: span 3;
+    }
+    .material-large-b {
+        grid-column-end: span 7;
+    }
+    .material-large-c {
+        grid-column-end: span 2;
+    }
+    .materials-main,
+    .datein-element-1b,
+    .material-buttonrow,
+    .displaydate,
+    .material-element,
+    .show-material,
+    .project-field-numeric {
+        font-size: 30px;
+    }
+    .material-titlerow {
+        font-size: 40px;
+    }
+    .material-titlerow,
+    .materials-main,
+    .material-large-d,
+    .material-large-e {
+        grid-column-end: span 12;
+    }
+
+
+
+}

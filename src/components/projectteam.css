@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
+.projectteam-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+
+}
+
+.save-manager-icon {
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+.save-manager-icon {
+    width: 100%;
+    max-width: 280px;
+}
+
+.button-addprovider {
+    border: 0px;
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+.small-profile {
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.project-team-title {
+    font-size: 30px;
+}
+
+.project-team-general,
+.small-profile,
+.provider-link-container,
+.provider-link-container {
+    font-size: 20px;
+}
+
+.project-team-title,
+.largesearch-a,
+.small-profile,
+.provider-picture-container,
+.provider-link-container,
+.profile-row-1b {
+    text-align: center;
+}
+
+.remove-provider-container {
+    margin: auto;
+}
+
+.smallpicture-container {
+    width: 100%;
+    max-width: 250px;
+    margin: auto;
+}
+
+.project-team-title,
+.smallpicture-container {
+    border: 1px;
+}
+
+.project-team-title,
+.project-team-general,
+.smallsearch,
+.myprovider-container {
+    grid-column-end: span 2;
+}
+
+
+.smallsearch,
+.provider-picture-container,
+.provider-link-container {
+    border: 1px solid;
+}
+
+.provider-picture-container {
+    margin: 0px auto 15px auto;
+}
+
+.profile-icon {
+    width: 100%;
+    height: auto;
+}
+
+.profile-icon {
+    max-width: 247px;
+}
+
+.button-addprovider {
+    max-width: 108px;
+}
+
+
+
+
+.provider-picture-container {
+    width: 247px;
+    max-height: 165px;
+}
+
+.remove-provider-container {
+    width: 54px;
+    height: auto;
+
+}
+
+.provider-link-container {
+    width: 100%;
+}
+
+
+
+.profile-row-1a {
+    width: 75%;
+}
+
+.profile-row-1b {
+    width: 20%;
+}
+
+.profile-row-1a,
+.profile-row-1b,
+.provider-link-container {
+    float: left;
+}
+
+.remove-provider-icon {
+    width: 54px;
+    height: auto;
+    background-color: #FFFFFF;
+    border: 0px;
+}
+
+.profile-link {
+    color: #000000;
+}
+
+@media screen and (min-width:721px) {
+
+    .profile-row-1a {
+        width: 80%;
+    }
+
+    .profile-row-1b {
+        width: 19%;
+    }
+    .provider-picture-container {
+        width: 343px;
+        max-height: 268px;
+    }
+    .project-team-general,
+    .largesearch-b,
+    .promargin:auvider-link-container {
+        font-size: 24px;
+    }
+    .project-team-title {
+        font-size: 36px;
+    }
+    .projectteam-container {
+        grid-template-columns: 16% 17% 17% 17% 17% 16%;
+    }
+    .project-team-title,
+    .project-team-general {
+        grid-column-end: span 6;
+    }
+    .largesearch-b,
+    .largesearch-a {
+        border: 1px solid;
+    }
+    .largesearch-b {
+        grid-column-end: span 4;
+    }
+    .profile-icon {
+        max-width: 103px;
+    }
+
+    .myprovider-container {
+        grid-column-end: span 3;
+    }
+    .save-manager-icon {
+        max-width: 360px
+    }
+
+}
+
+@media screen and (min-width:1081px) {
+    .save-manager-icon {
+        max-width: 435px
+    }
+    .myprovider-container {
+        grid-column-end: span 4;
+    }
+    .button-addprovider {
+        max-width: 160px;
+    }
+    .profile-icon {
+        max-width: 160px;
+    }
+    .project-team-general,
+    .largesearch-b,
+    .provider-link-container {
+        font-size: 30px;
+    }
+    .project-team-title {
+        font-size: 40px;
+    }
+    .largesearch-b {
+        grid-column-end: span 8;
+    }
+    .largesearch-a {
+        grid-column-end: span 2;
+    }
+    .project-team-title,
+    .project-team-general {
+        grid-column-end: span 12;
+    }
+    .projectteam-container {
+        grid-template-columns: 9% 8% 8% 8% 9% 8% 8% 9% 8% 8% 8% 9%;
+    }
+}

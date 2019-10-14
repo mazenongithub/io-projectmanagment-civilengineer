@@ -1,0 +1,1544 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans|Signika:400,600');
+.delateteam-1 {
+    fill: #ccc;
+}
+
+.checkclientidicon-1 {
+    fill: #005c02;
+}
+
+.checkclientidicon-1,
+.checkclientidicon-2 {
+    stroke: #001700;
+    stroke-miterlimit: 10;
+}
+
+.checkclientidicon-2 {
+    fill: #e8bc00;
+    stroke-width: 0.5px;
+}
+
+.defaultphoto-1 {
+    fill: #999898;
+}
+
+.defaultphoto-1,
+.defaultphoto-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.defaultphoto-2 {
+    fill: #fff;
+}
+
+.delateteam-2 {
+    fill: gray;
+    stroke: #999;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.registerwithemail-1 {
+    fill: #61dafb;
+    stroke-width: 2px;
+}
+
+.registerwithemail-1,
+.registerwithemail-2 {
+    stroke: #202122;
+    stroke-miterlimit: 10;
+}
+
+.registerwithemail-2 {
+    font-size: 20px;
+    fill: #61666b;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.registerwithemail-3 {
+    letter-spacing: 0em;
+}
+
+.facebooklogin-1 {
+    fill: #395597;
+    stroke: #000;
+    stroke-width: 3px;
+}
+
+.facebooklogin-1,
+.facebooklogin-2 {
+    stroke-miterlimit: 10;
+}
+
+.facebooklogin-2 {
+    font-size: 30px;
+    fill: #fff;
+    stroke: #fff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.facebooklogin-3 {
+    letter-spacing: 0em;
+}
+
+.facebooklogin-4 {
+    letter-spacing: -0.02em;
+}
+
+.facebooklogin-5 {
+    letter-spacing: 0em;
+}
+
+.logo-1 {
+    fill: none;
+}
+
+.logo-1,
+.logo-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.logo-2,
+.logo-3 {
+    fill: #8c1837;
+}
+
+.logo-2 {
+    stroke-width: 2px;
+}
+
+.logo-4 {
+    font-size: 38px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.logo-5 {
+    letter-spacing: -0.01em;
+}
+
+.logo-6 {
+    letter-spacing: 0em;
+}
+
+.google-1 {
+    fill: #ff1102;
+    stroke: #000;
+    stroke-width: 3px;
+}
+
+.google-1,
+.google-2 {
+    stroke-miterlimit: 10;
+}
+
+.google-2 {
+    font-size: 30px;
+    fill: #fff;
+    stroke: #fff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.google-3 {
+    letter-spacing: 0em;
+}
+
+.linkedin-1 {
+    fill: #26658c;
+    stroke: #000;
+    stroke-width: 3px;
+}
+
+.linkedin-1,
+.linkedin-2 {
+    stroke-miterlimit: 10;
+}
+
+.linkedin-2 {
+    font-size: 30px;
+    fill: #fff;
+    stroke: #fff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.linkedin-3 {
+    letter-spacing: 0em;
+}
+
+.linkedin-4 {
+    letter-spacing: -0.01em;
+}
+
+.signupbyemail-1 {
+    fill: #61dafb;
+    stroke-width: 3px;
+}
+
+.signupbyemail-1,
+.signupbyemail-2 {
+    stroke: #202122;
+    stroke-miterlimit: 10;
+}
+
+.signupbyemail-2 {
+    font-size: 30px;
+    fill: #61666b;
+    stroke-width: 2px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+
+}
+
+.gotologin-1 {
+    fill: #61dafb;
+    stroke-width: 3px;
+}
+
+.gotologin-1,
+.gotologin-2 {
+    stroke: #202122;
+    stroke-miterlimit: 10;
+}
+
+.gotologin-2 {
+    font-size: 30px;
+    fill: #61666b;
+    stroke-width: 2px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.gotologin-3 {
+    letter-spacing: 0em;
+}
+
+.emaillogin-1 {
+    fill: #61dafb;
+    stroke-width: 2px;
+}
+
+.emaillogin-1,
+.emaillogin-2 {
+    stroke: #202122;
+    stroke-miterlimit: 10;
+}
+
+.emaillogin-2 {
+    font-size: 30px;
+    fill: #202122;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.emaillogin-3 {
+    letter-spacing: 0em;
+}
+
+.clearbutton-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.clearbutton-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearbutton-3 {
+    letter-spacing: -0.01em;
+}
+
+.clearbutton-4 {
+    letter-spacing: 0em;
+}
+
+.updateproject-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.updateproject-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updateproject-3 {
+    letter-spacing: 0.04em;
+}
+
+.updateproject-4 {
+    letter-spacing: 0.05em;
+}
+
+.clearschedulelabor-1 {
+    fill: #cbdbd7;
+}
+
+.clearschedulelabor-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearschedulelabor-3 {
+    fill: none;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updateschedulelabor-1 {
+    fill: #91aab4;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updateschedulelabor-2 {
+    font-size: 29px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updateschedulelabor-3 {
+    letter-spacing: 0.01em;
+}
+
+.updateschedulelabor-4 {
+    letter-spacing: 0.02em;
+}
+
+.updateschedulelabor-5 {
+    letter-spacing: 0.01em;
+}
+
+.updateschedulematerial-1 {
+    fill: #6a8487;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updateschedulematerial-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updateschedulematerial-3 {
+    letter-spacing: 0.04em;
+}
+
+.clearmaterialid-1 {
+    fill: #accfcc;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.clearmaterialid-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearmaterialid-3 {
+    letter-spacing: 0.01em;
+}
+
+.clearmaterialid-4 {
+    letter-spacing: 0em;
+}
+
+.clearmaterialid-5 {
+    letter-spacing: -0.01em;
+}
+
+.clearmaterialid-6 {
+    letter-spacing: 0em;
+}
+
+.updateactualmaterial-1 {
+    fill: #a62152;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updateactualmaterial-2 {
+    font-size: 36px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updateactualmaterial-3 {
+    letter-spacing: 0.04em;
+}
+
+.updateactualmaterial-4 {
+    letter-spacing: 0em;
+}
+
+.updateactualmaterial-5 {
+    letter-spacing: 0em;
+}
+
+.clearactualmaterial-1 {
+    fill: #b25a5f;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.clearactualmaterial-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearactualmaterial-3 {
+    letter-spacing: 0.01em;
+}
+
+.clearactualmaterial-4 {
+    letter-spacing: 0em;
+}
+
+.clearactualmaterial-5 {
+    letter-spacing: -0.01em;
+}
+
+.clearactualmaterial-6 {
+    letter-spacing: 0em;
+}
+
+.updateactuallabor-1 {
+    fill: #a63841;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updateactuallabor-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updateactuallabor-3 {
+    letter-spacing: 0.04em;
+}
+
+.updateactuallabor-4 {
+    letter-spacing: 0em;
+}
+
+.clearactuallabor-1 {
+    fill: #cbdbd7;
+}
+
+.clearactuallabor-2 {
+    fill: #8c5549;
+}
+
+.clearactuallabor-3 {
+    fill: none;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.clearactuallabor-4 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearmilestone-1 {
+    fill: #dfff92;
+    stroke: #6c8432;
+    stroke-miterlimit: 10;
+    stroke-width: 4px;
+}
+
+.clearmilestone-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearmilestone-3 {
+    letter-spacing: 0em;
+}
+
+.updatemilestone-1 {
+    fill: #add16e;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.updatemilestone-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updatemilestone-3 {
+    letter-spacing: 0.04em;
+}
+
+.updatemilestone-4 {
+    letter-spacing: 0em;
+}
+
+.updateprojectteam-1 {
+    fill: #0062ba;
+    stroke: #009245;
+    stroke-miterlimit: 10;
+}
+
+.updateprojectteam-2 {
+    font-size: 40px;
+    fill: #fff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+    letter-spacing: 0.04em;
+}
+
+.updateprojectteam-3 {
+    letter-spacing: 0.04em;
+}
+
+.updateprojectteam-4 {
+    letter-spacing: 0.05em;
+}
+
+.updateprojectteam-5 {
+    letter-spacing: -0.03em;
+}
+
+.authorizeproposal-1 {
+    fill: #00b0cf;
+}
+
+.authorizeproposal-2 {
+    fill: #636463;
+}
+
+.authorizeproposal-3 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.authorizeproposal-4 {
+    letter-spacing: -0.01em;
+}
+
+.authorizeproposal-5 {
+    letter-spacing: -0.01em;
+}
+
+.removeproject-1 {
+    fill: #999;
+}
+
+.removeproject-1,
+.removeproject-4,
+.removeproject-5 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.removeproject-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.removeproject-3 {
+    letter-spacing: -0.01em;
+}
+
+.removeproject-4 {
+    fill: #9e0e20;
+    stroke-width: 0.5px;
+}
+
+.removeproject-5 {
+    fill: #f2f2f2;
+    stroke-width: 0.25px;
+}
+
+.editproject-1 {
+    fill: #56927e;
+    stroke: #114c44;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.editproject-2 {
+    font-size: 48px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+    letter-spacing: 0.08em;
+}
+
+.editproject-3 {
+    letter-spacing: 0.07em;
+}
+
+.editproject-4 {
+    letter-spacing: 0.08em;
+}
+
+.removematerial-1 {
+    fill: #ccc;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.removematerial-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.removematerial-2,
+.removematerial-6 {
+    fill: #9e1b33;
+}
+
+.removematerial-3 {
+    letter-spacing: 0em;
+}
+
+.removematerial-4 {
+    letter-spacing: -0.01em;
+}
+
+.removematerial-5 {
+    letter-spacing: -0.01em;
+}
+
+.removematerial-7 {
+    fill: #e6e6e6;
+}
+
+.removeinvoice-1 {
+    fill: #999;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.removeinvoice-2 {
+    fill: #900;
+}
+
+.removeinvoice-3 {
+    fill: #fff;
+}
+
+.removeinvoice-4 {
+    font-size: 20px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+    letter-spacing: 0.03em;
+}
+
+.removeinvoice-5 {
+    letter-spacing: 0.06em;
+}
+
+.touchprojectid-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.touchprojectid-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.touchprojectid-3 {
+    letter-spacing: -0.08em;
+}
+
+.touchprojectid-4 {
+    letter-spacing: 0em;
+}
+
+.touchprojectid-5 {
+    letter-spacing: -0.01em;
+}
+
+.touchprojectid-6 {
+    letter-spacing: 0em;
+}
+
+.touchprojectid-7 {
+    letter-spacing: -0.01em;
+}
+
+.startnewproject-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.startnewproject-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.startnewproject-3 {
+    letter-spacing: 0em;
+}
+
+.startnewproject-4 {
+    letter-spacing: 0.04em;
+}
+
+.startnewproject-5 {
+    letter-spacing: -0.01em;
+}
+
+.startnewproject-6 {
+    letter-spacing: -0.01em;
+}
+
+.startnewproject-7 {
+    letter-spacing: 0em;
+}
+
+.startnewproject-8 {
+    letter-spacing: 0em;
+}
+
+.savenewproject-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.savenewproject-2 {
+    fill: url(#linear-gradient);
+}
+
+.savenewproject-3 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.savenewproject-4 {
+    letter-spacing: -0.01em;
+}
+
+.savenewproject-5 {
+    letter-spacing: -0.01em;
+}
+
+.savenewproject-6 {
+    letter-spacing: 0em;
+}
+
+.savenewproject-7 {
+    letter-spacing: 0em;
+}
+
+.saveallprojects-1 {
+    fill: #efecca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.saveallprojects-2 {
+    fill: url(#linear-gradient);
+}
+
+.saveallprojects-3 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveallprojects-4 {
+    letter-spacing: -0.01em;
+}
+
+.saveallprojects-5 {
+    letter-spacing: -0.01em;
+}
+
+.saveallprojects-6 {
+    letter-spacing: 0em;
+}
+
+.saveactualproject-1 {
+    fill: #f90500;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.saveproject-1 {
+    fill: #aed3e3;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.saveproject-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveproject-3 {
+    letter-spacing: -0.01em;
+}
+
+.saveproject-4 {
+    letter-spacing: -0.01em;
+}
+
+.saveproject-5 {
+    letter-spacing: 0em;
+}
+
+.actualdatearrowup-1 {
+    fill: #570b17;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.milestonedatearrowup-1,
+.milestonedatearrowdown-1 {
+    fill: #004416;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.actualdatearrowdown-1 {
+    fill: #570b17;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.datearrowup-1 {
+    fill: #2a678c;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.datearrowdown-1 {
+    fill: #2a678c;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.editLabor-1 {
+    fill: #aed3e3;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.editactualLabor-1 {
+    fill: #ff1f1f;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.editLabor-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.deleteactuallabor-1 {
+    fill: #666666;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.deleteschedulelabor-1 {
+    fill: #00b0cf;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.deleteschedulelabor-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.deleteschedulelabor-3 {
+    letter-spacing: 0em;
+}
+
+.clearactiveactuallabor-1 {
+    fill: #a80003;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.clearactivelabor-1 {
+    fill: #8daaba;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.clearactivelabor-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearactivelabor-3 {
+    letter-spacing: 0em;
+}
+
+.clearactivelabor-4 {
+    letter-spacing: -0.01em;
+}
+
+.opendatemenu-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.opendatemenu-2 {
+    fill: #666;
+}
+
+.closedatemenu-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+}
+
+.closedatemenu-1,
+.closedatemenu-2 {
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.closedatemenu-2 {
+    fill: #666;
+    stroke: #666;
+}
+
+.dateyearup-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.dateyearup-2 {
+    fill: #666;
+}
+
+.dateyeardown-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.dateyeardown-2 {
+    fill: #666;
+}
+
+.datemonthdown-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.datemonthdown-2 {
+    fill: #666;
+}
+
+.datemonthup-1 {
+    fill: #e6e6e6;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.datemonthup-2 {
+    fill: #666;
+}
+
+.proposalid-1 {
+    fill: #85b9e4;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.proposalid-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.proposalid-3 {
+    letter-spacing: -0.01em;
+}
+
+.proposalid-4 {
+    letter-spacing: 0em;
+}
+
+.proposalid-5 {
+    letter-spacing: -0.01em;
+}
+
+.removeproposal-1 {
+    fill: #b3b3b3;
+}
+
+.removeproposal-1,
+.removeproposal-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.removeproposal-2 {
+    fill: #fff;
+}
+
+.createproposalid-1 {
+    fill: #9ac0da;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.createproposalid-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.createproposalid-3 {
+    letter-spacing: -0.01em;
+}
+
+.clearproposalid-1,
+.clearproposalid-5 {
+    fill: #0085ca;
+}
+
+.clearproposalid-1 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.clearproposalid-2,
+.clearproposalid-5 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearproposalid-3 {
+    letter-spacing: -0.01em;
+}
+
+.clearproposalid-4 {
+    letter-spacing: 0em;
+}
+
+.additeminvoice-1 {
+    fill: #ff1f1f;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.additemproposal-1 {
+    fill: #aed3e3;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.additemproposal-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.removeinvoiceitem-1 {
+    fill: #666666;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.removeproposalitem-1 {
+    fill: #00b0cf;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.removeproposalitem-2 {
+    font-size: 30px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.removeproposalitem-3 {
+    letter-spacing: -0.01em;
+}
+
+.createinvoiceid-1 {
+    fill: #b3211d;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.createinvoiceid-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.createinvoiceid-3 {
+    letter-spacing: -0.01em;
+}
+
+.createinvoiceid-4 {
+    letter-spacing: -0.01em;
+}
+
+.clearinvoiceid-1 {
+    fill: #ff1f1f;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.clearinvoiceid-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clearinvoiceid-3 {
+    letter-spacing: -0.01em;
+}
+
+.invoiceid-1 {
+    fill: #770e0e;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.invoiceid-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.invoiceid-3 {
+    letter-spacing: -0.01em;
+}
+
+.invoiceid-4 {
+    letter-spacing: -0.01em;
+}
+
+.addprovidericon-1 {
+    fill: #aab1bf;
+    stroke-width: 2px;
+}
+
+.addprovidericon-1,
+.addprovidericon-2 {
+    stroke: #0c1d40;
+    stroke-miterlimit: 10;
+}
+
+.addprovidericon-2 {
+    font-size: 40px;
+    fill: #0c1d40;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveprojectmanager-1 {
+    fill: #6595bf;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.saveprojectmanager-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveprojectmanager-3 {
+    letter-spacing: -0.01em;
+}
+
+.saveprojectmanager-4 {
+    letter-spacing: -0.01em;
+}
+
+.saveprojectmanager-5 {
+    letter-spacing: 0em;
+}
+
+.saveprofile-1 {
+    fill: #87278f;
+    stroke: #87278f;
+    stroke-width: 3px;
+}
+
+.saveprofile-1,
+.saveprofile-2 {
+    stroke-miterlimit: 10;
+}
+
+.saveprofile-2 {
+    font-size: 30px;
+    fill: #f1d23c;
+    stroke: #f1d23c;
+    stroke-width: 2px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveprofile-3 {
+    letter-spacing: -0.01em;
+}
+
+.completeprofile-1 {
+    fill: #f2b705;
+    stroke: #000;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+}
+
+.completeprofile-2 {
+    font-size: 40px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.completeprofile-3 {
+    letter-spacing: -0.01em;
+}
+
+.completeprofile-4 {
+    letter-spacing: 0em;
+}
+
+.completeprofile-5 {
+    letter-spacing: -0.01em;
+}
+
+.completeprofile-6 {
+    letter-spacing: 0em;
+}
+
+.completeprofile-7 {
+    letter-spacing: 0em;
+}
+
+.stripeconnect-1 {
+    fill: #2a678c;
+}
+
+.stripeconnect-2 {
+    font-size: 24px;
+    fill: #f0f2f2;
+    stroke: #f0f2f2;
+    stroke-miterlimit: 10;
+    stroke-width: 2px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+    letter-spacing: 0.09em;
+}
+
+.stripeconnect-3 {
+    letter-spacing: 0.1em;
+}
+
+.stripeconnect-4 {
+    letter-spacing: 0.1em;
+}
+
+.stripeconnect-5 {
+    letter-spacing: 0.02em;
+}
+
+.stripeconnect-6 {
+    letter-spacing: 0.1em;
+}
+
+.stripeconnect-7 {
+    letter-spacing: 0.1em;
+}
+
+.yahoo-1 {
+    fill: #311656;
+    stroke-width: 5px;
+}
+
+.yahoo-1,
+.yahoo-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.yahoo-2 {
+    font-size: 45px;
+    fill: #f1f2f1;
+    font-family: 'Signika', sans-serif;
+    ;
+    font-weight: 600;
+}
+
+.yahoo-3 {
+    letter-spacing: -0.01em;
+}
+
+.yahoo-4 {
+    letter-spacing: 0em;
+}
+
+.yahoo-5 {
+    letter-spacing: 0.02em;
+}
+
+.yahoo-6 {
+    letter-spacing: 0em;
+}
+
+.yahoo-7 {
+    letter-spacing: -0.05em;
+}
+
+.saveallprofile-1 {
+    fill: #13437e;
+}
+
+.saveallprofile-1,
+.saveallprofile-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.saveallprofile-2 {
+    font-size: 41px;
+    fill: #fff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.saveallprofile-3 {
+    letter-spacing: -0.01em;
+}
+
+.saveallprofile-4 {
+    letter-spacing: -0.01em;
+}
+
+.saveallprofile-5 {
+    letter-spacing: 0em;
+}
+
+.uploadnewprofileimage-1 {
+    fill: #a5acaf;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.uploadnewprofileimage-2 {
+    font-size: 43px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.uploadnewprofileimage-3 {
+    letter-spacing: -0.01em;
+}
+
+.uploadnewprofileimage-4 {
+    letter-spacing: 0em;
+}
+
+.updatepasswordicon-1 {
+    fill: #949494;
+}
+
+.updatepasswordicon-1,
+.updatepasswordicon-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.updatepasswordicon-2 {
+    font-size: 48px;
+    fill: #fff;
+    stroke-width: 0.5px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.updatepasswordicon-3 {
+    letter-spacing: -0.01em;
+}
+
+.updatepasswordicon-4 {
+    letter-spacing: -0.01em;
+}
+
+.updatepasswordicon-5 {
+    letter-spacing: -0.01em;
+}
+
+.updatepasswordicon-6 {
+    letter-spacing: -0.01em;
+}
+
+.updatepasswordicon-7 {
+    letter-spacing: 0em;
+}
+
+.newstripeconnecticon-1 {
+    fill: #1f5aa6;
+    stroke: #0d070d;
+}
+
+.newstripeconnecticon-1,
+.newstripeconnecticon-2 {
+    stroke-miterlimit: 10;
+}
+
+.newstripeconnecticon-2 {
+    font-size: 49px;
+    fill: #f2f2f2;
+    stroke: #0e2f59;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.newstripeconnecticon-3 {
+    letter-spacing: -0.01em;
+}
+
+.newstripeconnecticon-4 {
+    letter-spacing: 0em;
+}
+
+.newstripeconnecticon-5 {
+    letter-spacing: 0em;
+}
+
+.newclearprojectid-1 {
+    fill: #015d40;
+    stroke: #003932;
+}
+
+.newclearprojectid-1,
+.newclearprojectid-2 {
+    stroke-miterlimit: 10;
+}
+
+.newclearprojectid-2 {
+    font-size: 50px;
+    fill: #fcfffd;
+    stroke: #f8b320;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.newclearprojectid-3 {
+    letter-spacing: -0.01em;
+}
+
+.newclearprojectid-4 {
+    letter-spacing: 0em;
+}
+
+.newsaveproject-1 {
+    fill: #015d40;
+    stroke: #003932;
+}
+
+.newsaveproject-1,
+.newsaveproject-2 {
+    stroke-miterlimit: 10;
+}
+
+.newsaveproject-2 {
+    font-size: 50px;
+    fill: #fcfffd;
+    stroke: #f8b320;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.newsaveproject-3 {
+    letter-spacing: -0.01em;
+}
+
+.newsaveproject-4 {
+    letter-spacing: -0.01em;
+}
+
+.newsaveproject-5 {
+    letter-spacing: 0em;
+}
+
+.editmilestone-1 {
+    fill: #014c1d;
+}
+
+.editmilestone-1,
+.editmilestone-2 {
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.editmilestone-2 {
+    font-size: 48px;
+    fill: #f8ffff;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.deletemilestone-1 {
+    fill: #c0001d;
+    stroke: #000;
+}
+
+.deletemilestone-1,
+.deletemilestone-2 {
+    stroke-miterlimit: 10;
+}
+
+.deletemilestone-2 {
+    font-size: 48px;
+    fill: #f8ffff;
+    stroke: #142044;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.deletemilestone-3 {
+    letter-spacing: 0em;
+}
+
+.clicktojoinnetwork-1 {
+    fill: #0085ca;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.clicktojoinnetwork-2 {
+    font-size: 37px;
+    font-family: NunitoSans-Regular, Nunito Sans;
+}
+
+.clicktojoinnetwork-3 {
+    letter-spacing: 0em;
+}
+
+.clicktojoinnetwork-4 {
+    letter-spacing: 0.01em;
+}
+
+.clicktojoinnetwork-5 {
+    letter-spacing: -0.01em;
+}
+
+.managericon-1 {
+    fill: #ba9a30;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+
+.providericon-1 {
+    fill: #d4af37;
+    stroke: #000;
+    stroke-miterlimit: 10;
+}
+.closeprovidermenu-1{fill:#d4af37;stroke:#000;stroke-miterlimit:10;}
+.closeprojectmenu-1{fill:#ba9a30;stroke:#000;stroke-miterlimit:10;}

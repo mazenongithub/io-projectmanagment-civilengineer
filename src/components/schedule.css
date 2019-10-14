@@ -1,0 +1,231 @@
+.labor-container {
+    display: grid;
+    font-family: 'Nunito Sans', sans-serif;
+    grid-template-columns: 50% 50%;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+}
+
+.labortime-container {
+    display: grid;
+    grid-template-columns: 16% 17% 17% 17% 17% 16%;
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+
+}
+
+.labor-timein-main {
+    grid-column-end: span 6;
+}
+
+.labor-main {
+    font-size: 24px;
+}
+
+.labor-timein-main,
+.labortime-label,
+.labor-timein-general,
+.schedulelaborid-main,
+.labor-output-row,
+.project-select-field,
+.schedulelaborid-row-1a,
+.schedulelaborid-row-1b,
+.schedulelaborid-row-2,
+.schedulelaborid-row-3,
+.schedulelaborid-small-1 {
+    font-size: 20px;
+}
+
+.labor-main,
+.labor-timein-general,
+.labortime-label,
+.labor-timein-container,
+.labor-timein-milestone,
+.schedulelaborid-row-2 {
+    grid-column-end: span 2;
+}
+
+.labor-main,
+.labor-timein-main,
+.labortime-label,
+.labor-output-row {
+    text-align: center;
+}
+
+.laborid-icon {
+    width: 111px;
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.labortime-container {
+    max-width: 533px;
+    margin: auto;
+}
+
+.project-select-field {
+    width: 95%;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+
+
+.time-field {
+    height: 68px;
+}
+
+.btnsaveprojects {
+    width: 280px;
+    border: 0px;
+    padding: 0px;
+    background-color: #FFFFFF;
+}
+
+.timebutton-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.time-field {
+    margin-top: 10px;
+    max-width: 43px;
+    text-align: center;
+}
+
+.time-field {
+    font-size: 30px;
+}
+
+.time-button {
+    width: 100%;
+    max-width: 40px;
+    border: 0px;
+    background-color: #FFFFFF;
+}
+
+@media screen and (min-width:721px) {
+    .time-field {
+        max-width: 100px;
+    }
+    .time-field {
+        font-size: 36px;
+    }
+    .btnsaveprojects {
+        width: 330px;
+    }
+    .labortime-container {
+        grid-row-gap: 15px;
+        grid-column-gap: 15px;
+    }
+    .labortime-container,
+    .labor-timein-main,
+    .labortime-label,
+    .labor-timein-general,
+    .schedulelaborid-main,
+    .labor-output-row,
+    .project-select-field,
+    .schedulelaborid-row-1a,
+    .schedulelaborid-row-1b,
+    .schedulelaborid-row-2,
+    .schedulelaborid-row-3,
+    .schedulelaborid-small-1 {
+        font-size: 24px;
+    }
+
+
+    .labor-output-row {
+        font-size: 20px;
+    }
+    .labor-main {
+        font-size: 30px;
+    }
+    .labor-output-row {
+        grid-column-end: span 2;
+    }
+    .schedulelaborid-main,
+    .schedulelaborid-small-1 {
+        grid-column-end: span 3;
+    }
+    .labor-main,
+    .labor-timein-general,
+    .labor-timein-container,
+    .labor-timein-milestone,
+    .schedulelaborid-row-2 {
+        grid-column-end: span 6;
+    }
+    .labor-container {
+        grid-template-columns: 16% 17% 17% 17% 17% 16%;
+    }
+    .laborid-icon {
+        width: 128px;
+    }
+
+}
+
+@media screen and (min-width:1081px) {
+    .schedulelaborid-main {
+        grid-column-end: span 6;
+    }
+    .schedulelaborid-row-1a {
+        grid-column-end: span 5;
+    }
+    .schedulelaborid-row-1b {
+        grid-column-end: span 2;
+    }
+    .laborid-icon {
+        width: 143px;
+    }
+    .time-field {
+        max-width: 76px;
+    }
+    .time-field {
+        font-size: 40px;
+    }
+    .btnsaveprojects {
+        width: 380px;
+    }
+    .labortime-container {
+        margin-left: 15px;
+    }
+
+    .labor-output-row {
+        font-size: 24px;
+    }
+    .labor-timein-main,
+    .labortime-label,
+    .labor-timein-general,
+    .labor-output-row,
+    .schedulelaborid-main,
+    .labor-output-row,
+    .project-select-field,
+    .schedulelaborid-row-1a,
+    .schedulelaborid-row-1b,
+    .schedulelaborid-row-2,
+    .schedulelaborid-row-3 {
+        font-size: 30px;
+    }
+    .labor-output-row {
+        grid-column-end: span 4;
+    }
+    .labor-timein-container {
+        grid-column-end: span 6;
+    }
+    .labor-main {
+        font-size: 36px;
+    }
+    .labor-main,
+    .labor-timein-general,
+    .labor-timein-milestone,
+    .schedulelaborid-row-2,
+    .schedulelaborid-row-3 {
+        grid-column-end: span 12;
+    }
+    .labor-container {
+        grid-template-columns: 8% 8% 9% 8% 8% 9% 8% 8% 9% 8% 8% 9%;
+    }
+
+}
