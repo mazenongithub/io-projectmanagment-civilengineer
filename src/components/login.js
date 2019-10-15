@@ -15,6 +15,7 @@ class Login extends Component {
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
+        console.log("Server API", process.env.REACT_APP_SERVER_API)
         window.addEventListener('resize', this.updateWindowDimensions);
         this.props.reduxNavigation({ navigation: "login" })
         let windowwidth = window.innerWidth;
