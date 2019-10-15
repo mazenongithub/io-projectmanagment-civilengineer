@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { GoogleLogin, EmailLoginSVG, yahooIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
+
 class Login extends Component {
     constructor(props) {
         super(props);
