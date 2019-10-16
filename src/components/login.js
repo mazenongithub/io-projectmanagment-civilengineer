@@ -16,7 +16,7 @@ class Login extends Component {
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
-        console.log("ENV", process.env.NODE_ENV)
+     
         window.addEventListener('resize', this.updateWindowDimensions);
         this.props.reduxNavigation({ navigation: "login" })
         let windowwidth = window.innerWidth;
@@ -67,13 +67,13 @@ class Login extends Component {
     }
     render() {
 
-        let formpostURL = `${process.env.REACT_APP_ROOT_SERVER}/api/loginuser`;
-        const googleredirect = `${process.env.REACT_APP_ROOT_SERVER}/oauth20/google/login`;
-        //const facebookredirect = `${process.env.REACT_APP_ROOT_SERVER}/oauth20/facebook/login`
-        //const linkedinredirect = `${process.env.REACT_APP_ROOT_SERVER}/oauth20/linkedin/login`
-        const yahooredirect = `${process.env.REACT_APP_ROOT_SERVER}/oauth20/yahoo/login`;
-        const yahooscope = `https://api.login.yahoo.com/oauth2/request_auth?redirect_uri=${yahooredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_YAHOO_CLIENTID}`
-        const googlescope = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${googleredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_GOOGLE_CLIENTID}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline`
+        let formpostURL = `${process.env.REACT_APP_SERVER_API}/api/loginuser`;
+        const googleredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/google/login`;
+        //const facebookredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/facebook/login`
+        //const linkedinredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/linkedin/login`
+        const yahooredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/yahoo/login`;
+        const yahooscope = `https://api.login.yahoo.com/oauth2/request_auth?redirect_uri=${yahooredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_YAHOOID}`
+        const googlescope = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${googleredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_GOOGLEID}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline`
         //const facebookscope = `https://www.facebook.com/dialog/oauth?client_id=${process.env.REACT_APP_FACEBOOK_APPID}&redirect_uri=${encodeURIComponent(facebookredirect)}`;
         //const linkedinscope = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.REACT_APP_LINKEDIN_CLIENTID}&redirect_uri=${encodeURIComponent(linkedinredirect)}&state=linkedin&scope=${encodeURIComponent("r_basicprofile r_emailaddress")}`
         return (

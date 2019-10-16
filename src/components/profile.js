@@ -141,7 +141,7 @@ class Profile extends Component {
 
             }
             else {
-                let stripe_redirect = `${process.env.REACT_APP_ROOT_SERVER}/api/stripe/updatepaymentid`
+                let stripe_redirect = `${process.env.REACT_APP_SERVER_API}/api/stripe/updatepaymentid`
                 stripe_redirect = encodeURIComponent(stripe_redirect);
                 //redirect_uri=http://webdevbootcamp-mazenoncloud9.c9users.io:8081/api/stripe/updatepaymentid&response_type=code&client_id=ca_ETdAZ69zcymVDO45aRGOnspAT9xHuv43&scope=read_write
                 const stripe = `https://connect.stripe.com/oauth/authorize?response_type=code&redirect_uri=${stripe_redirect}&client_id=${process.env.REACT_APP_STRIPE_CONNECT}&state=${this.props.myusermodel.providerid}&stripe_user[business_type]=company&scope=read_write`

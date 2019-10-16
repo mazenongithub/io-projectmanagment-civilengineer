@@ -30,7 +30,7 @@ class App extends Component {
         this.state = { render: '' }
     }
     componentDidMount() {
-        document.title = "app.goandhireme.com";
+        document.title = "projectmanagement.civilengineer.io";
         this.checkuserlogin();
 
     }

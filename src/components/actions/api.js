@@ -3,7 +3,7 @@
 
 export async function CheckUserLogin() {
 
-    let APIURL = `/api/checkuser`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checkuser`
 
     return fetch(APIURL).then(resp => {
 
@@ -25,7 +25,7 @@ export async function CheckUserLogin() {
 }
 export async function GoandHireMe(values) {
     let providerid = values.providerid;
-    var APIURL = `/api/${providerid}/goandhireme`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/goandhireme`
 
     return fetch(APIURL, {
             method: 'post',
@@ -57,7 +57,7 @@ export async function GoandHireMe(values) {
 export async function ProviderEndPoint(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
-    var APIURL = `/api/${providerid}/projects/${projectid}/providerendpoint`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/providerendpoint`
 
     return fetch(APIURL, {
             method: 'post',
@@ -89,7 +89,7 @@ export async function ProviderEndPoint(values) {
 export async function SaveAllProjects(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
-    var APIURL = `/api/${providerid}/projects/${projectid}/saveallprojects`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/saveallprojects`
 
     return fetch(APIURL, {
             method: 'post',
@@ -120,7 +120,7 @@ export async function SaveAllProjects(values) {
 }
 export async function CheckEmailAddress(emailaddress) {
 
-    var APIURL = `/api/user/checkemailaddress/${emailaddress}`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/user/checkemailaddress/${emailaddress}`
 
     return fetch(APIURL)
         .then(resp => {
@@ -142,7 +142,7 @@ export async function CheckEmailAddress(emailaddress) {
         })
 }
 export async function CheckProjectID(projectid) {
-    const APIURL = `/api/${projectid}/checkprojectid`
+    const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${projectid}/checkprojectid`
     return fetch(APIURL)
         .then(resp => {
 
@@ -164,7 +164,7 @@ export async function CheckProjectID(projectid) {
 }
 export async function CheckProviderID(providerid) {
 
-    var APIURL = `/api/${providerid}/checkproviderid`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/checkproviderid`
 
     return fetch(APIURL)
         .then(resp => {
@@ -187,7 +187,7 @@ export async function CheckProviderID(providerid) {
 }
 export async function CheckCommission(providerid) {
 
-    let APIURL = `/api/${providerid}/checkcommission`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/checkcommission`
     console.log(APIURL)
     return fetch(APIURL)
         .then(resp => {
@@ -209,7 +209,7 @@ export async function CheckCommission(providerid) {
         })
 }
 export async function UploadProfileImage(formdata, providerid) {
-    var APIURL = `/api/${providerid}/uploadprofileimage`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/uploadprofileimage`
 
     return fetch(APIURL, {
             method: 'post',
@@ -236,7 +236,7 @@ export async function UploadProfileImage(formdata, providerid) {
 }
 export async function getstripeloginlink() {
 
-    var APIURL = "/api/stripe/getuserloginlink"
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/stripe/getuserloginlink`
 
     return fetch(APIURL)
         .then(resp => {
@@ -261,7 +261,7 @@ export async function handleStripePayment(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
     let invoiceid = values.invoiceid;
-    let APIURL = `/api/${providerid}/projects/${projectid}/invoicepayment/${invoiceid}`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/invoicepayment/${invoiceid}`
 
     return fetch(APIURL, {
             method: 'post',
@@ -294,7 +294,7 @@ export async function handleStripePayment(values) {
 export async function InsertInvoice(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
-    var APIURL = `/api/${providerid}/projects/${projectid}/insertinvoice`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/insertinvoice`
 
     return fetch(APIURL, {
             method: 'post',
@@ -327,7 +327,7 @@ export async function InsertInvoice(values) {
 export async function InsertProposal(values) {
     let projectid = values.projectid;
     let providerid = values.providerid;
-    var APIURL = `/api/${providerid}/projects/${projectid}/insertproposal`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/insertproposal`
     return fetch(APIURL, {
             method: 'post',
             credentials: 'same-origin',
@@ -358,7 +358,7 @@ export async function InsertProposal(values) {
 
 export async function AddCommission(commission) {
     let values = { commission }
-    var APIURL = `/api/${commission}/joinmynetwork/commission`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${commission}/joinmynetwork/commission`
     return fetch(APIURL, {
             method: 'post',
             credentials: 'same-origin',
@@ -390,7 +390,7 @@ export async function AddCommission(commission) {
 export async function InsertMyProject(values) {
     console.log(values)
     let providerid = values.providerid;
-    var APIURL = `/api/${providerid}/projects/insertmyproject`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/insertmyproject`
     return fetch(APIURL, {
             method: 'post',
             credentials: 'same-origin',
@@ -424,7 +424,7 @@ export async function InsertMyProject(values) {
 
 export async function loadmyprojects(providerid) {
 
-    var APIURL = `/api/${providerid}/projects/loadmyproject`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/loadmyproject`
     return fetch(APIURL, {
             method: 'get',
             credentials: 'same-origin'
@@ -450,7 +450,7 @@ export async function loadmyprojects(providerid) {
 export async function DeleteMyProject(values) {
     let projectid = values.projectid;
     let providerid = values.providerid;
-    var APIURL = `/api/${providerid}/projects/deletemyproject/${projectid}`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/deletemyproject/${projectid}`
     return fetch(APIURL, {
             method: 'get',
             credentials: 'same-origin'
@@ -475,7 +475,7 @@ export async function DeleteMyProject(values) {
 
 export async function LoadMyProviders() {
 
-    var APIURL = "/api/loadmyproviders";
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loadmyproviders`;
     return fetch(APIURL, {
             method: 'get',
             credentials: 'same-origin'
@@ -500,7 +500,7 @@ export async function LoadMyProviders() {
 
 export async function checkuserlogin(values) {
 
-    var APIURL = "/api/login"
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/login`
     return fetch(APIURL, {
             method: 'post',
             credentials: 'same-origin',
@@ -530,7 +530,7 @@ export async function checkuserlogin(values) {
 
 export async function UpdateUserPassword(values) {
     let providerid = values.providerid;
-    var APIURL = `/api/${providerid}/updateuserpassword`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/updateuserpassword`
     return fetch(APIURL, {
             method: 'post',
             credentials: 'same-origin',
