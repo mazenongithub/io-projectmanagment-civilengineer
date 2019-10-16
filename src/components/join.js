@@ -33,7 +33,7 @@ class Join extends Component {
     }
 
     render() {
-        const googleredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/google/login`
+        const googleredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagment/oauth20/google/login`
         //const facebookredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/facebook`
         //const linkedinredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/linkedin`
 

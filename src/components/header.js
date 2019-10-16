@@ -20,7 +20,7 @@ class Header extends Component {
         this.setState({ widthofwindow: window.innerWidth });
     }
     showlogout() {
-        var logoutURL = process.env.REACT_APP_SERVER_API + "/api/user/logout";
+        var logoutURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/user/logout";
         if (this.props.myusermodel.hasOwnProperty("providerid")) {
             return (<a href={logoutURL}
             className="nav-link"> <span className="nav-link">Logout </span> </a>);

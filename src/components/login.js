@@ -67,11 +67,11 @@ class Login extends Component {
     }
     render() {
 
-        let formpostURL = `${process.env.REACT_APP_SERVER_API}/api/loginuser`;
-        const googleredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/google/login`;
+        let formpostURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loginuser`;
+        const googleredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/oauth20/google/login`;
         //const facebookredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/facebook/login`
         //const linkedinredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/linkedin/login`
-        const yahooredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/yahoo/login`;
+        const yahooredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/oauth20/yahoo/login`;
         const yahooscope = `https://api.login.yahoo.com/oauth2/request_auth?redirect_uri=${yahooredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_YAHOOID}`
         const googlescope = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${googleredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_GOOGLEID}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline`
         //const facebookscope = `https://www.facebook.com/dialog/oauth?client_id=${process.env.REACT_APP_FACEBOOK_APPID}&redirect_uri=${encodeURIComponent(facebookredirect)}`;
