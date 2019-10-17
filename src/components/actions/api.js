@@ -425,7 +425,11 @@ export async function InsertMyProject(values) {
 export async function loadmyprojects(providerid) {
 
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/loadmyproject`
-    return fetch(APIURL)
+    console.log(APIURL)
+    return fetch(APIURL, {
+        method: 'get',
+        credentials: 'same-origin'
+    })
         .then(resp => {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
