@@ -29,7 +29,7 @@ export async function GoandHireMe(values) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -61,7 +61,7 @@ export async function ProviderEndPoint(values) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -93,7 +93,7 @@ export async function SaveAllProjects(values) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -213,7 +213,7 @@ export async function UploadProfileImage(formdata, providerid) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             body: formdata
         })
         .then(resp => {
@@ -265,7 +265,7 @@ export async function handleStripePayment(values) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -298,7 +298,7 @@ export async function InsertInvoice(values) {
 
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -330,7 +330,7 @@ export async function InsertProposal(values) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/${projectid}/insertproposal`
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -361,7 +361,7 @@ export async function AddCommission(commission) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${commission}/joinmynetwork/commission`
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -393,7 +393,7 @@ export async function InsertMyProject(values) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/insertmyproject`
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -451,7 +451,7 @@ export async function DeleteMyProject(values) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/deletemyproject/${projectid}`
     return fetch(APIURL, {
             method: 'get',
-            credentials: 'same-origin'
+            credentials: 'include'
         })
         .then(resp => {
             if (!resp.ok) {
@@ -476,7 +476,7 @@ export async function LoadMyProviders() {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loadmyproviders`;
     return fetch(APIURL, {
             method: 'get',
-            credentials: 'same-origin'
+            credentials: 'include'
         })
         .then(resp => {
             if (!resp.ok) {
@@ -501,7 +501,7 @@ export async function checkuserlogin(values) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/login`
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
@@ -531,7 +531,7 @@ export async function UpdateUserPassword(values) {
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/updateuserpassword`
     return fetch(APIURL, {
             method: 'post',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
