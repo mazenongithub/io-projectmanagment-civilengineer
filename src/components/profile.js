@@ -685,7 +685,7 @@ class Profile extends Component {
         if (this.props.myusermodel) {
             return (
                 <div className="myprofile-container">
-              <div className="profile-titlerow">Your profile can be view at http://app.goandhireme.com/{this.props.match.params.providerid}  </div>
+              <div className="profile-titlerow">Your profile can be view at {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}  </div>
               <div className="profile-main"> <div className="profilepicture-container">{this.getprofileimage()} </div> </div>
              <div className="profile-main">Select From the Following </div>
              {this.showmenus()}

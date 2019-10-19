@@ -8,7 +8,9 @@
     width: 100%;
 
 }
-
+.activemilestoneid{
+    background-color:#DFF4BA;
+}
 .milestoneid-delete {
     text-align: right;
 }
@@ -24,6 +26,7 @@
     width: 235px;
     border: 0px;
     border-radius: 5px;
+    background-color: #FFFFFF;
 }
 
 .delete-milestone {
@@ -36,7 +39,6 @@
 
 .milestoneid-icon,
 .milestoneid-milestone,
-.milestoneid-date,
 .milestoneid-delete {
     border: 1px solid;
 }
@@ -101,21 +103,17 @@
     .milestone-element-1,
     .milestoneid-delete,
     .milestone-element-3,
-    .milestoneid-milestone,
     .milestone-titlerow {
         grid-column-end: span 6;
     }
     .milestone-element-2a {
         grid-column-end: span 2;
     }
-    .milestone-element-2b {
+    .milestone-element-2b,
+    .milestoneid-milestone {
         grid-column-end: span 4;
     }
 
-
-    .milestoneid-date {
-        grid-column-end: span 3;
-    }
     .milestoneid-icon {
         grid-column-end: span 1;
     }
@@ -133,7 +131,7 @@
     }
 
     .milestoneid-date {
-        grid-column-end: span 6;
+        grid-column-end: span 2;
     }
     .milestone-element-3 {
         grid-column-end: span 6;
@@ -155,12 +153,12 @@
     .milestone-element-2a {
         grid-column-end: span 4;
     }
-    .milestone-element-2b {
+    .milestone-element-2b,
+    .milestoneid-milestone {
         grid-column-end: span 8;
     }
     .milestone-element-1,
     .milestoneid-delete,
-    .milestoneid-milestone,
     .milestone-titlerow {
         grid-column-end: span 12;
     }

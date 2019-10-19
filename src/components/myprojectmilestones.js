@@ -330,9 +330,16 @@ class MyProjectMilestones extends Component {
             })
         }
     }
+    getactivemilestone(milestoneid) {
+        if(this.state.activemilestoneid === milestoneid) {
+            return(`activemilestoneid`)
+        } else {
+            return;
+        }
+    }
     showmilestone(mymilestone) {
         let milestone = [];
-        milestone.push(<div className="milestoneid-milestone">MilestoneID: {mymilestone.milestoneid} Title: {mymilestone.milestone} <br/>
+        milestone.push(<div className={`milestoneid-milestone ${this.getactivemilestone(mymilestone.milestoneid)}`}>MilestoneID: {mymilestone.milestoneid} Title: {mymilestone.milestone} <br/>
         From {inputUTCStringForMaterialID(mymilestone.start)} to {inputUTCStringForMaterialID(mymilestone.completion)}</div>)
         milestone.push(<div className="milestoneid-date">  <button className="delete-milestone"
         onClick={event=>{this.findmilestone(mymilestone.milestoneid)}}>

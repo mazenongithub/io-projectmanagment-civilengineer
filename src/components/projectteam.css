@@ -94,12 +94,9 @@
     max-width: 108px;
 }
 
-
-
-
 .provider-picture-container {
     width: 247px;
-    max-height: 165px;
+    height:247px;
 }
 
 .remove-provider-container {
@@ -148,9 +145,10 @@
     .profile-row-1b {
         width: 19%;
     }
+
     .provider-picture-container {
         width: 343px;
-        max-height: 268px;
+        height: 343px;
     }
     .project-team-general,
     .largesearch-b,

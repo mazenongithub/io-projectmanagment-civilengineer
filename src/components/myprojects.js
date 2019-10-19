@@ -27,6 +27,7 @@ class MyProjects extends Component {
   }
 
   componentDidMount() {
+
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
     this.props.reduxNavigation({ navigation: "myprojects" })
@@ -289,25 +290,27 @@ class MyProjects extends Component {
   }
   getallprojectsmanaging() {
     let project = [];
+    
     if (this.props.projects) {
+      let providerid = this.props.myusermodel.providerid;
       if (this.props.projects.hasOwnProperty("length")) {
         // eslint-disable-next-line
         this.props.projects.map(myproject => {
           if (this.state.width >= 1080) {
             project.push(<div className="span-2 align-content-center">{this.getprojectmanagingicon(myproject.projectid)}</div>)
-            project.push(<div className="span-10 project-regularfont">{myproject.projectid} {myproject.title}</div>)
+            project.push(<div className="span-10 project-regularfont"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link></div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
           }
           else if (this.state.width >= 720) {
             project.push(<div className="span-2 align-content-center">{this.getprojectmanagingicon(myproject.projectid)}</div>)
-            project.push(<div className="span-4 project-regularfont">{myproject.projectid} {myproject.title}</div>)
+            project.push(<div className="span-4 project-regularfont"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link></div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
           }
           else {
             project.push(<div className="span-2 project-regularfont">
         <div className="project-flexcontainer">
             <div className="flex-one align-content-right">{this.getprojectmanagingicon(myproject.projectid)}</div>
-            <div className="flex-three">{myproject.projectid} {myproject.title} </div>
+            <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
         </div>
       </div>)
 
@@ -365,17 +368,18 @@ class MyProjects extends Component {
   getallprojectsprovider() {
     let project = [];
     if (this.props.projectsprovider) {
+      let providerid = this.props.myusermodel.providerid;
       if (this.props.projectsprovider.hasOwnProperty("length")) {
         // eslint-disable-next-line
         this.props.projectsprovider.map(myproject => {
           if (this.state.width >= 1080) {
             project.push(<div className="span-2 align-content-center">{this.getprovidericon(myproject.projectid)}</div>)
-            project.push(<div className="span-10 project-regularfont">{myproject.projectid} {myproject.title}</div>)
+            project.push(<div className="span-10 project-regularfont"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link></div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
           }
           else if (this.state.width >= 720) {
             project.push(<div className="span-2 align-content-center">{this.getprovidericon(myproject.projectid)}</div>)
-            project.push(<div className="span-4 project-regularfont">{myproject.projectid} {myproject.title}</div>)
+            project.push(<div className="span-4 project-regularfont"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link></div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
           }
           else {
@@ -383,7 +387,7 @@ class MyProjects extends Component {
             project.push(<div className="span-2 project-regularfont">
         <div className="project-flexcontainer">
             <div className="flex-one align-content-right">{this.getprovidericon(myproject.projectid)}</div>
-            <div className="flex-three">{myproject.projectid} {myproject.title} </div>
+            <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
         </div>
       </div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
@@ -944,7 +948,7 @@ class MyProjects extends Component {
       if (this.props.projectid.projectid) {
         myproject.push(<div className="project-title-row"><button className="project-button" onClick={event=>{this.clearprojectid(event)}}>{newClearProjectID()} </button> </div>)
         myproject.push(<div className="projecthome-element-1">
-        Your Project is found at as {process.env.REACT_APP_ROOT_CLIENT}/{this.props.match.params.providerid}/myprojects/{this.props.projectid.projectid}</div>)
+        Your Project is found at as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.props.projectid.projectid}</div>)
         myproject.push(this.showprojectinfo())
         myproject.push(<div className="projecthome-element-1 align-text-center">{this.state.message} </div>)
         myproject.push(<div className="project-title-row"><button className="project-button" onClick={event=>{this.handleSaveAllProjects(event)}}>{saveAllProfileIcon()} </button></div>)
@@ -959,7 +963,7 @@ class MyProjects extends Component {
         onFocus={event=>this.checkprojectid(event)}
         className="project-field"/>
         <br/>
-        Your Project Will Appear as {process.env.REACT_APP_ROOT_CLIENT}/{this.props.match.params.providerid}/myprojects/{this.state.projectid}</div>)
+        Your Project Will Appear as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.state.projectid}</div>)
         myproject.push(<div className="projecthome-element-1">{this.state.message} </div>)
 
       }

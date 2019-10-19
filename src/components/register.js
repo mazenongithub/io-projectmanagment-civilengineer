@@ -91,7 +91,7 @@ class Register extends Component {
     getprovideridmessage() {
         let message = "";
         if (this.state.provideridcheck) {
-            message = `Your Profile will appear as ${process.env.REACT_APP_ROOT_CLIENT}/${this.state.providerid}`
+            message = `Your Profile will appear as ${process.env.REACT_APP_CLIENT_API}/${this.state.providerid}`
 
         }
         else {

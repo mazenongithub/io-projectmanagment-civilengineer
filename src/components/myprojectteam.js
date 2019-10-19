@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './projectteam.css';
 import * as actions from './actions';
-import { capitalizeFirst, TeamMember, MyUserModel } from './functions'
+import { capitalizeFirst, TeamMember, MyUserModel} from './functions'
 import { SaveAllProjects } from './actions/api';
-import { addProviderIcon, DeleteTeamIcon, SaveProjectManagerIcon } from './svg'
+import { addProviderIcon, DeleteTeamIcon, SaveProjectManagerIcon, defaultProfilePhoto } from './svg'
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -267,7 +267,7 @@ class MyProjectTeam extends Component {
             return (<img src={myprovider.profileurl} className="profile-img"  alt={`${myprovider.firstname} ${myprovider.lastname}`} />)
         }
         else {
-            return (<span>&nbsp; </span>)
+            return (<div className="profile-img">{defaultProfilePhoto()}</div>)
         }
     }
     createprovider(myprovider) {
