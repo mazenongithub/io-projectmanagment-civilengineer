@@ -13,7 +13,13 @@
     grid-column-gap: 10px;
 
 }
-
+.activelaborid{
+    background-color:#8AE6FF
+}
+.activeactuallabor{
+    background-color: #F7869E;
+}
+.
 .labor-timein-main {
     grid-column-end: span 6;
 }

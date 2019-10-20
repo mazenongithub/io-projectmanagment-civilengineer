@@ -2055,19 +2055,24 @@ class MyActualMaterials extends Component {
 
         }
     }
+    getactivematerialid(materialid) {
+        if(this.state.activematerialid === materialid) {
+            return `activeactualmaterialid`
+        }
+    }
     showmaterialid(mymaterial) {
         let materialid = [];
         if (this.state.width > 1080) {
-            materialid.push(<div className={`show-material material-large-a`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-large-b`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-large-c`}> <button className="laborid-icon" onClick={event=> {this.findmaterial(mymaterial.materialid)}}>{editActualLaborIcon()}</button></div>)
-            materialid.push(<div className={`show-material material-large-d`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-large-e`}><button className="laborid-icon" onClick={event=>{this.deleteMaterial(event,mymaterial.materialid)}}>{deleteActualLaborIcon()} </button></div>)
+            materialid.push(<div className={`show-material material-large-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
+            materialid.push(<div className={`show-material material-large-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
+            materialid.push(<div className={`show-material material-large-c`}><button className="laborid-icon" onClick={event=>{this.deleteMaterial(event,mymaterial.materialid)}}>{deleteActualLaborIcon()} </button></div>)
+            materialid.push(<div className={`show-material material-large-d ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
+            materialid.push(<div className={`show-material material-large-e`}> <button className="laborid-icon" onClick={event=> {this.findmaterial(mymaterial.materialid)}}>{editActualLaborIcon()}</button></div>)
         }
         else {
-            materialid.push(<div className={`show-material material-small-a`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-small-b`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-small-c`}>{mymaterial.description} </div>)
+            materialid.push(<div className={`show-material material-small-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
+            materialid.push(<div className={`show-material material-small-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
+            materialid.push(<div className={`show-material material-small-c ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
             materialid.push(<div className={`show-material material-small-d`}><button className="laborid-icon" onClick={event=> {this.findmaterial(mymaterial.materialid)}}>{editActualLaborIcon()}</button></div>)
             materialid.push(<div className={`show-material material-small-d align-right`}><button className="laborid-icon" onClick={event=>{this.deleteMaterial(event,mymaterial.materialid)}}>{deleteActualLaborIcon()} </button> </div>)
         }

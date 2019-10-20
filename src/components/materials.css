@@ -7,6 +7,12 @@
     background-color: #ff6b6b;
 }
 
+.activematerialid {
+    background-color: #00b0cf;  
+}
+.activeactualmaterialid{
+    background-color: #ff6b6b;
+}
 .calendar-element {
     border: 1px solid;
 }

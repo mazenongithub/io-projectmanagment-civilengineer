@@ -1039,20 +1039,27 @@ class MyActualLabor extends Component {
 
         }
     }
+    getactivelaborid(laborid) {
+        if(this.state.activelaborid === laborid) {
+            return `activeactuallabor`
+        } else {
+            return;
+        }
+    }
 
     showlaborid(mylabor) {
         let laborid = [];
         if (this.state.width > 1080) {
-            laborid.push(<div className="schedulelaborid-row-1a">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className="schedulelaborid-row-1a">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
-            laborid.push(<div className="schedulelaborid-row-1b"><button className="laborid-icon" onClick={event=> {this.findlabor(mylabor.laborid)}}>{editActualLaborIcon()}</button> </div>)
-            laborid.push(<div className="schedulelaborid-row-2">{mylabor.description} </div>)
-            laborid.push(<div className="schedulelaborid-row-3"> <button className="laborid-icon" onClick={event=>{this.handleDelete(event,mylabor.laborid)}}>{deleteActualLaborIcon()} </button></div>)
+            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
+            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
+            laborid.push(<div className="schedulelaborid-row-1b"> <button className="laborid-icon" onClick={event=>{this.handleDelete(event,mylabor.laborid)}}>{deleteActualLaborIcon()} </button> </div>)
+            laborid.push(<div className={`schedulelaborid-row-2  ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
+            laborid.push(<div className="schedulelaborid-row-3"><button className="laborid-icon" onClick={event=> {this.findlabor(mylabor.laborid)}}>{editActualLaborIcon()}</button></div>)
         }
         else {
-            laborid.push(<div className="schedulelaborid-small-1">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className="schedulelaborid-small-1">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
-            laborid.push(<div className="schedulelaborid-row-2">{mylabor.description} </div>)
+            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
+            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
+            laborid.push(<div className={`schedulelaborid-row-2 ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
             laborid.push(<div className="schedulelaborid-small-1"> <button className="laborid-icon" onClick={event=> {this.findlabor(mylabor.laborid)}}>{editActualLaborIcon()}</button> </div>)
             laborid.push(<div className="schedulelaborid-small-1 align-right" onClick={event=>{this.handleDelete(event,mylabor.laborid)}}><button className="laborid-icon">{deleteActualLaborIcon()} </button> </div>)
 

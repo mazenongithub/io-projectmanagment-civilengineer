@@ -112,7 +112,7 @@ class MyProjectTeam extends Component {
             largesearchprovider.push(<div className="largesearch-a"> <img alt={`${myprovider.firstname} ${myprovider.lastname}`} src={profileurl} className="profile-icon" /></div>)
         }
         else {
-            largesearchprovider.push(<div className="largesearch-a">&nbsp;</div>)
+            largesearchprovider.push(<div className="largesearch-a">{defaultProfilePhoto()}</div>)
         }
 
         largesearchprovider.push(<div className="largesearch-b"> 
@@ -176,7 +176,7 @@ class MyProjectTeam extends Component {
             profile.push(<img alt={`${myprovider.firstname} ${myprovider.lastname}`} src={profileurl} className="profile-icon" />)
         }
         else {
-            profile.push(<span>&nbsp; </span>)
+            profile.push(<div className="smallpicture-container">{defaultProfilePhoto()} </div>)
         }
         smallsearchprovider.push(<div className="smallsearch"> &nbsp;
             <div className="smallpicture-container"> {profile}</div>
