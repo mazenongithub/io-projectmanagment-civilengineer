@@ -42,19 +42,17 @@ class App extends Component {
         if (response.hasOwnProperty("projectsprovider")) {
 
             this.props.projectsProvider(response.projectsprovider.myproject)
-          }
-          if (response.hasOwnProperty("projectsmanaging")) {
+        }
+        if (response.hasOwnProperty("projectsmanaging")) {
             this.props.reduxProjects(response.projectsmanaging.myproject)
-          }
-      
-          
-          if (response.hasOwnProperty("providerid")) {
-      
+        }
+
+        if (response.hasOwnProperty("providerid")) {
+
             let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
-      
+
             this.props.updateUserModel(myusermodel)
-      
-          }
+        }
         else if (response.hasOwnProperty("message")) {
             this.props.updateUserModel({ message: response.message })
             this.setState({ render: "render" })
