@@ -24,6 +24,7 @@ import ProjectTeam from './components/projectteam';
 import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
 import { CheckUserLogin } from './components/actions/api'
+import {MyUserModel} from './components/functions'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -37,10 +38,23 @@ class App extends Component {
 
     async checkuserlogin() {
         let response = await CheckUserLogin();
-        if (response.hasOwnProperty("providerid")) {
-            this.props.updateUserModel({ providerid: response.providerid })
-            this.setState({ render: "render" })
-        }
+        console.log(response)
+        if (response.hasOwnProperty("projectsprovider")) {
+
+            this.props.projectsProvider(response.projectsprovider.myproject)
+          }
+          if (response.hasOwnProperty("projectsmanaging")) {
+            this.props.reduxProjects(response.projectsmanaging.myproject)
+          }
+      
+          
+          if (response.hasOwnProperty("providerid")) {
+      
+            let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
+      
+            this.props.updateUserModel(myusermodel)
+      
+          }
         else if (response.hasOwnProperty("message")) {
             this.props.updateUserModel({ message: response.message })
             this.setState({ render: "render" })

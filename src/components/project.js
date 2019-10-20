@@ -33,33 +33,10 @@ class Project extends Component {
 
     let projectid = this.props.match.params.projectid;
     this.props.ProjectID({ projectid })
-    if (!this.props.projects.hasOwnProperty("length") && !this.props.projectsprovider.hasOwnProperty("length")) {
-      let providerid = this.props.match.params.providerid;
-      this.getmyprojects(providerid);
-    }
+ 
 
   }
-  async getmyprojects(providerid) {
-    let response = await loadmyprojects(providerid);
-    console.log(response)
 
-    if (response.hasOwnProperty("projectsprovider")) {
-
-      this.props.projectsProvider(response.projectsprovider.myproject)
-    }
-    if (response.hasOwnProperty("projectsmanaging")) {
-      this.props.reduxProjects(response.projectsmanaging.myproject)
-    }
-
-    if (response.hasOwnProperty("providerid")) {
-
-      let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.provideraddress, response.providercity, response.providerstate, response.providerzipcode, response.emailaddress, response.phone, response.profileurl, response.stripe)
-
-      this.props.updateUserModel(myusermodel)
-
-    }
-    this.setState({ render: 'render' })
-  }
   getservicetype() {
     let projectid = this.props.match.params.projectid;
     let servicetype = "";

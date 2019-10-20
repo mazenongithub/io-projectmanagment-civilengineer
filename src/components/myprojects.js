@@ -32,12 +32,6 @@ class MyProjects extends Component {
     window.addEventListener('resize', this.updateWindowDimensions);
     this.props.reduxNavigation({ navigation: "myprojects" })
 
-    if (!this.props.projects.hasOwnProperty("length") && !this.props.projectsprovider.hasOwnProperty("length")) {
-
-      let providerid = this.props.match.params.providerid;
-      this.getmyprojects(providerid);
-    }
-
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
@@ -51,21 +45,7 @@ class MyProjects extends Component {
     let response = await loadmyprojects(providerid);
     console.log(response)
 
-    if (response.hasOwnProperty("projectsprovider")) {
-
-      this.props.projectsProvider(response.projectsprovider.myproject)
-    }
-    if (response.hasOwnProperty("projectsmanaging")) {
-      this.props.reduxProjects(response.projectsmanaging.myproject)
-    }
-
-    if (response.hasOwnProperty("providerid")) {
-
-      let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
-
-      this.props.updateUserModel(myusermodel)
-
-    }
+   
     this.setState({ render: 'render' })
   }
   geterrormessages() {
