@@ -683,9 +683,11 @@ class Profile extends Component {
     }
     handleProfile() {
         if (this.props.myusermodel) {
+            if(this.props.myusermodel.hasOwnProperty("providerid")) {
+            let providerid =this.props.myusermodel.providerid
             return (
                 <div className="myprofile-container">
-              <div className="profile-titlerow">Your profile can be view at {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}  </div>
+              <div className="profile-titlerow">Your profile can be view at {process.env.REACT_APP_CLIENT_API}/{providerid}  </div>
               <div className="profile-main"> <div className="profilepicture-container">{this.getprofileimage()} </div> </div>
              <div className="profile-main">Select From the Following </div>
              {this.showmenus()}
@@ -693,6 +695,10 @@ class Profile extends Component {
             </div>
 
             )
+            } else {
+                return (<div>&nbsp; </div>)   
+            }
+
         }
         else {
             return (<div>&nbsp; </div>)

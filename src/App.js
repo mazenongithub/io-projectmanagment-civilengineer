@@ -30,10 +30,10 @@ class App extends Component {
         super(props);
         this.state = { render: '' }
     }
+
     componentDidMount() {
         document.title = "projectmanagement.civilengineer.io";
         this.checkuserlogin();
-
     }
 
     async checkuserlogin() {
@@ -91,8 +91,6 @@ class App extends Component {
    
     </BrowserRouter>
  </div>
-
-
         );
     }
 }
