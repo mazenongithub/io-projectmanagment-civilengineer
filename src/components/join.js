@@ -28,12 +28,12 @@ class Join extends Component {
         if (this.state.windowwidth > 720 && this.state.windowwidth < 1080) {
 
             return (<div className="login-buttonrow">
-        &nbsp; </div>)
+                &nbsp; </div>)
         }
     }
 
     render() {
-        const googleredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagment/oauth20/google/login`
+        const googleredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/oauth20/google/login`
         //const facebookredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/facebook`
         //const linkedinredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/linkedin`
 
@@ -41,40 +41,40 @@ class Join extends Component {
         const googlescope = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${googleredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_GOOGLEID}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline`
         //const facebookscope = `https://www.facebook.com/dialog/oauth?client_id=${process.env.REACT_APP_FACEBOOK_APPID}&redirect_uri=${encodeURIComponent(facebookredirect)}`;
         return (<div className="join-container">
-      <div className="join-titlerow">
-      Registration
+            <div className="join-titlerow">
+                Registration
       </div>
-      <div className="join-spanall">
-      <p> Registering is important to become a service provider in your area. Once you are registered to become a member of our working network of service providers. 
+            <div className="join-spanall">
+                <p> Registering is important to become a service provider in your area. Once you are registered to become a member of our working network of service providers.
       Once you are a member you will appear in searches and our making yourself eligible to provide services on projects. </p>
-      <p>Registering is easy when you use of the following web services. You will be required to consent to your email address. 
+                <p>Registering is easy when you use of the following web services. You will be required to consent to your email address.
       Once registered you can complete your profile. </p>
+            </div>
+            <div className="loginbuttonrow">
+                &nbsp;
       </div>
-      <div className="loginbuttonrow">
-       &nbsp;
+            <div className="loginbuttonrow">
+                <a href={googlescope}>
+                    <button className="btnregister">
+                        {GoogleLogin()}
+                    </button>
+                </a>
+            </div>
+            <div className="loginbuttonrow">
+                &nbsp;
       </div>
-      <div className="loginbuttonrow">
-       <a href={googlescope}>
-        <button className="btnregister">
-       {GoogleLogin()}
-        </button>
-        </a>
-      </div>
-     <div className="loginbuttonrow">
-     &nbsp;
-      </div>
-      {this.showextrarow()}
-     <div className="register-label">or Register By Email:</div>
-     <div className="register-buttoncontainer">
-     <Link to="/providers/register" className="dontunderlinelink"><div className="registerbutton">
-    {SignUpByEmail()} </div></Link> 
-     </div>
-     <div className="register-label">Already Registered?  </div>
-     <div className="register-buttoncontainer"><Link to="/providers/login" className="dontunderlinelink">
-     <div className="registerbutton">
-     {GoToLogin()}
-  </div></Link></div>
-      </div>)
+            {this.showextrarow()}
+            <div className="register-label">or Register By Email:</div>
+            <div className="register-buttoncontainer">
+                <Link to="/providers/register" className="dontunderlinelink"><div className="registerbutton">
+                    {SignUpByEmail()} </div></Link>
+            </div>
+            <div className="register-label">Already Registered?  </div>
+            <div className="register-buttoncontainer"><Link to="/providers/login" className="dontunderlinelink">
+                <div className="registerbutton">
+                    {GoToLogin()}
+                </div></Link></div>
+        </div>)
     }
 }
 
