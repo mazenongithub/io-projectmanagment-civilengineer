@@ -299,47 +299,47 @@ class ClientRegister extends Component {
     handleClientRegister() {
 
 
-        let formpostURL = process.env.REACT_APP_SERVER_API + "/api/updateclientregister";
+        let formpostURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/updateclientregister";
         return (<form action={formpostURL} method="post"
-        onSubmit={event=>{this.handleSubmit(event)}}>
-        <div className="register-container">
-        <div className="register-titlerow">Complete Your Profile To Register</div>
-        
-        <div className="register-field">
-        Choose a Provider ID <br/>
-        <input type="text" className="project-field" name="newproviderid" value={this.getproviderid()} 
-        onChange={event=>{this.handleproviderid(event.target.value)}} 
-        onFocus={event=>{this.verifyProviderID(event)}}
-        onBlur={event=>{this.verifyProviderID(event)}}/>
-        </div>
-        <div className="register-field">{this.handleprofileicon()}</div>
-        
-        <div className="register-spanall">
-        {this.getprofilemessage()}
-        </div>
-        
-        
-        <div className="register-field">First Name <br/><input name="firstname" type="text" value={this.getfirstname()} onChange={event=>{this.handlefirstname(event.target.value)}}  className="project-field" /> </div>
-        <div className="register-field">Last Name <br/><input type="text" name="lastname" className="project-field" value={this.getlastname()} onChange={event=>{this.handlelastname(event.target.value)}} /> </div>
-        <div className="register-field">Company <br/><input type="text" name="company" className="project-field" value={this.getcompany()} onChange={event=>{this.handlecompany(event.target.value)}}/> </div>
-        <div className="register-field">Job Title <input type="text" name="jobtitle" className="project-field" value={this.getjobtitle()} onChange={event=>{this.handlejobtitle(event.target.value)}} /> </div>
-        <div className="register-field">Address<input type="text" name="address" className="project-field" value={this.getaddress()} onChange={event=>{this.handleaddress(event.target.value)}} /> </div>
-        <div className="register-field">City<input type="text" name="city" className="project-field" value={this.getcity()} onChange={event=>{this.handlecity(event.target.value)}} /> </div>
-        <div className="register-field">State<input type="text" name="sta" className="project-field" onChange={event=>{this.handlestate(event.target.value)}} value={this.getstate()} /> </div>
-        <div className="register-field">Zipcode<input type="text" name="zipcode" className="project-field"  value={this.getzipcode()} onChange={event=>{this.handlezipcode(event.target.value)}} /> </div>
-        <div className="register-field">Email Address<input type="text" name="emailaddress" className="project-field" value={this.getemail()} onChange={event=>{this.handleemail(event.target.value)}} /> </div>
-        <div className="register-field">Phone Number<input type="text" name="phonenumber" className="project-field" value={this.getphone()} onChange={event=>{this.handlephonenumber(event.target.value)}} /> </div>
-        <div className="register-field">{this.getcommissionmessage()} </div>
-        <div className="register-field"><input type="text" name="commission" 
-            value={this.getcommission()}
-            onFocus={()=>{this.verifyCommission()}}
-            onBlur={()=>{this.verifyCommission()}}
-            onChange={(event)=>{this.handleCommission(event.target.value)}}
-            className="project-field" /> </div>
-        <div className="register-button-container">{this.state.message}</div>
-        <div className="register-button-container"><button className="button-completeprofile"> {CompleteProfileIcon()} </button></div>
-        </div>
-        
+            onSubmit={event => { this.handleSubmit(event) }}>
+            <div className="register-container">
+                <div className="register-titlerow">Complete Your Profile To Register</div>
+
+                <div className="register-field">
+                    Choose a Provider ID <br />
+                    <input type="text" className="project-field" name="newproviderid" value={this.getproviderid()}
+                        onChange={event => { this.handleproviderid(event.target.value) }}
+                        onFocus={event => { this.verifyProviderID(event) }}
+                        onBlur={event => { this.verifyProviderID(event) }} />
+                </div>
+                <div className="register-field">{this.handleprofileicon()}</div>
+
+                <div className="register-spanall">
+                    {this.getprofilemessage()}
+                </div>
+
+
+                <div className="register-field">First Name <br /><input name="firstname" type="text" value={this.getfirstname()} onChange={event => { this.handlefirstname(event.target.value) }} className="project-field" /> </div>
+                <div className="register-field">Last Name <br /><input type="text" name="lastname" className="project-field" value={this.getlastname()} onChange={event => { this.handlelastname(event.target.value) }} /> </div>
+                <div className="register-field">Company <br /><input type="text" name="company" className="project-field" value={this.getcompany()} onChange={event => { this.handlecompany(event.target.value) }} /> </div>
+                <div className="register-field">Job Title <input type="text" name="jobtitle" className="project-field" value={this.getjobtitle()} onChange={event => { this.handlejobtitle(event.target.value) }} /> </div>
+                <div className="register-field">Address<input type="text" name="address" className="project-field" value={this.getaddress()} onChange={event => { this.handleaddress(event.target.value) }} /> </div>
+                <div className="register-field">City<input type="text" name="city" className="project-field" value={this.getcity()} onChange={event => { this.handlecity(event.target.value) }} /> </div>
+                <div className="register-field">State<input type="text" name="sta" className="project-field" onChange={event => { this.handlestate(event.target.value) }} value={this.getstate()} /> </div>
+                <div className="register-field">Zipcode<input type="text" name="zipcode" className="project-field" value={this.getzipcode()} onChange={event => { this.handlezipcode(event.target.value) }} /> </div>
+                <div className="register-field">Email Address<input type="text" name="emailaddress" className="project-field" value={this.getemail()} onChange={event => { this.handleemail(event.target.value) }} /> </div>
+                <div className="register-field">Phone Number<input type="text" name="phonenumber" className="project-field" value={this.getphone()} onChange={event => { this.handlephonenumber(event.target.value) }} /> </div>
+                <div className="register-field">{this.getcommissionmessage()} </div>
+                <div className="register-field"><input type="text" name="commission"
+                    value={this.getcommission()}
+                    onFocus={() => { this.verifyCommission() }}
+                    onBlur={() => { this.verifyCommission() }}
+                    onChange={(event) => { this.handleCommission(event.target.value) }}
+                    className="project-field" /> </div>
+                <div className="register-button-container">{this.state.message}</div>
+                <div className="register-button-container"><button className="button-completeprofile"> {CompleteProfileIcon()} </button></div>
+            </div>
+
         </form>)
 
     }
