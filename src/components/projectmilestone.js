@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import './myprojects.css';
 import * as actions from './actions';
 import { connect } from 'react-redux';
-import { loadmyprojects } from './actions/api';
 import MyProjectMilestones from './myprojectmilestones';
 import ShowProjectMilestones from './showprojectmilestones';
-import { MyUserModel } from './functions';
 class ProjectMilestone extends Component {
     componentDidMount() {
         let projectid = this.props.match.params.projectid
         this.props.reduxNavigation({ navigation: "milestones" })
         this.props.ProjectID({ projectid })
-     
+
 
     }
-  
+
     updateState() {
         this.setState({ render: 'render' })
     }
@@ -24,10 +22,10 @@ class ProjectMilestone extends Component {
                 let servicetype = this.getservicetype();
 
                 if (servicetype === "manager") {
-                    return (<MyProjectMilestones/>)
+                    return (<MyProjectMilestones />)
                 }
                 else if (servicetype === "provider") {
-                    return (<ShowProjectMilestones/>)
+                    return (<ShowProjectMilestones />)
                 }
                 else {
                     return (<div>&nbsp; </div>)

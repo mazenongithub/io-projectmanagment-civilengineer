@@ -33,7 +33,7 @@ import {
     inputUTCStringForMaterialID,
     validateLaborRate
 }
-from './functions';
+    from './functions';
 
 class MyActualLabor extends Component {
     constructor(props) {
@@ -899,104 +899,98 @@ class MyActualLabor extends Component {
     }
     showtimein() {
         return (<div className="labortime-container">
-            <div className="labor-timein-main">
-            Time In
-            <input type="datetime-local" className="project-field" value={this.gettimein()} onChange={event=>this.handletimein(event.target.value)}/>
-            </div>
-                <div className="labortime-label">Month </div>
+
+            <div className="labortime-label">Month </div>
             <div className="labortime-label">Day</div>
             <div className="labortime-label">Year </div>
             <div className="labortime-element">
                 <input type="text" className="project-field time-field" value={this.gettimeinmonth()} />
             </div>
-                <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinmonthup(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinmonthdown(event)}}> {ActualDateArrowDown()}</button></div>
-                 </div>
-            <div className="labortime-element"> 
-            <input type="text" className="project-field time-field" value={this.gettimeinday()} /></div>
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeinbyinc(event,(1000*60*60*24))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeinbyinc(event,(1000*60*60*24))}}> {ActualDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthup(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthdown(event) }}> {ActualDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element">
+                <input type="text" className="project-field time-field" value={this.gettimeinday()} /></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}> {ActualDateArrowDown()}</button></div>
             </div>
             <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinyear()} /></div>
-            <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinyearup(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinyeardown(event)}}> {ActualDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyearup(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyeardown(event) }}> {ActualDateArrowDown()}</button></div>
             </div>
             <div className="labortime-label">Hr. </div>
             <div className="labortime-label">Min. </div>
             <div className="labortime-label">AM/PM </div>
-             <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinhours()} />
-             </div>
-             <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeinbyinc(event,(1000*60*60))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeinbyinc(event,(1000*60*60))}}> {ActualDateArrowDown()}</button></div>
-                </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinminutes()} />&nbsp;</div>
-            <div className="labortime-element"> 
-               <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeinbyinc(event,(1000*60))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeinbyinc(event,(1000*60))}} > {ActualDateArrowDown()}</button></div>
+            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinhours()} />
             </div>
-            <div className="labortime-element"><input type="text" className="project-field time-field"  value={this.gettimeinampm()}/></div>
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button"  onClick={event=>{this.toggletimeinampm(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.toggletimeinampm(event)}}> {ActualDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60)) }}> {ActualDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinminutes()} />&nbsp;</div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60)) }} > {ActualDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element"><input type="text" className="project-field time-field" value={this.gettimeinampm()} /></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeinampm(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeinampm(event) }}> {ActualDateArrowDown()}</button></div>
             </div>
         </div>)
     }
 
     showtimeout() {
         return (<div className="labortime-container">
-            <div className="labor-timein-main">
-            Time Out
-              <input type="datetime-local" className="project-field" value={this.gettimeout()} onChange={event=>this.handletimeout(event.target.value)}/>
-            </div>
+
             <div className="labortime-label">Mon </div>
             <div className="labortime-label">Day </div>
             <div className="labortime-label">Year </div>
             <div className="labortime-element">
                 <input type="text" className="project-field time-field" value={this.gettimeoutmonth()} />
             </div>
-                <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutmonthup(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button"  onClick={event=>{this.timeoutmonthdown(event)}}> {ActualDateArrowDown()}</button></div>
-                 </div>
-            <div className="labortime-element"> 
-            <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeoutbyinc(event,(1000*60*60*24))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeoutbyinc(event,(1000*60*60*24))}}> {ActualDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthup(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthdown(event) }}> {ActualDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element">
+                <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}> {ActualDateArrowDown()}</button></div>
             </div>
             <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutyear()} /></div>
-            
-            <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutyearup(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutyeardown(event)}}> {ActualDateArrowDown()}</button></div>
+
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyearup(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyeardown(event) }}> {ActualDateArrowDown()}</button></div>
             </div>
             <div className="labortime-label">Hr. </div>
             <div className="labortime-label">Min. </div>
             <div className="labortime-label">AM/PM </div>
-             <div className="labortime-element"> 
-             <input type="text" className="project-field time-field" value={this.gettimeouthours()} />
-             </div>
-             
-             <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeoutbyinc(event,(1000*60*60))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeoutbyinc(event,(1000*60*60))}}>{ActualDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <input type="text" className="project-field time-field" value={this.gettimeouthours()} />
             </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutminutes()}/>&nbsp;</div>
-            
-            <div className="labortime-element"> 
-               <div className="timebutton-container"><button className="time-button" onClick={event=>{this.increasetimeoutbyinc(event,(1000*60))}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.decreasetimeoutbyinc(event,(1000*60))}}> {ActualDateArrowDown()}</button></div>
+
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60)) }}>{ActualDateArrowDown()}</button></div>
             </div>
-            
+            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutminutes()} />&nbsp;</div>
+
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60)) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60)) }}> {ActualDateArrowDown()}</button></div>
+            </div>
+
             <div className="labortime-element"><input type="text" className="project-field time-field" value={this.gettimeoutampm()} /></div>
-            
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.toggletimeoutampm(event)}}>{ActualDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.toggletimeoutampm(event)}}> {ActualDateArrowDown()}</button></div>
+
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeoutampm(event) }}>{ActualDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeoutampm(event) }}> {ActualDateArrowDown()}</button></div>
             </div>
         </div>)
     }
@@ -1040,7 +1034,7 @@ class MyActualLabor extends Component {
         }
     }
     getactivelaborid(laborid) {
-        if(this.state.activelaborid === laborid) {
+        if (this.state.activelaborid === laborid) {
             return `activeactuallabor`
         } else {
             return;
@@ -1051,17 +1045,17 @@ class MyActualLabor extends Component {
         let laborid = [];
         if (this.state.width > 1080) {
             laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
-            laborid.push(<div className="schedulelaborid-row-1b"> <button className="laborid-icon" onClick={event=>{this.handleDelete(event,mylabor.laborid)}}>{deleteActualLaborIcon()} </button> </div>)
+            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
+            laborid.push(<div className="schedulelaborid-row-1b"> <button className="laborid-icon" onClick={event => { this.handleDelete(event, mylabor.laborid) }}>{deleteActualLaborIcon()} </button> </div>)
             laborid.push(<div className={`schedulelaborid-row-2  ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
-            laborid.push(<div className="schedulelaborid-row-3"><button className="laborid-icon" onClick={event=> {this.findlabor(mylabor.laborid)}}>{editActualLaborIcon()}</button></div>)
+            laborid.push(<div className="schedulelaborid-row-3"><button className="laborid-icon" onClick={event => { this.findlabor(mylabor.laborid) }}>{editActualLaborIcon()}</button></div>)
         }
         else {
             laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
+            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
             laborid.push(<div className={`schedulelaborid-row-2 ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
-            laborid.push(<div className="schedulelaborid-small-1"> <button className="laborid-icon" onClick={event=> {this.findlabor(mylabor.laborid)}}>{editActualLaborIcon()}</button> </div>)
-            laborid.push(<div className="schedulelaborid-small-1 align-right" onClick={event=>{this.handleDelete(event,mylabor.laborid)}}><button className="laborid-icon">{deleteActualLaborIcon()} </button> </div>)
+            laborid.push(<div className="schedulelaborid-small-1"> <button className="laborid-icon" onClick={event => { this.findlabor(mylabor.laborid) }}>{editActualLaborIcon()}</button> </div>)
+            laborid.push(<div className="schedulelaborid-small-1 align-right" onClick={event => { this.handleDelete(event, mylabor.laborid) }}><button className="laborid-icon">{deleteActualLaborIcon()} </button> </div>)
 
         }
 
@@ -1097,7 +1091,7 @@ class MyActualLabor extends Component {
     }
     handleClearProject() {
         if (this.state.activelaborid) {
-            return (<button className="btnsaveprojects" onClick={event=>{this.clearlaborid(event)}}>{ClearActiveActualLabor()} </button>)
+            return (<button className="btnsaveprojects" onClick={event => { this.clearlaborid(event) }}>{ClearActiveActualLabor()} </button>)
         }
         else {
             return (<span>&nbsp;</span>)
@@ -1505,33 +1499,33 @@ class MyActualLabor extends Component {
         return (
 
             <div className="labor-container">
-            <div className="labor-main">{this.getprojectitle()}</div>
-            <div className="labor-main">Actual Labor</div>
-            <div className="labor-main">{this.handleClearProject()}</div>
-             <div className="labor-main">{this.getactivemessage()}</div>
-            <div className="labor-timein-general">Description <br/><input type="text" className="project-field" onChange={event=>{this.handledescription(event.target.value)}} value={this.getdescription()}/></div>
-            <div className="labor-timein-container">{this.showtimein()}  </div>
-            <div className="labor-timein-container">{this.showtimeout()}  </div>
-            <div className="labor-timein-general">
-                <select className="project-select-field" value={this.getmilestone()} onChange={event=>{this.handlemilestone(event.target.value)}}>
-                    <option>Select A Milestone </option>
-                    {this.loadmilestones()}
-                </select> 
-            </div>
-            <div className="labor-output-row">
-            Labor Rate <br/>
-            <input type="text" className="project-field project-field-numeric"  onChange={event=>{this.handlelaborrate(event.target.value)}} value={this.getlaborrate()}/>
-            </div>
-            <div className="labor-output-row"> Total Hours <br/>
-            {this.showtotalhours()}</div>
-            <div className="labor-output-row">Amount <br/>
-            {this.showamount()}<br/> </div>
-            {this.getextrarow()}
-            <div className="labor-main">{this.state.message} </div>
-            <div className="labor-main"><button className="btnsaveprojects" onClick={event=>{this.saveallprojects()}}>{SaveActualProjectIcon()} </button> </div>
-            {this.handleshowlaborid()}
-          
-           
+                <div className="labor-main">{this.getprojectitle()}</div>
+                <div className="labor-main">Actual Labor</div>
+                <div className="labor-main">{this.handleClearProject()}</div>
+                <div className="labor-main">{this.getactivemessage()}</div>
+                <div className="labor-timein-general">Description <br /><input type="text" className="project-field" onChange={event => { this.handledescription(event.target.value) }} value={this.getdescription()} /></div>
+                <div className="labor-timein-container">{this.showtimein()}  </div>
+                <div className="labor-timein-container">{this.showtimeout()}  </div>
+                <div className="labor-timein-general">
+                    <select className="project-select-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
+                        <option>Select A Milestone </option>
+                        {this.loadmilestones()}
+                    </select>
+                </div>
+                <div className="labor-output-row">
+                    Labor Rate <br />
+                    <input type="text" className="project-field project-field-numeric" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} />
+                </div>
+                <div className="labor-output-row"> Total Hours <br />
+                    {this.showtotalhours()}</div>
+                <div className="labor-output-row">Amount <br />
+                    {this.showamount()}<br /> </div>
+                {this.getextrarow()}
+                <div className="labor-main">{this.state.message} </div>
+                <div className="labor-main"><button className="btnsaveprojects" onClick={event => { this.saveallprojects() }}>{SaveActualProjectIcon()} </button> </div>
+                {this.handleshowlaborid()}
+
+
             </div>
 
 

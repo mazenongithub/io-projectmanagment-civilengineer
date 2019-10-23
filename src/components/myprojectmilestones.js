@@ -28,7 +28,7 @@ import {
     inputUTCStringForLaborID,
     inputUTCStringForMaterialID
 }
-from './functions';
+    from './functions';
 import { ClearMilestone, SaveProjectManagerIcon, MilestoneDateArrowUp, MilestoneDateArrowDown, deleteMilestoneIcon, editMilestoneIcon } from './svg';
 import { connect } from 'react-redux';
 
@@ -137,7 +137,7 @@ class MyProjectMilestones extends Component {
     }
     handleClearMilestone() {
         if (this.state.activemilestoneid) {
-            return (<button className="milestone-button" onClick={event=>{this.clearmilestoneid()}}>{ClearMilestone()} </button>)
+            return (<button className="milestone-button" onClick={event => { this.clearmilestoneid() }}>{ClearMilestone()} </button>)
         }
         else {
             return (<span>&nbsp; </span>)
@@ -331,53 +331,50 @@ class MyProjectMilestones extends Component {
         }
     }
     getactivemilestone(milestoneid) {
-        if(this.state.activemilestoneid === milestoneid) {
-            return(`activemilestoneid`)
+        if (this.state.activemilestoneid === milestoneid) {
+            return (`activemilestoneid`)
         } else {
             return;
         }
     }
     showmilestone(mymilestone) {
         let milestone = [];
-        milestone.push(<div className={`milestoneid-milestone ${this.getactivemilestone(mymilestone.milestoneid)}`}>MilestoneID: {mymilestone.milestoneid} Title: {mymilestone.milestone} <br/>
-        From {inputUTCStringForMaterialID(mymilestone.start)} to {inputUTCStringForMaterialID(mymilestone.completion)}</div>)
+        milestone.push(<div className={`milestoneid-milestone ${this.getactivemilestone(mymilestone.milestoneid)}`}>MilestoneID: {mymilestone.milestoneid} Title: {mymilestone.milestone} <br />
+            From {inputUTCStringForMaterialID(mymilestone.start)} to {inputUTCStringForMaterialID(mymilestone.completion)}</div>)
         milestone.push(<div className="milestoneid-date">  <button className="delete-milestone"
-        onClick={event=>{this.findmilestone(mymilestone.milestoneid)}}>
-        {editMilestoneIcon()}</button></div>)
+            onClick={event => { this.findmilestone(mymilestone.milestoneid) }}>
+            {editMilestoneIcon()}</button></div>)
         milestone.push(<div className="milestoneid-date milestone-align-right">  <button className="delete-milestone"
-        onClick={event=>{this.deletemilestone(mymilestone.milestoneid)}}>
-        {deleteMilestoneIcon()}</button></div>)
+            onClick={event => { this.deletemilestone(mymilestone.milestoneid) }}>
+            {deleteMilestoneIcon()}</button></div>)
         return milestone;
     }
 
     showtimein() {
         return (<div className="labortime-container">
-            <div className="labor-timein-main">
-            Time In
-            <input type="date" className="project-field" value={this.gettimein()} onChange={event=>this.handletimein(event.target.value)}/>
-            </div>
-                <div className="labortime-label">Month </div>
+
+            <div className="labortime-label">Month </div>
             <div className="labortime-label">Day</div>
             <div className="labortime-label">Year </div>
             <div className="labortime-element">
                 <input type="text" className="project-field time-field" value={this.gettimeinmonth()} />
             </div>
-                <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinmonthup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinmonthdown(event)}}> {MilestoneDateArrowDown()}</button></div>
-                 </div>
-            <div className="labortime-element"> 
-            <input type="text" className="project-field time-field" value={this.gettimeinday()} /></div>
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeindayup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeindaydown(event)}}> {MilestoneDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthdown(event) }}> {MilestoneDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element">
+                <input type="text" className="project-field time-field" value={this.gettimeinday()} /></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeindayup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeindaydown(event) }}> {MilestoneDateArrowDown()}</button></div>
             </div>
             <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinyear()} /></div>
-            <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinyearup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeinyeardown(event)}}> {MilestoneDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyearup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyeardown(event) }}> {MilestoneDateArrowDown()}</button></div>
             </div>
-            
+
         </div>)
     }
     getproject() {
@@ -705,33 +702,30 @@ class MyProjectMilestones extends Component {
     }
     showtimeout() {
         return (<div className="labortime-container">
-            <div className="labor-timein-main">
-            Time Out
-              <input type="date" className="project-field" value={this.gettimeout()} onChange={event=>this.handletimeout(event.target.value)}/>
-            </div>
+
             <div className="labortime-label">Mon </div>
             <div className="labortime-label">Day </div>
             <div className="labortime-label">Year </div>
             <div className="labortime-element">
                 <input type="text" className="project-field time-field" value={this.gettimeoutmonth()} />
             </div>
-                <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutmonthup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button"  onClick={event=>{this.timeoutmonthdown(event)}}> {MilestoneDateArrowDown()}</button></div>
-                 </div>
-            <div className="labortime-element"> 
-            <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
-            <div className="labortime-element"> 
-                   <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutdayup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutdaydown(event,(1000*60*60*24))}}> {MilestoneDateArrowDown()}</button></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthdown(event) }}> {MilestoneDateArrowDown()}</button></div>
+            </div>
+            <div className="labortime-element">
+                <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutdayup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutdaydown(event, (1000 * 60 * 60 * 24)) }}> {MilestoneDateArrowDown()}</button></div>
             </div>
             <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutyear()} /></div>
-            
-            <div className="labortime-element"> 
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutyearup(event)}}>{MilestoneDateArrowUp()}</button></div>
-                    <div className="timebutton-container"><button className="time-button" onClick={event=>{this.timeoutyeardown(event)}}> {MilestoneDateArrowDown()}</button></div>
+
+            <div className="labortime-element">
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyearup(event) }}>{MilestoneDateArrowUp()}</button></div>
+                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyeardown(event) }}> {MilestoneDateArrowDown()}</button></div>
             </div>
-             </div>)
+        </div>)
     }
     gettimeout() {
         let completion = "";
@@ -1024,17 +1018,17 @@ class MyProjectMilestones extends Component {
         return (
 
             <div className="mymilestone-container">
-            <div className="milestone-titlerow">{this.getprojectitle()} <br/>Project Milestones</div>
-            <div className="milestone-element-1 titlerow">{this.handleClearMilestone()}</div>
-            <div className="milestone-element-1"> {this.milestonemessage()}</div>
-            <div className="milestone-element-2a"> What is the Milestone Called?</div>
-            <div className="milestone-element-2b"> <input type="text" className="project-field" value={this.getmilestonefield()} onChange={event=>{this.handlemilestone(event.target.value)}} /></div>
-            <div className="milestone-element-1"> Enter and Start and End Date for the Milestone</div>
-            <div className="milestone-element-3"> {this.showtimein()}</div> 
-            <div className="milestone-element-3"> {this.showtimeout()}</div> 
-            <div className="milestone-element-1 titlerow">{this.state.message} </div>
-            <div className="milestone-element-1 titlerow"> <button className="project-button" onClick={event=>{this.handleSaveAllProjects(event)}}>{SaveProjectManagerIcon()} </button> </div>
-            {this.getmilestoneids()}
+                <div className="milestone-titlerow">{this.getprojectitle()} <br />Project Milestones</div>
+                <div className="milestone-element-1 titlerow">{this.handleClearMilestone()}</div>
+                <div className="milestone-element-1"> {this.milestonemessage()}</div>
+                <div className="milestone-element-2a"> What is the Milestone Called?</div>
+                <div className="milestone-element-2b"> <input type="text" className="project-field" value={this.getmilestonefield()} onChange={event => { this.handlemilestone(event.target.value) }} /></div>
+                <div className="milestone-element-1"> Enter and Start and End Date for the Milestone</div>
+                <div className="milestone-element-3"> {this.showtimein()}</div>
+                <div className="milestone-element-3"> {this.showtimeout()}</div>
+                <div className="milestone-element-1 titlerow">{this.state.message} </div>
+                <div className="milestone-element-1 titlerow"> <button className="project-button" onClick={event => { this.handleSaveAllProjects(event) }}>{SaveProjectManagerIcon()} </button> </div>
+                {this.getmilestoneids()}
             </div>
 
         )

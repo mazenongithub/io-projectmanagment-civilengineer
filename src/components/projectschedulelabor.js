@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import ShowProjectScheduleLabor from './showprojectschedulelabor';
 import MyProjectScheduleLabor from './myprojectschedulelabor';
 import * as actions from './actions'
-import { loadmyprojects } from './actions/api';
-import { MyUserModel } from './functions';
 import './myprojects.css';
 
 
@@ -18,7 +16,7 @@ class ProjectScheduleLabor extends Component {
         let projectid = this.props.match.params.projectid
         this.props.reduxNavigation({ navigation: "schedulelabor" })
         this.props.ProjectID({ projectid })
-     
+
 
 
     }
@@ -58,10 +56,10 @@ class ProjectScheduleLabor extends Component {
         if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
             let servicetype = this.getservicetype();
             if (servicetype === "provider") {
-                return (<MyProjectScheduleLabor/>)
+                return (<MyProjectScheduleLabor />)
             }
             else if (servicetype === "manager") {
-                return (<ShowProjectScheduleLabor/>)
+                return (<ShowProjectScheduleLabor />)
             }
             else {
                 return (<span>&nbsp; </span>)

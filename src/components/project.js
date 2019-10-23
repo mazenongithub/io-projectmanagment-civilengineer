@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './myprojects.css'
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import { loadmyprojects, SaveAllProjects } from './actions/api';
+import { SaveAllProjects } from './actions/api';
 import { Link } from 'react-router-dom';
 import { SaveProjectManagerIcon } from './svg'
 import {
@@ -16,7 +16,7 @@ import {
   inputUTCStringForLaborID
 
 }
-from './functions';
+  from './functions';
 
 //import _ from 'lodash';
 class Project extends Component {
@@ -33,7 +33,7 @@ class Project extends Component {
 
     let projectid = this.props.match.params.projectid;
     this.props.ProjectID({ projectid })
- 
+
 
   }
 
@@ -258,13 +258,13 @@ class Project extends Component {
       if (projectid) {
         // eslint-disable-next-line
         return (this.props.projects.map(myproject => {
-            if (myproject.projectid === projectid) {
-              return (<div className="project-element project-title-row">
-              <button className="btn-updateproject" onClick={event=>{this.handleSaveAllProjects()}}>
-        {SaveProjectManagerIcon()} 
-     </button></div>)
-            }
-          })
+          if (myproject.projectid === projectid) {
+            return (<div className="project-element project-title-row">
+              <button className="btn-updateproject" onClick={event => { this.handleSaveAllProjects() }}>
+                {SaveProjectManagerIcon()}
+              </button></div>)
+          }
+        })
 
 
         )
@@ -366,11 +366,11 @@ class Project extends Component {
     if (this.props.projects || this.props.projectsprovider) {
       let servicetype = this.getservicetype();
       if (servicetype === "manager") {
-        projecttitle.push(<div className="projectprovider-container">Project Title<br/>
-        <input type="text" 
-        value={this.gettitle()}
-        onChange={event=>{this.handletitle(event.target.value)}} 
-        className="project-field" /> </div>)
+        projecttitle.push(<div className="projectprovider-container">Project Title<br />
+          <input type="text"
+            value={this.gettitle()}
+            onChange={event => { this.handletitle(event.target.value) }}
+            className="project-field" /> </div>)
       }
 
     }
@@ -553,18 +553,18 @@ class Project extends Component {
 
       if (servicetype === "manager") {
 
-        projectlocation.push(<div className="projecthome-element-2a"> Address <br/>
-          <input type="text" onChange={event=>{this.handleaddress(event.target.value)}} value={this.getaddress()} className="project-field" />
-          </div>)
-        projectlocation.push(<div className="projecthome-element-2b"> Zipcode <br/><input type="text" className="project-field" onChange={event=>{this.handlezipcode(event.target.value)}} value={this.getzipcode()} /></div>)
-        projectlocation.push(<div className="projecthome-element-3"> City <br/><input type="text" className="project-field" onChange={event=>{this.handlecity(event.target.value)}} value={this.getcity()} /></div>)
-        projectlocation.push(<div className="projecthome-element-3">State <br/><select className="project-field" onChange={event=>{this.handlestate(event.target.value)}} value={this.getstate()}>{this.loadstates()} </select></div>)
+        projectlocation.push(<div className="projecthome-element-2a"> Address <br />
+          <input type="text" onChange={event => { this.handleaddress(event.target.value) }} value={this.getaddress()} className="project-field" />
+        </div>)
+        projectlocation.push(<div className="projecthome-element-2b"> Zipcode <br /><input type="text" className="project-field" onChange={event => { this.handlezipcode(event.target.value) }} value={this.getzipcode()} /></div>)
+        projectlocation.push(<div className="projecthome-element-3"> City <br /><input type="text" className="project-field" onChange={event => { this.handlecity(event.target.value) }} value={this.getcity()} /></div>)
+        projectlocation.push(<div className="projecthome-element-3">State <br /><select className="project-field" onChange={event => { this.handlestate(event.target.value) }} value={this.getstate()}>{this.loadstates()} </select></div>)
       }
       else if (servicetype === "provider") {
         let myproject = this.getprojectprovider();
-        projectlocation.push(<div className="project-title-row"> 
-         {myproject.address} <br/>{ myproject.city }, { myproject.projectstate } { myproject.zipcode }
-             </div>)
+        projectlocation.push(<div className="project-title-row">
+          {myproject.address} <br />{myproject.city}, {myproject.projectstate} {myproject.zipcode}
+        </div>)
       }
       else {
 
@@ -591,8 +591,8 @@ class Project extends Component {
 
       }
       else if (servicetype === "manager") {
-        scope.push(<div className="projecthome-element-1">Scope of Work <br/> <textarea className="project-field" onChange={event=>{this.changescope(event.target.value)}} value={this.getscope()} > 
-         </textarea> </div>)
+        scope.push(<div className="projecthome-element-1">Scope of Work <br /> <textarea className="project-field" onChange={event => { this.changescope(event.target.value) }} value={this.getscope()} >
+        </textarea> </div>)
       }
       else {
         scope.push(<div className="projectprovider-container">&nbsp;</div>)
@@ -627,27 +627,27 @@ class Project extends Component {
   render() {
     return (
       <div>
-     <div className="myproject-container">
-     <div className="project-element project-title-row">{this.displayprojectid()} </div>
-     {this.handleprojecttitle()}
-    {this.handleprojectlocation()}
-   {this.handlescope()}
-    <div className="projectmessage-container">{this.state.message} </div>
-    {this.handleinsertbutton()}
-   
-    <div className="project-element project-title-row">Project Components </div>
-    <div className={`project-component-link ${this.getprojectclass()}`}>{this.showmilestone()}</div>
-    <div className={`project-component-link ${this.getprojectclass()}`}>{this.showteam()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulelabor()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulematerials()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`}>{this.showactuallabor()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`} >{this.showactualmaterials()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`}>{this.showproposals()}</div>
-     <div className={`project-component-link ${this.getprojectclass()}`}>{this.showinvoices()}</div>
-     </div>
-      
-     
-</div>)
+        <div className="myproject-container">
+          <div className="project-element project-title-row">{this.displayprojectid()} </div>
+          {this.handleprojecttitle()}
+          {this.handleprojectlocation()}
+          {this.handlescope()}
+          <div className="projectmessage-container">{this.state.message} </div>
+          {this.handleinsertbutton()}
+
+          <div className="project-element project-title-row">Project Components </div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showmilestone()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showteam()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulelabor()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulematerials()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showactuallabor()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`} >{this.showactualmaterials()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showproposals()}</div>
+          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showinvoices()}</div>
+        </div>
+
+
+      </div>)
   }
 }
 

@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import ShowProposals from './showproposals';
 import MyProposals from './myproposals';
 import * as actions from './actions';
-import { loadmyprojects } from './actions/api';
 import { connect } from 'react-redux';
-import { MyUserModel } from './functions';
+
 
 class Proposals extends Component {
 
@@ -16,17 +15,17 @@ class Proposals extends Component {
         let projectid = this.props.match.params.projectid;
         this.props.ProjectID({ projectid });
         this.props.reduxNavigation({ navigation: "proposals", projectid })
-    
+
     }
- 
+
     handleproposal() {
         let servicetype = this.getservicetype();
 
         if (servicetype === "manager") {
-            return (<ShowProposals/>);
+            return (<ShowProposals />);
         }
         else if (servicetype === "provider") {
-            return (<MyProposals/>);
+            return (<MyProposals />);
 
         }
         else {
@@ -69,7 +68,7 @@ class Proposals extends Component {
     }
     render() {
         return (<div>
-        {this.handleproposal()}
+            {this.handleproposal()}
         </div>)
     }
 

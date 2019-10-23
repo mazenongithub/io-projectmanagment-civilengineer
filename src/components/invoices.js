@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { loadmyprojects } from './actions/api';
-import { MyUserModel } from './functions';
 import * as actions from './actions';
 import ShowInvoices from './showinvoices';
 import MyInvoices from './myinvoices'
@@ -11,9 +9,9 @@ class Invoices extends Component {
         let projectid = this.props.match.params.projectid;
         this.props.ProjectID({ projectid });
         this.props.reduxNavigation({ navigation: "invoices", projectid })
- 
+
     }
-   
+
     getservicetype() {
         let servicetype = false;
         if (this.props.projectid) {
@@ -47,10 +45,10 @@ class Invoices extends Component {
 
             let servicetype = this.getservicetype();
             if (servicetype === "manager") {
-                return (<ShowInvoices/>)
+                return (<ShowInvoices />)
             }
             else if (servicetype === "provider") {
-                return (<MyInvoices/>)
+                return (<MyInvoices />)
             }
             else {
                 return (<span> &nbsp;</span>)
@@ -63,8 +61,8 @@ class Invoices extends Component {
     }
 
     render() {
-        return (<div> 
-        {this.handleinvoices()}
+        return (<div>
+            {this.handleinvoices()}
         </div>)
     }
 

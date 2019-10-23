@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { loadmyprojects } from './actions/api';
 import ShowScheduleMaterials from './showschedulematerials';
 import MyProjectScheduleMaterials from './myprojectschedulematerials';
-import { MyUserModel } from './functions';
 import './myprojects.css';
 import * as actions from './actions'
 class ProjectScheduleMaterials extends Component {
@@ -11,7 +9,7 @@ class ProjectScheduleMaterials extends Component {
         let projectid = this.props.match.params.projectid
         this.props.reduxNavigation({ navigation: "schedulematerials" })
         this.props.ProjectID({ projectid })
-      
+
     }
 
     handleschedulematerials() {
@@ -20,10 +18,10 @@ class ProjectScheduleMaterials extends Component {
             let servicetype = this.getservicetype();
 
             if (servicetype === "manager") {
-                return (<ShowScheduleMaterials/>)
+                return (<ShowScheduleMaterials />)
             }
             else if (servicetype === "provider") {
-                return (<MyProjectScheduleMaterials/>)
+                return (<MyProjectScheduleMaterials />)
             }
             else {
                 return (<span> &nbsp;</span>)

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import './myprojects.css';
 import * as actions from './actions';
-import { loadmyprojects, LoadMyProviders } from './actions/api'
+import { LoadMyProviders } from './actions/api'
 import { connect } from 'react-redux';
 import MyProjectTeam from './myprojectteam';
 import ShowProjectTeam from './showprojectteam';
-import { MyUserModel } from './functions';
+
 class ProjectTeam extends Component {
     componentDidMount() {
         let projectid = this.props.match.params.projectid
         this.props.reduxNavigation({ navigation: "projectteam" })
         this.props.ProjectID({ projectid })
-      
+
         if (!this.props.searchproviders.hasOwnProperty("searchproviders")) {
             this.loadmysearchproviders()
         }
@@ -24,7 +24,7 @@ class ProjectTeam extends Component {
         let myprovider = response.searchproviders.myprovider
         this.props.searchProviders({ searchproviders: myprovider })
     }
-  
+
 
     showprojectteam() {
 
@@ -34,10 +34,10 @@ class ProjectTeam extends Component {
 
                 let servicetype = this.getservicetype();
                 if (servicetype === "manager") {
-                    return (<MyProjectTeam/>)
+                    return (<MyProjectTeam />)
                 }
                 else if (servicetype === "provider") {
-                    return (<ShowProjectTeam/>)
+                    return (<ShowProjectTeam />)
                 }
                 else {
                     return (<span> &nbsp;</span>)

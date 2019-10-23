@@ -4,14 +4,13 @@ import './myprojects.css';
 import * as actions from './actions'
 import MyActualMaterials from './myactualmaterials';
 import ShowActualMaterials from './showactualmaterials';
-import { loadmyprojects } from './actions/api';
-import { MyUserModel } from './functions';
+
 class ActualMaterials extends Component {
     componentDidMount() {
         let projectid = this.props.match.params.projectid
         this.props.reduxNavigation({ navigation: "actualmaterials" })
         this.props.ProjectID({ projectid })
-   
+
 
     }
 
@@ -48,10 +47,10 @@ class ActualMaterials extends Component {
         if (this.props.projectsprovider.hasOwnProperty("length") || this.props.projects.hasOwnProperty("length")) {
             let servicetype = this.getservicetype();
             if (servicetype === "manager") {
-                return (<ShowActualMaterials/>)
+                return (<ShowActualMaterials />)
             }
             else if (servicetype === "provider") {
-                return (<MyActualMaterials/>)
+                return (<MyActualMaterials />)
             }
         }
         else {
