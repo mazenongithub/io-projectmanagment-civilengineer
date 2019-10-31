@@ -1122,7 +1122,7 @@ class MyScheduleLabor extends Component {
         }
         else {
             this.setState({ description })
-            let providerid = this.props.myusermodel.clientid;
+            let providerid = this.props.myusermodel.providerid;
             let laborid = makeID(8)
             let milestoneid = this.state.milestoneid;
             let laborrate = this.state.laborrate;
@@ -1225,10 +1225,11 @@ class MyScheduleLabor extends Component {
         }
         else {
             this.setState({ milestoneid })
-            let providerid = this.props.myusermodel.clientid;
+            let providerid = this.props.myusermodel.providerid;
             let laborid = makeID(8)
             let description = this.state.description;
             let laborrate = this.state.laborrate;
+
             let timein = inputDateObjOutputAdjString(this.state.timein);
             let timeout = inputDateObjOutputAdjString(this.state.timeout);
             let proposalid = "";
@@ -1297,7 +1298,7 @@ class MyScheduleLabor extends Component {
 
         else {
             this.setState({ laborrate: value })
-            let providerid = this.props.myusermodel.clientid;
+            let providerid = this.props.myusermodel.providerid;
             let laborid = makeID(8)
             let description = this.state.description;
             let milestoneid = this.state.milestoneid;
@@ -1383,9 +1384,9 @@ class MyScheduleLabor extends Component {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
-                            console.log(mylabor.laborrate)
+
                             errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                            console.log(errmsg)
+
                         })
                     }
 
@@ -1417,7 +1418,7 @@ class MyScheduleLabor extends Component {
             let myproject = this.getproject()
 
             let values = { providerid, projectid, myproject }
-            console.log(values)
+
 
             let response = await ProviderEndPoint(values);
             console.log(response)
