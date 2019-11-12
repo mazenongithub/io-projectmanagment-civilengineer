@@ -45,7 +45,7 @@ class MyProjects extends Component {
     let response = await loadmyprojects(providerid);
     console.log(response)
 
-   
+
     this.setState({ render: 'render' })
   }
   geterrormessages() {
@@ -262,15 +262,15 @@ class MyProjects extends Component {
   }
   getprojectmanagingicon(projectid) {
     if (this.props.projectid.projectid === projectid) {
-      return (<button className="projectmenu-icon" onClick={()=>{this.clearprojectid()}}>{CloseProjectIcon()}</button>)
+      return (<button className="projectmenu-icon" onClick={() => { this.clearprojectid() }}>{CloseProjectIcon()}</button>)
     }
     else {
-      return (<button className="projectmenu-icon" onClick={()=>{this.findproject(projectid)}}>{ProjectManagerIcon()}</button>)
+      return (<button className="projectmenu-icon" onClick={() => { this.findproject(projectid) }}>{ProjectManagerIcon()}</button>)
     }
   }
   getallprojectsmanaging() {
     let project = [];
-    
+
     if (this.props.projects) {
       let providerid = this.props.myusermodel.providerid;
       if (this.props.projects.hasOwnProperty("length")) {
@@ -288,11 +288,11 @@ class MyProjects extends Component {
           }
           else {
             project.push(<div className="span-2 project-regularfont">
-        <div className="project-flexcontainer">
-            <div className="flex-one align-content-right">{this.getprojectmanagingicon(myproject.projectid)}</div>
-            <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
-        </div>
-      </div>)
+              <div className="project-flexcontainer">
+                <div className="flex-one align-content-right">{this.getprojectmanagingicon(myproject.projectid)}</div>
+                <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
+              </div>
+            </div>)
 
             project.push(this.getprojectsubmenu(myproject.projectid))
 
@@ -325,8 +325,8 @@ class MyProjects extends Component {
     else {
       projectsmanaging.push(<div className="span-2 project-regularfont">
         <div className="project-flexcontainer">
-            <div className="flex-one"><button className="projectmenu-icon">{ProjectManagerIcon()}</button></div>
-            <div className="flex-five">Projects Managing </div>
+          <div className="flex-one"><button className="projectmenu-icon">{ProjectManagerIcon()}</button></div>
+          <div className="flex-five">Projects Managing </div>
         </div>
       </div>)
       projectsmanaging.push(this.getallprojectsmanaging())
@@ -338,10 +338,10 @@ class MyProjects extends Component {
   }
   getprovidericon(projectid) {
     if (this.props.projectid.projectid === projectid) {
-      return (<button className="projectmenu-icon" onClick={()=>{this.clearprojectid()}}>{CloseProviderIcon()}</button>)
+      return (<button className="projectmenu-icon" onClick={() => { this.clearprojectid() }}>{CloseProviderIcon()}</button>)
     }
     else {
-      return (<button className="projectmenu-icon" onClick={()=>this.findproject(projectid)}>{ProjectProviderIcon()}</button>)
+      return (<button className="projectmenu-icon" onClick={() => this.findproject(projectid)}>{ProjectProviderIcon()}</button>)
     }
 
   }
@@ -365,11 +365,11 @@ class MyProjects extends Component {
           else {
 
             project.push(<div className="span-2 project-regularfont">
-        <div className="project-flexcontainer">
-            <div className="flex-one align-content-right">{this.getprovidericon(myproject.projectid)}</div>
-            <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
-        </div>
-      </div>)
+              <div className="project-flexcontainer">
+                <div className="flex-one align-content-right">{this.getprovidericon(myproject.projectid)}</div>
+                <div className="flex-three"><Link className="showprojectlink" to={`/${providerid}/myprojects/${myproject.projectid}`}>{myproject.projectid} {myproject.title}</Link> </div>
+              </div>
+            </div>)
             project.push(this.getprojectsubmenu(myproject.projectid))
           }
 
@@ -403,8 +403,8 @@ class MyProjects extends Component {
     else {
       projectsprovider.push(<div className="span-2 project-regularfont">
         <div className="project-flexcontainer">
-            <div className="flex-one"><button className="projectmenu-icon">{ProjectProviderIcon()}</button></div>
-            <div className="flex-five">Projects Managing </div>
+          <div className="flex-one"><button className="projectmenu-icon">{ProjectProviderIcon()}</button></div>
+          <div className="flex-five">Projects Managing </div>
         </div>
       </div>)
       projectsprovider.push(this.getallprojectsprovider())
@@ -738,25 +738,30 @@ class MyProjects extends Component {
 
   getproject() {
     let project = false;
-    let projectid = this.props.projectid.projectid;
-    if (this.props.projects.hasOwnProperty("length")) {
+    if (this.props.projectid) {
+      if (this.props.projectid.hasOwnProperty("projectid")) {
 
-      // eslint-disable-next-line
-      this.props.projects.map(myproject => {
-        if (myproject.projectid === projectid) {
-          project = myproject;
-        }
-      })
-    }
-    if (!project) {
-      // eslint-disable-next-line
-      this.props.projectsprovider.map(myproject => {
-        if (myproject.projectid === projectid) {
-          project = myproject;
-        }
-      })
-    }
+        let projectid = this.props.projectid.projectid;
+        if (this.props.projects.hasOwnProperty("length")) {
 
+          // eslint-disable-next-line
+          this.props.projects.map(myproject => {
+            if (myproject.projectid === projectid) {
+              project = myproject;
+            }
+          })
+
+        }
+        if (!project) {
+          // eslint-disable-next-line
+          this.props.projectsprovider.map(myproject => {
+            if (myproject.projectid === projectid) {
+              project = myproject;
+            }
+          })
+        }
+      }
+    }
     return project;
   }
   validateProjectProvider() {
@@ -860,36 +865,36 @@ class MyProjects extends Component {
     let projectinfo = [];
     let myproject = this.getproject();
     if (myproject.servicetype === "manager") {
-      projectinfo.push(<div className="projecthome-element-1"> Project Title <br/><input type="text"
-    className="project-field"
-    onChange={event=>{this.ChangeTitle(event.target.value)}}
-    value={this.getTitle()}/></div>)
-      projectinfo.push(<div className="projecthome-element-2a">Project Address <br/><input type="text" className="project-field" 
-    onChange={event=>{this.ChangeAddress(event.target.value)}}
-    value={this.getAddress()}/></div>)
-      projectinfo.push(<div className="projecthome-element-2b">Zipcode<br/><input type="text" className="project-field"
-    onChange={event=>{this.ChangeZipcode(event.target.value)}}
-    value={this.getZipcode()} /></div>)
+      projectinfo.push(<div className="projecthome-element-1"> Project Title <br /><input type="text"
+        className="project-field"
+        onChange={event => { this.ChangeTitle(event.target.value) }}
+        value={this.getTitle()} /></div>)
+      projectinfo.push(<div className="projecthome-element-2a">Project Address <br /><input type="text" className="project-field"
+        onChange={event => { this.ChangeAddress(event.target.value) }}
+        value={this.getAddress()} /></div>)
+      projectinfo.push(<div className="projecthome-element-2b">Zipcode<br /><input type="text" className="project-field"
+        onChange={event => { this.ChangeZipcode(event.target.value) }}
+        value={this.getZipcode()} /></div>)
 
-      projectinfo.push(<div className="projecthome-element-3">Project City <br/><input type="text" className="project-field"
-     onChange={event=>{this.ChangeCity(event.target.value)}}
-     value={this.getCity()}/></div>)
-      projectinfo.push(<div className="projecthome-element-3">Project State <br/><select className="project-field"
-     onChange={event=>{this.ChangeState(event.target.value)}}
-     value={this.getState()}>{this.getStates()}</select></div>)
-      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br/> <textarea 
-     onChange={event=>{this.ChangeScope(event.target.value)}}
-     value={this.getScope()}
-     className="project-field"> </textarea> </div>)
+      projectinfo.push(<div className="projecthome-element-3">Project City <br /><input type="text" className="project-field"
+        onChange={event => { this.ChangeCity(event.target.value) }}
+        value={this.getCity()} /></div>)
+      projectinfo.push(<div className="projecthome-element-3">Project State <br /><select className="project-field"
+        onChange={event => { this.ChangeState(event.target.value) }}
+        value={this.getState()}>{this.getStates()}</select></div>)
+      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br /> <textarea
+        onChange={event => { this.ChangeScope(event.target.value) }}
+        value={this.getScope()}
+        className="project-field"> </textarea> </div>)
     }
     else {
-      projectinfo.push(<div className="projecthome-element-1"> Project Title <br/>{this.getTitle()}</div>)
-      projectinfo.push(<div className="projecthome-element-2a">Project Address <br/>{this.getAddress()}</div>)
-      projectinfo.push(<div className="projecthome-element-2b">Zipcode<br/>{this.getZipcode()}</div>)
+      projectinfo.push(<div className="projecthome-element-1"> Project Title <br />{this.getTitle()}</div>)
+      projectinfo.push(<div className="projecthome-element-2a">Project Address <br />{this.getAddress()}</div>)
+      projectinfo.push(<div className="projecthome-element-2b">Zipcode<br />{this.getZipcode()}</div>)
 
-      projectinfo.push(<div className="projecthome-element-3">Project City <br/>{this.getCity()}</div>)
-      projectinfo.push(<div className="projecthome-element-3">Project State <br/>{this.getState()}</div>)
-      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br/>{this.getScope()}</div>)
+      projectinfo.push(<div className="projecthome-element-3">Project City <br />{this.getCity()}</div>)
+      projectinfo.push(<div className="projecthome-element-3">Project State <br />{this.getState()}</div>)
+      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br />{this.getScope()}</div>)
     }
     return projectinfo;
   }
@@ -926,24 +931,24 @@ class MyProjects extends Component {
     let myproject = [];
     if (this.props.projectid) {
       if (this.props.projectid.projectid) {
-        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event=>{this.clearprojectid(event)}}>{newClearProjectID()} </button> </div>)
+        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event => { this.clearprojectid(event) }}>{newClearProjectID()} </button> </div>)
         myproject.push(<div className="projecthome-element-1">
-        Your Project is found at as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.props.projectid.projectid}</div>)
+          Your Project is found at as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.props.projectid.projectid}</div>)
         myproject.push(this.showprojectinfo())
         myproject.push(<div className="projecthome-element-1 align-text-center">{this.state.message} </div>)
-        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event=>{this.handleSaveAllProjects(event)}}>{saveAllProfileIcon()} </button></div>)
+        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event => { this.handleSaveAllProjects(event) }}>{saveAllProfileIcon()} </button></div>)
       }
       else {
-        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event=>{this.CreateNewProject(event)}}>{SaveNewProjectIcon()} </button> </div>)
+        myproject.push(<div className="project-title-row"><button className="project-button" onClick={event => { this.CreateNewProject(event) }}>{SaveNewProjectIcon()} </button> </div>)
         myproject.push(<div className="projecthome-element-1">Create a unique Project ID (recommended)
-        <input type="text" 
-        value={this.state.projectid} 
-        onChange={event=>{this.handleprojectid(event.target.value)}} 
-        onBlur={event=>this.checkprojectid(event)}
-        onFocus={event=>this.checkprojectid(event)}
-        className="project-field"/>
-        <br/>
-        Your Project Will Appear as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.state.projectid}</div>)
+        <input type="text"
+            value={this.state.projectid}
+            onChange={event => { this.handleprojectid(event.target.value) }}
+            onBlur={event => this.checkprojectid(event)}
+            onFocus={event => this.checkprojectid(event)}
+            className="project-field" />
+          <br />
+          Your Project Will Appear as {process.env.REACT_APP_CLIENT_API}/{this.props.match.params.providerid}/myprojects/{this.state.projectid}</div>)
         myproject.push(<div className="projecthome-element-1">{this.state.message} </div>)
 
       }
@@ -956,12 +961,12 @@ class MyProjects extends Component {
   }
   showmyprojects() {
     return (<div className="projecthome-container">
-    <div className="project-title-row">
-    My Projects <br/> Provider ID {this.props.match.params.providerid}
-    </div>
-    {this.handleactiveproject()}
-    {this.showallprojects()}
-    {this.showallservices()}
+      <div className="project-title-row">
+        My Projects <br /> Provider ID {this.props.match.params.providerid}
+      </div>
+      {this.handleactiveproject()}
+      {this.showallprojects()}
+      {this.showallservices()}
     </div>)
   }
   render() {
