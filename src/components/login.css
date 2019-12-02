@@ -45,14 +45,23 @@
     border: 0px;
     background-color: #FFFFFF;
 }
+.btntypical{
+    border: 0px;
+    background-color: #FFFFFF;
+}
 
 .invalid-logindisplay {
     font-size: 20px;
     color: #CC1D1D;
 }
+.loginButton{
+    width:285px;
+}
 
 @media screen and (min-width:721px) {
-
+    .loginButton{
+        width:304px;
+    }
     .login-buttoncontainer {
         text-align: right;
     }

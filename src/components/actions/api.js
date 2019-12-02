@@ -4,7 +4,7 @@
 export async function CheckUserLogin() {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checkuser`
-
+console.log(APIURL)
     return fetch(APIURL,{credentials:'include'}).then(resp => {
 
         if (!resp.ok) {
