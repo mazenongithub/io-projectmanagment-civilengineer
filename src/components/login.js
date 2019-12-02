@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import EmailLogin from './form/emaillogin';
-import LoginPassword from './form/loginpassword';
 import { connect } from 'react-redux';
-import { GoogleLogin, EmailLoginSVG, AppleSigninIcon } from './svg';
+import { GoogleSigninIcon, EmailLoginSVG, AppleSigninIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
 import firebase from 'firebase'
@@ -191,65 +189,97 @@ class Login extends Component {
 
     }
 
-
+    getLoginMessage() {
+        let message;
+        if (this.props.hasOwnProperty("match")) {
+            if (this.props.match.hasOwnProperty("params")) {
+                message = this.props.match.params.message;
+            }
+        }
+        return message;
+    }
     render() {
 
         let formpostURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loginuser`;
-        //const googleredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/oauth20/google/login`;
-        //const facebookredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/facebook/login`
-        //const linkedinredirect = `${process.env.REACT_APP_SERVER_API}/oauth20/linkedin/login`
-        //const yahooredirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/oauth20/yahoo/login`;
-        //const yahooscope = `https://api.login.yahoo.com/oauth2/request_auth?redirect_uri=${yahooredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_YAHOOID}`
-        //const googlescope = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${googleredirect}&prompt=consent&response_type=code&client_id=${process.env.REACT_APP_GOOGLEID}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline`
-        //const facebookscope = `https://www.facebook.com/dialog/oauth?client_id=${process.env.REACT_APP_FACEBOOK_APPID}&redirect_uri=${encodeURIComponent(facebookredirect)}`;
-        //const linkedinscope = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.REACT_APP_LINKEDIN_CLIENTID}&redirect_uri=${encodeURIComponent(linkedinredirect)}&state=linkedin&scope=${encodeURIComponent("r_basicprofile r_emailaddress")}`
+
         return (
-            <div>
-                <form method="post" action={formpostURL} onSubmit={event => this.handleSubmit(event)}>
-                    <div className="login-container">
-                        <div className="login-titlerow">Login </div>
-                        <div className="login-buttonrow">
-                            <div className="btnlogin">
+            <div className="general-flex">
+                <div className="flex-1 general-container">
 
-                                <button type="button" onClick={event => { this.appleSignIn(event) }} className="loginButton btntypical">
-                                    {AppleSigninIcon()}
-                                </button>
-
-                            </div>
-                        </div>
-                        <div className="login-buttonrow">
-                            <div className="btnlogin">
-                                <button type="button" onClick={event => { this.googleSignIn(event) }} className="loginButton btntypical">
-                                    {GoogleLogin()}
-                                </button>
-                            </div>
-                        </div>
-                        <div className="login-buttonrow">
-                            <div className="btnlogin">
-                                &nbsp;
+                    <div className="general-flex">
+                        <div className="flex-1 general-container">
+                            <div className="flex-1 general-container login-aligncenter titleFont">
+                                Login
             </div>
                         </div>
-                        {this.showextrarow()}
-                        <div className="invalid-logindisplay">{this.state.message} </div>
-                        <EmailLogin />
-                        <LoginPassword />
-                        <div className="login-buttoncontainer">
-                            <button id="btnemaillogin">{EmailLoginSVG()}
-                            </button> </div>
-
                     </div>
-                </form>
 
-                <form id="loginform" action={`${process.env.REACT_APP_SERVER_API}/projectmanagement/webclient/loginuser`} method="post">
-                    <input type="hidden" id='form-clientid' name="clientid" />
-                    <input type="hidden" id='form-client' name="client" />
-                    <input type="hidden" id='form-firstname' name="firstname" />
-                    <input type="hidden" id='form-lastname' name="lastname" />
-                    <input type="hidden" id='form-emailaddress' name="emailaddress" />
-                    <input type="hidden" id='form-phonenumber' name="phonenumber" />
-                    <input type="hidden" id='form-profileurl' name="profileurl" />
+                    <div className="general-flex">
+                        <div className="flex-1 general-container">
 
-                </form>
+                            <div className="flex-1 general-container login-aligncenter titleFont">
+                                <button className="btnclientlogin general-button" onClick={() => { this.googleSignIn() }}>
+                                    {GoogleSigninIcon()}
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 general-container">
+                            <div className="flex-1 general-container login-aligncenter titleFont">
+                                <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn() }}>
+                                    {AppleSigninIcon()}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form action={formpostURL} method="post">
+                        <div className="general-flex">
+                            <div className="flex-1 general-container login-aligncenter regularFont">
+                                Email
+                    </div>
+                            <div className="flex-2 general-container login-aligncenter regularFont">
+                                <input type="text" name="emailaddress" className="general-field" />
+                            </div>
+                        </div>
+
+                        <div className="general-flex">
+                            <div className="flex-1 general-container login-aligncenter regularFont">
+                                Password
+                    </div>
+                            <div className="flex-2 general-container login-aligncenter titleFont">
+                                <input type="password" name="pass" className="general-field" />
+                            </div>
+                        </div>
+                        <div className="general-flex">
+                            <div className="flex-1 general-container login-aligncenter titleFont">
+                                <button className="btnclientlogin general-button">
+                                    {EmailLoginSVG()}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="general-flex">
+                            <div className="flex-1 general-container login-aligncenter regularFont errorFont">
+                                {this.getLoginMessage()}
+                            </div>
+                        </div>
+                    </form>
+
+                    <form id="loginform" action={`${process.env.REACT_APP_SERVER_API}/projectmanagement/webclient/loginuser`} method="post">
+                        <input type="hidden" id='form-clientid' name="clientid" />
+                        <input type="hidden" id='form-client' name="client" />
+                        <input type="hidden" id='form-firstname' name="firstname" />
+                        <input type="hidden" id='form-lastname' name="lastname" />
+                        <input type="hidden" id='form-emailaddress' name="emailaddress" />
+                        <input type="hidden" id='form-phonenumber' name="phonenumber" />
+                        <input type="hidden" id='form-profileurl' name="profileurl" />
+
+                    </form>
+
+                </div>
             </div>)
     }
 }

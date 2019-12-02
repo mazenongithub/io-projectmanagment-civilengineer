@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import './join.css';
-import { GoogleLogin, SignUpByEmail, GoToLogin } from './svg';
+import { GoogleSigninIcon, SignUpByEmail, GoToLogin } from './svg';
 import './svg/svg.css';
 import * as actions from './actions';
 class Join extends Component {
@@ -56,7 +56,7 @@ class Join extends Component {
             <div className="loginbuttonrow">
                 <a href={googlescope}>
                     <button className="btnregister">
-                        {GoogleLogin()}
+                        {GoogleSigninIcon()}
                     </button>
                 </a>
             </div>

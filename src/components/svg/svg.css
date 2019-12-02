@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans|Signika:400,600');
-.applesignin-1{fill:#bfbfbf;stroke:#595959;stroke-width:3px;}.applesignin-1,.applesignin-2{stroke-miterlimit:10;}.applesignin-2{font-size:30px;stroke:#202122;font-family:NunitoSans-Regular, Nunito Sans;}.applesignin-3{letter-spacing:0em;}
+.appleSigninIcon-1{fill:#bfbfbf;stroke:#595959;}.appleSigninIcon-1,.appleSigninIcon-2{stroke-miterlimit:10;}.appleSigninIcon-2{font-size:30px;fill:#f4f8f9;stroke:#050505;stroke-width:0.25px;font-family:NunitoSans-Regular, Nunito Sans;}.appleSigninIcon-3{letter-spacing:0em;}
+.googleSignIcon-1{fill:#ff1102;}.googleSignIcon-1,.googleSignIcon-2{stroke:#000;stroke-miterlimit:10;}.googleSignIcon-2{font-size:30px;fill:#fff;stroke-width:0.25px;font-family:NunitoSans-Regular, Nunito Sans;}.googleSignIcon-3{letter-spacing:0em;}
 .delateteam-1 {
     fill: #ccc;
 }
