@@ -6,7 +6,7 @@ import { GoogleLogin, EmailLoginSVG, AppleSigninIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
 import firebase from 'firebase'
-import { firebaseconfig } from './firebase'
+
 
 class Login extends Component {
     constructor(props) {
@@ -44,13 +44,9 @@ class Login extends Component {
             }
         }
         this.setState({ message, windowwidth })
-        this.initializeFirebase()
-    }
-    initializeFirebase() {
-        const configs = firebaseconfig()
-        firebase.initializeApp(configs);
 
     }
+
     googleSignIn() {
         let provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope('email');

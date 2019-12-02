@@ -24,7 +24,9 @@ import ProjectTeam from './components/projectteam';
 import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
 import { CheckUserLogin } from './components/actions/api'
-import {MyUserModel} from './components/functions'
+import { MyUserModel } from './components/functions'
+import firebase from 'firebase'
+import { firebaseconfig } from './components/firebase'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -33,7 +35,12 @@ class App extends Component {
 
     componentDidMount() {
         document.title = "projectmanagement.civilengineer.io";
+
+        const configs = firebaseconfig()
+        firebase.initializeApp(configs);
+
         this.checkuserlogin();
+
     }
 
     async checkuserlogin() {
@@ -62,35 +69,35 @@ class App extends Component {
     render() {
         return (
             <div className="appbody-container">
-            <BrowserRouter>
-    <div>
-    <Header/>
-    <Switch>
-    <Route exact path="/" component={Home} />
-    <Route exact path="/:providerid" component={ViewProfile} />
-    <Route exact path="/:providerid/profile" component={Profile} />
-    <Route exact path="/:providerid/myprojects" component={MyProjects} />
-    <Route exact path="/:providerid/myprojects/:projectid" component={Project} />
-    <Route exact path="/:providerid/myprojects/:projectid/milestones" component={ProjectMilestone} />
-    <Route exact path="/:providerid/myprojects/:projectid/schedulelabor" component={ProjectScheduleLabor} />
-    <Route exact path="/:providerid/myprojects/:projectid/actuallabor" component={ActualLabor} />
-    <Route exact path="/:providerid/myprojects/:projectid/schedulematerials" component={ProjectScheduleMaterials} />
-    <Route exact path="/:providerid/myprojects/:projectid/actualmaterials" component={ActualMaterials} />
-    <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />
-    <Route exact path="/:providerid/myprojects/:projectid/invoices" component={Invoices} />
-    <Route exact path="/:providerid/myprojects/:projectid/projectteam" component={ProjectTeam} />
-    <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid" component={ViewInvoice} />
-    <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid" component={ViewProposal} />
-    <Route exact path="/:providerid/completeprofile" component={RegisterClient}/>
-    <Route exact path="/providers/join" component={Join} />
-    <Route exact path="/providers/register" component={Register} />
-    <Route exact path="/providers/login" component={Login} />
-    <Route exact path="/providers/login/:message" component={Login} />
-    </Switch>
-    </div>
-   
-    </BrowserRouter>
- </div>
+                <BrowserRouter>
+                    <div>
+                        <Header />
+                        <Switch>
+                            <Route exact path="/" component={Home} />
+                            <Route exact path="/:providerid" component={ViewProfile} />
+                            <Route exact path="/:providerid/profile" component={Profile} />
+                            <Route exact path="/:providerid/myprojects" component={MyProjects} />
+                            <Route exact path="/:providerid/myprojects/:projectid" component={Project} />
+                            <Route exact path="/:providerid/myprojects/:projectid/milestones" component={ProjectMilestone} />
+                            <Route exact path="/:providerid/myprojects/:projectid/schedulelabor" component={ProjectScheduleLabor} />
+                            <Route exact path="/:providerid/myprojects/:projectid/actuallabor" component={ActualLabor} />
+                            <Route exact path="/:providerid/myprojects/:projectid/schedulematerials" component={ProjectScheduleMaterials} />
+                            <Route exact path="/:providerid/myprojects/:projectid/actualmaterials" component={ActualMaterials} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices" component={Invoices} />
+                            <Route exact path="/:providerid/myprojects/:projectid/projectteam" component={ProjectTeam} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid" component={ViewInvoice} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid" component={ViewProposal} />
+                            <Route exact path="/:providerid/completeprofile" component={RegisterClient} />
+                            <Route exact path="/providers/join" component={Join} />
+                            <Route exact path="/providers/register" component={Register} />
+                            <Route exact path="/providers/login" component={Login} />
+                            <Route exact path="/providers/login/:message" component={Login} />
+                        </Switch>
+                    </div>
+
+                </BrowserRouter>
+            </div>
         );
     }
 }
