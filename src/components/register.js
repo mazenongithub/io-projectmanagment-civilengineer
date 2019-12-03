@@ -155,6 +155,10 @@ class Register extends Component {
         let client = "";
         let clientid = "";
         let profileurl = "";
+        let emailaddress = this.state.emailaddress;
+        let phonenumber = this.state.phonenumber;
+        let firstname = this.state.firstname;
+        let lastname = this.state.lastname;
         try {
             let result = await firebase.auth().signInWithPopup(provider)
 
@@ -165,11 +169,29 @@ class Register extends Component {
             profileurl = user.providerData[0].photoURL;
             client = 'google';
             clientid = user.providerData[0].uid;
+            if (!emailaddress) {
+                emailaddress = user.providerData[0].email;
+            }
+            if (!firstname && user.providerData[0].displayName) {
+                firstname = user.providerData[0].displayName.split(' ')[0]
+            }
+            if (!lastname && user.providerData[0].displayName) {
+                lastname = user.providerData[0].displayName.split(' ')[1]
+            }
+            if (!phonenumber) {
+                phonenumber = user.providerData[0].phoneNumber
+            }
+
             var accessToken = result.credential.accessToken;
             var idToken = result.credential.idToken;
-            console.log({ accessToken, idToken })
-            console.log("googlesignin", client, clientid, profileurl)
-            this.setState({ client, clientid, profileurl })
+
+
+            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname })
+
+
+
+
+
             // ...
         } catch (error) {
             // Handle Errors here.
@@ -193,20 +215,40 @@ class Register extends Component {
         let client = "";
         let clientid = "";
         let profileurl = "";
+        let emailaddress = this.state.emailaddress;
+        let phonenumber = this.state.phonenumber;
+        let firstname = this.state.firstname;
+        let lastname = this.state.lastname;
         provider.addScope('email');
         provider.addScope('name');
         try {
             let result = await firebase.auth().signInWithPopup(provider)
+
             // The signed-in user info.
+
             var user = result.user;
             console.log(user)
             profileurl = user.providerData[0].photoURL;
             client = 'apple';
             clientid = user.providerData[0].uid;
+            if (!emailaddress) {
+                emailaddress = user.providerData[0].email;
+            }
+            if (!firstname && user.providerData[0].displayName) {
+                firstname = user.providerData[0].displayName.split(' ')[0]
+            }
+            if (!lastname && user.providerData[0].displayName) {
+                lastname = user.providerData[0].displayName.split(' ')[1]
+            }
+            if (!phonenumber) {
+                phonenumber = user.providerData[0].phoneNumber
+            }
+
             var accessToken = result.credential.accessToken;
             var idToken = result.credential.idToken;
-            console.log({ accessToken, idToken })
-            this.setState({ client, clientid, profileurl })
+
+
+            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname })
 
         } catch (error) {
             // Handle Errors here.
