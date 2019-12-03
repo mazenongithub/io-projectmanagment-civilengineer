@@ -23,11 +23,11 @@ class Header extends Component {
         var logoutURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/user/logout";
         if (this.props.myusermodel.hasOwnProperty("providerid")) {
             return (<a href={logoutURL}
-            className="nav-link"> <span className="nav-link">Logout </span> </a>);
+                className="nav-link"> <span className="nav-link">Logout </span> </a>);
         }
         else if (this.props.myusermodel.hasOwnProperty("message")) {
 
-            return (<Link  className="nav-link" to="/providers/login"><span className="nav-link"> Login  </span></Link>);
+            return (<Link className="nav-link" to="/providers/login"><span className="nav-link"> Login  </span></Link>);
 
         }
         else {
@@ -44,7 +44,7 @@ class Header extends Component {
         }
         else if (this.props.myusermodel.hasOwnProperty("message")) {
 
-            return (<Link to="/providers/join" className="nav-link"> Register </Link>);
+            return (<Link to="/providers/register" className="nav-link"> Register </Link>);
 
         }
         else {
@@ -56,10 +56,10 @@ class Header extends Component {
     showdashboard() {
         if (this.props.myusermodel.hasOwnProperty("providerid")) {
             let providerid = this.props.myusermodel.providerid;
-            return (<Link  className="nav-link" to={`/${providerid}/myprojects`}>  Projects  </Link>);
+            return (<Link className="nav-link" to={`/${providerid}/myprojects`}>  Projects  </Link>);
         }
         else if (this.props.myusermodel) {
-            return (<Link  className="nav-link" to="/"> Home </Link>)
+            return (<Link className="nav-link" to="/"> Home </Link>)
         }
 
         else {
@@ -114,7 +114,7 @@ class Header extends Component {
                 case "milestones":
                     providerid = this.props.myusermodel.providerid;
                     projectid = this.props.projectid.projectid;
-                    myjsx.push(<Link  to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>)
                     return (myjsx);
@@ -128,7 +128,7 @@ class Header extends Component {
                 case "schedulelabor":
                     providerid = this.props.myusermodel.providerid;
                     projectid = this.props.projectid.projectid;
-                    myjsx.push(<Link  to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/schedulelabor`} className="nav-link">  {`/schedulelabor`}  </Link>)
                     return (myjsx);
@@ -142,32 +142,32 @@ class Header extends Component {
                 case "actuallabor":
                     providerid = this.props.myusermodel.providerid;
                     projectid = this.props.projectid.projectid;
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/actuallabor`} className="nav-link">  {`/actuallabor`}  </Link>)
                     return (myjsx);
                 case "actualmaterials":
                     providerid = this.props.myusermodel.providerid;
                     projectid = this.props.projectid.projectid;
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/actualmaterials`} className="nav-link">  {`/actualmaterials`}  </Link>)
                     return (myjsx);
                 case "proposals":
 
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
                     return (myjsx);
                 case "invoices":
 
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
                     return (myjsx);
                 case "viewinvoice":
 
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
 
@@ -176,7 +176,7 @@ class Header extends Component {
                     providerid = this.props.myusermodel.providerid;
                     projectid = this.props.projectid.projectid;
 
-                    myjsx.push(<Link to={`/${providerid}/myprojects`}  className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
 
@@ -195,19 +195,19 @@ class Header extends Component {
     render() {
 
         return (<div className="navigation-container">
-        <div className="navigation-element-1">
-        <div className="navigation-logo-container">{Logo()}</div>
-        </div>
-          {this.getextradiv()}
-         <div className="navigation-element-2">
-        <ul className="navigation-liststyle">
-        <li> {this.handleregister() } </li>
-        <li>{this.showdashboard()}</li>
-        <li>{this.showlogout()}</li>
-        </ul>
-        </div>
-         <div className="navigation-element-3">{this.navigationmenu()}
-        </div>
+            <div className="navigation-element-1">
+                <div className="navigation-logo-container">{Logo()}</div>
+            </div>
+            {this.getextradiv()}
+            <div className="navigation-element-2">
+                <ul className="navigation-liststyle">
+                    <li> {this.handleregister()} </li>
+                    <li>{this.showdashboard()}</li>
+                    <li>{this.showlogout()}</li>
+                </ul>
+            </div>
+            <div className="navigation-element-3">{this.navigationmenu()}
+            </div>
         </div>)
     }
 }

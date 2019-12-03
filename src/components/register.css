@@ -25,8 +25,7 @@
     font-size: 30px;
     text-align: center;
 }
-
-.register-spanall,
+.register-regularfont,
 .project-field,
 .register-errmessage,
 .register-providerid-container,
@@ -36,7 +35,9 @@
 
 
 .register-errmessage,
-.register-button-container {
+.register-button-container,
+.client-container,
+.register-aligncenter {
     text-align: center;
 }
 
@@ -59,8 +60,24 @@
 .register-errmessage {
     color: #CC1D1D;
 }
-
+.btnclientregister{
+    width:170px;
+    height:40px;
+}
+.btnregisternow{
+    width:240px;
+    height:45px;
+}
 @media screen and (min-width:721px) {
+    .btnregisternow{
+        width:360px;
+        height:70px;
+    }
+    .btnclientregister{
+        width:300px;
+        height:55px;
+    }
+    
     .button-completeprofile {
         width: 310px;
     }
@@ -74,7 +91,7 @@
     .register-providerid-container {
         grid-column-end: span 3;
     }
-    .register-spanall,
+   
     .register-field,
     .register-errmessage,
     .register-providerid-container,
@@ -101,6 +118,10 @@
 }
 
 @media screen and (min-width:1081px) {
+    .btnregisternow{
+        width:370px;
+        height:80px;
+    }
     .button-completeprofile {
         width: 345px;
     }
@@ -118,7 +139,7 @@
     .register-providerid-container {
         grid-column-end: span 6;
     }
-    .register-spanall,
+    
     .register-field,
     .register-errmessage,
     .register-providerid-container,

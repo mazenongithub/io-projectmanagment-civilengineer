@@ -49,6 +49,9 @@ export function newStripeConnectIcon() {
 export function uploadnewProfilePictureIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 464 86"><defs><style></style></defs><title>updateprofileimage</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="uploadnewprofileimage-1" x="0.5" y="0.5" width="463" height="85" rx="8.54" /><text className="uploadnewprofileimage-2" transform="translate(29.86 54.31)">Update <tspan className="uploadnewprofileimage-3" x="152.35" y="0">Pr</tspan><tspan className="uploadnewprofileimage-4" x="194.4" y="0">o</tspan><tspan x="218.22" y="0">file Image</tspan></text></g></g></svg>)
 }
+export function RegisterNowIcon() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 378 81.5"> <defs><style></style></defs> <title>registernow</title> <g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="registernow-1" x="2.5" y="0.5" width="375" height="80.5" rx="10.64" /><text className="registernow-2" transform="translate(53.22 49.57)">Regi<tspan className="registernow-3" x="89.24" y="0">s</tspan><tspan x="110.24" y="0">ter N</tspan><tspan className="registernow-4" x="208.92" y="0">o</tspan><tspan className="registernow-5" x="232.88" y="0">w</tspan></text></g></g></svg >)
+}
 export function saveAllProfileIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 367 79"><defs><style></style></defs><title>saveallprofile</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="saveallprofile-1" x="0.5" y="0.5" width="366" height="78" rx="8.11" /><text className="saveallprofile-2" transform="translate(45.35 49.9)">Sa<tspan className="saveallprofile-3" x="47.03" y="0">v</tspan><tspan x="67.85" y="0">e All </tspan><tspan className="saveallprofile-4" x="159.45" y="0">Pr</tspan><tspan className="saveallprofile-5" x="199.54" y="0">o</tspan><tspan x="222.26" y="0">file </tspan></text></g></g></svg>)
 }

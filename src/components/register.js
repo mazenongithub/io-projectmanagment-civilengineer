@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import './register.css';
 import './svg/svg.css';
 import * as actions from './actions';
-import { RegisterWithEmail, checkClientIcon } from './svg'
+import { GoogleSigninIcon, AppleSigninIcon, RegisterNowIcon, checkClientIcon } from './svg'
 import { connect } from 'react-redux';
 import { showOccupations, UsStates, validateProviderID, validateName, validateEmail, validatePhoneNumber, validateZipcode, validatePassword } from './functions';
 import { CheckProviderID, CheckCommission } from './actions/api'
-
+import firebase from 'firebase'
 class Register extends Component {
 
     constructor(props) {
@@ -27,6 +27,9 @@ class Register extends Component {
             emailaddress: '',
             phonenumber: '',
             password: '',
+            client: '',
+            clientid: '',
+            profileurl: '',
             commissionmessage: 'Enter the Provider ID if you were referred by another Service Provider ?'
         }
 
@@ -145,6 +148,84 @@ class Register extends Component {
         }
 
     }
+    async googleSignIn() {
+        let provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        let client = "";
+        let clientid = "";
+        let profileurl = "";
+        try {
+            let result = await firebase.auth().signInWithPopup(provider)
+
+            // The signed-in user info.
+
+            var user = result.user;
+            console.log(user)
+            profileurl = user.providerData[0].photoURL;
+            client = 'google';
+            clientid = user.providerData[0].uid;
+            var accessToken = result.credential.accessToken;
+            var idToken = result.credential.idToken;
+            console.log({ accessToken, idToken })
+            console.log("googlesignin", client, clientid, profileurl)
+            this.setState({ client, clientid, profileurl })
+            // ...
+        } catch (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            console.log(errorCode)
+            var errorMessage = error.message;
+            console.log(errorMessage)
+            // The email of the user's account used.
+            var email = error.email;
+            console.log(email)
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            console.log(credential)
+
+            // ...
+        }
+
+    }
+    async appleSignIn() {
+        let provider = new firebase.auth.OAuthProvider('apple.com');
+        let client = "";
+        let clientid = "";
+        let profileurl = "";
+        provider.addScope('email');
+        provider.addScope('name');
+        try {
+            let result = await firebase.auth().signInWithPopup(provider)
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user)
+            profileurl = user.providerData[0].photoURL;
+            client = 'apple';
+            clientid = user.providerData[0].uid;
+            var accessToken = result.credential.accessToken;
+            var idToken = result.credential.idToken;
+            console.log({ accessToken, idToken })
+            this.setState({ client, clientid, profileurl })
+
+        } catch (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            console.log(errorCode)
+            var errorMessage = error.message;
+            console.log(errorMessage)
+            // The email of the user's account used.
+            var email = error.email;
+            console.log(email)
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            console.log(credential)
+
+            // ...
+        };
+
+
+    }
     handleform() {
         let form = [];
         if (this.state.provideridcheck) {
@@ -222,40 +303,75 @@ class Register extends Component {
                 onBlur={() => { this.verifyCommission() }}
                 onChange={(event) => { this.setState({ commission: event.target.value }) }}
                 className="project-field" />  </div>)
+            form.push(
+                <div className="register-spanall register-regularfont client-container register-regularFont register-aligncenter">
+                    {this.clientmessage()}
+                    <input type="hidden" id="register-clientid" value={this.state.clientid} name="clientid" />
+                    <input type="hidden" id="register-client" value={this.state.client} name="client" />
+                    <input type="hidden" id="register-profileurl" value={this.state.profileurl} name="profileurl" />
+                </div>)
 
-            form.push(<div className="register-buttoncontainer-1">
-                <button id="btnregisteremail">
-                    {RegisterWithEmail()}
+            form.push(<div className="register-field register-aligncenter"> <button type="button" className="btnclientregister general-button" onClick={() => { this.googleSignIn() }}>
+                {GoogleSigninIcon()}
+            </button></div>)
+            form.push(<div className="register-field register-aligncenter"><button type="button" className="btnclientregister general-button" onClick={() => { this.appleSignIn() }}>
+                {AppleSigninIcon()}
+            </button></div>)
+            form.push(<div className="register-spanall register-aligncenter">
+                <button className="btnregisternow general-button">
+                    {RegisterNowIcon()}
                 </button>
             </div>)
+
         }
         return form;
     }
+    clientmessage() {
+        let client = this.state.client;
+
+        let message = "";
+        if (client === 'google') {
+            console.log("googlesignin", client)
+            message = `Your preferred signin method is ${client}`
+        } else if (client === 'apple') {
+            console.log("googlesignin", client)
+            message = `Your preferred signin method is ${client}`
+        } else {
+            message = `Add your Client Account for Easy Sign In`
+        }
+
+        return message;
+    }
     render() {
         let formpostURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/registernewuser";
-        return (<form action={formpostURL} method="post"
-            onSubmit={event => { this.handleSubmit(event) }}>
-            <div className="register-container">
-                <div className="register-titlerow">Register By Email </div>
-                <div className="register-spanall register-errmessage">{this.state.message} </div>
-                <div className="register-field"> ProviderID <br />
-                    <input type="text" className="project-field"
-                        name="providerid"
-                        value={this.state.providerid}
-                        onChange={event => { this.handleProviderID(event.target.value) }}
-                        onFocus={event => { this.verifyProviderID(event) }}
-                        onBlur={event => { this.verifyProviderID(event) }}
-                    />
+        return (
 
-                </div>
-                <div className="register-field">
-                    {this.handleprofileicon()}
-                </div>
-                <div className="register-spanall">   {this.getprovideridmessage()} </div>
 
-                {this.handleform()}
-            </div>
-        </form>)
+            <form action={formpostURL} method="post"
+                onSubmit={event => { this.handleSubmit(event) }}>
+                <div className="register-container">
+                    <div className="register-aligncenter register-spanall titleFont">Register </div>
+                    <div className="register-spanall register-errmessage">{this.state.message} </div>
+                    <div className="register-field"> ProviderID <br />
+                        <input type="text" className="project-field"
+                            name="providerid"
+                            value={this.state.providerid}
+                            onChange={event => { this.handleProviderID(event.target.value) }}
+                            onFocus={event => { this.verifyProviderID(event) }}
+                            onBlur={event => { this.verifyProviderID(event) }}
+                        />
+
+                    </div>
+                    <div className="register-field">
+                        {this.handleprofileicon()}
+                    </div>
+                    <div className="register-spanall register-regularfont">   {this.getprovideridmessage()} </div>
+
+                    {this.handleform()}
+                </div>
+            </form>
+
+        )
     }
 }
 
