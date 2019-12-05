@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
 .project-field {
     width: 95%;
     padding: 5px;
@@ -128,7 +129,12 @@
     font-family: 'Nunito Sans', sans-serif;
 
 }
-
+.textareaFont  
+{  
+  font-family: 'Nunito Sans', sans-serif;  
+  font-weight:400
+ 
+}
 .projectid-large-1,
 .projectid-large-1a,
 .projectid-large-3,

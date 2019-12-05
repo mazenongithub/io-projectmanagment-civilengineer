@@ -568,7 +568,6 @@ class MyActualMaterials extends Component {
                         {display}
                     </div>)
 
-
                 }
                 else if (i >= 13 && i <= 34) {
                     let display = " "

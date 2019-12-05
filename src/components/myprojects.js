@@ -882,10 +882,12 @@ class MyProjects extends Component {
       projectinfo.push(<div className="projecthome-element-3">Project State <br /><select className="project-field"
         onChange={event => { this.ChangeState(event.target.value) }}
         value={this.getState()}>{this.getStates()}</select></div>)
-      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br /> <textarea
-        onChange={event => { this.ChangeScope(event.target.value) }}
-        value={this.getScope()}
-        className="project-field"> </textarea> </div>)
+      projectinfo.push(<div className="projecthome-element-1">Scope of Work <br />
+        <textarea
+          onChange={event => { this.ChangeScope(event.target.value) }}
+          value={this.getScope()}
+          className="project-field project-regularfont textareaFont">
+        </textarea> </div>)
     }
     else {
       projectinfo.push(<div className="projecthome-element-1"> Project Title <br />{this.getTitle()}</div>)
