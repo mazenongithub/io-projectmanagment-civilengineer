@@ -2,6 +2,14 @@
 .align-contentCenter{
     text-align:center;
 }
+.btn-removeIcon{
+    width:82px;
+    height:68px;
+}
+.btn-clearlaborid{
+    width:366px;
+    height:76px;
+}
 .showBorder{
     border:1px solid;
 }

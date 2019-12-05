@@ -4,7 +4,7 @@ import * as actions from './actions';
 import './schedule.css';
 import { ProviderEndPoint } from './actions/api'
 // eslint-disable-next-line 
-import { SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
+import { removeIcon, SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
 import {
     inputDateObjOutputAdjString,
     calculatetotalhours,
@@ -945,24 +945,23 @@ class MyScheduleLabor extends Component {
         }
     }
     showlaborid(mylabor) {
-        let laborid = [];
-        if (this.state.width > 1080) {
-            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className={`schedulelaborid-row-1a ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
-            laborid.push(<div className="schedulelaborid-row-1b"><button className="laborid-icon" onClick={event => { this.handleDelete(event, mylabor.laborid) }}>{deleteLaborIcon()} </button> </div>)
-            laborid.push(<div className={`schedulelaborid-row-2 ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
-            laborid.push(<div className="schedulelaborid-row-3"><button className="laborid-icon" onClick={event => { this.findlabor(mylabor.laborid) }}>{editLaborIcon()}</button> </div>)
-        }
-        else {
-            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}  </div>)
-            laborid.push(<div className={`schedulelaborid-small-1 ${this.getactivelaborid(mylabor.laborid)}`}>${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</div>)
-            laborid.push(<div className={`schedulelaborid-row-2 ${this.getactivelaborid(mylabor.laborid)}`}>{mylabor.description} </div>)
-            laborid.push(<div className="schedulelaborid-small-1"> <button className="laborid-icon" onClick={event => { this.findlabor(mylabor.laborid) }}>{editLaborIcon()}</button> </div>)
-            laborid.push(<div className="schedulelaborid-small-1 align-right"><button className="laborid-icon" onClick={event => { this.handleDelete(event, mylabor.laborid) }}>{deleteLaborIcon()} </button> </div>)
+        return (
+            <div className="general-flex">
+                <div className="flex-7" onClick={event => { this.findlabor(mylabor.laborid) }}>
+                    <span className="regularFont">{mylabor.description}</span> <br />
+                    <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
+                    <span className="regularFont">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</span>
+                </div>
+                <div className="flex-1 align-contentCenter">
+                    <button className="btn-removeIcon general-button" onClick={event => { this.handleDelete(event, mylabor.laborid) }}>
+                        {removeIcon()}
+                    </button>
 
-        }
+                </div>
 
-        return laborid;
+            </div>
+        )
+
     }
     getproject() {
         let project = {};
@@ -976,6 +975,62 @@ class MyScheduleLabor extends Component {
             })
         }
         return project;
+    }
+    getactivelabor() {
+        let labor = {}
+        if (this.state.activelaborid) {
+            let laborid = this.state.activelaborid;
+            let myproject = this.getproject();
+            if (myproject.hasOwnProperty("schedulelabor")) {
+                myproject.schedulelabor.mylabor.map((mylabor, i) => {
+                    if (mylabor.laborid === laborid) {
+                        labor = mylabor;
+                    }
+                })
+            }
+        }
+        return labor;
+    }
+    getactivelaborkey() {
+        let key = "";
+        if (this.state.activelaborid) {
+            let laborid = this.state.activelaborid;
+            let myproject = this.getproject();
+            if (myproject.hasOwnProperty("schedulelabor")) {
+                myproject.schedulelabor.mylabor.map((mylabor, i) => {
+                    if (mylabor.laborid === laborid) {
+                        key = i;
+                    }
+                })
+            }
+        }
+        return key;
+    }
+    getprojectkey() {
+        let projectid = this.props.projectid.projectid;
+        let key = false;
+        if (this.props.projects) {
+            if (this.props.projects.hasOwnProperty("length")) {
+                this.props.projects.map((myproject, i) => {
+                    if (myproject.projectid === projectid) {
+                        key = i;
+                    }
+                })
+            }
+        }
+        if (!key) {
+            if (this.props.projectsprovider) {
+                if (this.props.projectsprovider.hasOwnProperty("length")) {
+                    this.props.projectsprovider.map((myproject, i) => {
+                        if (myproject.projectid === projectid) {
+                            key = i;
+                        }
+                    })
+                }
+            }
+        }
+
+        return key;
     }
     clearlaborid() {
         let laborrate = "";
@@ -994,7 +1049,15 @@ class MyScheduleLabor extends Component {
     }
     handleClearProject() {
         if (this.state.activelaborid) {
-            return (<button className="btnsaveprojects" onClick={event => { this.clearlaborid(event) }}>{ClearActiveLabor()} </button>)
+            let mylabor = this.getactivelabor();
+            return (
+                <div className="general-flex">
+                    <div className="regualrFont flex-1 align-contentCenter">
+                        <span className="regularFont">{`Active Labor ID is ${mylabor.description}`}</span><br />
+                        <button className="general-button btn-clearlaborid" onClick={event => { this.clearlaborid(event) }}>{ClearActiveLabor()} </button>
+                    </div>
+                </div>
+            )
         }
         else {
             return (<span>&nbsp;</span>)
@@ -1524,33 +1587,47 @@ class MyScheduleLabor extends Component {
                         </div>
                     </div>
 
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="regularFont"> {this.handleClearProject()} </div>
+                        </div>
+
+                    </div>
 
                     <div className="general-flex">
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            <div className="regularFont">
+                                Select A Milestone ID <br />
+                                <select className="project-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
+                                    <option>Select A Milestone </option>
+                                    {this.loadmilestones()}
+                                </select>
+                            </div>
                         </div>
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            <div className="regularFont"> Labor Rate <br />
+                                <input type="text" className="project-field align-contentCenter" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} /></div>
                         </div>
                     </div>
 
                     <div className="general-flex">
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            <div className="align-contentCenter regularFont"> Total Hours <br /></div>
                         </div>
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            <div className="align-contentCenter regularFont"> Amount <br /></div>
                         </div>
                     </div>
+
                     <div className="general-flex">
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            <div className="regularFont">Description <br /><input type="text" className="project-field" onChange={event => { this.handledescription(event.target.value) }} value={this.getdescription()} /></div>
                         </div>
 
                     </div>
                     <div className="general-flex">
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            {this.handleshowlaborid()}
                         </div>
 
                     </div>

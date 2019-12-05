@@ -2,6 +2,9 @@ import React from 'react';
 export function AppleSigninIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 301 56"><defs><style></style></defs><title>appleLoginIcon</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="appleSigninIcon-1" x="0.5" y="0.5" width="300" height="55" rx="4.68" /><text className="appleSigninIcon-2" transform="translate(39.16 33.15) scale(0.96 1)"><tspan className="appleSigninIcon-3">L</tspan><tspan x="16.17" y="0">ogin with Apple</tspan></text></g></g></svg>)
 }
+export function removeIcon() {
+    return(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41.25 34.94"><defs><style></style></defs><title>removeIcon</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="removeicon-1" x="0.5" y="0.5" width="40.25" height="33.94"/><polygon className="removeicon-2" points="33.44 26.01 29.55 29.51 20.05 21.46 10.79 29.79 6.79 26.4 16.05 18.08 6.54 10.03 10.44 6.53 19.94 14.57 29.2 6.25 33.2 9.64 23.94 17.96 33.44 26.01"/></g></g></svg>)
+}
 export function defaultProfilePhoto() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 274 267"><defs><style></style></defs><title>defaultphoto</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="defaultphoto-1" x="0.5" y="0.5" width="273" height="266" /><path className="defaultphoto-2" d="M255.81,176.48v70a20,20,0,0,1-20,20H46.8a20,20,0,0,1-20-20v-70a20,20,0,0,1,20-20H107a73.15,73.15,0,0,1-19.67-14.33A68,68,0,0,1,67.62,94.5c0-38.66,32.91-70,73.5-70s73.5,31.34,73.5,70a68,68,0,0,1-19.31,47.3,73.44,73.44,0,0,1-20,14.7h60.56A20,20,0,0,1,255.81,176.48Z" /></g></g></svg>)
 }
