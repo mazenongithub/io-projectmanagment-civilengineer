@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 import './schedule.css';
 import { ProviderEndPoint } from './actions/api'
+// eslint-disable-next-line 
 import { SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
 import {
     inputDateObjOutputAdjString,
@@ -897,103 +898,6 @@ class MyScheduleLabor extends Component {
         }
 
     }
-    showtimein() {
-        return (<div className="labortime-container">
-
-            <div className="labortime-label">Month </div>
-            <div className="labortime-label">Day</div>
-            <div className="labortime-label">Year </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeinmonth()} />
-            </div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthup(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinmonthdown(event) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeinday()} /></div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinyear()} /></div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyearup(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeinyeardown(event) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-label">Hr. </div>
-            <div className="labortime-label">Min. </div>
-            <div className="labortime-label">AM/PM </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinhours()} />
-            </div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60)) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeinminutes()} />&nbsp;</div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60)) }} > {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"><input type="text" className="project-field time-field" value={this.gettimeinampm()} /></div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeinampm(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeinampm(event) }}> {DateArrowDown()}</button></div>
-            </div>
-        </div>)
-    }
-
-    showtimeout() {
-        return (<div className="labortime-container">
-
-            <div className="labortime-label">Mon </div>
-            <div className="labortime-label">Day </div>
-            <div className="labortime-label">Year </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeoutmonth()} />
-            </div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthup(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthdown(event) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutyear()} /></div>
-
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyearup(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyeardown(event) }}> {DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-label">Hr. </div>
-            <div className="labortime-label">Min. </div>
-            <div className="labortime-label">AM/PM </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeouthours()} />
-            </div>
-
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60)) }}>{DateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutminutes()} />&nbsp;</div>
-
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60)) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60)) }}> {DateArrowDown()}</button></div>
-            </div>
-
-            <div className="labortime-element"><input type="text" className="project-field time-field" value={this.gettimeoutampm()} /></div>
-
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeoutampm(event) }}>{DateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.toggletimeoutampm(event) }}> {DateArrowDown()}</button></div>
-            </div>
-        </div>)
-    }
     handleshowlaborid() {
         let laborid = [];
         let myproject = this.getproject();
@@ -1470,7 +1374,132 @@ class MyScheduleLabor extends Component {
             return "";
         }
     }
+    showtimein() {
+        return (
+            <div className="general-flex">
+                <div className="flex-1">
 
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+
+                            <div className="general-flex">
+                                <div className="flex-3 showBorder timedisplay-container">
+                                    &nbsp;
+                                </div>
+                                <div className="flex-1 showBorder timedisplay-container">
+                                    &nbsp;
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder timecell-container">
+
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container">
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+
+                        </div>
+                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
+                            &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div></div>
+                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
+                            &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div></div>
+                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
+                            &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
+                            &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                            <div className="timecell-module showBorder">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder calendar-container">
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        )
+    }
+    showtimeout() {
+        return (
+            <div className="general-flex">
+                <div className="flex-1">
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">&nbsp;
+
+
+                        </div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">&nbsp;</div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">&nbsp;</div>
+                    </div>
+
+
+                </div>
+            </div>
+        )
+    }
     render() {
         return (
 
@@ -1486,16 +1515,12 @@ class MyScheduleLabor extends Component {
 
                     <div className="general-flex">
                         <div className="flex-1 showBorder">
-                            <div className=""> &nbsp;
-
-
-
-                            </div>
+                            {this.showtimein()}
                         </div>
 
 
                         <div className="flex-1 showBorder">
-                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                            {this.showtimeout()}
                         </div>
                     </div>
 

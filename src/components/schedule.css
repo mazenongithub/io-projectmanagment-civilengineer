@@ -5,6 +5,18 @@
 .showBorder{
     border:1px solid;
 }
+.timecell-container{
+    min-height: 180px;
+}
+.timedisplay-container{
+    min-height:60px;
+}
+.calendar-container{
+    min-height: 540px;
+}
+.timecell-module{
+    min-height:60px;
+}
 @media screen and (min-width:539px) {
 
 }
