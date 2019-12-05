@@ -190,8 +190,10 @@ class Register extends Component {
             profileurl = user.providerData[0].photoURL;
             client = 'google';
             clientid = user.providerData[0].uid;
+            let emailcheck = 'invalid';
             if (!emailaddress) {
                 emailaddress = user.providerData[0].email;
+                emailcheck = 'valid'
             }
             if (!firstname && user.providerData[0].displayName) {
                 firstname = user.providerData[0].displayName.split(' ')[0]
@@ -207,7 +209,7 @@ class Register extends Component {
             //var idToken = result.credential.idToken;
 
 
-            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname })
+            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname, emailcheck })
 
 
 
