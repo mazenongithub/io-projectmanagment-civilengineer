@@ -5,7 +5,6 @@ import * as actions from './actions';
 import './login.css';
 import firebase from 'firebase'
 
-
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -45,113 +44,94 @@ class Login extends Component {
 
     }
 
-    googleSignIn() {
+    async googleSignIn() {
         let provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope('email');
         provider.addScope('profile');
-        firebase
-            .auth()
-            .signInWithPopup(provider)
-            .then(function (result) {
-                // The signed-in user info.
-                var user = result.user;
+        try {
+            let result = await firebase.auth().signInWithPopup(provider)
 
-                let emailaddress = user.providerData[0].email;
-                let firstname = user.providerData[0].displayName.split(' ')[0]
-                let lastname = user.providerData[0].displayName.split(' ')[1]
-                let phonenumber = user.providerData[0].phoneNumber
-                let profileurl = user.providerData[0].photoURL;
-                let client = 'google';
-                let clientid = user.providerData[0].uid;
-                document.getElementById("form-clientid").value = clientid;
-                document.getElementById("form-client").value = client;
-                document.getElementById("form-firstname").value = firstname;
-                document.getElementById("form-lastname").value = lastname;
-                document.getElementById("form-emailaddress").value = emailaddress;
-                document.getElementById("form-phonenumber").value = phonenumber;
-                document.getElementById("form-profileurl").value = profileurl;
+            // The signed-in user info.
+            var user = result.user;
 
-                let loginform = document.getElementById("loginform")
-                loginform.submit();
-                // You can also get the Apple OAuth Access and ID Tokens.
-                var accessToken = result.credential.accessToken;
-                var idToken = result.credential.idToken;
-                console.log({ accessToken, idToken })
+            let emailaddress = user.providerData[0].email;
+            let firstname = user.providerData[0].displayName.split(' ')[0]
+            let lastname = user.providerData[0].displayName.split(' ')[1]
+            let phonenumber = user.providerData[0].phoneNumber
+            let profileurl = user.providerData[0].photoURL;
+            let client = 'google';
+            let clientid = user.providerData[0].uid;
+            this.setState({ clientid, client, firstname, lastname, emailaddress, phonenumber, profileurl })
+            let loginform = document.getElementById("loginform")
+            loginform.submit();
 
-                // ...
-            })
-            .catch(function (error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                console.log(errorCode)
-                var errorMessage = error.message;
-                console.log(errorMessage)
-                // The email of the user's account used.
-                var email = error.email;
-                console.log(email)
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
-                console.log(credential)
+            // You can also get the Apple OAuth Access and ID Tokens.
+            var accessToken = result.credential.accessToken;
+            var idToken = result.credential.idToken;
+            console.log({ accessToken, idToken })
 
-                // ...
-            });
+            // ...
+        } catch (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            console.log(errorCode)
+            var errorMessage = error.message;
+            console.log(errorMessage)
+            // The email of the user's account used.
+            var email = error.email;
+            console.log(email)
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            console.log(credential)
+
+            // ...
+        }
     }
-    appleSignIn() {
+    async appleSignIn() {
         let provider = new firebase.auth.OAuthProvider('apple.com');
         provider.addScope('email');
         provider.addScope('name');
-        firebase
-            .auth()
-            .signInWithPopup(provider)
-            .then(function (result) {
-                // The signed-in user info.
-                var user = result.user;
-                console.log(user)
-                let emailaddress = user.providerData[0].email;
-                let firstname = "";
-                let lastname = "";
-                if (user.providerData[0].displayName) {
-                    firstname = user.providerData[0].displayName.split(' ')[0]
-                    lastname = user.providerData[0].displayName.split(' ')[1]
-                } else {
-                    firstname = "";
-                    lastname = "";
-                }
-                let phonenumber = user.providerData[0].phoneNumber
-                let profileurl = user.providerData[0].photoURL;
-                let client = 'apple';
-                let clientid = user.providerData[0].uid;
-                document.getElementById("form-clientid").value = clientid;
-                document.getElementById("form-client").value = client;
-                document.getElementById("form-firstname").value = firstname;
-                document.getElementById("form-lastname").value = lastname;
-                document.getElementById("form-emailaddress").value = emailaddress;
-                document.getElementById("form-phonenumber").value = phonenumber;
-                document.getElementById("form-profileurl").value = profileurl;
+        try {
+            let result = await firebase.auth().signInWithPopup(provider)
 
-                let loginform = document.getElementById("loginform")
-                loginform.submit();
-                var accessToken = result.credential.accessToken;
-                var idToken = result.credential.idToken;
-                console.log({ accessToken, idToken })
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user)
+            let emailaddress = user.providerData[0].email;
+            let firstname = "";
+            let lastname = "";
+            if (user.providerData[0].displayName) {
+                firstname = user.providerData[0].displayName.split(' ')[0]
+                lastname = user.providerData[0].displayName.split(' ')[1]
+            } else {
+                firstname = "";
+                lastname = "";
+            }
+            let phonenumber = user.providerData[0].phoneNumber
+            let profileurl = user.providerData[0].photoURL;
+            let client = 'apple';
+            let clientid = user.providerData[0].uid;
+            this.setState({ clientid, client, firstname, lastname, emailaddress, phonenumber, profileurl })
+            let loginform = document.getElementById("loginform")
+            loginform.submit();
 
-                // ...
-            })
-            .catch(function (error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                console.log(errorCode)
-                var errorMessage = error.message;
-                console.log(errorMessage)
-                // The email of the user's account used.
-                var email = error.email;
-                console.log(email)
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
-                console.log(credential)
 
-                // ...
-            });
+            // ...
+        } catch (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            console.log(errorCode)
+            var errorMessage = error.message;
+            console.log(errorMessage)
+            // The email of the user's account used.
+            var email = error.email;
+            console.log(email)
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            console.log(credential)
+
+            // ...
+        };
 
 
     }
@@ -269,13 +249,13 @@ class Login extends Component {
                     </form>
 
                     <form id="loginform" action={`${process.env.REACT_APP_SERVER_API}/projectmanagement/webclient/loginuser`} method="post">
-                        <input type="hidden" id='form-clientid' name="clientid" />
-                        <input type="hidden" id='form-client' name="client" />
-                        <input type="hidden" id='form-firstname' name="firstname" />
-                        <input type="hidden" id='form-lastname' name="lastname" />
-                        <input type="hidden" id='form-emailaddress' name="emailaddress" />
-                        <input type="hidden" id='form-phonenumber' name="phonenumber" />
-                        <input type="hidden" id='form-profileurl' name="profileurl" />
+                        <input type="hidden" value={this.state.clientid} name="clientid" />
+                        <input type="hidden" value={this.state.client} name="client" />
+                        <input type="hidden" value={this.state.firstname} name="firstname" />
+                        <input type="hidden" value={this.state.lastname} name="lastname" />
+                        <input type="hidden" value={this.state.emailaddress} name="emailaddress" />
+                        <input type="hidden" value={this.state.phonenumber} name="phonenumber" />
+                        <input type="hidden" value={this.state.profileurl} name="profileurl" />
 
                     </form>
 
@@ -287,7 +267,8 @@ class Login extends Component {
 function mapStateToProps(state) {
     return {
         emailaddress: state.emailaddress,
-        password: state.password
+        password: state.password,
+        myusermodel: state.myusermodel
     }
 }
 export default connect(mapStateToProps, actions)(Login)

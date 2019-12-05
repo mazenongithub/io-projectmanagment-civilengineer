@@ -58,7 +58,7 @@ import {
     UPLOADIMAGE,
     PROVIDERID
 }
-from './types';
+    from './types';
 export const searchProviders = (searchproviders) => async dispatch => {
     dispatch({ type: SEARCHPROVIDERS, payload: searchproviders })
 }
@@ -66,6 +66,7 @@ export const projectAddress = (projectaddress) => async dispatch => {
     dispatch({ type: PROJECTADDRESS, payload: projectaddress })
 }
 export const providerID = (providerid) => async dispatch => {
+    console.log("PROVIDERID", providerid)
     dispatch({ type: PROVIDERID, payload: providerid })
 }
 export const reduxNavigation = (navigation) => async dispatch => {
@@ -185,7 +186,7 @@ export const myProvider = (myprovider) => async dispatch => {
 }
 
 export const projectTitle = (projecttitle) => async dispatch => {
- 
+
     dispatch({ type: PROJECTTITLE, payload: projecttitle })
 }
 
