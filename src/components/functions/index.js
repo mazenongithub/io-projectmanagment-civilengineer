@@ -2466,18 +2466,19 @@ export function validateProviderID(value) {
     const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,34}(?:[A-Za-z0-9_]))?)$/
     const test = reg_ex.test(value);
     value = value.trim();
+    let errmsg = "";
     if (!value) {
-        return " ProviderID is required ";
+        errmsg = " ProviderID is required ";
 
     }
     else if (value.length > 36) {
-        return " ProviderID should be less than 36 characters";
+        errmsg = " ProviderID should be less than 36 characters";
     }
     else if (!test) {
-        return ` Invalid Provider ID format ${value} `;
+        errmsg = ` Invalid Provider ID format ${value} `;
     }
 
-    return;
+    return errmsg;
 }
 export function validateCity(city) {
     let message = "";
