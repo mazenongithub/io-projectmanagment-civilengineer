@@ -1470,37 +1470,69 @@ class MyScheduleLabor extends Component {
             return "";
         }
     }
+
     render() {
         return (
 
-            <div className="labor-container">
-                <div className="labor-main">{this.getprojectitle()}</div>
-                <div className="labor-main">Schedule Labor</div>
-                <div className="labor-main">{this.handleClearProject()}</div>
-                <div className="labor-main">{this.getactivemessage()}</div>
-                <div className="labor-timein-general">Description <br /><input type="text" className="project-field" onChange={event => { this.handledescription(event.target.value) }} value={this.getdescription()} /></div>
-                <div className="labor-timein-container">{this.showtimein()}  </div>
-                <div className="labor-timein-container">{this.showtimeout()}  </div>
-                <div className="labor-timein-general">
-                    <select className="project-select-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
-                        <option>Select A Milestone </option>
-                        {this.loadmilestones()}
-                    </select>
-                </div>
-                <div className="labor-output-row">
-                    Labor Rate <br />
-                    <input type="text" className="project-field project-field-numeric" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} />
-                </div>
-                <div className="labor-output-row"> Total Hours <br />
-                    {this.showtotalhours()}</div>
-                <div className="labor-output-row">Amount <br />
-                    {this.showamount()}<br /> </div>
-                {this.getextrarow()}
-                <div className="labor-main">{this.state.message} </div>
-                <div className="labor-main"><button className="btnsaveprojects" onClick={event => { this.saveallprojects() }}>{SaveProjectIcon()} </button> </div>
-                {this.handleshowlaborid()}
+            <div className="general-flex">
+                <div className="flex-1">
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> Project ID{this.getproject().projectid}/{this.getproject().title}</div>
+                        </div>
+                    </div>
 
 
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className=""> &nbsp;
+
+
+
+                            </div>
+                        </div>
+
+
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+                    </div>
+
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+                    </div>
+
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+                    </div>
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+
+                    </div>
+                    <div className="general-flex">
+                        <div className="flex-1 showBorder">
+                            <div className="align-contentCenter titleFont"> &nbsp;</div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
             </div>
 
 
