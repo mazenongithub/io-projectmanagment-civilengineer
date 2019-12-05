@@ -30,9 +30,10 @@ import {
     subtractoneYearDateObj,
     inputUTCStringForMaterialID,
     inputUTCStringForMaterialIDWithTime,
-    validateLaborRate
+    validateLaborRate,
+    getOffset
 }
-from './functions';
+    from './functions';
 import {
     openDateMenu,
     closeDateMenu,
@@ -45,7 +46,7 @@ import {
     deleteActualLaborIcon,
     ClearActiveActualLabor
 }
-from './svg';
+    from './svg';
 import './materials.css';
 import * as actions from './actions';
 
@@ -108,7 +109,6 @@ class MyActualMaterials extends Component {
             let mymaterial = this.findmymaterial(materialid)
             let timein = mymaterial.timein;
             let newtimein = adjustdatefromcalendar(timein, value)
-            console.log(newtimein)
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
                 // eslint-disable-next-line
@@ -118,7 +118,6 @@ class MyActualMaterials extends Component {
                             // eslint-disable-next-line
                             myproject.actualmaterials.mymaterial.map((mymaterial, j) => {
                                 if (mymaterial.materialid === materialid) {
-                                    console.log("materialfound")
                                     this.props.projectsprovider[i].actualmaterials.mymaterial[j].timein = newtimein;
                                     let obj = this.props.projectsprovider;
                                     this.props.projectsProvider(obj)
@@ -274,18 +273,18 @@ class MyActualMaterials extends Component {
             month = trailingzero(month)
             let year = dateobj.getFullYear();
 
-
+            let offset = getOffset()
             let dayzero = trailingzero(day);
-            let timestring = `${year}/${month}/${dayzero} 00:00:00-07:00`;
+            let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
 
             let calendardate = new Date(timestring);
 
             let dateencoded = calendardate.getTime();
 
-            showday.push(<div 
-		className={`${this.getactivedate(dateencoded)} calendar-date`}
-		onClick={event=>{this.setDay(dateencoded)}}
-		> {day}</div>)
+            showday.push(<div
+                className={`${this.getactivedate(dateencoded)} calendar-date`}
+                onClick={event => { this.setDay(dateencoded) }}
+            > {day}</div>)
         }
         return showday;
     }
@@ -354,42 +353,42 @@ class MyActualMaterials extends Component {
         }
     }
     DateIn() {
-        return (<div className="datein-container"> 
-    <div className="datein-element-1a">
-    Enter Date <br/> <input type="date" 
-    value={this.getvalue()}
-    className="project-field"
-    onChange={event=>{this.handleChange(event.target.value)}}/>
-    </div>
-    <div className="datein-element-1b">
-    <button className={`datebutton  ${this.showclasscalendar()}`}
-    onClick={event=>{this.showCalender(event)}}
-    id="btn-opendatemenu">
-    {openDateMenu()}
-    </button>
-    <button className={`datebutton ${this.hideclasscalendar()}`} id="btn-closedatemenu"
-     onClick={event=>{this.hideCalendar(event)}}>
-     {closeDateMenu()}
-    </button>
-    </div>
-        <div className={`material-buttonrow ${this.hideclasscalendar()}`}><button className="datebutton"
-        onClick={event=>{this.yeardown(event)}}> {dateYearDown()}</button></div>
-        <div className={`material-buttonrow ${this.hideclasscalendar()}`}>
-        <button className="datebutton"
-        onClick={event=>{this.decreasemonth(event)}}>{dateMonthDown()} </button> </div>
-        <div className={`material-buttonrow ${this.hideclasscalendar()} displaydate`}>{this.showdateforcalendar()} </div>
-        <div className={`material-buttonrow ${this.hideclasscalendar()}`}
-        onClick={event=>{this.increasemonth(event)}}><button className="datebutton">{dateMonthUp()}</button> </div>
-        <div className={`material-buttonrow ${this.hideclasscalendar()}`}>
-        <button className="datebutton"
-        onClick={event=>{this.yearup(event)}}>{dateYearUp()} </button> </div>
-    	
-    	<div className={`dateincalendar-container ${this.hideclasscalendar()}`}>
-    	    <div className="calendar-grid">
-			{this.showgrid()}
-			</div>
-		</div>
-</div>)
+        return (<div className="datein-container">
+            <div className="datein-element-1a">
+                Enter Date <br /> <input type="date"
+                    value={this.getvalue()}
+                    className="project-field"
+                    onChange={event => { this.handleChange(event.target.value) }} />
+            </div>
+            <div className="datein-element-1b">
+                <button className={`datebutton  ${this.showclasscalendar()}`}
+                    onClick={event => { this.showCalender(event) }}
+                    id="btn-opendatemenu">
+                    {openDateMenu()}
+                </button>
+                <button className={`datebutton ${this.hideclasscalendar()}`} id="btn-closedatemenu"
+                    onClick={event => { this.hideCalendar(event) }}>
+                    {closeDateMenu()}
+                </button>
+            </div>
+            <div className={`material-buttonrow ${this.hideclasscalendar()}`}><button className="datebutton"
+                onClick={event => { this.yeardown(event) }}> {dateYearDown()}</button></div>
+            <div className={`material-buttonrow ${this.hideclasscalendar()}`}>
+                <button className="datebutton"
+                    onClick={event => { this.decreasemonth(event) }}>{dateMonthDown()} </button> </div>
+            <div className={`material-buttonrow ${this.hideclasscalendar()} displaydate`}>{this.showdateforcalendar()} </div>
+            <div className={`material-buttonrow ${this.hideclasscalendar()}`}
+                onClick={event => { this.increasemonth(event) }}><button className="datebutton">{dateMonthUp()}</button> </div>
+            <div className={`material-buttonrow ${this.hideclasscalendar()}`}>
+                <button className="datebutton"
+                    onClick={event => { this.yearup(event) }}>{dateYearUp()} </button> </div>
+
+            <div className={`dateincalendar-container ${this.hideclasscalendar()}`}>
+                <div className="calendar-grid">
+                    {this.showgrid()}
+                </div>
+            </div>
+        </div>)
     }
 
     showgridcalender(datein) {
@@ -406,37 +405,37 @@ class MyActualMaterials extends Component {
             days.map((day, i) => {
                 if (i === 0) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Mon
+                        Mon
 							</div>)
                 }
                 else if (i === 1) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Tues
+                        Tues
 							</div>)
                 }
                 else if (i === 2) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Weds
+                        Weds
 							</div>)
                 }
                 else if (i === 3) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Thurs
+                        Thurs
 							</div>)
                 }
                 else if (i === 4) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Fri
+                        Fri
 							</div>)
                 }
                 else if (i === 5) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Sat
+                        Sat
 							</div>)
                 }
                 else if (i === 6) {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							Sun
+                        Sun
 							</div>)
                 }
                 else if (i === 7) {
@@ -449,7 +448,7 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}&nbsp;
+                        {display}&nbsp;
 							</div>)
 
                 }
@@ -466,8 +465,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
 
                 else if (i === 9) {
@@ -486,8 +485,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
 
                 }
                 else if (i === 10) {
@@ -509,8 +508,8 @@ class MyActualMaterials extends Component {
                             break
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
 
 
                 }
@@ -536,8 +535,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display} 
-							</div>)
+                        {display}
+                    </div>)
 
                 }
                 else if (i === 12) {
@@ -566,8 +565,8 @@ class MyActualMaterials extends Component {
                     }
 
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
 
 
                 }
@@ -601,8 +600,8 @@ class MyActualMaterials extends Component {
 
 
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
 
                 }
                 else if (i === 14) {
@@ -633,8 +632,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 15) {
                     let display = " ";
@@ -664,8 +663,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 16) {
                     let display = " ";
@@ -695,8 +694,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 17) {
                     let display = " ";
@@ -726,8 +725,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 18) {
                     let display = " ";
@@ -757,8 +756,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 19) {
                     let display = " ";
@@ -788,8 +787,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 20) {
                     let display = " ";
@@ -819,8 +818,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 21) {
                     let display = " ";
@@ -850,8 +849,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-													{display}
-													</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 22) {
                     let display = " ";
@@ -881,8 +880,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 23) {
                     let display = " ";
@@ -912,8 +911,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 24) {
                     let display = " ";
@@ -943,8 +942,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 25) {
                     let display = " ";
@@ -974,8 +973,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 26) {
                     let display = " ";
@@ -1005,8 +1004,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 27) {
                     let display = " ";
@@ -1036,8 +1035,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 28) {
                     let display = " ";
@@ -1067,8 +1066,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 29) {
                     let display = " ";
@@ -1098,8 +1097,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 30) {
                     let display = " ";
@@ -1129,8 +1128,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 31) {
                     let display = " ";
@@ -1160,8 +1159,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 32) {
                     let display = " ";
@@ -1191,8 +1190,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 33) {
                     let display = " ";
@@ -1222,8 +1221,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 34) {
                     let display = " ";
@@ -1253,8 +1252,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 35) {
                     let display = " ";
@@ -1284,8 +1283,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 36) {
                     let display = " ";
@@ -1315,8 +1314,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 37) {
                     let display = " ";
@@ -1346,8 +1345,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 38) {
                     let display = " ";
@@ -1376,8 +1375,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 39) {
                     let display = " ";
@@ -1405,8 +1404,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 40) {
                     let display = " ";
@@ -1433,8 +1432,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 41) {
                     let display = " ";
@@ -1460,8 +1459,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 42) {
                     let display = " ";
@@ -1486,8 +1485,8 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else if (i === 43) {
                     let display = " ";
@@ -1511,12 +1510,12 @@ class MyActualMaterials extends Component {
                             break;
                     }
                     gridcalender.push(<div className="calendar-element daydisplay">
-							{display}
-							</div>)
+                        {display}
+                    </div>)
                 }
                 else {
                     gridcalender.push(<div className="calendar-element daydisplay">
-							&nbsp;
+                        &nbsp;
 							</div>)
                 }
             })
@@ -1530,7 +1529,7 @@ class MyActualMaterials extends Component {
             let materialid = this.state.activematerialid;
             let mymaterial = this.findmymaterial(materialid);
             let timein = mymaterial.timein;
-            let datein = new Date(`${timein.replace(/-/g,'/')}-00:00`);
+            let datein = new Date(`${timein.replace(/-/g, '/')}-00:00`);
             showgrid.push(this.showgridcalender(datein))
 
         }
@@ -1565,7 +1564,7 @@ class MyActualMaterials extends Component {
             let materialid = this.state.activematerialid;
             let mymaterial = this.findmymaterial(materialid);
             let timein = mymaterial.timein;
-            let datein = new Date(`${timein.replace(/-/g,'/')}-00:00`);
+            let datein = new Date(`${timein.replace(/-/g, '/')}-00:00`);
             return (formatDateforCalendarDisplay(datein))
         }
         else
@@ -2056,7 +2055,7 @@ class MyActualMaterials extends Component {
         }
     }
     getactivematerialid(materialid) {
-        if(this.state.activematerialid === materialid) {
+        if (this.state.activematerialid === materialid) {
             return `activeactualmaterialid`
         }
     }
@@ -2064,23 +2063,23 @@ class MyActualMaterials extends Component {
         let materialid = [];
         if (this.state.width > 1080) {
             materialid.push(<div className={`show-material material-large-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-large-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-large-c`}><button className="laborid-icon" onClick={event=>{this.deleteMaterial(event,mymaterial.materialid)}}>{deleteActualLaborIcon()} </button></div>)
+            materialid.push(<div className={`show-material material-large-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
+            materialid.push(<div className={`show-material material-large-c`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteActualLaborIcon()} </button></div>)
             materialid.push(<div className={`show-material material-large-d ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-large-e`}> <button className="laborid-icon" onClick={event=> {this.findmaterial(mymaterial.materialid)}}>{editActualLaborIcon()}</button></div>)
+            materialid.push(<div className={`show-material material-large-e`}> <button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editActualLaborIcon()}</button></div>)
         }
         else {
             materialid.push(<div className={`show-material material-small-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-small-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)}</div>)
+            materialid.push(<div className={`show-material material-small-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
             materialid.push(<div className={`show-material material-small-c ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-small-d`}><button className="laborid-icon" onClick={event=> {this.findmaterial(mymaterial.materialid)}}>{editActualLaborIcon()}</button></div>)
-            materialid.push(<div className={`show-material material-small-d align-right`}><button className="laborid-icon" onClick={event=>{this.deleteMaterial(event,mymaterial.materialid)}}>{deleteActualLaborIcon()} </button> </div>)
+            materialid.push(<div className={`show-material material-small-d`}><button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editActualLaborIcon()}</button></div>)
+            materialid.push(<div className={`show-material material-small-d align-right`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteActualLaborIcon()} </button> </div>)
         }
         return materialid;
     }
     handleClearProject() {
         if (this.state.activematerialid) {
-            return (<button className="btnsaveprojects" onClick={event=>{this.clearmaterialid(event)}}>{ClearActiveActualLabor()} </button>)
+            return (<button className="btnsaveprojects" onClick={event => { this.clearmaterialid(event) }}>{ClearActiveActualLabor()} </button>)
         }
         else {
             return (<span>&nbsp;</span>)
@@ -2211,40 +2210,40 @@ class MyActualMaterials extends Component {
     render() {
         return (
             <div className="material-container">
-            <div className="material-titlerow"> {this.getprojectitle()}<br/>Actual Materials</div>
-             <div className="labor-main">{this.handleClearProject()}</div>
-             <div className="labor-main">{this.getactivemessage()}</div>
-            <div className="materials-main">{this.DateIn()} </div>  
-            <div className="materials-main">
-                <select className="project-select-field" value={this.getmilestone()} onChange={event=>{this.handlemilestone(event.target.value)}}>
-                    <option>Select A Milestone </option>
-                    {this.loadmilestones()}
-                </select> 
-            </div>  
-            <div className="materials-main">
-                Description <br/>
-                <input type="text" className="project-field" 
-                onChange={event=>{this.handledescription(event.target.value)}} 
-                value={this.getdescription()}/> 
-            </div>  
-            <div className="material-element">
-                <input type="text" className="project-field project-field-numeric" 
-                onChange={event=>{this.handlequantity(event.target.value)}} 
-                value={this.getquantity()}/><br/> Quantity 
+                <div className="material-titlerow"> {this.getprojectitle()}<br />Actual Materials</div>
+                <div className="labor-main">{this.handleClearProject()}</div>
+                <div className="labor-main">{this.getactivemessage()}</div>
+                <div className="materials-main">{this.DateIn()} </div>
+                <div className="materials-main">
+                    <select className="project-select-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
+                        <option>Select A Milestone </option>
+                        {this.loadmilestones()}
+                    </select>
+                </div>
+                <div className="materials-main">
+                    Description <br />
+                    <input type="text" className="project-field"
+                        onChange={event => { this.handledescription(event.target.value) }}
+                        value={this.getdescription()} />
+                </div>
+                <div className="material-element">
+                    <input type="text" className="project-field project-field-numeric"
+                        onChange={event => { this.handlequantity(event.target.value) }}
+                        value={this.getquantity()} /><br /> Quantity
             </div>
-            <div className="material-element">
-            <input type="text" className="project-field project-field-numeric" 
-                onChange={event=>{this.handleunit(event.target.value)}} 
-                value={this.getunit()}/><br/> Per Unit  </div>
-            <div className="material-element"><input type="text" className="project-field project-field-numeric" 
-                onChange={event=>{this.handleunitcost(event.target.value)}} 
-                value={this.getunitcost()}/><br/> Unit Cost</div>
-            <div className="material-element">
-            {this.getamount()}<br/>
-            Amount</div> 
-            <div className="materials-main">{this.state.message} &nbsp; </div>
-            <div className="material-titlerow"><button className="btnsaveprojects" onClick={event=>{this.saveallprojects()}}>{SaveActualProjectIcon()} </button> </div> 
-            {this.handleshowmaterialids()}
+                <div className="material-element">
+                    <input type="text" className="project-field project-field-numeric"
+                        onChange={event => { this.handleunit(event.target.value) }}
+                        value={this.getunit()} /><br /> Per Unit  </div>
+                <div className="material-element"><input type="text" className="project-field project-field-numeric"
+                    onChange={event => { this.handleunitcost(event.target.value) }}
+                    value={this.getunitcost()} /><br /> Unit Cost</div>
+                <div className="material-element">
+                    {this.getamount()}<br />
+                    Amount</div>
+                <div className="materials-main">{this.state.message} &nbsp; </div>
+                <div className="material-titlerow"><button className="btnsaveprojects" onClick={event => { this.saveallprojects() }}>{SaveActualProjectIcon()} </button> </div>
+                {this.handleshowmaterialids()}
             </div>
         )
     }

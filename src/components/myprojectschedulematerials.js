@@ -30,7 +30,8 @@ import {
     subtractoneYearDateObj,
     inputUTCStringForMaterialID,
     inputUTCStringForMaterialIDWithTime,
-    validateLaborRate
+    validateLaborRate,
+    getOffset
 }
     from './functions';
 import {
@@ -108,7 +109,6 @@ class MyProjectScheduleMaterials extends Component {
             let mymaterial = this.findmymaterial(materialid)
             let timein = mymaterial.timein;
             let newtimein = adjustdatefromcalendar(timein, value)
-            console.log(newtimein)
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
                 // eslint-disable-next-line
@@ -118,7 +118,7 @@ class MyProjectScheduleMaterials extends Component {
                             // eslint-disable-next-line
                             myproject.schedulematerials.mymaterial.map((mymaterial, j) => {
                                 if (mymaterial.materialid === materialid) {
-                                    console.log("materialfound")
+
                                     this.props.projectsprovider[i].schedulematerials.mymaterial[j].timein = newtimein;
                                     let obj = this.props.projectsprovider;
                                     this.props.projectsProvider(obj)
@@ -267,16 +267,15 @@ class MyProjectScheduleMaterials extends Component {
         }
     }
     showdate(dateobj, day) {
-        console.log("SHOWDATE", dateobj, day)
+
         let showday = [];
         if (day) {
             let month = dateobj.getMonth() + 1;
             month = trailingzero(month)
             let year = dateobj.getFullYear();
-
-
             let dayzero = trailingzero(day);
-            let timestring = `${year}/${month}/${dayzero} 00:00:00-07:00`;
+            let offset = getOffset()
+            let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
 
             let calendardate = new Date(timestring);
 
@@ -393,6 +392,7 @@ class MyProjectScheduleMaterials extends Component {
     }
 
     showgridcalender(datein) {
+
         let gridcalender = [];
         if (Object.prototype.toString.call(datein) === "[object Date]") {
 

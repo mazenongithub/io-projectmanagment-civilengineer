@@ -1384,9 +1384,9 @@ class MyActualLabor extends Component {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
-                            console.log(mylabor.laborrate)
+                        
                             errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                            console.log(errmsg)
+                    
                         })
                     }
 
@@ -1408,9 +1408,9 @@ class MyActualLabor extends Component {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
-                            console.log(mylabor.laborrate)
+                       
                             errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                            console.log(errmsg)
+                          
                         })
                     }
 
@@ -1443,7 +1443,6 @@ class MyActualLabor extends Component {
             let myproject = this.getproject()
 
             let values = { providerid, projectid, myproject }
-            console.log(values)
 
             let response = await ProviderEndPoint(values);
             console.log(response)

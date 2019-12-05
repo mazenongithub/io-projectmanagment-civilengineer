@@ -753,7 +753,7 @@ export function decreaseDateStringByOneMonth(timein) {
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
 export function inputUTCStringAddOffsetString(timein) {
-    console.log(timein)
+
     let datein = new Date(`${timein.replace(/-/g, '/')}-00:00`)
     let fullyear = datein.getFullYear();
     let month = datein.getMonth() + 1
@@ -881,7 +881,7 @@ export function inputUTCStringForLaborID(timein) {
 
 }
 export function inputUTCStringForMaterialID(timein) {
-    console.log(timein)
+
     timein = timein.replace(/-/g, '/')
     let offset = new Date().getTimezoneOffset() / 60;
     let sym = "";
@@ -1218,6 +1218,18 @@ export function getstatelist() {
         { name: 'WYOMING', abbreviation: 'WY' }
     ])
 }
+export function getOffset() {
+    let offset = new Date().getTimezoneOffset() / 60
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
+    }
+    if (Math.abs(offset) < 10) {
+        offset = `0${offset}`
+    }
+    return (`${sym}${offset}:00`)
+
+}
 export function getcountrylist() {
     return ([
         { "name": "United States", "code": "US" },
@@ -1471,35 +1483,17 @@ export function makealocation(country, city, projectstate, zipcode) {
     return location;
 }
 export function inputDatePickerOutputDateObj(value) {
-    let datein = new Date()
-    let offset = datein.getTimezoneOffset() / 60;
-    let sym = "";
-    if (offset < 0) {
-        offset = -offset;
-        sym = "-"
+
+    let offset = new Date().getTimezoneOffset() / 60
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
     }
-    else {
-        sym = "+"
-    }
-    if (offset < 10) {
+    if (Math.abs(offset) < 10) {
         offset = `0${offset}`
-
     }
 
-    let hours = datein.getHours();
-    if (hours < 10) {
-        hours = `0${hours}`
-    }
-    let minutes = datein.getMinutes();
-    if (minutes < 10) {
-        minutes = `0${minutes}`
-    }
-    let seconds = datein.getSeconds();
-    if (seconds < 10) {
-        seconds = `0${seconds}`
-    }
-
-    let newDate = new Date(`${value.replace(/-/g, '-')} ${hours}:${minutes}:${seconds}${sym}${offset}:00`)
+    let newDate = new Date(`${value.replace(/-/g, '-')} 00:00:00${sym}${offset}:00`)
 
     return newDate;
 }
@@ -1957,7 +1951,7 @@ export function addOneMonthtoDateString(calendardate) {
     else {
         sym = "-";
     }
-    console.log(`${calendardate.replace(/-/g, '-')} 00:00:00${sym}${offset}:00`)
+
 
     let datein = new Date(`${calendardate.replace(/-/g, '-')} 00:00:00${sym}${offset}:00`)
 

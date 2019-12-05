@@ -46,7 +46,7 @@ class MyProjectMilestones extends Component {
     }
 
     handleSubmit(event) {
-        console.log(event.target.name)
+
         let errmsg = this.geterrormessage();
         if (!errmsg) {
             let projectid = this.props.projectid.projectid
@@ -55,7 +55,6 @@ class MyProjectMilestones extends Component {
             let milestonestartdate = this.props.milestonestartdate.milestonestartdate;
             let milestoneenddate = this.props.milestoneenddate.milestoneenddate;
             let values = { milestoneid, projectid, milestone, milestonestartdate, milestoneenddate }
-            console.log(values)
             this.insertmilestone(values)
         }
         else {
@@ -99,23 +98,23 @@ class MyProjectMilestones extends Component {
     }
 
     updateremovemousedown(event) {
-        console.log(event.target.name)
+
         let button = document.getElementById("btn-insertmilestoneid");
         button.classList.remove("active-button");
     }
     updateaddmousedown(event) {
-        console.log(event.target.name)
+
         let button = document.getElementById("btn-insertmilestoneid");
         button.classList.add("active-button");
     }
 
     clearremovemousedown(event) {
-        console.log(event.target.name)
+
         let button = document.getElementById("btn-clearmilestoneid");
         button.classList.remove("active-button");
     }
     clearaddmousedown(event) {
-        console.log(event.target.name)
+
         let button = document.getElementById("btn-clearmilestoneid");
         button.classList.add("active-button");
     }
@@ -312,7 +311,7 @@ class MyProjectMilestones extends Component {
         }
     }
     findmilestone(milestoneid) {
-        console.log(milestoneid)
+
         if (this.props.projects.hasOwnProperty("length")) {
             // eslint-disable-next-line
             this.props.projects.map(myproject => {
@@ -506,7 +505,6 @@ class MyProjectMilestones extends Component {
         }
         else {
             let newDate = addoneMonthDateObj(this.state.start);
-            console.log(newDate)
             this.setState({ start: newDate })
         }
     }
@@ -558,7 +556,6 @@ class MyProjectMilestones extends Component {
                             myproject.projectmilestones.mymilestone.map((mymilestone, j) => {
                                 if (mymilestone.milestoneid === milestoneid) {
                                     let start = datestringDayUp(mymilestone.start)
-                                    console.log(start)
                                     this.props.projects[i].projectmilestones.mymilestone[j].start = start;
                                     let obj = this.props.projects;
                                     this.props.reduxProjects(obj)
@@ -594,7 +591,6 @@ class MyProjectMilestones extends Component {
                             myproject.projectmilestones.mymilestone.map((mymilestone, j) => {
                                 if (mymilestone.milestoneid === milestoneid) {
                                     let start = datestringDayDown(mymilestone.start)
-                                    console.log(start)
                                     this.props.projects[i].projectmilestones.mymilestone[j].start = start;
                                     let obj = this.props.projects;
                                     this.props.reduxProjects(obj)
@@ -826,7 +822,6 @@ class MyProjectMilestones extends Component {
         }
         else {
             let newDate = addoneMonthDateObj(this.state.completion);
-            console.log(newDate)
             this.setState({ completion: newDate })
         }
     }
