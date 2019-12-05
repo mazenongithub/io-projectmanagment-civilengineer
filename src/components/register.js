@@ -53,7 +53,7 @@ class Register extends Component {
     }
     getcommissionmessage() {
         if (this.state.commission && !this.state.commissioncheck) {
-            return `Referred Provider ID is invalid `
+            return `Referred Provider ID ${this.state.commission} is invalid `
         }
         else {
             return ``
@@ -61,9 +61,11 @@ class Register extends Component {
     }
     handleSubmit(event) {
         let errmsg = "";
-        errmsg += validateEmail(this.state.emailaddress);
+
         if (this.state.emailcheck === "invalid") {
             errmsg += this.state.emailmessage;
+        } else {
+            errmsg += validateEmail(this.state.emailaddress);
         }
         if (!this.state.provideridcheck) {
             errmsg += this.state.provideridmsg;
@@ -71,7 +73,6 @@ class Register extends Component {
         errmsg += validateProviderID(this.state.providerid)
         errmsg += validatePhoneNumber(this.state.phonenumber);
         errmsg += validateZipcode(this.state.zipcode);
-        errmsg += this.state.provideridmsg;
         errmsg += validatePassword(this.state.password);
         errmsg += validateName(this.state.firstname);
         errmsg += validateName(this.state.lastname)
