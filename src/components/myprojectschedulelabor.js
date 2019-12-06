@@ -51,7 +51,7 @@ import {
 class MyScheduleLabor extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', width: 0, height: 0, activelaborid: '', timein: new Date(), timeout: new Date(new Date().getTime() + (1000 * 60 * 60)), description: "", laborrate: "", message: 'Active Labor ID is clear, Type a Description to Create One' }
+        this.state = { render: '', width: 0, height: 0, activelaborid: '', timein: new Date(), timeout: new Date(new Date().getTime() + (1000 * 60 * 60)), description: "", laborrate: "", message: 'Active Labor ID is clear, Type a Description to Create One', activetimeincalendar: false }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
@@ -1499,6 +1499,27 @@ class MyScheduleLabor extends Component {
 
         return (this.showcalender(datein))
     }
+    activetimeincalendar() {
+        let activetimeincalendar = this.state.activetimeincalendar;
+        if (activetimeincalendar) {
+            activetimeincalendar = false;
+        } else {
+            activetimeincalendar = true;
+        }
+        this.setState({ activetimeincalendar })
+    }
+    handlecalendartimein() {
+        if (this.state.activetimeincalendar) {
+            return (<div className="general-flex">
+                <div className="flex-1 calendar-container">
+                    {this.showcalendartimein()}
+
+                </div>
+            </div>)
+        } else {
+            return;
+        }
+    }
     showtimein() {
 
         return (
@@ -1513,7 +1534,7 @@ class MyScheduleLabor extends Component {
                                     {this.timeinheader()}
                                 </div>
                                 <div className="flex-1 timedisplay-container align-contentCenter">
-                                    <button className="general-button majorDownIcon">{majorDownIcon()}</button>
+                                    <button className="general-button majorDownIcon" onClick={() => { this.activetimeincalendar() }}>{majorDownIcon()}</button>
                                 </div>
                             </div>
 
@@ -1595,12 +1616,7 @@ class MyScheduleLabor extends Component {
                         </div>
                     </div>
 
-                    <div className="general-flex">
-                        <div className="flex-1 calendar-container">
-                            {this.showcalendartimein()}
-
-                        </div>
-                    </div>
+                    {this.handlecalendartimein()}
 
 
                 </div>
