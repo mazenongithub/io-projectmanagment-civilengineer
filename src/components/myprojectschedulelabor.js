@@ -1496,7 +1496,7 @@ class MyScheduleLabor extends Component {
         } else {
             datein = this.state.timein;
         }
-        console.log("SHOWCALENDAR", datein)
+
         return (this.showcalender(datein))
     }
     showtimein() {
@@ -1506,13 +1506,13 @@ class MyScheduleLabor extends Component {
                 <div className="flex-1">
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
 
                             <div className="general-flex">
-                                <div className="flex-3 showBorder timedisplay-container regularFont">
+                                <div className="flex-3 timedisplay-container regularFont">
                                     {this.timeinheader()}
                                 </div>
-                                <div className="flex-1 showBorder timedisplay-container align-contentCenter">
+                                <div className="flex-1 timedisplay-container align-contentCenter">
                                     <button className="general-button majorDownIcon">{majorDownIcon()}</button>
                                 </div>
                             </div>
@@ -1596,7 +1596,7 @@ class MyScheduleLabor extends Component {
                     </div>
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder calendar-container">
+                        <div className="flex-1 calendar-container">
                             {this.showcalendartimein()}
 
                         </div>
@@ -1608,7 +1608,7 @@ class MyScheduleLabor extends Component {
         )
     }
     showcalender(datein) {
-        console.log("SHOWCALENDAR", datein)
+
         let gridcalender = [];
         if (Object.prototype.toString.call(datein) === "[object Date]") {
 
@@ -2196,6 +2196,44 @@ class MyScheduleLabor extends Component {
             </div>
         )
     }
+    handleTimes() {
+        if (this.state.width > 900) {
+            return (
+                <div className="general-flex">
+                    <div className="flex-1">
+                        {this.showtimein()}
+                    </div>
+
+
+                    <div className="flex-1 addLeftMargin">
+                        {this.showtimeout()}
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div className="general-flex">
+                    <div className="flex-1 showBorder">
+
+                        <div className="general-flex">
+                            <div className="flex-1 showBorder">
+                                {this.showtimein()}
+                            </div>
+                        </div>
+
+
+                        <div className="general-flex">
+                            <div className="flex-1 showBorder addLeftMargin">
+                                {this.showtimeout()}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            )
+
+        }
+    }
     render() {
         return (
 
@@ -2203,22 +2241,14 @@ class MyScheduleLabor extends Component {
                 <div className="flex-1">
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="align-contentCenter titleFont"> Project ID{this.getproject().projectid}/{this.getproject().title}</div>
+                            <div className="align-contentCenter titleFont">Schedule Labor</div>
                         </div>
                     </div>
 
 
-                    <div className="general-flex">
-                        <div className="flex-1 showBorder">
-                            {this.showtimein()}
-                        </div>
-
-
-                        <div className="flex-1 showBorder">
-                            {this.showtimeout()}
-                        </div>
-                    </div>
+                    {this.handleTimes()}
 
                     <div className="general-flex">
                         <div className="flex-1 showBorder">

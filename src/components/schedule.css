@@ -3,9 +3,12 @@
 .calendar-element{
     text-align:center;
 }
+.addLeftMargin{
+    margin-left:10px;
+}
 .laborcalendar-grid{
     margin:auto;
-    width:98%;
+    width:100%;
     display:grid;
     grid-template-columns:14% 14% 14% 14% 14% 14% 14%;
     font-family: 'Nunito Sans', sans-serif;
@@ -48,9 +51,7 @@
 .timedisplay-container{
     min-height:60px;
 }
-.calendar-container{
-    min-height: 540px;
-}
+
 .timecell-module{
     min-height:60px;
 }
