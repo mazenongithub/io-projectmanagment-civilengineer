@@ -64,7 +64,7 @@ class ShowProjectActualLabor extends Component {
     showlaborid(mylabor) {
         return (
             <div className="general-flex">
-                <div className="flex-1" onClick={event => { this.findlabor(mylabor.laborid) }}>
+                <div className="flex-1">
                     <span className="regularFont">{mylabor.description}</span> <br />
                     <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
                     <span className="regularFont">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</span>

@@ -5,7 +5,7 @@ import './invoices.css';
 import {
     inputUTCStringForMaterialIDWithTime
 }
-from './functions';
+    from './functions';
 class ShowActualMaterials extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class ShowActualMaterials extends Component {
 
     }
 
-   
+
     updateWindowDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
 
@@ -33,26 +33,23 @@ class ShowActualMaterials extends Component {
         if (myproject.hasOwnProperty("actualmaterials")) {
             // eslint-disable-next-line
             myproject.actualmaterials.mymaterial.map(mymaterial => {
-                materialrows.push(this.showrowmaterial(mymaterial))
+                materialrows.push(this.showmaterialid(mymaterial))
             })
         }
         return materialrows;
     }
 
-    showrowmaterial(mymaterial) {
-        let material = [];
-        if (this.state.width > 1080) {
-            material.push(<div className="invoice-row-large-a">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            material.push(<div className="invoice-row-large-b">{mymaterial.description} </div>)
-            material.push(<div className="invoice-row-large-a">{mymaterial.quantity} @ ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)} </div>)
-        }
-        else {
-            material.push(<div className="invoice-row-small-a">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            material.push(<div className="invoice-row-small-a">{mymaterial.quantity} @  ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)} </div>)
-            material.push(<div className="invoice-row-small-b">{mymaterial.description} </div>)
-        }
-        return material;
+    showmaterialid(mymaterial) {
+        return (<div className="general-flex">
+            <div className="flex-7">
 
+                <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
+                <span className="regularFont">{mymaterial.description}</span><br />
+                <span className="regularFont">{mymaterial.quantity} {mymaterial.unit} ${mymaterial.unitcost} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</span>
+
+            </div>
+
+        </div>)
     }
 
     showtotalamount() {
@@ -119,10 +116,10 @@ class ShowActualMaterials extends Component {
         return (
 
             <div className="show-invoice-container">
-        <div className="show-invoice-title">{this.showtitle()} <br/> Actual Materials</div>
-        {this.showmaterialrows()}
-        <div className="invoice-amount-container">The Total Actual Materials is ${this.gettotalamount().toFixed(2)} </div>
-        </div>)
+                <div className="show-invoice-title">{this.showtitle()} <br /> Actual Materials</div>
+                <div className="materials-main">{this.showmaterialrows()}</div>
+                <div className="invoice-amount-container">The Total Actual Materials is ${this.gettotalamount().toFixed(2)} </div>
+            </div>)
 
     }
 }

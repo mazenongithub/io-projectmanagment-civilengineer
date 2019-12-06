@@ -1412,7 +1412,7 @@ class MyProjectScheduleMaterials extends Component {
     }
     showmaterialid(mymaterial) {
         return (<div className="general-flex">
-            <div className="flex-7" ame="laborid-icon" onClick={() => { this.findmaterial(mymaterial.materialid) }}>
+            <div className="flex-7" onClick={() => { this.findmaterial(mymaterial.materialid) }}>
 
                 <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
                 <span className="regularFont">{mymaterial.description}</span><br />
