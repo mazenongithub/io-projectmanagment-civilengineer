@@ -41,16 +41,15 @@ import {
     dateYearDown,
     dateMonthDown,
     dateMonthUp,
-    SaveActualProjectIcon,
-    editActualLaborIcon,
-    deleteActualLaborIcon,
-    ClearActiveActualLabor
+    saveallprojectactual,
+    ClearActualMaterial,
+    removeIcon
 }
     from './svg';
 import './materials.css';
 import * as actions from './actions';
 
-class MyActualMaterials extends Component {
+class MyProjectActualMaterials extends Component {
 
     constructor(props) {
         super(props);
@@ -118,6 +117,7 @@ class MyActualMaterials extends Component {
                             // eslint-disable-next-line
                             myproject.actualmaterials.mymaterial.map((mymaterial, j) => {
                                 if (mymaterial.materialid === materialid) {
+
                                     this.props.projectsprovider[i].actualmaterials.mymaterial[j].timein = newtimein;
                                     let obj = this.props.projectsprovider;
                                     this.props.projectsProvider(obj)
@@ -272,9 +272,8 @@ class MyActualMaterials extends Component {
             let month = dateobj.getMonth() + 1;
             month = trailingzero(month)
             let year = dateobj.getFullYear();
-
-            let offset = getOffset()
             let dayzero = trailingzero(day);
+            let offset = getOffset()
             let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
 
             let calendardate = new Date(timestring);
@@ -357,7 +356,7 @@ class MyActualMaterials extends Component {
             <div className="datein-element-1a">
                 Enter Date <br /> <input type="date"
                     value={this.getvalue()}
-                    className="project-field"
+                    className="project-field titleFont general-Font"
                     onChange={event => { this.handleChange(event.target.value) }} />
             </div>
             <div className="datein-element-1b">
@@ -392,6 +391,7 @@ class MyActualMaterials extends Component {
     }
 
     showgridcalender(datein) {
+
         let gridcalender = [];
         if (Object.prototype.toString.call(datein) === "[object Date]") {
 
@@ -568,6 +568,7 @@ class MyActualMaterials extends Component {
                         {display}
                     </div>)
 
+
                 }
                 else if (i >= 13 && i <= 34) {
                     let display = " "
@@ -603,6 +604,7 @@ class MyActualMaterials extends Component {
                     </div>)
 
                 }
+
 
                 else if (i === 35) {
                     let display = " ";
@@ -1405,30 +1407,63 @@ class MyActualMaterials extends Component {
     }
     getactivematerialid(materialid) {
         if (this.state.activematerialid === materialid) {
-            return `activeactualmaterialid`
+            return `activematerialid`
         }
     }
     showmaterialid(mymaterial) {
-        let materialid = [];
-        if (this.state.width > 1080) {
-            materialid.push(<div className={`show-material material-large-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-large-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-large-c`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteActualLaborIcon()} </button></div>)
-            materialid.push(<div className={`show-material material-large-d ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-large-e`}> <button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editActualLaborIcon()}</button></div>)
+        return (<div className="general-flex">
+            <div className="flex-7" ame="laborid-icon" onClick={() => { this.findmaterial(mymaterial.materialid) }}>
+
+                <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
+                <span className="regularFont">{mymaterial.description}</span><br />
+                <span className="regularFont">{mymaterial.quantity} {mymaterial.unit} ${mymaterial.unitcost} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</span>
+
+            </div>
+            <div className="flex-1">
+                <button className="btn-removeIcon general-button" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>
+                    {removeIcon()}
+                </button>
+            </div>
+        </div>)
+    }
+    getactivematerial() {
+        let material = {};
+        if (this.state.activematerialid) {
+            let myproject = this.getproject();
+            let materialid = this.state.activematerialid;
+            if (myproject.hasOwnProperty("actualmaterials")) {
+                // eslint-disable-next-line
+                myproject.actualmaterials.mymaterial.map(mymaterial => {
+                    if (mymaterial.materialid === materialid) {
+                        material = mymaterial;
+                    }
+                })
+            }
         }
-        else {
-            materialid.push(<div className={`show-material material-small-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-small-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-small-c ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-small-d`}><button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editActualLaborIcon()}</button></div>)
-            materialid.push(<div className={`show-material material-small-d align-right`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteActualLaborIcon()} </button> </div>)
-        }
-        return materialid;
+        return material;
     }
     handleClearProject() {
         if (this.state.activematerialid) {
-            return (<button className="btnsaveprojects" onClick={event => { this.clearmaterialid(event) }}>{ClearActiveActualLabor()} </button>)
+            let mymaterial = this.getactivematerial();
+
+            return (
+                <div className="general-flex">
+                    <div className="flex-1">
+
+                        <div className="general-flex">
+                            <div className="flex-1 align-contentCenter">
+                                <button className="general-button btn-clearmaterialid" onClick={event => { this.clearmaterialid(event) }}>{ClearActualMaterial()} </button>
+                            </div>
+                        </div>
+
+                        <div className="general-flex">
+                            <div className="flex-1 regularFont align-contentCenter">
+                                {`Active Materal is ${mymaterial.description}`}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>)
         }
         else {
             return (<span>&nbsp;</span>)
@@ -1437,7 +1472,7 @@ class MyActualMaterials extends Component {
     clearmaterialid() {
         this.setState({
             activematerialid: "",
-            message: " Material ID is clear, start typing to create a material",
+            message: "",
             datein: new Date(),
             quantity: 0,
             unit: "",
@@ -1453,26 +1488,6 @@ class MyActualMaterials extends Component {
             // eslint-disable-next-line
             this.props.projectsprovider.map(myproject => {
                 if (myproject.projectid === projectid) {
-                    if (myproject.hasOwnProperty("schedulelabor")) {
-                        // eslint-disable-next-line
-                        myproject.schedulelabor.mylabor.map(mylabor => {
-                            if (!mylabor.milestoneid) {
-                                errmsg = `${mylabor.laborid} is missing a milestone `
-                            }
-                            errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                        })
-                    }
-
-                    if (myproject.hasOwnProperty("schedulematerials")) {
-                        // eslint-disable-next-line
-                        myproject.schedulematerials.mymaterial.map(mymaterial => {
-                            if (!mymaterial.milestoneid) {
-                                errmsg = `${mymaterial.materialid} is missing a milestone `
-                            }
-                            errmsg += `${validateLaborRate(mymaterial.unitcost)}`
-                            errmsg += `${validateLaborRate(mymaterial.quantity)}`
-                        })
-                    }
                     if (myproject.hasOwnProperty("actuallabor")) {
                         // eslint-disable-next-line
                         myproject.actuallabor.mylabor.map(mylabor => {
@@ -1493,6 +1508,7 @@ class MyActualMaterials extends Component {
                             errmsg += `${validateLaborRate(mymaterial.quantity)}`
                         })
                     }
+
 
                 }
             })
@@ -1560,11 +1576,12 @@ class MyActualMaterials extends Component {
         return (
             <div className="material-container">
                 <div className="material-titlerow"> {this.getprojectitle()}<br />Actual Materials</div>
-                <div className="labor-main">{this.handleClearProject()}</div>
-                <div className="labor-main">{this.getactivemessage()}</div>
+                <div className="materials-main">{this.handleClearProject()}</div>
+
                 <div className="materials-main">{this.DateIn()} </div>
                 <div className="materials-main">
-                    <select className="project-select-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
+                    <div className="regularFont">Milestone ID</div>
+                    <select className="project-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
                         <option>Select A Milestone </option>
                         {this.loadmilestones()}
                     </select>
@@ -1591,8 +1608,8 @@ class MyActualMaterials extends Component {
                     {this.getamount()}<br />
                     Amount</div>
                 <div className="materials-main">{this.state.message} &nbsp; </div>
-                <div className="material-titlerow"><button className="btnsaveprojects" onClick={event => { this.saveallprojects() }}>{SaveActualProjectIcon()} </button> </div>
-                {this.handleshowmaterialids()}
+                <div className="material-titlerow"><button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{saveallprojectactual()} </button> </div>
+                <div className="materials-main"> {this.handleshowmaterialids()}</div>
             </div>
         )
     }
@@ -1606,4 +1623,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, actions)(MyActualMaterials)
+export default connect(mapStateToProps, actions)(MyProjectActualMaterials)

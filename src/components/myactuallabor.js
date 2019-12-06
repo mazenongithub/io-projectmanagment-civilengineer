@@ -1151,8 +1151,8 @@ class MyActualLabor extends Component {
             let laborrate = this.state.laborrate;
             let timein = inputDateObjOutputAdjString(this.state.timein);
             let timeout = inputDateObjOutputAdjString(this.state.timeout);
-            let proposalid = "";
-            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid)
+            let invoiceid = "";
+            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid)
 
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
@@ -1255,8 +1255,8 @@ class MyActualLabor extends Component {
 
             let timein = inputDateObjOutputAdjString(this.state.timein);
             let timeout = inputDateObjOutputAdjString(this.state.timeout);
-            let proposalid = "";
-            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid)
+            let invoiceid = "";
+            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid)
 
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
@@ -1328,8 +1328,8 @@ class MyActualLabor extends Component {
             let laborrate = value;
             let timein = inputDateObjOutputAdjString(this.state.timein);
             let timeout = inputDateObjOutputAdjString(this.state.timeout);
-            let proposalid = "";
-            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid)
+            let invoiceid = "";
+            let mylabor = ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid)
 
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
