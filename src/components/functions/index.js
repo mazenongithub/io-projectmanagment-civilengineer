@@ -407,6 +407,7 @@ export function subtractincDateObj(datein, inc) {
     return (new Date(datein.getTime() - inc))
 }
 export function increaseDateStringByOneMonth(timein) {
+
     let offset = new Date().getTimezoneOffset() / 60;
     let sym = "";
     if (offset > 0) {
@@ -418,10 +419,10 @@ export function increaseDateStringByOneMonth(timein) {
     }
 
     let datein = new Date(`${timein.replace(/-/g, '/')}${sym}${offset}:00`);
-    let month = datein.getMonth();
+    let month = datein.getMonth() + 1;
     let year = datein.getFullYear();
     if (month === 12) {
-        month = 0;
+        month = 1;
         year = year + 1;
     }
     else {
@@ -430,7 +431,7 @@ export function increaseDateStringByOneMonth(timein) {
 
     let date = datein.getDate();
     let hours = datein.getHours();
-    month = month + 1;
+
     if (month < 10) {
         month = `0${month}`;
     }
@@ -450,7 +451,7 @@ export function increaseDateStringByOneMonth(timein) {
     if (seconds < 10) {
         seconds = `0${seconds}`;
     }
-
+    console.log("ONEMONTHINCREASE", `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`)
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
 export function increaseDateStringByOneYear(timein) {
@@ -495,7 +496,6 @@ export function increaseDateStringByOneYear(timein) {
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
 export function inputDateTimeOutDateObj(timein) {
-    //let timein = '2019-07-09T21:24';
     let offset = new Date().getTimezoneOffset() / 60
     let sym = "";
     if (offset > 0) {
@@ -508,14 +508,8 @@ export function inputDateTimeOutDateObj(timein) {
     if (offset < 10) {
         offset = `0${offset}`
     }
-
-    let times = timein.split('T')
-    let datein = times[0];
-    timein = times[1];
-
-    let newDate = new Date(`${datein.replace(/-/g, '/')} ${timein}:00${sym}${offset}:00`);
-    return newDate;
-
+let newDate = new Date(`${timein.replace(/-/g, '/')}:00${sym}${offset}:00`);
+return(newDate)
 }
 export function inputTimeDateOutputUTCString(timein) {
     let offset = new Date().getTimezoneOffset() / 60;
@@ -798,47 +792,56 @@ export function toggleAMDateObj(datein) {
 
 }
 export function toggleAMTimeString(timein) {
-    let offset = new Date().getTimezoneOffset() / 60;
-    let sym = "";
-    if (offset > 0) {
-        sym = "-"
-    }
-    else {
-        sym = "+"
-        offset = -offset;
-    }
-    if (offset < 10) {
-        offset = `0${offset}`
-    }
-
-    let datein = new Date(`${timein.replace(/-/g, '/')}${sym}${offset}:00`)
-
-    let hoursin = datein.getHours();
+    let datein = new Date(`${timein.replace(/-/g, '/')} UTC`)
+    let hours = datein.getHours();
     let newDate = {};
-    if (hoursin > 12) {
-        newDate = new Date(datein.getTime() - (12 * 60 * 60 * 1000))
+    if (hours > 12) {
+        newDate = new Date(datein.getTime() - (1000 * 60 * 60 * 12))
     }
     else {
-        newDate = new Date(datein.getTime() + (12 * 60 * 60 * 1000))
-    }
-    let hour = newDate.getHours();
-    if (hour < 10) {
-        hour = `0${hour}`
-    }
-    let minute = newDate.getMinutes();
-    if (minute < 10) {
-        minute = `0${minute}`
+        newDate = new Date(datein.getTime() + (1000 * 60 * 60 * 12))
     }
     let year = newDate.getFullYear();
-    let day = newDate.getDate();
-    if (day < 10) {
-        day = `0${day}`
-    }
+
     let month = newDate.getMonth() + 1;
     if (month < 10) {
         month = `0${month}`
     }
-    return (`${year}-${month}-${day} ${hour}:${minute}:00`)
+    hours = newDate.getHours()
+
+
+    let day = newDate.getDate()
+    if (day < 10) {
+        day = `0${day}`
+    }
+    let minutes = newDate.getMinutes();
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+    let offset = 2 * new Date().getTimezoneOffset() / 60
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
+    }
+    if (Math.abs(offset) < 10) {
+        offset = `0${offset}`
+    }
+    offset = `${sym}${offset}:00`
+    let UTCDate = new Date(`${year}-${month}-${day} ${hours}:${minutes}:00${offset}`)
+    hours = UTCDate.getHours()
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+    month = UTCDate.getMonth() + 1;
+    if (month < 10) {
+        month = `0${month}`
+    }
+    day = UTCDate.getDate();
+    if (day < 10) {
+        day = `0${day}`
+    }
+    year = UTCDate.getFullYear();
+    return (`${year}-${month}-${day} ${hours}:${minutes}:00`)
 
 }
 export function calchoursdateobj(dateout, datein) {
@@ -968,6 +971,30 @@ export function check_29_feb_leapyear(dateobj) {
         return 29;
     }
 
+}
+export function inputDateObjOutputCalendarString(datein) {
+
+    let month = datein.getMonth() + 1;
+    let day = datein.getDate();
+    let hours = datein.getHours();
+    let ampm = 'AM'
+    if (hours > 12) {
+        hours = hours - 12;
+        ampm = 'PM'
+    }
+    let minutes = datein.getMinutes();
+    let year = datein.getFullYear();
+    if (month < 10) {
+        month = `0${month}`
+    }
+    if (day < 10) {
+        day = `0${day}`
+    }
+
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+    return (`${month}/${day}/${year} ${hours}:${minutes} ${ampm}`)
 }
 export function inputDateObjOutputAdjString(datein) {
     let offset = new Date().getTimezoneOffset() / 60
@@ -1217,6 +1244,17 @@ export function getstatelist() {
         { name: 'WISCONSIN', abbreviation: 'WI' },
         { name: 'WYOMING', abbreviation: 'WY' }
     ])
+}
+export function AMPMfromTimeIn(timein) {
+    let datein = new Date(`${timein.replace(/-/g, '/')} UTC`);
+    let hours = datein.getHours();
+    let ampm = "";
+    if (hours >= 12) {
+        ampm = "PM"
+    } else {
+        ampm = "AM"
+    }
+    return (ampm)
 }
 export function getOffset() {
     let offset = new Date().getTimezoneOffset() / 60

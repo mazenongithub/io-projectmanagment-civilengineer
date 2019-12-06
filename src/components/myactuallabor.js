@@ -1384,9 +1384,9 @@ class MyActualLabor extends Component {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
-                        
+
                             errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                    
+
                         })
                     }
 
@@ -1408,9 +1408,9 @@ class MyActualLabor extends Component {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
-                       
+
                             errmsg += `${validateLaborRate(mylabor.laborrate)}`
-                          
+
                         })
                     }
 

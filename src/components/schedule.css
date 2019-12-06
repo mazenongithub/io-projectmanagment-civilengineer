@@ -1,16 +1,45 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500|Nunito|Nunito+Sans');
-.align-contentCenter{
+.align-contentCenter,
+.calendar-element{
     text-align:center;
+}
+.laborcalendar-grid{
+    margin:auto;
+    width:98%;
+    display:grid;
+    grid-template-columns:14% 14% 14% 14% 14% 14% 14%;
+    font-family: 'Nunito Sans', sans-serif;
+}
+.calendar-element{
+    width:100%;
+    max-width: 77px;
+    max-height:77px
+}
+.alignRight{
+    text-align:right;
 }
 .btn-removeIcon{
     width:82px;
     height:68px;
 }
+.time-button{
+    width:62px;
+    height:41px;
+}
+.timeinput-field{
+    width:99%;
+    max-width:65px;
+}
 .btn-clearlaborid{
     width:366px;
     height:76px;
 }
-.showBorder{
+.majorDownIcon{
+    width:76px;
+    height:64px;
+}
+.showBorder,
+.calendar-element{
     border:1px solid;
 }
 .timecell-container{
@@ -25,8 +54,13 @@
 .timecell-module{
     min-height:60px;
 }
+.calendar-element{
+    font-size:20px;
+}
 @media screen and (min-width:539px) {
-
+    .calendar-element{
+        font-size:24px;
+    }
 }
 
 @media screen and (min-width:1081px) {

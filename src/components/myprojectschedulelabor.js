@@ -4,7 +4,7 @@ import * as actions from './actions';
 import './schedule.css';
 import { ProviderEndPoint } from './actions/api'
 // eslint-disable-next-line 
-import { removeIcon, SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
+import { majorDownIcon, removeIcon, SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
 import {
     inputDateObjOutputAdjString,
     calculatetotalhours,
@@ -32,7 +32,19 @@ import {
     toggleAMDateObj,
     calchoursdateobj,
     inputUTCStringForMaterialID,
-    validateLaborRate
+    validateLaborRate,
+    inputDateObjOutputCalendarString,
+    AMPMfromTimeIn,
+    inputDateSecActiveIDTimein,
+    trailingzero,
+    check_31,
+    check_30,
+    check_29_feb_leapyear,
+    getOffset,
+    inputtimeDBoutputCalendarDaySeconds,
+    inputDateObjOutputCalendarDaySeconds,
+    inputDateObjandSecReturnObj,
+    getFirstIsOn
 }
     from './functions';
 
@@ -97,16 +109,20 @@ class MyScheduleLabor extends Component {
         let month = "";
         let datein = {};
         if (this.state.activelaborid) {
-            let laborid = this.state.activelaborid;
-            let mylabor = this.getmylabor(laborid);
+
+            let mylabor = this.getactivelabor();
             datein = new Date(inputUTCStringAddOffsetString(mylabor.timein).replace(/-/g, '/'));
+            console.log("MONTHTIMEIN", datein)
         }
         else {
             datein = this.state.timein;
         }
 
         month = datein.getMonth() + 1;
-        return month;
+        if (month < 10) {
+            month = `0${month}`
+        }
+        return `${month}/`;
     }
     gettimeoutmonth() {
         let month = "";
@@ -140,7 +156,10 @@ class MyScheduleLabor extends Component {
             datein = this.state.timein;
         }
         day = datein.getDate();
-        return day;
+        if (day < 10) {
+            day = `0${day}`
+        }
+        return `${day}/`;
     }
     gettimeoutday() {
         let day = "";
@@ -218,7 +237,9 @@ class MyScheduleLabor extends Component {
         else if (hours === 0) {
             hours = 12;
         }
-        return hours;
+
+
+        return `${hours}:`;
     }
     gettimeouthours() {
         let hours = "";
@@ -263,6 +284,9 @@ class MyScheduleLabor extends Component {
             datein = this.state.timein;
         }
         minutes = datein.getMinutes();
+        if (minutes < 10) {
+            minutes = `0${minutes}`
+        }
         return minutes;
     }
     gettimeoutminutes() {
@@ -282,34 +306,47 @@ class MyScheduleLabor extends Component {
         return minutes;
 
     }
-    toggletimeinampm(event) {
+    checkampmtimein(dir) {
+        let validate = true;
+        let timein = this.getactivelabor().timein;
+        let ampm = AMPMfromTimeIn(timein)
+        if (ampm === "PM" && dir === "up") {
+            validate = false;
+        } else if (ampm === "AM" && dir === "down") {
+            validate = false;
+        }
+        return validate;
+    }
+    toggletimeinampm(dir) {
 
         if (this.state.activelaborid) {
-            let laborid = this.state.activelaborid;
-            let mylabor = this.getmylabor(laborid);
-            let timein = mylabor.timein;
-            timein = toggleAMTimeString(mylabor.timein)
-            if (this.props.projectsprovider.hasOwnProperty("length")) {
-                let projectid = this.props.projectid.projectid;
-                // eslint-disable-next-line
-                this.props.projectsprovider.map((myproject, i) => {
-                    if (myproject.projectid === projectid) {
-                        if (myproject.hasOwnProperty("schedulelabor")) {
-                            // eslint-disable-next-line
-                            myproject.schedulelabor.mylabor.map((mylabor, j) => {
-                                if (mylabor.laborid === laborid) {
-                                    this.props.projectsprovider[i].schedulelabor.mylabor[j].timein = timein;
-                                    let obj = this.props.projectsprovider;
-                                    this.props.projectsProvider(obj)
-                                    this.setState({ render: 'render' })
-                                }
-                            })
+            let validate = this.checkampmtimein(dir);
+            if (validate) {
+                let laborid = this.state.activelaborid;
+                let mylabor = this.getactivelabor();
+                let timein = mylabor.timein;
+                timein = toggleAMTimeString(mylabor.timein)
+                if (this.props.projectsprovider.hasOwnProperty("length")) {
+                    let projectid = this.props.projectid.projectid;
+                    // eslint-disable-next-line
+                    this.props.projectsprovider.map((myproject, i) => {
+                        if (myproject.projectid === projectid) {
+                            if (myproject.hasOwnProperty("schedulelabor")) {
+                                // eslint-disable-next-line
+                                myproject.schedulelabor.mylabor.map((mylabor, j) => {
+                                    if (mylabor.laborid === laborid) {
+                                        this.props.projectsprovider[i].schedulelabor.mylabor[j].timein = timein;
+                                        let obj = this.props.projectsprovider;
+                                        this.props.projectsProvider(obj)
+                                        this.setState({ render: 'render' })
+                                    }
+                                })
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
 
-
+            }// if validate
 
         }
         else {
@@ -982,6 +1019,7 @@ class MyScheduleLabor extends Component {
             let laborid = this.state.activelaborid;
             let myproject = this.getproject();
             if (myproject.hasOwnProperty("schedulelabor")) {
+                // eslint-disable-next-line
                 myproject.schedulelabor.mylabor.map((mylabor, i) => {
                     if (mylabor.laborid === laborid) {
                         labor = mylabor;
@@ -997,6 +1035,7 @@ class MyScheduleLabor extends Component {
             let laborid = this.state.activelaborid;
             let myproject = this.getproject();
             if (myproject.hasOwnProperty("schedulelabor")) {
+                // eslint-disable-next-line
                 myproject.schedulelabor.mylabor.map((mylabor, i) => {
                     if (mylabor.laborid === laborid) {
                         key = i;
@@ -1011,6 +1050,7 @@ class MyScheduleLabor extends Component {
         let key = false;
         if (this.props.projects) {
             if (this.props.projects.hasOwnProperty("length")) {
+                // eslint-disable-next-line
                 this.props.projects.map((myproject, i) => {
                     if (myproject.projectid === projectid) {
                         key = i;
@@ -1021,6 +1061,7 @@ class MyScheduleLabor extends Component {
         if (!key) {
             if (this.props.projectsprovider) {
                 if (this.props.projectsprovider.hasOwnProperty("length")) {
+                    // eslint-disable-next-line
                     this.props.projectsprovider.map((myproject, i) => {
                         if (myproject.projectid === projectid) {
                             key = i;
@@ -1361,7 +1402,7 @@ class MyScheduleLabor extends Component {
                         // eslint-disable-next-line
                         myproject.schedulematerials.mymaterial.map(mymaterial => {
                             if (!mymaterial.milestoneid) {
-                                errmsg = `${mymaterial.materialid} is missing a milestone `
+                                errmsg = `${mymaterial.matieralid} is missing a milestone `
 
                             }
                             errmsg += `${validateLaborRate(mymaterial.unitcost)}`
@@ -1437,7 +1478,29 @@ class MyScheduleLabor extends Component {
             return "";
         }
     }
+    timeinheader() {
+        let mylabor = {};
+        if (this.state.activelaborid) {
+            mylabor = this.getactivelabor();
+            return (`Time In ${inputUTCStringForLaborID(mylabor.timein)}`)
+        } else {
+            return (`Time In ${inputDateObjOutputCalendarString(this.state.timein)}`)
+        }
+
+    }
+    showcalendartimein() {
+        let datein = {};
+        if (this.state.activelaborid) {
+            let timein = this.getactivelabor().timein;
+            datein = inputDateTimeOutDateObj(timein)
+        } else {
+            datein = this.state.timein;
+        }
+        console.log("SHOWCALENDAR", datein)
+        return (this.showcalender(datein))
+    }
     showtimein() {
+
         return (
             <div className="general-flex">
                 <div className="flex-1">
@@ -1446,15 +1509,13 @@ class MyScheduleLabor extends Component {
                         <div className="flex-1 showBorder">
 
                             <div className="general-flex">
-                                <div className="flex-3 showBorder timedisplay-container">
-                                    &nbsp;
+                                <div className="flex-3 showBorder timedisplay-container regularFont">
+                                    {this.timeinheader()}
                                 </div>
-                                <div className="flex-1 showBorder timedisplay-container">
-                                    &nbsp;
+                                <div className="flex-1 showBorder timedisplay-container align-contentCenter">
+                                    <button className="general-button majorDownIcon">{majorDownIcon()}</button>
                                 </div>
-
                             </div>
-
 
                         </div>
                     </div>
@@ -1462,73 +1523,81 @@ class MyScheduleLabor extends Component {
                     <div className="general-flex">
                         <div className="flex-1 showBorder timecell-container">
 
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.timeinmonthup(event) }}>{DateArrowUp()}</button>
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinmonth()} />
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.timeinmonthdown(event) }}> {DateArrowDown()}</button>
                             </div>
 
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder">
+                                <button className="general-button time-button" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinday()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60 * 24)) }}> {DateArrowDown()}</button>
+                            </div>
+
+                        </div>
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder">
+                                <button className="time-button general-button" onClick={event => { this.timeinyearup(event) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinyear()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button" onClick={event => { this.timeinyeardown(event) }}> {DateArrowDown()}</button>
+                            </div>
                         </div>
 
                         <div className="flex-1 showBorder timecell-container">
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60 * 60)) }}>{DateArrowUp()}</button>
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinhours()} />
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60 * 60)) }}> {DateArrowDown()}</button>
                             </div>
+                        </div>
 
-                        </div>
-                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
-                            &nbsp;
+                        <div className="flex-1 showBorder timecell-container">
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.increasetimeinbyinc(event, (1000 * 60)) }}>{DateArrowUp()}</button>
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinminutes()} />
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
-                            </div></div>
-                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
-                            &nbsp;
-                            </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
-                            </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
-                            </div></div>
-                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
-                            &nbsp;
-                            </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
-                            </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.decreasetimeinbyinc(event, (1000 * 60)) }} > {DateArrowDown()}</button>
                             </div>
                         </div>
-                        <div className="flex-1 showBorder timecell-container"> <div className="timecell-module showBorder">
-                            &nbsp;
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={() => { this.toggletimeinampm("up") }}>{DateArrowUp()}</button>
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeinampm()} />
                             </div>
-                            <div className="timecell-module showBorder">
-                                &nbsp;
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={() => { this.toggletimeinampm("down") }}> {DateArrowDown()}</button>
                             </div>
                         </div>
                     </div>
 
                     <div className="general-flex">
                         <div className="flex-1 showBorder calendar-container">
-
+                            {this.showcalendartimein()}
 
                         </div>
                     </div>
@@ -1537,6 +1606,570 @@ class MyScheduleLabor extends Component {
                 </div>
             </div>
         )
+    }
+    showcalender(datein) {
+        console.log("SHOWCALENDAR", datein)
+        let gridcalender = [];
+        if (Object.prototype.toString.call(datein) === "[object Date]") {
+
+            let firstison = getFirstIsOn(datein);
+            let days = [];
+            let numberofcells = 49;
+            for (let i = 1; i < numberofcells + 1; i++) {
+                days.push(i);
+            }
+            // eslint-disable-next-line
+            days.map((day, i) => {
+                if (i === 0) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Mon
+							</div>)
+                }
+                else if (i === 1) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Tues
+							</div>)
+                }
+                else if (i === 2) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Weds
+							</div>)
+                }
+                else if (i === 3) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Thurs
+							</div>)
+                }
+                else if (i === 4) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Fri
+							</div>)
+                }
+                else if (i === 5) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sat
+							</div>)
+                }
+                else if (i === 6) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sun
+							</div>)
+                }
+                else if (i === 7) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}&nbsp;
+							</div>)
+
+                }
+                else if (i === 8) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 2);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+
+                else if (i === 9) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 3);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 2);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 10) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 4);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 3);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 2);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i === 11) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 5);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 4);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 3);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 2);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 12) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, 6);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 5);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 4);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 3);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 2);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i >= 13 && i <= 34) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, i - 6);
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, i - 7);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, i - 8);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, i - 9);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, i - 10);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, i - 11);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, i - 12);
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+
+
+                else if (i === 35) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, 28);
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 27);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 26);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 25);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 24);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 23);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 36) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, 28);
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 27);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 26);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 25);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 24);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 37) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein))
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, 28);
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 27);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 26);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 25);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 38) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, 28);
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 27);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 26);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 39) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, 28);
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 27);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 40) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, 28);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 41) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, check_29_feb_leapyear(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 42) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, check_30(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 43) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            break;
+                        case "Sun":
+                            display = this.showdate(datein, check_31(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        &nbsp;
+							</div>)
+                }
+            })
+        }
+        return (<div className="laborcalendar-grid">
+            {gridcalender}
+        </div>)
+    }
+    showdate(dateobj, day) {
+
+        let showday = [];
+        if (day) {
+
+
+            let month = dateobj.getMonth() + 1;
+            month = trailingzero(month)
+            let year = dateobj.getFullYear();
+            let dayzero = trailingzero(day);
+            let offset = getOffset()
+            let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
+
+            let calendardate = new Date(timestring);
+
+            let dateencoded = calendardate.getTime();
+
+            showday.push(<div
+                className={`${this.getactivedate(dateencoded)} calendar-date`}
+                onClick={event => { this.setDay(dateencoded) }}
+            > {day}</div>)
+        }
+        return showday;
+    }
+    getactivedate(dateencoded) {
+        let activeclass = "";
+        if (this.state.activelaborid) {
+
+
+            let mylabor = this.getactivelabor()
+            let timein = mylabor.timein;
+            if (inputtimeDBoutputCalendarDaySeconds(timein) === dateencoded) {
+                activeclass = "active-schedule-calendar"
+            }
+        }
+        else {
+            let datein = this.state.timein;
+            if (inputDateObjOutputCalendarDaySeconds(datein) === dateencoded) {
+                activeclass = "active-schedule-calendar"
+            }
+
+        }
+        return activeclass;
+    }
+    setDay(dateencoded) {
+        if (this.state.activelaborid) {
+
+            let mylabor = this.getactivelabor();
+            let laborid = mylabor.laborid;
+            let timein = mylabor.timein
+            let newtimein = inputDateSecActiveIDTimein(dateencoded, timein)
+            if (this.props.projectsprovider.hasOwnProperty("length")) {
+                let projectid = this.props.projectid.projectid;
+                // eslint-disable-next-line
+                this.props.projectsprovider.map((myproject, i) => {
+                    if (myproject.projectid === projectid) {
+                        if (myproject.hasOwnProperty("schedulelabor")) {
+                            // eslint-disable-next-line
+                            myproject.schedulelabor.mylabor.map((mylabor, j) => {
+                                if (mylabor.laborid === laborid) {
+                                    this.props.projectsprovider[i].schedulelabor.mylabor[j].timein = newtimein;
+                                    let obj = this.props.projectsprovider;
+                                    this.props.projectsProvider(obj);
+                                    this.setState({ render: 'render' })
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+
+        }
+        else {
+            let timein = inputDateObjandSecReturnObj(dateencoded, this.state.timein);
+
+            this.setState({ timein, render: 'render' })
+        }
+
     }
     showtimeout() {
         return (
@@ -1606,7 +2239,7 @@ class MyScheduleLabor extends Component {
                         </div>
                         <div className="flex-1 showBorder">
                             <div className="regularFont"> Labor Rate <br />
-                                <input type="text" className="project-field align-contentCenter" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} /></div>
+                                <input type="text" className="project-field" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} /></div>
                         </div>
                     </div>
 
