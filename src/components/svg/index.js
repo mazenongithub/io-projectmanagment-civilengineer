@@ -146,7 +146,9 @@ export function UpdateScheduleMaterial() {
 export function ClearMaterialID() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 347 57"><defs><style></style></defs><title>Asset 14</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="clearmaterialid-1" x="1" y="1" width="345" height="55" rx="4.88" /><text className="clearmaterialid-2" transform="translate(70.72 34.3)">Clear <tspan className="clearmaterialid-3" x="70.14" y="0">M</tspan><tspan className="clearmaterialid-4" x="94.44" y="0">a</tspan><tspan className="clearmaterialid-5" x="108.78" y="0">t</tspan><tspan x="118.53" y="0">e</tspan><tspan className="clearmaterialid-6" x="133.56" y="0">r</tspan><tspan x="143.49" y="0">ial ID</tspan></text></g></g></svg>)
 }
-
+export function SaveAllProjectIcon() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 339 77"><defs><style></style></defs><title>saveallproject</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="saveallprojecticon-1" x="1" y="1" width="337" height="75" rx="5.08" /><text className="saveallprojecticon-2" transform="translate(25 47.33) scale(0.87 1)">Sa<tspan className="saveallprojecticon-3" x="53.76" y="0">v</tspan><tspan x="77.58" y="0">e All </tspan><tspan className="saveallprojecticon-4" x="182.3" y="0">Pr</tspan><tspan x="228.14" y="0">oje</tspan><tspan className="saveallprojecticon-5" x="289.73" y="0">c</tspan><tspan x="312.23" y="0">t</tspan></text></g></g></svg>)
+}
 export function UpdateActualMaterial() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 72"><defs><style></style></defs><title>insertactualmaterials</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="updateactualmaterial-1" x="1" y="1" width="438" height="70" rx="5.06" /><text className="updateactualmaterial-2" transform="translate(39.75 41.38)">Inse<tspan className="updateactualmaterial-3" x="65.92" y="0">r</tspan><tspan x="80.03" y="0">t A</tspan><tspan className="updateactualmaterial-4" x="127.73" y="0">c</tspan><tspan className="updateactualmaterial-5" x="145.01" y="0">tual Materials</tspan></text></g></g></svg>)
 }

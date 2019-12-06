@@ -76,6 +76,7 @@
     display: grid;
     grid-template-columns: 17% 17% 17% 17% 16% 16%;
     grid-row-gap: 10px;
+    max-width:540px;
 }
 
 .datebutton {

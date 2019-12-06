@@ -3,6 +3,9 @@
 .calendar-element{
     text-align:center;
 }
+.message-container{
+    height:40px;
+}
 .addLeftMargin{
     margin-left:10px;
 }
@@ -29,6 +32,10 @@
     width:62px;
     height:41px;
 }
+.saveAllProjectsIcon{
+    width:337px;
+    height:75;
+}
 .timeinput-field{
     width:99%;
     max-width:65px;
@@ -47,6 +54,7 @@
 }
 .timecell-container{
     min-height: 180px;
+    max-width:77px;
 }
 .timedisplay-container{
     min-height:60px;
@@ -57,6 +65,11 @@
 }
 .calendar-element{
     font-size:20px;
+}
+.btn-clearmaterialid{
+    width:345px;
+    height:55px;
+
 }
 @media screen and (min-width:539px) {
     .calendar-element{

@@ -41,10 +41,9 @@ import {
     dateYearDown,
     dateMonthDown,
     dateMonthUp,
-    SaveProjectIcon,
-    editLaborIcon,
-    deleteLaborIcon,
-    ClearActiveLabor
+    SaveAllProjectIcon,
+    ClearMaterialID,
+    removeIcon
 }
     from './svg';
 import './materials.css';
@@ -357,7 +356,7 @@ class MyProjectScheduleMaterials extends Component {
             <div className="datein-element-1a">
                 Enter Date <br /> <input type="date"
                     value={this.getvalue()}
-                    className="project-field"
+                    className="project-field titleFont general-Font"
                     onChange={event => { this.handleChange(event.target.value) }} />
             </div>
             <div className="datein-element-1b">
@@ -1412,26 +1411,59 @@ class MyProjectScheduleMaterials extends Component {
         }
     }
     showmaterialid(mymaterial) {
-        let materialid = [];
-        if (this.state.width > 1080) {
-            materialid.push(<div className={`show-material material-large-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-large-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-large-c`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteLaborIcon()} </button> </div>)
-            materialid.push(<div className={`show-material material-large-d ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-large-e`}><button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editLaborIcon()}</button></div>)
+        return (<div className="general-flex">
+            <div className="flex-7" ame="laborid-icon" onClick={() => { this.findmaterial(mymaterial.materialid) }}>
+
+                <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
+                <span className="regularFont">{mymaterial.description}</span><br />
+                <span className="regularFont">{mymaterial.quantity} {mymaterial.unit} ${mymaterial.unitcost} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</span>
+
+            </div>
+            <div className="flex-1">
+                <button className="btn-removeIcon general-button" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>
+                    {removeIcon()}
+                </button>
+            </div>
+        </div>)
+    }
+    getactivematerial() {
+        let material = {};
+        if (this.state.activematerialid) {
+            let myproject = this.getproject();
+            let materialid = this.state.activematerialid;
+            if (myproject.hasOwnProperty("schedulematerials")) {
+                // eslint-disable-next-line
+                myproject.schedulematerials.mymaterial.map(mymaterial => {
+                    if (mymaterial.materialid === materialid) {
+                        material = mymaterial;
+                    }
+                })
+            }
         }
-        else {
-            materialid.push(<div className={`show-material material-small-a ${this.getactivematerialid(mymaterial.materialid)}`}>{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            materialid.push(<div className={`show-material material-small-b ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.quantity} ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</div>)
-            materialid.push(<div className={`show-material material-small-c ${this.getactivematerialid(mymaterial.materialid)}`}>{mymaterial.description} </div>)
-            materialid.push(<div className={`show-material material-small-d`}><button className="laborid-icon" onClick={event => { this.findmaterial(mymaterial.materialid) }}>{editLaborIcon()}</button></div>)
-            materialid.push(<div className={`show-material material-small-d align-right`}><button className="laborid-icon" onClick={event => { this.deleteMaterial(event, mymaterial.materialid) }}>{deleteLaborIcon()} </button> </div>)
-        }
-        return materialid;
+        return material;
     }
     handleClearProject() {
         if (this.state.activematerialid) {
-            return (<button className="btnsaveprojects" onClick={event => { this.clearmaterialid(event) }}>{ClearActiveLabor()} </button>)
+            let mymaterial = this.getactivematerial();
+
+            return (
+                <div className="general-flex">
+                    <div className="flex-1">
+
+                        <div className="general-flex">
+                            <div className="flex-1 align-contentCenter">
+                                <button className="general-button btn-clearmaterialid" onClick={event => { this.clearmaterialid(event) }}>{ClearMaterialID()} </button>
+                            </div>
+                        </div>
+
+                        <div className="general-flex">
+                            <div className="flex-1 regularFont align-contentCenter">
+                                {`Active Materal is ${mymaterial.description}`}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>)
         }
         else {
             return (<span>&nbsp;</span>)
@@ -1440,7 +1472,7 @@ class MyProjectScheduleMaterials extends Component {
     clearmaterialid() {
         this.setState({
             activematerialid: "",
-            message: " Material ID is clear, start typing to create a material",
+            message: "",
             datein: new Date(),
             quantity: 0,
             unit: "",
@@ -1544,11 +1576,12 @@ class MyProjectScheduleMaterials extends Component {
         return (
             <div className="material-container">
                 <div className="material-titlerow"> {this.getprojectitle()}<br />Schedule Materials</div>
-                <div className="labor-main">{this.handleClearProject()}</div>
-                <div className="labor-main">{this.getactivemessage()}</div>
+                <div className="materials-main">{this.handleClearProject()}</div>
+
                 <div className="materials-main">{this.DateIn()} </div>
                 <div className="materials-main">
-                    <select className="project-select-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
+                    <div className="regularFont">Milestone ID</div>
+                    <select className="project-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
                         <option>Select A Milestone </option>
                         {this.loadmilestones()}
                     </select>
@@ -1575,8 +1608,8 @@ class MyProjectScheduleMaterials extends Component {
                     {this.getamount()}<br />
                     Amount</div>
                 <div className="materials-main">{this.state.message} &nbsp; </div>
-                <div className="material-titlerow"><button className="btnsaveprojects" onClick={event => { this.saveallprojects() }}>{SaveProjectIcon()} </button> </div>
-                {this.handleshowmaterialids()}
+                <div className="material-titlerow"><button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button> </div>
+                <div className="materials-main"> {this.handleshowmaterialids()}</div>
             </div>
         )
     }

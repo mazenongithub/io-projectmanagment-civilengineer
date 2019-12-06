@@ -75,6 +75,9 @@
 .flex-12{
     flex:12;
 }
+.general-Font{
+  font-family: 'Nunito Sans', sans-serif;
+}
 .login-container {
     display: grid;
     font-family: 'Nunito Sans', sans-serif;

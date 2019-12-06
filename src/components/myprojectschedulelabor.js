@@ -4,7 +4,7 @@ import * as actions from './actions';
 import './schedule.css';
 import { ProviderEndPoint } from './actions/api'
 // eslint-disable-next-line 
-import { majorDownIcon, removeIcon, SaveProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
+import { majorDownIcon, removeIcon, SaveAllProjectIcon, ClearActiveLabor, DateArrowUp, DateArrowDown, editLaborIcon, deleteLaborIcon } from './svg'
 import {
     inputDateObjOutputAdjString,
     calculatetotalhours,
@@ -51,7 +51,7 @@ import {
 class MyScheduleLabor extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', width: 0, height: 0, activelaborid: '', timein: new Date(), timeout: new Date(new Date().getTime() + (1000 * 60 * 60)), description: "", laborrate: "", message: 'Active Labor ID is clear, Type a Description to Create One', activetimeincalendar: false }
+        this.state = { render: '', width: 0, height: 0, activelaborid: '', timein: new Date(), timeout: new Date(new Date().getTime() + (1000 * 60 * 60)), description: "", laborrate: "", message: '', activetimeincalendar: false }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
@@ -126,20 +126,24 @@ class MyScheduleLabor extends Component {
     }
     gettimeoutmonth() {
         let month = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
-            let laborid = this.state.activelaborid;
-            let mylabor = this.getmylabor(laborid);
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
+            let mylabor = this.getactivelabor();
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
         }
         else {
-            dateout = this.state.timeout;
+            datein = this.state.timeout;
         }
-        month = dateout.getMonth() + 1;
-        return month;
+
+        month = datein.getMonth() + 1;
+        if (month < 10) {
+            month = `0${month}`
+        }
+        return `${month}/`;
     }
+
     gettimeinday() {
         let day = "";
         let datein = {};
@@ -163,40 +167,43 @@ class MyScheduleLabor extends Component {
     }
     gettimeoutday() {
         let day = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
             let mylabor = this.getmylabor(laborid);
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
-
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
         }
         else {
-            dateout = this.state.timeout;
+            datein = this.state.timeout;
         }
-        day = dateout.getDate();
-        return day;
+        day = datein.getDate();
+        if (day < 10) {
+            day = `0${day}`
+        }
+        return `${day}/`;
     }
+
     gettimeoutyear() {
         let year = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
             let mylabor = this.getmylabor(laborid);
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
-
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
         }
         else {
-            dateout = this.state.timeout;
+            datein = this.state.timeout;
         }
-        year = dateout.getFullYear();
+        year = datein.getFullYear();
         let century = Math.floor(year / 100) * 100;
         year = year - century;
         return year;
     }
+
     gettimeinyear() {
         let year = "";
         let datein = {};
@@ -243,30 +250,26 @@ class MyScheduleLabor extends Component {
     }
     gettimeouthours() {
         let hours = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
             let mylabor = this.getmylabor(laborid);
 
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
-
-
-
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
         }
         else {
-            dateout = this.state.timeout;
-
+            datein = this.state.timeout;
         }
-        hours = dateout.getHours();
+        hours = datein.getHours();
         if (hours > 12) {
             hours = hours - 12;
         }
         else if (hours === 0) {
             hours = 12;
         }
-        return hours;
 
+        return `${hours}:`;
     }
     gettimeinminutes() {
         let minutes = "";
@@ -291,20 +294,24 @@ class MyScheduleLabor extends Component {
     }
     gettimeoutminutes() {
         let minutes = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
             let mylabor = this.getmylabor(laborid);
 
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
+
+
 
         }
         else {
-            dateout = this.state.timeout;
+            datein = this.state.timeout;
         }
-        minutes = dateout.getMinutes();
+        minutes = datein.getMinutes();
+        if (minutes < 10) {
+            minutes = `0${minutes}`
+        }
         return minutes;
-
     }
     checkampmtimein(dir) {
         let validate = true;
@@ -354,9 +361,6 @@ class MyScheduleLabor extends Component {
             this.setState({ timein: datein })
         }
 
-
-
-
     }
     gettimeinampm() {
         let ampm = "";
@@ -366,9 +370,6 @@ class MyScheduleLabor extends Component {
             let mylabor = this.getmylabor(laborid);
 
             datein = new Date(inputUTCStringAddOffsetString(mylabor.timein).replace(/-/g, '/'));
-
-
-
 
         }
         else {
@@ -386,17 +387,19 @@ class MyScheduleLabor extends Component {
     }
     gettimeoutampm() {
         let ampm = "";
-        let dateout = {};
+        let datein = {};
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
             let mylabor = this.getmylabor(laborid);
-            dateout = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
+
+            datein = new Date(inputUTCStringAddOffsetString(mylabor.timeout).replace(/-/g, '/'));
 
         }
         else {
-            dateout = this.state.timeout;
+            datein = this.state.timeout;
+
         }
-        let hours = dateout.getHours();
+        let hours = datein.getHours();
         if (hours >= 12) {
             ampm = "PM"
         }
@@ -405,43 +408,54 @@ class MyScheduleLabor extends Component {
         }
         return ampm;
     }
-    toggletimeoutampm(event) {
+    checkampmtimeout(dir) {
+        let validate = true;
+        let timeout = this.getactivelabor().timeout;
+        let ampm = AMPMfromTimeIn(timeout)
+        if (ampm === "PM" && dir === "up") {
+            validate = false;
+        } else if (ampm === "AM" && dir === "down") {
+            validate = false;
+        }
+        return validate;
+    }
+
+    toggletimeoutampm(dir) {
 
         if (this.state.activelaborid) {
-            let laborid = this.state.activelaborid;
-            let mylabor = this.getmylabor(laborid);
-            let timeout = mylabor.timeout;
-            timeout = toggleAMTimeString(mylabor.timeout)
-            if (this.props.projectsprovider.hasOwnProperty("length")) {
-                let projectid = this.props.projectid.projectid;
-                // eslint-disable-next-line
-                this.props.projectsprovider.map((myproject, i) => {
-                    if (myproject.projectid === projectid) {
-                        if (myproject.hasOwnProperty("schedulelabor")) {
-                            // eslint-disable-next-line
-                            myproject.schedulelabor.mylabor.map((mylabor, j) => {
-                                if (mylabor.laborid === laborid) {
-                                    this.props.projectsprovider[i].schedulelabor.mylabor[j].timeout = timeout;
-                                    let obj = this.props.projectsprovider;
-                                    this.props.projectsProvider(obj)
-                                    this.setState({ render: 'render' })
-                                }
-                            })
+            let validate = this.checkampmtimeout(dir);
+            if (validate) {
+                let laborid = this.state.activelaborid;
+                let mylabor = this.getactivelabor();
+                let timeout = mylabor.timeout;
+                timeout = toggleAMTimeString(mylabor.timeout)
+                if (this.props.projectsprovider.hasOwnProperty("length")) {
+                    let projectid = this.props.projectid.projectid;
+                    // eslint-disable-next-line
+                    this.props.projectsprovider.map((myproject, i) => {
+                        if (myproject.projectid === projectid) {
+                            if (myproject.hasOwnProperty("schedulelabor")) {
+                                // eslint-disable-next-line
+                                myproject.schedulelabor.mylabor.map((mylabor, j) => {
+                                    if (mylabor.laborid === laborid) {
+                                        this.props.projectsprovider[i].schedulelabor.mylabor[j].timeout = timeout;
+                                        let obj = this.props.projectsprovider;
+                                        this.props.projectsProvider(obj)
+                                        this.setState({ render: 'render' })
+                                    }
+                                })
+                            }
                         }
-                    }
-                })
-            }
+                    })
+                }
 
-
+            }// if validate
 
         }
         else {
-            let dateout = toggleAMDateObj(this.state.timeout)
-            this.setState({ timeout: dateout })
+            let datein = toggleAMDateObj(this.state.timeout)
+            this.setState({ timeout: datein })
         }
-
-
-
 
     }
     increasetimeinbyinc(event, inc) {
@@ -710,6 +724,7 @@ class MyScheduleLabor extends Component {
             this.setState({ timeout: newDate })
         }
     }
+
     timeoutyeardown(event) {
         if (this.state.activelaborid) {
             let laborid = this.state.activelaborid;
@@ -840,7 +855,7 @@ class MyScheduleLabor extends Component {
         }
         else {
             let newDate = subtractMonthDateObj(this.state.timeout);
-            this.setState({ timeout: newDate });
+            this.setState({ timeout: newDate })
         }
     }
     gettimein() {
@@ -2108,6 +2123,90 @@ class MyScheduleLabor extends Component {
             {gridcalender}
         </div>)
     }
+    showdatetimeout(dateobj, day) {
+
+        let showday = [];
+        if (day) {
+
+
+            let month = dateobj.getMonth() + 1;
+            month = trailingzero(month)
+            let year = dateobj.getFullYear();
+            let dayzero = trailingzero(day);
+            let offset = getOffset()
+            let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
+
+            let calendardate = new Date(timestring);
+
+            let dateencoded = calendardate.getTime();
+
+            showday.push(<div
+                className={`${this.getactivedatetimeout(dateencoded)} calendar-date`}
+                onClick={event => { this.setDayTimeout(dateencoded) }}
+            > {day}</div>)
+        }
+        return showday;
+    }
+
+    setDayTimeout(dateencoded) {
+        if (this.state.activelaborid) {
+
+            let mylabor = this.getactivelabor();
+            let laborid = mylabor.laborid;
+            let timeout = mylabor.timeout
+            let newtimeout = inputDateSecActiveIDTimein(dateencoded, timeout)
+            if (this.props.projectsprovider.hasOwnProperty("length")) {
+                let projectid = this.props.projectid.projectid;
+                // eslint-disable-next-line
+                this.props.projectsprovider.map((myproject, i) => {
+                    if (myproject.projectid === projectid) {
+                        if (myproject.hasOwnProperty("schedulelabor")) {
+                            // eslint-disable-next-line
+                            myproject.schedulelabor.mylabor.map((mylabor, j) => {
+                                if (mylabor.laborid === laborid) {
+                                    this.props.projectsprovider[i].schedulelabor.mylabor[j].timeout = newtimeout;
+                                    let obj = this.props.projectsprovider;
+                                    this.props.projectsProvider(obj);
+                                    this.setState({ render: 'render' })
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+
+        }
+        else {
+            let timeout = inputDateObjandSecReturnObj(dateencoded, this.state.timeout);
+
+            this.setState({ timeout, render: 'render' })
+        }
+
+    }
+
+
+    getactivedatetimeout(dateencoded) {
+        let activeclass = "";
+        if (this.state.activelaborid) {
+
+
+            let mylabor = this.getactivelabor()
+            let timeout = mylabor.timeout;
+            if (inputtimeDBoutputCalendarDaySeconds(timeout) === dateencoded) {
+                activeclass = "active-schedule-calendar"
+            }
+        }
+        else {
+            let datein = this.state.timeout;
+            if (inputDateObjOutputCalendarDaySeconds(datein) === dateencoded) {
+                activeclass = "active-schedule-calendar"
+            }
+
+        }
+        return activeclass;
+    }
+
+
     showdate(dateobj, day) {
 
         let showday = [];
@@ -2187,31 +2286,642 @@ class MyScheduleLabor extends Component {
         }
 
     }
+    // TIME OUT FUNCTIONS
+
+    activetimeoutcalendar() {
+        let activetimeoutcalendar = this.state.activetimeoutcalendar;
+        if (activetimeoutcalendar) {
+            activetimeoutcalendar = false;
+        } else {
+            activetimeoutcalendar = true;
+        }
+        this.setState({ activetimeoutcalendar })
+    }
+
+    timeoutheader() {
+        let mylabor = {};
+        if (this.state.activelaborid) {
+            mylabor = this.getactivelabor();
+            return (`Time Out ${inputUTCStringForLaborID(mylabor.timeout)}`)
+        } else {
+            return (`Time Out ${inputDateObjOutputCalendarString(this.state.timeout)}`)
+        }
+
+    }
+    calendertimeout(datein) {
+
+        let gridcalender = [];
+        if (Object.prototype.toString.call(datein) === "[object Date]") {
+
+            let firstison = getFirstIsOn(datein);
+            let days = [];
+            let numberofcells = 49;
+            for (let i = 1; i < numberofcells + 1; i++) {
+                days.push(i);
+            }
+            // eslint-disable-next-line
+            days.map((day, i) => {
+                if (i === 0) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Mon
+							</div>)
+                }
+                else if (i === 1) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Tues
+							</div>)
+                }
+                else if (i === 2) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Weds
+							</div>)
+                }
+                else if (i === 3) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Thurs
+							</div>)
+                }
+                else if (i === 4) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Fri
+							</div>)
+                }
+                else if (i === 5) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sat
+							</div>)
+                }
+                else if (i === 6) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sun
+							</div>)
+                }
+                else if (i === 7) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}&nbsp;
+							</div>)
+
+                }
+                else if (i === 8) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 2);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+
+                else if (i === 9) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 3);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 2);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 10) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 4);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 3);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 2);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i === 11) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 5);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 4);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 3);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 2);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 12) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, 6);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 5);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 4);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 3);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 2);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i >= 13 && i <= 34) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, i - 6);
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, i - 7);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, i - 8);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, i - 9);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, i - 10);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, i - 11);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, i - 12);
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+
+
+                else if (i === 35) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 27);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 26);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 25);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 24);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 23);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 36) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 27);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 26);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 25);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 24);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 37) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein))
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 27);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 26);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 25);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 38) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 27);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 26);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 39) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 27);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 40) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, 28);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 41) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, check_29_feb_leapyear(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 42) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, check_30(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 43) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            break;
+                        case "Sun":
+                            display = this.showdatetimeout(datein, check_31(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        &nbsp;
+							</div>)
+                }
+            })
+        }
+        return (<div className="laborcalendar-grid">
+            {gridcalender}
+        </div>)
+    }
+    showcalendartimeout() {
+        let datein = {};
+        if (this.state.activelaborid) {
+            let timeout = this.getactivelabor().timeout;
+            datein = inputDateTimeOutDateObj(timeout)
+        } else {
+            datein = this.state.timeout;
+        }
+
+        return (this.calendertimeout(datein))
+    }
+
+    handlecalendartimeout() {
+        if (this.state.activetimeoutcalendar) {
+            return (<div className="general-flex">
+                <div className="flex-1 calendar-container">
+                    {this.showcalendartimeout()}
+
+                </div>
+            </div>)
+        } else {
+            return;
+        }
+    }
     showtimeout() {
+
         return (
             <div className="general-flex">
                 <div className="flex-1">
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">&nbsp;
+                        <div className="flex-1">
 
+                            <div className="general-flex">
+                                <div className="flex-3 timedisplay-container regularFont">
+                                    {this.timeoutheader()}
+                                </div>
+                                <div className="flex-1 timedisplay-container align-contentCenter">
+                                    <button className="general-button majorDownIcon" onClick={() => { this.activetimeoutcalendar() }}>{majorDownIcon()}</button>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">&nbsp;</div>
+                        <div className="flex-1 showBorder timecell-container">
+
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.timeoutmonthup(event) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeoutmonth()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.timeoutmonthdown(event) }}> {DateArrowDown()}</button>
+                            </div>
+
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder">
+                                <button className="general-button time-button" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeoutday()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="general-button time-button" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60 * 24)) }}> {DateArrowDown()}</button>
+                            </div>
+
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder">
+                                <button className="time-button general-button" onClick={event => { this.timeoutyearup(event) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeoutyear()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button" onClick={event => { this.timeoutyeardown(event) }}> {DateArrowDown()}</button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container">
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60 * 60)) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeouthours()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60 * 60)) }}> {DateArrowDown()}</button>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 showBorder timecell-container">
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.increasetimeoutbyinc(event, (1000 * 60)) }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeoutminutes()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={event => { this.decreasetimeoutbyinc(event, (1000 * 60)) }} > {DateArrowDown()}</button>
+                            </div>
+                        </div>
+                        <div className="flex-1 showBorder timecell-container align-contentCenter">
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={() => { this.toggletimeoutampm("up") }}>{DateArrowUp()}</button>
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <input type="text" className="timeinput-field align-contentCenter titleFont" value={this.gettimeoutampm()} />
+                            </div>
+                            <div className="timecell-module showBorder align-contentCenter">
+                                <button className="time-button general-button align-contentCenter" onClick={() => { this.toggletimeoutampm("down") }}> {DateArrowDown()}</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="general-flex">
-                        <div className="flex-1 showBorder">&nbsp;</div>
-                    </div>
+                    {this.handlecalendartimeout()}
 
 
                 </div>
             </div>
         )
     }
+
     handleTimes() {
         if (this.state.width > 900) {
             return (
@@ -2301,6 +3011,19 @@ class MyScheduleLabor extends Component {
                     <div className="general-flex">
                         <div className="flex-1">
                             <div className="regularFont">Description <br /><input type="text" className="project-field" onChange={event => { this.handledescription(event.target.value) }} value={this.getdescription()} /></div>
+                        </div>
+
+                    </div>
+                    <div className="general-flex">
+
+                        <div className="flex-1 align-contentCenter regularFont message-container">
+                            {this.state.message}
+                        </div>
+                    </div>
+                    <div className="general-flex">
+
+                        <div className="flex-1 align-contentCenter">
+                            <button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button>
                         </div>
 
                     </div>
