@@ -12,7 +12,7 @@ import {
     UTCTimefromCurrentDate,
     UTCStringFormatDateforProposal
 }
-from './functions';
+    from './functions';
 import { AuthorizeProposal } from './svg';
 
 class ViewProposal extends Component {
@@ -142,10 +142,10 @@ class ViewProposal extends Component {
         items.map(item => {
             if (item.proposalid === proposalid) {
                 if (item.hasOwnProperty("laborid")) {
-                    proposal.push(this.showmylabor(item))
+                    proposal.push(this.showlaborid(item))
                 }
                 else if (item.hasOwnProperty("materialid")) {
-                    proposal.push(this.showrowmaterial(item))
+                    proposal.push(this.showmaterialid(item))
                 }
             }
         })
@@ -153,34 +153,30 @@ class ViewProposal extends Component {
         return proposal;
 
     }
-    showrowmaterial(mymaterial) {
-        let material = [];
-        if (this.state.width > 1080) {
-            material.push(<div className="invoice-row-large-a">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            material.push(<div className="invoice-row-large-b">{mymaterial.description} </div>)
-            material.push(<div className="invoice-row-large-a">{mymaterial.quantity} @ ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)} </div>)
-        }
-        else {
-            material.push(<div className="invoice-row-small-a">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)} </div>)
-            material.push(<div className="invoice-row-small-a">{mymaterial.quantity} @  ${mymaterial.unitcost}/{mymaterial.unit} = ${(mymaterial.quantity*mymaterial.unitcost).toFixed(2)} </div>)
-            material.push(<div className="invoice-row-small-b">{mymaterial.description} </div>)
-        }
-        return material;
+    showmaterialid(mymaterial) {
+        return (<div className="general-flex">
+            <div className="flex-7">
 
+                <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
+                <span className="regularFont">{mymaterial.description}</span><br />
+                <span className="regularFont">{mymaterial.quantity} {mymaterial.unit} ${mymaterial.unitcost} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</span>
+
+            </div>
+
+        </div>)
     }
-    showmylabor(mylabor) {
-        let labor = [];
-        if (this.state.width > 1080) {
-            labor.push(<div className="invoice-row-large-a">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)} </div>)
-            labor.push(<div className="invoice-row-large-b">{mylabor.description} </div>)
-            labor.push(<div className="invoice-row-large-a">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)} </div>)
-        }
-        else {
-            labor.push(<div className="invoice-row-small-a">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)} </div>)
-            labor.push(<div className="invoice-row-small-a">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)} </div>)
-            labor.push(<div className="invoice-row-small-b">{mylabor.description} </div>)
-        }
-        return (labor)
+    showlaborid(mylabor) {
+        return (
+            <div className="general-flex">
+                <div className="flex-1">
+                    <span className="regularFont">{mylabor.description}</span> <br />
+                    <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
+                    <span className="regularFont">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</span>
+                </div>
+
+            </div>
+        )
+
     }
     getproposalamount() {
         let amount = 0;
@@ -285,7 +281,7 @@ class ViewProposal extends Component {
         let authorizedbutton = [];
         let servicetype = this.getservicetype();
         if (servicetype === "manager") {
-            authorizedbutton.push(<div className="show-invoice-title"><button className="main-button" onClick={event=>{this.updateauthorization(event)}}>{AuthorizeProposal()} </button> </div>)
+            authorizedbutton.push(<div className="show-invoice-title"><button className="main-button" onClick={event => { this.updateauthorization(event) }}>{AuthorizeProposal()} </button> </div>)
             authorizedbutton.push(<div className="invoice-amount-container"> {this.state.message} </div>)
             authorizedbutton.push(<div className="invoice-amount-container"> {this.getupdated()}</div>);
             authorizedbutton.push(<div className="invoice-amount-container"> {this.getauthorized()}</div>);
@@ -323,11 +319,11 @@ class ViewProposal extends Component {
         return (
             (
                 <div className="show-invoice-container">
-        <div className="show-invoice-title">{this.showtitle()} <br/> Proposal ID {this.props.match.params.proposalid}</div>
-        {this.showproposalrows()}
-         <div className="invoice-amount-container">The total amount of the proposal is ${this.getproposalamount().toFixed(2)} </div>
-        {this.showauthorizebutton()}
-        </div>))
+                    <div className="show-invoice-title">{this.showtitle()} <br /> Proposal ID {this.props.match.params.proposalid}</div>
+                    <div className="materials-main">{this.showproposalrows()}</div>
+                    <div className="invoice-amount-container">The total amount of the proposal is ${this.getproposalamount().toFixed(2)} </div>
+                    {this.showauthorizebutton()}
+                </div>))
 
     }
 }
