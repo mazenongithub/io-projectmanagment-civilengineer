@@ -5,7 +5,7 @@ import {
     calculatetotalhours,
     inputUTCStringForLaborID
 }
-from './functions'
+    from './functions'
 class ShowProjectScheduleLabor extends Component {
     constructor(props) {
         super(props);
@@ -54,24 +54,23 @@ class ShowProjectScheduleLabor extends Component {
         if (myproject.hasOwnProperty("schedulelabor")) {
             // eslint-disable-next-line
             myproject.schedulelabor.mylabor.map(mylabor => {
-                labor.push(this.showmylabor(mylabor))
+                labor.push(this.showlaborid(mylabor))
             })
         }
         return labor;
     }
-    showmylabor(mylabor) {
-        let labor = [];
-        if (this.state.width > 1080) {
-            labor.push(<div className="invoice-row-large-a">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)} </div>)
-            labor.push(<div className="invoice-row-large-b">{mylabor.description} </div>)
-            labor.push(<div className="invoice-row-large-a">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)} </div>)
-        }
-        else {
-            labor.push(<div className="invoice-row-small-a">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)} </div>)
-            labor.push(<div className="invoice-row-small-a">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout,mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout,mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)} </div>)
-            labor.push(<div className="invoice-row-small-b">{mylabor.description} </div>)
-        }
-        return (labor)
+    showlaborid(mylabor) {
+        return (
+            <div className="general-flex">
+                <div className="flex-1" onClick={event => { this.findlabor(mylabor.laborid) }}>
+                    <span className="regularFont">{mylabor.description}</span> <br />
+                    <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
+                    <span className="regularFont">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</span>
+                </div>
+
+            </div>
+        )
+
     }
     gettotalamount() {
         let myproject = this.getproject();
@@ -87,10 +86,10 @@ class ShowProjectScheduleLabor extends Component {
     render() {
         return (
             <div className="show-invoice-container">
-        <div className="show-invoice-title">{this.showtitle()} <br/> Schedule Labor</div>
-        {this.showlabor()}
-        <div className="invoice-amount-container">The Total Schedule Labor ${this.gettotalamount().toFixed(2)} </div>
-        </div>)
+                <div className="show-invoice-title">{this.showtitle()} <br /> Schedule Labor</div>
+                <div className="materials-main">{this.showlabor()}</div>
+                <div className="invoice-amount-container">The Total Schedule Labor ${this.gettotalamount().toFixed(2)} </div>
+            </div>)
 
     }
 }
