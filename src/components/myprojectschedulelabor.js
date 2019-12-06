@@ -2242,7 +2242,7 @@ class MyScheduleLabor extends Component {
 
                     <div className="general-flex">
                         <div className="flex-1">
-                            <div className="align-contentCenter titleFont"> Project ID{this.getproject().projectid}/{this.getproject().title}</div>
+                            <div className="align-contentCenter titleFont"> ProjectID {this.getproject().projectid}/{this.getproject().title}</div>
                             <div className="align-contentCenter titleFont">Schedule Labor</div>
                         </div>
                     </div>
@@ -2251,14 +2251,14 @@ class MyScheduleLabor extends Component {
                     {this.handleTimes()}
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="regularFont"> {this.handleClearProject()} </div>
                         </div>
 
                     </div>
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="regularFont">
                                 Select A Milestone ID <br />
                                 <select className="project-field" value={this.getmilestone()} onChange={event => { this.handlemilestone(event.target.value) }}>
@@ -2267,29 +2267,29 @@ class MyScheduleLabor extends Component {
                                 </select>
                             </div>
                         </div>
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="regularFont"> Labor Rate <br />
                                 <input type="text" className="project-field" onChange={event => { this.handlelaborrate(event.target.value) }} value={this.getlaborrate()} /></div>
                         </div>
                     </div>
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="align-contentCenter regularFont"> Total Hours <br /></div>
                         </div>
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="align-contentCenter regularFont"> Amount <br /></div>
                         </div>
                     </div>
 
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             <div className="regularFont">Description <br /><input type="text" className="project-field" onChange={event => { this.handledescription(event.target.value) }} value={this.getdescription()} /></div>
                         </div>
 
                     </div>
                     <div className="general-flex">
-                        <div className="flex-1 showBorder">
+                        <div className="flex-1">
                             {this.handleshowlaborid()}
                         </div>
 
