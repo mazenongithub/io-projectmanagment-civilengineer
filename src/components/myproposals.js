@@ -461,7 +461,7 @@ class MyProposals extends Component {
                                 this.updatetime(proposalid)
                                 let obj = this.props.projectsprovider;
                                 this.props.projectsProvider(obj)
-                                this.setState({ message: `Material ID ${materialid} removed from Proposal ID ${proposalid}` })
+                                this.setState({ render: 'render' })
                             }
                         })
                     }
