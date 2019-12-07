@@ -3,6 +3,7 @@
 .calendar-element{
     text-align:center;
 }
+
 .message-container{
     height:40px;
 }
@@ -16,10 +17,12 @@
     grid-template-columns:14% 14% 14% 14% 14% 14% 14%;
     font-family: 'Nunito Sans', sans-serif;
 }
+
+
 .calendar-element{
     width:100%;
-    max-width: 77px;
-    max-height:77px
+    max-width: 50px;
+    max-height:50px
 }
 .alignRight{
     text-align:right;
@@ -64,19 +67,28 @@
     min-height:60px;
 }
 .calendar-element{
-    font-size:20px;
+    font-size:18px;
 }
 .btn-clearmaterialid{
     width:345px;
     height:55px;
 
 }
-@media screen and (min-width:539px) {
+@media screen and (min-width:419px) {
     .calendar-element{
-        font-size:24px;
+        font-size:20px;
+        font-weight:500;
     }
 }
-
+@media screen and (min-width:900px) {
+    .calendar-element{
+        max-width: 64px;
+        max-height:64px
+    }
+}
 @media screen and (min-width:1081px) {
-    
+    .calendar-element{
+        max-width: 77px;
+        max-height:77px
+    } 
 }

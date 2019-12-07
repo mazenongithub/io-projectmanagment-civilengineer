@@ -8,6 +8,36 @@
     width: 100%;
 
 }
+.calendar-milestone{
+ min-height:540px;
+    
+}
+.milestonecalender{
+    max-width:321px;
+    
+   
+}
+
+.generalFont{
+    font-family: 'Nunito Sans', sans-serif;
+}
+.calendar-button{
+width:46px;
+height:43px;
+}
+.milestone-date-container,
+.milestone-flexcontainer,
+.general-milestone-container,
+.minheightcontainer{
+    min-height:50px;
+   
+}
+.milestone-flexcontainer,
+.general-milestone-container,
+.marginbottomcontainer{
+    margin-bottom:10px;
+}
+
 .activemilestoneid{
     background-color:#DFF4BA;
 }
@@ -79,7 +109,16 @@
 .milestone-align-right {
     text-align: right;
 }
-
+@media screen and (min-width:419px) {
+    .calendar-button{
+        width:58px;
+        height:55px;
+    }
+    .milestonecalender{
+        max-width:419px;
+        margin:auto;
+    }
+}
 @media screen and (min-width:721px) {
     .delete-milestone {
         width: 130px;
@@ -118,8 +157,18 @@
         grid-column-end: span 1;
     }
 }
+@media screen and (min-width:900px) {
+    .milestonecalender{
+        margin:0px;
+        max-width:400px;
+    }
+}
 
 @media screen and (min-width:1081px) {
+    .milestonecalender{
+        margin:0px;
+        max-width:540px;
+    }
     .milestone-titlerow {
         font-size: 40px;
     }

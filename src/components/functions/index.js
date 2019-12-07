@@ -495,6 +495,17 @@ export function increaseDateStringByOneYear(timein) {
 
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
+export function milestoneformatdatestring(datein) {
+
+    let dateinArray = datein.split('-');
+    if (dateinArray.length === 3) {
+        let newDate = `${dateinArray[1]}/${dateinArray[2]}/${dateinArray[0]}`
+        return newDate;
+    } else {
+        return datein;
+    }
+
+}
 export function inputDateTimeOutDateObj(timein) {
     let offset = new Date().getTimezoneOffset() / 60
     let sym = "";
@@ -508,8 +519,8 @@ export function inputDateTimeOutDateObj(timein) {
     if (offset < 10) {
         offset = `0${offset}`
     }
-let newDate = new Date(`${timein.replace(/-/g, '/')}:00${sym}${offset}:00`);
-return(newDate)
+    let newDate = new Date(`${timein.replace(/-/g, '/')}:00${sym}${offset}:00`);
+    return (newDate)
 }
 export function inputTimeDateOutputUTCString(timein) {
     let offset = new Date().getTimezoneOffset() / 60;
@@ -1602,6 +1613,68 @@ export function sorttimes(timeina, timeinb) {
     else {
         return 0;
     }
+}
+export function inputDateSecDateStringOutputString(dateencoded, timein) {
+    let newDate = new Date(dateencoded)
+    let offset = newDate.getTimezoneOffset() / 60;
+    let sym = "";
+    if (offset < 0) {
+        offset = -offset;
+        sym = "+"
+    }
+    else {
+        sym = "-"
+    }
+    if (offset < 10) {
+        offset = `0${offset}`
+    }
+
+    let datein = new Date(`${timein.replace(/-/g, '/')}-00:00`);
+    let month = newDate.getMonth() + 1;
+    if (month < 10) {
+        month = `0${month}`
+    }
+    let day = newDate.getDate();
+    if (day < 10) {
+        day = `0${day}`
+    }
+    let year = newDate.getFullYear();
+
+    let hours = datein.getHours();
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+    let minutes = datein.getMinutes();
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+    let seconds = datein.getSeconds();
+    if (seconds < 10) {
+        seconds = `0${seconds}`
+    }
+    let fakedate = new Date(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}${sym}${2 * offset}:00`)
+    hours = fakedate.getHours();
+    if (hours < 10) {
+        hours = `0${hours}`
+    }
+    minutes = fakedate.getMinutes();
+    if (minutes < 10) {
+        minutes = `0${minutes}`
+    }
+    seconds = fakedate.getSeconds();
+    if (seconds < 10) {
+        seconds = `0${seconds}`
+    }
+    month = fakedate.getMonth() + 1;
+    if (month < 10) {
+        month = `0${month}`
+    }
+    year = fakedate.getFullYear();
+    day = fakedate.getDate();
+    if (day < 10) {
+        day = `0${day}`
+    }
+    return (`${year}-${month}-${day}`)
 }
 export function inputDateSecActiveIDTimein(dateencoded, timein) {
     let newDate = new Date(dateencoded)
