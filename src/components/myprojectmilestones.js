@@ -980,6 +980,23 @@ class MyProjectMilestones extends Component {
         return timein;
 
     }
+    handletimeouticon() {
+        if (this.state.showtimeout) {
+            return (closeDateMenu())
+        } else {
+            return (openDateMenu())
+        }
+    }
+
+    toggletimeout() {
+        let timeout = this.state.showtimeout;
+        if (timeout) {
+            timeout = false;
+        } else {
+            timeout = true;
+        }
+        this.setState({ showtimeout: timeout })
+    }
     toggletimein() {
         let timein = this.state.showtimein;
         if (timein) {
@@ -1002,8 +1019,8 @@ class MyProjectMilestones extends Component {
                 <div className="flex-1">
 
                     <div className="general-flex">
-                        <div className="flex-2 regularFont">Start Date</div>
-                        <div className="flex-3  minheightcontainer">
+                        <div className="flex-2 regularFont">Start </div>
+                        <div className="flex-3 minheightcontainer">
                             <input type="date"
                                 className="project-field generalFont"
                                 value={this.gettimein()}
@@ -1356,43 +1373,642 @@ class MyProjectMilestones extends Component {
             this.setState({ start: newDate })
         }
     }
+    setDayCompletion(dateencoded) {
+
+        if (this.state.activemilestoneid) {
+
+            let mymilestone = this.getactivemilestone();
+            let milestoneid = mymilestone.milestoneid;
+            let timeout = mymilestone.completion;
+            let newtimeout = inputDateSecDateStringOutputString(dateencoded, timeout)
+            if (this.props.projects.hasOwnProperty("length")) {
+                let projectid = this.props.projectid.projectid;
+                // eslint-disable-next-line
+                this.props.projects.map((myproject, i) => {
+                    if (myproject.projectid === projectid) {
+                        if (myproject.hasOwnProperty("projectmilestones")) {
+                            // eslint-disable-next-line
+                            myproject.projectmilestones.mymilestone.map((mymilestone, j) => {
+                                if (mymilestone.milestoneid === milestoneid) {
+                                    this.props.projects[i].projectmilestones.mymilestone[j].completion = newtimeout;
+                                    let obj = this.props.projects;
+                                    this.props.reduxProjects(obj);
+                                    this.setState({ render: 'render' })
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+
+        }
+        else {
+            let datein = inputDateObjandSecReturnObj(dateencoded, this.state.completion);
+            this.setState({ completion: datein, render: 'render' })
+        }
+
+    }
+
+    getactivedatecompletion(dateencoded) {
+        let activeclass = "";
+        if (this.state.activemilestoneid) {
+
+            let mymilestone = this.getactivemilestone();
+            let timeout = mymilestone.completion;
+            if (inputtimeDBoutputCalendarDaySeconds(timeout) === dateencoded) {
+                activeclass = "activemilestoneid"
+            }
+        }
+        else {
+            let datein = this.state.completion;
+            if (inputDateObjOutputCalendarDaySeconds(datein) === dateencoded) {
+                activeclass = "activemilestoneid"
+            }
+
+        }
+        return activeclass;
+    }
+    showdatecompletion(dateobj, day) {
+
+        let showday = [];
+        if (day) {
+            let month = dateobj.getMonth() + 1;
+            month = trailingzero(month)
+            let year = dateobj.getFullYear();
+            let dayzero = trailingzero(day);
+            let offset = getOffset()
+            let timestring = `${year}/${month}/${dayzero} 00:00:00${offset}`;
+
+            let calendardate = new Date(timestring);
+
+            let dateencoded = calendardate.getTime();
+
+            showday.push(<div
+                className={`calendar-date ${this.getactivedatecompletion(dateencoded)}`}
+                onClick={event => { this.setDayCompletion(dateencoded) }}
+            > {day}</div>)
+        }
+        return showday;
+    }
+
+    showgridcalendercompletion(datein) {
+
+        let gridcalender = [];
+        if (Object.prototype.toString.call(datein) === "[object Date]") {
+
+            let firstison = getFirstIsOn(datein);
+            let days = [];
+            let numberofcells = 49;
+            for (let i = 1; i < numberofcells + 1; i++) {
+                days.push(i);
+            }
+            // eslint-disable-next-line
+            days.map((day, i) => {
+                if (i === 0) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Mon
+                        </div>)
+                }
+                else if (i === 1) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Tues
+                        </div>)
+                }
+                else if (i === 2) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Weds
+                        </div>)
+                }
+                else if (i === 3) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Thurs
+                        </div>)
+                }
+                else if (i === 4) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Fri
+                        </div>)
+                }
+                else if (i === 5) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sat
+                        </div>)
+                }
+                else if (i === 6) {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        Sun
+                        </div>)
+                }
+                else if (i === 7) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}&nbsp;
+                        </div>)
+
+                }
+                else if (i === 8) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 2);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+
+                else if (i === 9) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 3);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 2);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 10) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 4);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 3);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 2);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i === 11) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 5);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 4);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 3);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 2);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+                else if (i === 12) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, 6);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 5);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 4);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 3);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 2);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 1);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+
+                }
+                else if (i >= 13 && i <= 34) {
+                    let display = " "
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, i - 6);
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, i - 7);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, i - 8);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, i - 9);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, i - 10);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, i - 11);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, i - 12);
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+
+                }
+
+
+                else if (i === 35) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 27);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 26);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 25);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 24);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 23);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 36) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 27);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 26);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 25);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 24);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 37) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein))
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 27);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 26);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 25);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 38) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 27);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 26);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 39) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 27);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 40) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, 28);
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 41) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, check_29_feb_leapyear(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 42) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, check_30(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else if (i === 43) {
+                    let display = " ";
+                    switch (firstison) {
+                        case "Mon":
+                            break;
+                        case "Tues":
+                            break;
+                        case "Weds":
+                            break;
+                        case "Thurs":
+                            break;
+                        case "Fri":
+                            break;
+                        case "Sat":
+                            break;
+                        case "Sun":
+                            display = this.showdatecompletion(datein, check_31(datein));
+                            break;
+                        default:
+                            break;
+                    }
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        {display}
+                    </div>)
+                }
+                else {
+                    gridcalender.push(<div className="calendar-element daydisplay">
+                        &nbsp;
+                        </div>)
+                }
+            })
+        }
+        return (<div className="calendar-grid milestonecalender">{gridcalender}</div>)
+    }
+    showgridtimeout() {
+
+        let showgrid = [];
+        if (this.state.activemilestone) {
+            let mymilestone = this.getactivemilestone();
+
+            let timeout = mymilestone.completion;
+            let datein = new Date(`${timeout.replace(/-/g, '/')} UTC`);
+            showgrid.push(this.showgridcalendercompletion(datein))
+
+        }
+        else {
+            if (this.state.completion) {
+
+                let datein = this.state.completion;
+
+                showgrid.push(this.showgridcalendercompletion(datein))
+            }
+        }
+
+        return showgrid;
+
+    }
+    handleshowtimeout() {
+        let timeout = [];
+        if (this.state.showtimeout) {
+            timeout.push(<div className="general-flex">
+                <div className="flex-1  minheightcontainer align-contentCenter"> <button className="general-button calendar-button" onClick={event => { this.timeoutyeardown(event) }}> {dateYearDown()}</button> </div>
+                <div className="flex-1  minheightcontainer align-contentCenter"><button className="general-button calendar-button" onClick={event => { this.timeoutmonthdown(event) }}>{dateMonthDown()} </button> </div>
+                <div className="flex-2  minheightcontainer align-contentCenter regularFont">{displaydateformilestone(this.gettimeout())} </div>
+                <div className="flex-1  minheightcontainer align-contentCenter"><button className="general-button calendar-button" onClick={event => { this.timeoutmonthup(event) }}>{dateMonthUp()}</button>  </div>
+                <div className="flex-1  minheightcontainer align-contentCenter"> <button className="general-button calendar-button" onClick={event => { this.timeoutyearup(event) }}>{dateYearUp()} </button> </div>
+            </div>)
+            timeout.push(<div className="general-flex">
+                <div className="flex-1">
+                    {this.showgridtimeout()}
+                </div>
+            </div>)
+
+        }
+        return timeout;
+
+    }
     showtimeout() {
-        return (<div className="labortime-container">
+        return (
+            <div className="general-flex">
+                <div className="flex-1">
 
-            <div className="labortime-label">Mon </div>
-            <div className="labortime-label">Day </div>
-            <div className="labortime-label">Year </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeoutmonth()} />
-            </div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthup(event) }}>{MilestoneDateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutmonthdown(event) }}> {MilestoneDateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element">
-                <input type="text" className="project-field time-field" value={this.gettimeoutday()} /></div>
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutdayup(event) }}>{MilestoneDateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutdaydown(event, (1000 * 60 * 60 * 24)) }}> {MilestoneDateArrowDown()}</button></div>
-            </div>
-            <div className="labortime-element"> <input type="text" className="project-field time-field" value={this.gettimeoutyear()} /></div>
+                    <div className="general-flex">
+                        <div className="flex-2 regularFont">Completion</div>
+                        <div className="flex-3  minheightcontainer">
+                            <input type="date"
+                                className="project-field generalFont"
+                                value={this.gettimeout()}
+                                onChange={event => { this.handletimeout(event.target.value) }} /> </div>
+                        <div className="flex-1  minheightcontainer align-contentCenter"><button className="general-button calendar-button" onClick={() => { this.toggletimeout() }}> {this.handletimeouticon()}</button> </div>
+                    </div>
 
-            <div className="labortime-element">
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyearup(event) }}>{MilestoneDateArrowUp()}</button></div>
-                <div className="timebutton-container"><button className="time-button" onClick={event => { this.timeoutyeardown(event) }}> {MilestoneDateArrowDown()}</button></div>
+                    {this.handleshowtimeout()}
+
+                </div>
             </div>
-        </div>)
+
+        )
     }
     gettimeout() {
         let completion = "";
         if (this.state.activemilestoneid) {
             let milestoneid = this.state.activemilestoneid;
             let mymilestone = this.getmilestone(milestoneid);
-            completion = mymilestone.completion;
+            completion = makeDatefromTimein(mymilestone.completion);
 
         }
         else {
-            completion = inputDateObjOutput(this.state.completion);
+            completion = makeDatefromObj(this.state.completion);
         }
 
         return completion;
@@ -1673,11 +2289,11 @@ class MyProjectMilestones extends Component {
 
         if (this.state.width > 900) {
             return (<div className="general-flex">
-                <div className="flex-1 showBorder milestone-calendar-container calendar-milestone">
+                <div className="flex-1 milestone-calendar-container calendar-milestone">
                     {this.showtimein()}
 
                 </div>
-                <div className="flex-1 showBorder milestone-calendar-container calendar-milestone">
+                <div className="flex-1 milestone-calendar-container calendar-milestone">
 
                     {this.showtimeout()}
                 </div>
