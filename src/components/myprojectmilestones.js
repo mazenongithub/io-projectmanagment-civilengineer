@@ -379,7 +379,7 @@ class MyProjectMilestones extends Component {
     showgridtimein() {
 
         let showgrid = [];
-        if (this.state.activemilestone) {
+        if (this.state.activemilestoneid) {
             let mymilestone = this.getactivemilestone();
 
             let timein = mymilestone.start;
@@ -1937,7 +1937,7 @@ class MyProjectMilestones extends Component {
     showgridtimeout() {
 
         let showgrid = [];
-        if (this.state.activemilestone) {
+        if (this.state.activemilestoneid) {
             let mymilestone = this.getactivemilestone();
 
             let timeout = mymilestone.completion;
