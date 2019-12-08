@@ -50,7 +50,7 @@ class MyProjectMilestones extends Component {
         super(props);
         this.state = {
             render: '',
-            message: 'PLACEHOLDER',
+            message: '',
             milestone: '',
             activemilestoneid: "",
             start: new Date(),
@@ -2354,8 +2354,8 @@ class MyProjectMilestones extends Component {
 
 
 
-                    <div className="general-flex minHeight addBottomMargin showBorder">
-                        <div className="flex-1 general-milestone-container align-contentCente">
+                    <div className="general-flex minHeight addBottomMargin">
+                        <div className="flex-1 general-milestone-container align-contentCenter">
 
                             {this.state.message}
                         </div>
