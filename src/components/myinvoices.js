@@ -18,7 +18,7 @@ import './createinvoice.css';
 import {
     createInvoiceIcon,
     removeIcon,
-    SaveAllProjectIcon
+    saveallprojectactual
 }
     from './svg';
 
@@ -679,7 +679,7 @@ class MyInvoices extends Component {
                     <div className="general-flex addBottomMargin">
                         <div className="flex-1 align-contentCenter">
                             <div className="regularFont align-contentCenter addBottomMargin minHeight">{this.state.message}</div>
-                            <button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button>
+                            <button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{saveallprojectactual()} </button>
                         </div>
                     </div>
 
