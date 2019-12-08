@@ -4,7 +4,6 @@ import * as actions from './actions';
 import { SaveAllProjects } from './actions/api';
 import {
     MyMilestone,
-    inputDateObjOutput,
     inputdatestringOutPutDateObj,
     inputdatestringOutputMonth,
     inputdatestringOutputDate,
@@ -43,7 +42,7 @@ import {
 
 }
     from './functions';
-import { removeIcon, closeDateMenu, openDateMenu, SaveProjectManagerIcon, ClearMilestone, MilestoneDateArrowUp, MilestoneDateArrowDown, dateYearDown, dateMonthDown, dateYearUp, dateMonthUp } from './svg';
+import { removeIcon, closeDateMenu, openDateMenu, SaveProjectManagerIcon, ClearMilestone, dateYearDown, dateMonthDown, dateYearUp, dateMonthUp } from './svg';
 import { connect } from 'react-redux';
 
 class MyProjectMilestones extends Component {
