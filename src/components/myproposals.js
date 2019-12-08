@@ -276,7 +276,7 @@ class MyProposals extends Component {
                             let obj = this.props.projectsprovider;
                             let dateupdated = inputUTCStringForLaborID(response.dateupdated)
                             this.props.projectsProvider(obj);
-                            this.setState({ activeproposalid: response.insertproposal, proposalidmsg: `Active Proposal ID is ${response.insertproposal}, Select Items to Add to the Proposal `, message: `Last Updated ${response.message} ${dateupdated}` })
+                            this.setState({ activeproposalid: response.insertproposal, proposalidmsg: `Active Proposal ID is ${response.insertproposal}, Select Items to Add to the Proposal `, message: `${response.message} Last Updated ${dateupdated}` })
                         }
                     })
                 }
@@ -621,6 +621,7 @@ class MyProposals extends Component {
                 myproject.proposals.myproposal.map(myproposal => {
                     if (myproposal.proposalid === proposalid) {
                         if (myproposal.updated) {
+
                             updated = UTCStringFormatDateforProposal(myproposal.updated);
                         }
                     }
