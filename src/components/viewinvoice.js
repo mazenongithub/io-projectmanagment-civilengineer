@@ -347,7 +347,7 @@ class ViewInvoice extends Component {
 
         return (
             <StripeCheckout
-                name="goandhireme"
+                name="civilengineer.io"
                 description={`Payment on Invoice ID ${invoiceid}`}
                 amount={amount}
                 token={token => this.processStripe(token)}

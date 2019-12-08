@@ -2355,7 +2355,7 @@ class MyProjectMilestones extends Component {
 
 
                     <div className="general-flex minHeight addBottomMargin">
-                        <div className="flex-1 general-milestone-container align-contentCenter">
+                        <div className="flex-1 general-milestone-container align-contentCenter regularFont">
 
                             {this.state.message}
                         </div>

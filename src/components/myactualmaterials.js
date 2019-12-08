@@ -984,7 +984,7 @@ class MyProjectActualMaterials extends Component {
                             this.props.projectsprovider[i].actualmaterials.mymaterial.push(mymaterial)
                             let obj = this.props.projectsprovider;
                             this.props.projectsProvider(obj)
-                            this.setState({ activematerialid: materialid, message: `Active Material ID is ${materialid}, You are in Edit Mode` })
+                            this.setState({ activematerialid: materialid })
                         }
                         else {
                             let material = [];
@@ -993,7 +993,7 @@ class MyProjectActualMaterials extends Component {
                             this.props.projectsprovider[i].actualmaterials = actualmaterials;
                             let obj = this.props.projectsprovider;
                             this.props.projectsProvider(obj)
-                            this.setState({ activematerialid: materialid, message: `Active Material ID is ${materialid}, You are in Edit Mode` })
+                            this.setState({ activematerialid: materialid })
                         }
                     }
                 })
@@ -1607,7 +1607,7 @@ class MyProjectActualMaterials extends Component {
                 <div className="material-element">
                     {this.getamount()}<br />
                     Amount</div>
-                <div className="materials-main">{this.state.message} &nbsp; </div>
+                <div className="materials-main align-contentCenter">{this.state.message} &nbsp; </div>
                 <div className="material-titlerow"><button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{saveallprojectactual()} </button> </div>
                 <div className="materials-main"> {this.handleshowmaterialids()}</div>
             </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './projectteam.css';
 import * as actions from './actions';
-import { capitalizeFirst, TeamMember, MyUserModel} from './functions'
+import { capitalizeFirst, TeamMember, MyUserModel } from './functions'
 import { SaveAllProjects } from './actions/api';
 import { addProviderIcon, DeleteTeamIcon, SaveProjectManagerIcon, defaultProfilePhoto } from './svg'
 import { connect } from 'react-redux';
@@ -115,14 +115,14 @@ class MyProjectTeam extends Component {
             largesearchprovider.push(<div className="largesearch-a">{defaultProfilePhoto()}</div>)
         }
 
-        largesearchprovider.push(<div className="largesearch-b"> 
-         <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname}</Link> {myprovider.jobtitle}
-        <br/>
-        {myprovider.provideraddress}, {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode}<br/>
-        <a href={`mailTo:${myprovider.emailaddress}`} class="profile-link">  { myprovider.emailaddress } </a> <br/> 
-        <a href={`tel:${myprovider.phone}`} className="profile-link">  { myprovider.phone }</a>
+        largesearchprovider.push(<div className="largesearch-b">
+            <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname}</Link> {myprovider.jobtitle}
+            <br />
+            {myprovider.provideraddress}, {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode}<br />
+            <a href={`mailTo:${myprovider.emailaddress}`} class="profile-link">  {myprovider.emailaddress} </a> <br />
+            <a href={`tel:${myprovider.phone}`} className="profile-link">  {myprovider.phone}</a>
         </div>)
-        largesearchprovider.push(<div className="largesearch-a"> <button className="button-addprovider" onClick={event=>{this.addteammember(myprovider.providerid)}}>{addProviderIcon()} </button></div>)
+        largesearchprovider.push(<div className="largesearch-a"> <button className="button-addprovider" onClick={event => { this.addteammember(myprovider.providerid) }}>{addProviderIcon()} </button></div>)
         return largesearchprovider;
     }
     getprovider(providerid) {
@@ -181,12 +181,12 @@ class MyProjectTeam extends Component {
         smallsearchprovider.push(<div className="smallsearch"> &nbsp;
             <div className="smallpicture-container"> {profile}</div>
             <div className="small-profile">
-        <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname} </Link> {myprovider.jobtitle}
-        <br/>
-        {myprovider.provideraddress}, {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode}<br/>
-       <a href={`mailTo:${myprovider.emailaddress}`} className="profile-link"> { myprovider.emailaddress } </a><br/> <a href={`tel:${myprovider.phone}`} className="profile-link">{ myprovider.phone } </a>
-         </div>
-         <div className="small-profile"><button className="button-addprovider" onClick={event=>{this.addteammember(myprovider.providerid)}}>{addProviderIcon()} </button> </div>
+                <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname} </Link> {myprovider.jobtitle}
+                <br />
+                {myprovider.provideraddress}, {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode}<br />
+                <a href={`mailTo:${myprovider.emailaddress}`} className="profile-link"> {myprovider.emailaddress} </a><br /> <a href={`tel:${myprovider.phone}`} className="profile-link">{myprovider.phone} </a>
+            </div>
+            <div className="small-profile"><button className="button-addprovider" onClick={event => { this.addteammember(myprovider.providerid) }}>{addProviderIcon()} </button> </div>
         </div>)
 
         return smallsearchprovider;
@@ -264,7 +264,7 @@ class MyProjectTeam extends Component {
     }
     getproviderimage(myprovider) {
         if (myprovider.profileurl) {
-            return (<img src={myprovider.profileurl} className="profile-img"  alt={`${myprovider.firstname} ${myprovider.lastname}`} />)
+            return (<img src={myprovider.profileurl} className="profile-img" alt={`${myprovider.firstname} ${myprovider.lastname}`} />)
         }
         else {
             return (<div className="profile-img">{defaultProfilePhoto()}</div>)
@@ -272,17 +272,17 @@ class MyProjectTeam extends Component {
     }
     createprovider(myprovider) {
         return (<div className="myprovider-container">
-        <div className="profile-row-1a"> 
-            <div className="provider-picture-container" onClick={event=>{this.makeprovideractive(myprovider.providerid)}}>{this.getproviderimage(myprovider)} </div> 
-        </div>
-       <div className="profile-row-1b">
-            <div className="remove-provider-container"><button className="remove-provider-icon" onClick={event=>{this.removeprovider(myprovider.providerid)}}> {DeleteTeamIcon()}</button> </div>
-       </div>
-        <div className="provider-link-container"> 
-        <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname} </Link> {myprovider.jobtitle}
-        <br/>
-        {myprovider.provideraddress} {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode} <br/>
-        <a href={`mailTo:${myprovider.emailaddress}`} className="profile-link">{ myprovider.emailaddress } </a> <br/> <a href={`tel:${myprovider.phone}`} className="profile-link"> { myprovider.phone } </a></div>
+            <div className="profile-row-1a">
+                <div className="provider-picture-container" onClick={event => { this.makeprovideractive(myprovider.providerid) }}>{this.getproviderimage(myprovider)} </div>
+            </div>
+            <div className="profile-row-1b">
+                <div className="remove-provider-container"><button className="remove-provider-icon" onClick={event => { this.removeprovider(myprovider.providerid) }}> {DeleteTeamIcon()}</button> </div>
+            </div>
+            <div className="provider-link-container">
+                <Link to={`/${myprovider.providerid}`} className="profile-link">{myprovider.firstname} {myprovider.lastname} </Link> {myprovider.jobtitle}
+                <br />
+                {myprovider.provideraddress} {myprovider.providercity} {myprovider.providerstate} {myprovider.providerzipcode} <br />
+                <a href={`mailTo:${myprovider.emailaddress}`} className="profile-link">{myprovider.emailaddress} </a> <br /> <a href={`tel:${myprovider.phone}`} className="profile-link"> {myprovider.phone} </a></div>
         </div>)
 
 
@@ -342,7 +342,7 @@ class MyProjectTeam extends Component {
             let providerid = this.state.activeprovider;
             let myprovider = this.getprovider(providerid)
             role.push(<div className="project-team-general">Assign {myprovider.firstname} {myprovider.lastname} a role on the Project </div>)
-            role.push(<div className="project-team-general"> <input type="text" className="project-field" value={this.getrole()} onChange={event=>{this.handlerole(event.target.value)}} /> </div>)
+            role.push(<div className="project-team-general"> <input type="text" className="project-field" value={this.getrole()} onChange={event => { this.handlerole(event.target.value) }} /> </div>)
 
         }
         return role;
@@ -389,18 +389,19 @@ class MyProjectTeam extends Component {
     }
     render() {
         return (<div className="projectteam-container">
-       <div className="project-team-title"> {this.getprojecttitle()} <br/> Project Team</div>
-       <div className="project-team-general"> {this.state.providermessage}</div>
-       <div className="project-team-general"> 
-            <input type="text" className="project-field" onChange={event=>{this.handleSearch(event.target.value)}} value={this.state.search}/>
-        </div>
-        {this.showsearchresults()}
-        <div className="project-team-general"> {this.state.teammessage}</div>
-        {this.showmyteam()}
-        {this.showrole()}
-        <div className="project-team-title"><button className="save-manager-icon" onClick={event=>{this.handleSaveAllProjects(event)}}>{SaveProjectManagerIcon()} </button> </div>
-       
-         <div className="project-team-general"> {this.state.message}</div>
+            <div className="project-team-title"> {this.getprojecttitle()} <br /> Project Team</div>
+            <div className="project-team-general"> {this.state.providermessage}</div>
+            <div className="project-team-general">
+                <input type="text" className="project-field" onChange={event => { this.handleSearch(event.target.value) }} value={this.state.search} />
+            </div>
+            {this.showsearchresults()}
+            <div className="project-team-general"> {this.state.teammessage}</div>
+            {this.showmyteam()}
+            {this.showrole()}
+            <div className="project-team-general align-contentCenter addBottomMargin"> {this.state.message}</div>
+            <div className="project-team-title"><button className="save-manager-icon" onClick={event => { this.handleSaveAllProjects(event) }}>{SaveProjectManagerIcon()} </button> </div>
+
+
         </div>)
     }
 }
