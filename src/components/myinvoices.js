@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { ProviderEndPoint, InsertInvoice } from './actions/api'
-import './proposals.css';
+import './invoices.css';
 import {
     sorttimes,
     inputUTCStringForLaborID,
@@ -16,11 +16,9 @@ import {
     from './functions';
 import './createinvoice.css';
 import {
-    removeProposalIcon,
-    createInvoiceID,
-    clearInvoiceID,
-    saveallprojectactual,
-    removeIcon
+    createInvoiceIcon,
+    removeIcon,
+    SaveAllProjectIcon
 }
     from './svg';
 
@@ -65,7 +63,7 @@ class MyInvoices extends Component {
                         // eslint-disable-next-line
                         myproject.invoices.myinvoice.map(myinvoice => {
 
-                            invoiceids.push(this.showinvoiceid(myinvoice.invoiceid))
+                            invoiceids.push(this.showinvoiceid(myinvoice))
                         })
                     }
                 }
@@ -73,20 +71,17 @@ class MyInvoices extends Component {
         }
         return invoiceids;
     }
-    showinvoiceicon(invoiceid) {
-        return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 599 115"><defs>
-            <style></style></defs><title>invoiceid</title><g id="Layer_2" data-name="Layer 2">
-                <g id="Layer_1-2" data-name="Layer 1">
-                    <rect className="invoiceid-1" x="8.5" y="0.5" width="590" height="114" rx="8.69" />
-                    <text className="invoiceid-2" transform="translate(145.46 65.7)">In<tspan className="invoiceid-3" x="32.96" y="0">v</tspan>
-                        <tspan x="53.28" y="0">oiceID</tspan>
-                        <tspan className="invoiceid-4" x="177" y="0">{invoiceid}</tspan></text></g></g></svg>)
-    }
-    findinvoice(event, invoiceid) {
-        this.setState({ activeinvoiceid: invoiceid, invoiceidmsg: `Active InvoiceID is ${invoiceid}` })
+
+    findinvoice(invoiceid) {
+        if (this.state.activeinvoiceid === invoiceid) {
+            this.setState({ activeinvoiceid: "" })
+        } else {
+            this.setState({ activeinvoiceid: invoiceid })
+        }
+
 
     }
-    deleteInvoice(event, invoiceid) {
+    deleteInvoice(invoiceid) {
         if (window.confirm(`Are you sure you want to delete Invoice ID ${invoiceid}?`)) {
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
@@ -133,25 +128,78 @@ class MyInvoices extends Component {
             }
         }
     }
-    showinvoiceid(invoiceid) {
+    getactiveinvoicemessage(invoiceid) {
+        if (this.state.activeinvoiceid) {
+            if (this.state.activeinvoiceid === invoiceid) {
+                return (` is Active`)
+            }
+        }
+    }
+    getdeactivate(invoiceid) {
+        if (this.state.activeinvoiceid) {
+            if (this.state.activeinvoiceid === invoiceid) {
+                return (<div className="general-flex">
+                    <div className="flex-1">
 
-        return (<div className="proposal-title-row">
-            <button className="proposals-button" onClick={event => { this.findinvoice(event, invoiceid) }}>{this.showinvoiceicon(invoiceid)} </button>
-            <button className="removeid-icon" onClick={event => { this.deleteInvoice(event, invoiceid) }}>{removeProposalIcon()} </button>
+                    </div>
+
+                </div>)
+            }
+        }
+    }
+    getactiveinvoicecontainer(invoiceid) {
+
+        let invoice = "";
+        if (this.state.activeinvoiceid === invoiceid) {
+            invoice = `activeinvoice-container`
+        } else {
+            invoice = `inactiveinvoice`
+        }
+
+        return invoice;
+    }
+    showinvoiceid(myinvoice) {
+
+        return (<div className="general-flex addBottomMargin">
+            <div className={`flex-2 regularFont invoiceid-container ${this.getactiveinvoicecontainer(myinvoice.invoiceid)}`} onClick={() => { this.findinvoice(myinvoice.invoiceid) }}>Invoice ID {myinvoice.invoiceid} {this.getactiveinvoicemessage(myinvoice.invoiceid)}</div>
+            <div className="flex-1 regularFont alignTop addLeftMargin align-contentCenter"> <button className="general-button remove-item" onClick={event => { this.deleteInvoice(myinvoice.invoiceid) }}>{removeIcon()}</button><br />remove</div>
         </div>)
     }
     getproject() {
         let project = {};
-        if (this.props.projectsprovider.hasOwnProperty("length")) {
-            let projectid = this.props.projectid.projectid;
-            // eslint-disable-next-line
-            this.props.projectsprovider.map(myproject => {
-                if (myproject.projectid === projectid) {
-                    project = myproject;
-                }
-            })
+        let projectid = "";
+        if (this.props.projectsprovider) {
+            if (this.props.projectsprovider.hasOwnProperty("length")) {
+
+                projectid = this.props.projectid.projectid;
+
+
+                // eslint-disable-next-line
+                this.props.projectsprovider.map(myproject => {
+                    if (myproject.projectid === projectid) {
+                        project = myproject;
+                    }
+                })
+            }
         }
+
         return project;
+    }
+    getactiveinvoice() {
+        let invoice = {};
+        if (this.state.activeinvoiceid) {
+            let invoiceid = this.state.activeinvoiceid;
+            let myproject = this.getproject();
+            if (myproject.hasOwnProperty("invoices")) {
+                // eslint-disable-next-line
+                myproject.invoices.mypropsal.map(myinvoice => {
+                    if (myinvoice.invoiceid === invoiceid) {
+                        invoice = myinvoice;
+                    }
+                })
+            }
+        }
+        return invoice;
     }
     getprojecttitle() {
         let title = "";
@@ -176,9 +224,9 @@ class MyInvoices extends Component {
             // eslint-disable-next-line
             this.props.projectsprovider.map(myproject => {
                 if (myproject.projectid === projectid) {
-                    if (myproject.hasOwnProperty("actuallabor")) {
+                    if (myproject.hasOwnProperty("schedulelabor")) {
                         // eslint-disable-next-line
-                        myproject.actuallabor.mylabor.map(mylabor => {
+                        myproject.schedulelabor.mylabor.map(mylabor => {
                             if (!mylabor.milestoneid) {
                                 errmsg = `${mylabor.laborid} is missing a milestone `
                             }
@@ -186,9 +234,9 @@ class MyInvoices extends Component {
                         })
                     }
 
-                    if (myproject.hasOwnProperty("actualmaterials")) {
+                    if (myproject.hasOwnProperty("schedulematerials")) {
                         // eslint-disable-next-line
-                        myproject.actualmaterials.mymaterial.map(mymaterial => {
+                        myproject.schedulematerials.mymaterial.map(mymaterial => {
                             if (!mymaterial.milestoneid) {
                                 errmsg = `${mymaterial.materialid} is missing a milestone `
 
@@ -225,7 +273,7 @@ class MyInvoices extends Component {
                             let obj = this.props.projectsprovider;
                             let dateupdated = inputUTCStringForLaborID(response.dateupdated)
                             this.props.projectsProvider(obj);
-                            this.setState({ activeinvoiceid: response.insertinvoice, invoiceidmsg: `Active Invoice ID is ${response.insertinvoice}, Select Items to Add to the Invoice `, message: `Last Updated ${response.message} ${dateupdated}` })
+                            this.setState({ activeinvoiceid: response.insertinvoice, message: `${response.message} Last Updated ${dateupdated}` })
                         }
                     })
                 }
@@ -236,15 +284,8 @@ class MyInvoices extends Component {
         }
 
     }
-    handletopIcon() {
-        if (this.state.activeinvoiceid) {
-            return (<button className="proposals-button" onClick={event => { this.clearinvoiceid(event) }}>{clearInvoiceID()}</button>)
-        }
-        else {
-            return (<button className="proposals-button" onClick={event => { this.createnewproposal() }}>{createInvoiceID()}</button>)
-        }
-    }
-    getproposalamount() {
+
+    getinvoiceamount() {
         let amount = 0;
         if (this.state.activeinvoiceid) {
             let invoiceid = this.state.activeinvoiceid;
@@ -270,14 +311,18 @@ class MyInvoices extends Component {
         }
         return (`$${amount.toFixed(2)}`)
     }
-    loadproposalitems() {
+    loadinvoiceitems() {
         let items = [];
-        let proposal = [];
+        let invoice = [];
+        let myproject = this.getproject();
 
         if (this.state.activeinvoiceid) {
-            proposal.push(<div className="proposal-main-row">Viewing All Proposed Schedule, Add the Item to the Invoice {this.state.activeinvoiceid}</div>)
+
+            invoice.push(<div className="proposal-main-row addBottomMargin">Viewing All Actual Costs, Add the Item to the Invoice {this.state.activeinvoiceid}</div>)
             if (this.props.projectsprovider.hasOwnProperty("length")) {
-                let myproject = this.getproject();
+
+
+
                 if (myproject.hasOwnProperty("actuallabor")) {
                     // eslint-disable-next-line
                     myproject.actuallabor.mylabor.map(mylabor => {
@@ -297,16 +342,16 @@ class MyInvoices extends Component {
             // eslint-disable-next-line
             items.map(item => {
                 if (item.hasOwnProperty("laborid")) {
-                    proposal.push(this.showlaborid(item))
+                    invoice.push(this.showlaborid(item))
                 }
                 else if (item.hasOwnProperty("materialid")) {
-                    proposal.push(this.showmaterialid(item))
+                    invoice.push(this.showmaterialid(item))
                 }
             })
-            proposal.push(<div className="proposal-title-row"> The Total Amount for Invoice {this.state.activeinvoiceid} is {this.getproposalamount()}</div>)
+            invoice.push(<div className="proposal-title-row addBottomMargin"> The Total Amount for Invoice {this.state.activeinvoiceid} is {this.getinvoiceamount()}</div>)
 
         }
-        return proposal;
+        return invoice;
     }
     findmymaterial(materialid) {
 
@@ -343,7 +388,7 @@ class MyInvoices extends Component {
             let invoiceid = this.state.activeinvoiceid;
             let mymaterial = this.findmymaterial(materialid)
             if (mymaterial.invoiceid === invoiceid) {
-                return (<button className="btn-removeIcon general-button" onClick={event => { this.removematerial(materialid) }}>
+                return (<button className="remove-item general-button" onClick={event => { this.removematerial(materialid) }}>
                     {removeIcon()}
                 </button>)
             }
@@ -430,7 +475,7 @@ class MyInvoices extends Component {
             // eslint-disable-next-line
             this.props.projectsprovider.map((myproject, i) => {
                 if (myproject.projectid === projectid) {
-                    if (myproject.hasOwnProperty("proposals")) {
+                    if (myproject.hasOwnProperty("invoices")) {
                         // eslint-disable-next-line
                         myproject.invoices.myinvoice.map((myinvoice, j) => {
                             if (myinvoice.invoiceid === invoiceid) {
@@ -474,7 +519,7 @@ class MyInvoices extends Component {
             let invoiceid = this.state.activeinvoiceid;
             let mylabor = this.getmylabor(laborid)
             if (mylabor.invoiceid === invoiceid) {
-                return (<button className="btn-removeIcon general-button" onClick={event => { this.removelabor(mylabor.laborid) }}>
+                return (<button className="remove-item general-button" onClick={event => { this.removelabor(mylabor.laborid) }}>
                     {removeIcon()}
                 </button>)
             }
@@ -487,7 +532,7 @@ class MyInvoices extends Component {
     showlaborid(mylabor) {
 
         return (
-            <div className="general-flex">
+            <div className="general-flex addBottomMargin">
                 <div className="flex-7" onClick={event => { this.addlabor(mylabor.laborid) }}>
                     <span className="regularFont">{mylabor.description}</span> <br />
                     <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
@@ -503,7 +548,7 @@ class MyInvoices extends Component {
 
     }
     showmaterialid(mymaterial) {
-        return (<div className="general-flex">
+        return (<div className="general-flex addBottomMargin">
             <div className="flex-7" ame="laborid-icon" onClick={event => { this.addmaterial(mymaterial.materialid) }}>
 
                 <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
@@ -549,7 +594,7 @@ class MyInvoices extends Component {
         let invoiceid = "";
         if (activeinvoiceid) {
             let myproject = response.projectsprovider.myproject[0];
-            if (myproject.hasOwnProperty("proposals")) {
+            if (myproject.hasOwnProperty("invoices")) {
                 // eslint-disable-next-line
                 myproject.invoices.myinvoice.map(myinvoice => {
                     if (myinvoice.invoiceid === activeinvoiceid) {
@@ -565,11 +610,12 @@ class MyInvoices extends Component {
         if (this.state.activeinvoiceid) {
             let invoiceid = this.state.activeinvoiceid;
             let myproject = this.getproject();
-            if (myproject.hasOwnProperty("proposals")) {
+            if (myproject.hasOwnProperty("invoices")) {
                 // eslint-disable-next-line
                 myproject.invoices.myinvoice.map(myinvoice => {
                     if (myinvoice.invoiceid === invoiceid) {
                         if (myinvoice.updated) {
+
                             updated = UTCStringFormatDateforProposal(myinvoice.updated);
                         }
                     }
@@ -577,7 +623,7 @@ class MyInvoices extends Component {
             }
         }
         if (updated) {
-            updated = `Last Updated ${updated}`
+            updated = `Invoice Last Updated ${updated}`
         }
 
         return updated;
@@ -587,7 +633,7 @@ class MyInvoices extends Component {
         if (this.state.activeinvoiceid) {
             let invoiceid = this.state.activeinvoiceid;
             let myproject = this.getproject();
-            if (myproject.hasOwnProperty("proposals")) {
+            if (myproject.hasOwnProperty("invoices")) {
                 // eslint-disable-next-line
                 myproject.invoices.myinvoice.map(myinvoice => {
                     if (myinvoice.invoiceid === invoiceid) {
@@ -606,16 +652,46 @@ class MyInvoices extends Component {
     render() {
         //PROPOSAL 
         return (
-            <div className="proposal-container">
-                <div className="proposal-title-row">{this.getprojecttitle()}<br />Invoices </div>
-                <div className="proposal-title-row">{this.handletopIcon()} </div>
-                <div className="proposal-main-row align-contentCenter">{this.state.invoiceidmsg}</div>
-                <div className="proposal-main-row">{this.loadinvoiceids()}</div>
-                <div className="proposal-main-row"> {this.loadproposalitems()}</div>
-                <div className="proposal-title-row">{this.getupdated()} </div>
-                <div className="proposal-title-row">{this.getapproved()} </div>
-                <div className="proposal-main-row align-contentCenter">{this.state.message}</div>
-                <div className="proposal-title-row"><button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{saveallprojectactual()} </button> </div>
+            <div className="general-flex">
+                <div className="flex-1">
+
+                    <div className="general-flex">
+                        <div className="flex-1 titleFont align-contentCenter addBottomMargin">
+                            ProjectID {this.getproject().projectid}/{this.getproject().title} <br />
+                            Invoices
+                        </div>
+                    </div>
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-2 regularFont">
+                            To Create A Invoice First Create an ID Then Add the Scheduled Items.
+                        </div>
+                        <div className="flex-1 addLeftMargin">
+                            <button className="general-button create-proposal" onClick={event => { this.createnewinvoice() }}>{createInvoiceIcon()}</button>
+                        </div>
+                    </div>
+
+                    {this.loadinvoiceids()}
+
+
+                    {this.loadinvoiceitems()}
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-1 align-contentCenter">
+                            <div className="regularFont align-contentCenter addBottomMargin minHeight">{this.state.message}</div>
+                            <button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button>
+                        </div>
+                    </div>
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-1 regularFont align-contentCenter">
+                            {this.getupdated()}
+                        </div>
+                    </div>
+
+
+                </div>
+
             </div>)
     }
 }
@@ -624,8 +700,7 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         projectid: state.projectid,
-        projectsprovider: state.projectsprovider,
-
+        projectsprovider: state.projectsprovider
     }
 }
 export default connect(mapStateToProps, actions)(MyInvoices)

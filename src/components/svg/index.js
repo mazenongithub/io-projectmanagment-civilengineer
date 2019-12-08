@@ -284,6 +284,9 @@ export function dateMonthUp() {
 export function removeProposalIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 65"><defs><style></style></defs><title>removeproposal</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="removeproposal-1" x="0.5" y="0.5" width="75" height="64" /><polygon className="removeproposal-2" points="40.54 32 54.68 46.14 51.14 49.68 37 35.54 22.86 49.68 19.32 46.14 33.46 32 19.32 17.86 22.86 14.32 37 28.46 51.14 14.32 54.68 17.86 40.54 32" /></g></g></svg>)
 }
+export function createInvoiceIcon() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 86"><defs><style></style></defs><title>createinvoiceicon</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="createinvoiceicon-1" x="8.5" y="2.5" width="331" height="81" rx="11.01" /><text className="createinvoiceicon-2" transform="translate(40.46 49.7)">C<tspan className="createinvoiceicon-3" x="27.08" y="0">r</tspan><tspan x="40.8" y="0">eate In</tspan><tspan className="createinvoiceicon-4" x="161.04" y="0">v</tspan><tspan x="181.36" y="0">oice</tspan></text></g></g></svg>)
+}
 export function createProposalIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 335 75"><defs><style></style></defs><title>createproposalicon</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="createproposalicon-1" x="2" y="2" width="331" height="71" rx="5.31" /><text className="createproposalicon-2" transform="translate(22.22 48.2)">C<tspan className="createproposalicon-3" x="27.08" y="0">r</tspan><tspan x="40.8" y="0">eate </tspan><tspan className="createproposalicon-3" x="128.08" y="0">Pr</tspan><tspan x="167.2" y="0">oposal</tspan></text></g></g></svg>)
 }

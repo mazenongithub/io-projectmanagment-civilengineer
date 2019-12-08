@@ -83,11 +83,20 @@
 .alignTop{
 vertical-align: top;
 }
-.activeproposal-container{
+.activeproposal-container,.activeinvoice-container{
     border:4px solid;
 }
-.inactiveproposal{
+.inactiveproposal,.inactiveinvoice{
     border:1px solid;
+}
+.invoiceid-container{
+    min-height:44px;
+    background-color: #F4E1E1;
+    color: #912020;
+    border-radius:5px;
+    text-align:center;
+    vertical-align: middle;
+    
 }
 .proposalid-container{
     min-height:44px;
