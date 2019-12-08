@@ -50,7 +50,7 @@ class MyProjectMilestones extends Component {
         super(props);
         this.state = {
             render: '',
-            message: '',
+            message: 'PLACEHOLDER',
             milestone: '',
             activemilestoneid: "",
             start: new Date(),
@@ -2354,12 +2354,17 @@ class MyProjectMilestones extends Component {
 
 
 
+                    <div className="general-flex minHeight addBottomMargin showBorder">
+                        <div className="flex-1 general-milestone-container align-contentCente">
 
+                            {this.state.message}
+                        </div>
+                    </div>
 
                     <div className="general-flex">
                         <div className="flex-1">
-                            <div className="general-milestone-container align-contentCenter regularFont"> {this.state.message}</div>
-                            <div className="general-milestone-container align-contentCenter"> <button className="project-button" onClick={event => { this.handleSaveAllProjects(event) }}>{SaveProjectManagerIcon()} </button></div>
+                            <div className="general-milestone-container align-contentCenter">
+                                <button className="project-button" onClick={event => { this.handleSaveAllProjects(event) }}>{SaveProjectManagerIcon()} </button></div>
                         </div>
                     </div>
 

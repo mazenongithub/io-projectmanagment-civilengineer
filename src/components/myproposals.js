@@ -16,11 +16,10 @@ import {
     from './functions';
 import './createinvoice.css';
 import {
-    removeProposalIcon,
     createProposalIcon,
     clearProposalIDIcon,
-    SaveAllProjectIcon,
-    removeIcon
+    removeIcon,
+    SaveAllProjectIcon
 }
     from './svg';
 
@@ -65,7 +64,7 @@ class MyProposals extends Component {
                         // eslint-disable-next-line
                         myproject.proposals.myproposal.map(myproposal => {
 
-                            proposalids.push(this.showproposalid(myproposal.proposalid))
+                            proposalids.push(this.showproposalid(myproposal))
                         })
                     }
                 }
@@ -83,11 +82,16 @@ class MyProposals extends Component {
                     Pr</tspan><tspan className="proposalid-4" x="39.12" y="0">oposalID</tspan>
                     <tspan x="200.72" y="0">{proposalid} </tspan></text></g></g></svg>)
     }
-    findproposal(event, proposalid) {
-        this.setState({ activeproposalid: proposalid, proposalidmsg: `Active ProposalID is ${proposalid}` })
+    findproposal(proposalid) {
+        if (this.state.activeproposalid === proposalid) {
+            this.setState({ activeproposalid: "" })
+        } else {
+            this.setState({ activeproposalid: proposalid })
+        }
+
 
     }
-    deleteProposal(event, proposalid) {
+    deleteProposal(proposalid) {
         if (window.confirm(`Are you sure you want to delete Proposal ID ${proposalid}?`)) {
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let projectid = this.props.projectid.projectid;
@@ -134,11 +138,41 @@ class MyProposals extends Component {
             }
         }
     }
-    showproposalid(proposalid) {
+    getactiveproposalmessage(proposalid) {
+        if (this.state.activeproposalid) {
+            if (this.state.activeproposalid === proposalid) {
+                return (` is Active`)
+            }
+        }
+    }
+    getdeactivate(proposalid) {
+        if (this.state.activeproposalid) {
+            if (this.state.activeproposalid === proposalid) {
+                return (<div className="general-flex">
+                    <div className="flex-1">
 
-        return (<div className="proposal-title-row">
-            <button className="proposals-button" onClick={event => { this.findproposal(event, proposalid) }}>{this.showproposalicon(proposalid)} </button>
-            <button className="removeid-icon" onClick={event => { this.deleteProposal(event, proposalid) }}>{removeProposalIcon()} </button>
+                    </div>
+
+                </div>)
+            }
+        }
+    }
+    getactiveproposalcontainer(proposalid) {
+
+        let proposal = "";
+        if (this.state.activeproposalid === proposalid) {
+            proposal = `activeproposal-container`
+        } else {
+            proposal = `inactiveproposal`
+        }
+
+        return proposal;
+    }
+    showproposalid(myproposal) {
+
+        return (<div className="general-flex addBottomMargin">
+            <div className={`flex-2 regularFont proposalid-container ${this.getactiveproposalcontainer(myproposal.proposalid)}`} onClick={() => { this.findproposal(myproposal.proposalid) }}>Proposal ID {myproposal.proposalid} {this.getactiveproposalmessage(myproposal.proposalid)}</div>
+            <div className="flex-1 regularFont alignTop addLeftMargin align-contentCenter"> <button className="general-button remove-item" onClick={event => { this.deleteProposal(myproposal.proposalid) }}>{removeIcon()}</button><br />remove</div>
         </div>)
     }
     getproject() {
@@ -153,6 +187,22 @@ class MyProposals extends Component {
             })
         }
         return project;
+    }
+    getactiveproposal() {
+        let proposal = {};
+        if (this.state.activeproposalid) {
+            let proposalid = this.state.activeproposalid;
+            let myproject = this.getproject();
+            if (myproject.hasOwnProperty("proposals")) {
+                // eslint-disable-next-line
+                myproject.proposals.mypropsal.map(myproposal => {
+                    if (myproposal.proposalid === proposalid) {
+                        proposal = myproposal;
+                    }
+                })
+            }
+        }
+        return proposal;
     }
     getprojecttitle() {
         let title = "";
@@ -276,7 +326,7 @@ class MyProposals extends Component {
         let proposal = [];
 
         if (this.state.activeproposalid) {
-            proposal.push(<div className="proposal-main-row">Viewing All Proposed Schedule, Add the Item to the Proposal {this.state.activeproposalid}</div>)
+            proposal.push(<div className="proposal-main-row addBottomMargin">Viewing All Proposed Schedule, Add the Item to the Proposal {this.state.activeproposalid}</div>)
             if (this.props.projectsprovider.hasOwnProperty("length")) {
                 let myproject = this.getproject();
                 if (myproject.hasOwnProperty("schedulelabor")) {
@@ -304,7 +354,7 @@ class MyProposals extends Component {
                     proposal.push(this.showmaterialid(item))
                 }
             })
-            proposal.push(<div className="proposal-title-row"> The Total Amount for Proposal {this.state.activeproposalid} is {this.getproposalamount()}</div>)
+            proposal.push(<div className="proposal-title-row addBottomMargin"> The Total Amount for Proposal {this.state.activeproposalid} is {this.getproposalamount()}</div>)
 
         }
         return proposal;
@@ -344,7 +394,7 @@ class MyProposals extends Component {
             let proposalid = this.state.activeproposalid;
             let mymaterial = this.findmymaterial(materialid)
             if (mymaterial.proposalid === proposalid) {
-                return (<button className="btn-removeIcon general-button" onClick={event => { this.removematerial(materialid) }}>
+                return (<button className="remove-item general-button" onClick={event => { this.removematerial(materialid) }}>
                     {removeIcon()}
                 </button>)
             }
@@ -475,7 +525,7 @@ class MyProposals extends Component {
             let proposalid = this.state.activeproposalid;
             let mylabor = this.getmylabor(laborid)
             if (mylabor.proposalid === proposalid) {
-                return (<button className="btn-removeIcon general-button" onClick={event => { this.removelabor(mylabor.laborid) }}>
+                return (<button className="remove-item general-button" onClick={event => { this.removelabor(mylabor.laborid) }}>
                     {removeIcon()}
                 </button>)
             }
@@ -488,7 +538,7 @@ class MyProposals extends Component {
     showlaborid(mylabor) {
 
         return (
-            <div className="general-flex">
+            <div className="general-flex addBottomMargin">
                 <div className="flex-7" onClick={event => { this.addlabor(mylabor.laborid) }}>
                     <span className="regularFont">{mylabor.description}</span> <br />
                     <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
@@ -504,7 +554,7 @@ class MyProposals extends Component {
 
     }
     showmaterialid(mymaterial) {
-        return (<div className="general-flex">
+        return (<div className="general-flex addBottomMargin">
             <div className="flex-7" ame="laborid-icon" onClick={event => { this.addmaterial(mymaterial.materialid) }}>
 
                 <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
@@ -578,7 +628,7 @@ class MyProposals extends Component {
             }
         }
         if (updated) {
-            updated = `Last Updated ${updated}`
+            updated = `Proposal Last Updated ${updated}`
         }
 
         return updated;
@@ -607,16 +657,46 @@ class MyProposals extends Component {
     render() {
         //PROPOSAL 
         return (
-            <div className="proposal-container">
-                <div className="proposal-title-row">{this.getprojecttitle()}<br />Proposals </div>
-                <div className="proposal-title-row">{this.handletopIcon()} </div>
-                <div className="proposal-main-row align-contentCenter">{this.state.proposalidmsg}</div>
-                <div className="proposal-main-row">{this.loadproposalids()}</div>
-                <div className="proposal-main-row"> {this.loadproposalitems()}</div>
-                <div className="proposal-title-row">{this.getupdated()} </div>
-                <div className="proposal-title-row">{this.getapproved()} </div>
-                <div className="proposal-main-row align-contentCenter">{this.state.message}</div>
-                <div className="proposal-title-row"><button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button> </div>
+            <div className="general-flex">
+                <div className="flex-1">
+
+                    <div className="general-flex">
+                        <div className="flex-1 titleFont align-contentCenter addBottomMargin">
+                            ProjectID {this.getproject().projectid}/{this.getproject().title} <br />
+                            Proposals
+                        </div>
+                    </div>
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-2 regularFont">
+                            To Create A Proposal First Create an ID Then Add the Scheduled Items.
+                        </div>
+                        <div className="flex-1 addLeftMargin">
+                            <button className="general-button create-proposal" onClick={event => { this.createnewproposal() }}>{createProposalIcon()}</button>
+                        </div>
+                    </div>
+
+                    {this.loadproposalids()}
+
+
+                    {this.loadproposalitems()}
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-1 align-contentCenter">
+                            <div className="regularFont align-contentCenter addBottomMargin minHeight">{this.state.message}</div>
+                            <button className="general-button saveAllProjectsIcon" onClick={event => { this.saveallprojects() }}>{SaveAllProjectIcon()} </button>
+                        </div>
+                    </div>
+
+                    <div className="general-flex addBottomMargin">
+                        <div className="flex-1 regularFont align-contentCenter">
+                            {this.getupdated()}
+                        </div>
+                    </div>
+
+
+                </div>
+
             </div>)
     }
 }
