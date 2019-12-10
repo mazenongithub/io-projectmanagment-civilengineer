@@ -507,20 +507,7 @@ export function milestoneformatdatestring(datein) {
 
 }
 export function inputDateTimeOutDateObj(timein) {
-    let offset = new Date().getTimezoneOffset() / 60
-    let sym = "";
-    if (offset > 0) {
-        sym = "-"
-    }
-    else {
-        sym = "+"
-        offset = -offset;
-    }
-    if (offset < 10) {
-        offset = `0${offset}`
-    }
-
-    let newDate = new Date(`${timein.replace(/-/g, '/')}:00${sym}${offset}:00`);
+    let newDate = new Date(`${timein.replace(/-/g, '/')} UTC`);
     return (newDate)
 }
 export function inputTimeDateOutputUTCString(timein) {
