@@ -1505,7 +1505,7 @@ class MyScheduleLabor extends Component {
     }
     showcalendartimein() {
         let datein = {};
-        console.log("SHOWCALENDARTIMEIN")
+
         if (this.state.activelaborid) {
             let timein = this.getactivelabor().timein;
             datein = inputDateTimeOutDateObj(timein)
@@ -1640,7 +1640,7 @@ class MyScheduleLabor extends Component {
         )
     }
     showcalender(datein) {
-
+        alert("showcalendar", datein)
         let gridcalender = [];
         if (Object.prototype.toString.call(datein) === "[object Date]") {
 
