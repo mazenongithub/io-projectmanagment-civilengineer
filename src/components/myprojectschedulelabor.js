@@ -1640,7 +1640,7 @@ class MyScheduleLabor extends Component {
         )
     }
     showcalender(datein) {
-        alert("showcalendar", datein)
+        console.log("showcalendar", datein)
         let gridcalender = [];
         if (Object.prototype.toString.call(datein) === "[object Date]") {
 
