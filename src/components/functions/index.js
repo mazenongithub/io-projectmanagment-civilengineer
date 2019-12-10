@@ -2114,15 +2114,7 @@ export function inputtimeDBoutputCalendarDaySeconds(timein) {
         date = `0${date}`
     }
     let year = datein.getFullYear();
-    let offset = new Date().getTimezoneOffset() / 60
-    let sym = "+";
-    if (offset > 0) {
-        sym = "-";
-    }
-    if (Math.abs(offset) < 10) {
-        offset = `0${offset}`
-    }
-    offset = `${sym}${offset}:00`;
+    let offset = getOffset();
     let newDate = new Date(`${year}/${month}/${date} 00:00:00${offset}`)
     return (newDate.getTime())
 }
