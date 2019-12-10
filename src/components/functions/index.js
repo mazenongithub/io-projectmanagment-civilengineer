@@ -519,7 +519,7 @@ export function inputDateTimeOutDateObj(timein) {
     if (offset < 10) {
         offset = `0${offset}`
     }
-    console.log("calendar date", `${timein.replace(/-/g, '/')}:00${sym}${offset}:00`)
+
     let newDate = new Date(`${timein.replace(/-/g, '/')}:00${sym}${offset}:00`);
     return (newDate)
 }
