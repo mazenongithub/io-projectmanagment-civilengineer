@@ -25,9 +25,10 @@
 
 
 .calendar-element{
-    width:100%;
-    max-width: 50px;
-    max-height:50px
+ 
+    width: 50px;
+    height:35px;
+    
 }
 .alignRight{
     text-align:right;
@@ -139,8 +140,8 @@ vertical-align: top;
 }
 @media screen and (min-width:900px) {
     .calendar-element{
-        max-width: 64px;
-        max-height:64px
+        width: 64px;
+        height:64px
     }
 }
 @media screen and (min-width:1081px) {
@@ -157,8 +158,8 @@ vertical-align: top;
         height:81px;
     }
     .calendar-element{
-        max-width: 77px;
-        max-height:77px
+        width: 77px;
+        height:77px
     } 
     
 }

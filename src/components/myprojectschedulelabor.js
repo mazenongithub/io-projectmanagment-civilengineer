@@ -1505,6 +1505,7 @@ class MyScheduleLabor extends Component {
     }
     showcalendartimein() {
         let datein = {};
+        console.log("SHOWCALENDARTIMEIN")
         if (this.state.activelaborid) {
             let timein = this.getactivelabor().timein;
             datein = inputDateTimeOutDateObj(timein)
