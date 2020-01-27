@@ -3,7 +3,12 @@ import { connect } from 'react-redux';
 import { GoogleSigninIcon, EmailLoginSVG, AppleSigninIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
-import firebase from 'firebase'
+import { LoginUser } from './actions/api';
+import Profile from './profile';
+import PM from './pm'
+import firebase from 'firebase';
+import { MyUserModel } from './functions'
+
 
 class Login extends Component {
     constructor(props) {
@@ -17,7 +22,8 @@ class Login extends Component {
             lastname: '',
             emailaddress: '',
             profileurl: '',
-            phonenumber: ''
+            phonenumber: '',
+            pass: ''
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -178,51 +184,72 @@ class Login extends Component {
         }
         return message;
     }
+    async loginuser() {
+        let emailaddress = this.state.emailaddress;
+        let pass = this.state.pass;
+        let values = { emailaddress, pass }
+        let response = await LoginUser(values)
+        if (response.hasOwnProperty("projects")) {
+            this.props.reduxProjects(response.projects.myproject)
+        }
+        if (response.hasOwnProperty("providerid")) {
+
+            let myusermodel = MyUserModel(response.providerid, response.client, response.clientid, response.firstname, response.lastname, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl)
+
+            this.props.updateUserModel(myusermodel)
+        }
+
+    }
     render() {
+        let pm = new PM();
+        let myuser = pm.getuser.call(this);
+        const Login = () => {
 
-        let formpostURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loginuser`;
 
-        return (
-            <div className="general-flex">
-                <div className="flex-1 general-container">
 
-                    <div className="general-flex">
-                        <div className="flex-1 general-container">
-                            <div className="flex-1 general-container login-aligncenter titleFont">
-                                Login
+            return (
+                <div className="general-flex">
+                    <div className="flex-1 general-container">
+
+                        <div className="general-flex">
+                            <div className="flex-1 general-container">
+                                <div className="flex-1 general-container login-aligncenter titleFont">
+                                    Login
             </div>
-                        </div>
-                    </div>
-
-                    <div className="general-flex">
-                        <div className="flex-1 general-container">
-
-                            <div className="flex-1 general-container login-aligncenter titleFont">
-                                <button className="btnclientlogin general-button" onClick={() => { this.googleSignIn() }}>
-                                    {GoogleSigninIcon()}
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div className="general-flex">
-                        <div className="flex-1 general-container">
-                            <div className="flex-1 general-container login-aligncenter titleFont">
-                                <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn() }}>
-                                    {AppleSigninIcon()}
-                                </button>
                             </div>
                         </div>
-                    </div>
 
-                    <form action={formpostURL} method="post">
+                        <div className="general-flex">
+                            <div className="flex-1 general-container">
+
+                                <div className="flex-1 general-container login-aligncenter titleFont">
+                                    <button className="btnclientlogin general-button" onClick={() => { pm.googleSignIn.call(this) }}>
+                                        {GoogleSigninIcon()}
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div className="general-flex">
+                            <div className="flex-1 general-container">
+                                <div className="flex-1 general-container login-aligncenter titleFont">
+                                    <button className="btnclientlogin general-button" onClick={() => { pm.appleSignIn.call(this) }}>
+                                        {AppleSigninIcon()}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div className="general-flex">
                             <div className="flex-1 general-container login-aligncenter regularFont">
                                 Email
                     </div>
                             <div className="flex-2 general-container login-aligncenter regularFont">
-                                <input type="text" name="emailaddress" className="general-field" />
+                                <input type="text" name="emailaddress" className="general-field"
+                                    value={this.state.emailaddress}
+                                    onChange={event => { this.setState({ emailaddress: event.target.value }) }} />
                             </div>
                         </div>
 
@@ -231,12 +258,15 @@ class Login extends Component {
                                 Password
                     </div>
                             <div className="flex-2 general-container login-aligncenter titleFont">
-                                <input type="password" name="pass" className="general-field" />
+                                <input type="password" name="pass" className="general-field"
+                                    value={this.state.pass}
+                                    onChange={event => { this.setState({ pass: event.target.value }) }}
+                                />
                             </div>
                         </div>
                         <div className="general-flex">
                             <div className="flex-1 general-container login-aligncenter titleFont">
-                                <button className="btnclientlogin general-button">
+                                <button className="btnclientlogin general-button" onClick={() => { this.loginuser() }}>
                                     {EmailLoginSVG()}
                                 </button>
                             </div>
@@ -246,21 +276,30 @@ class Login extends Component {
                                 {this.getLoginMessage()}
                             </div>
                         </div>
-                    </form>
 
-                    <form id="loginform" action={`${process.env.REACT_APP_SERVER_API}/projectmanagement/webclient/loginuser`} method="post">
-                        <input type="hidden" value={this.state.clientid} name="clientid" />
-                        <input type="hidden" value={this.state.client} name="client" />
-                        <input type="hidden" value={this.state.firstname} name="firstname" />
-                        <input type="hidden" value={this.state.lastname} name="lastname" />
-                        <input type="hidden" value={this.state.emailaddress} name="emailaddress" />
-                        <input type="hidden" value={this.state.phonenumber} name="phonenumber" />
-                        <input type="hidden" value={this.state.profileurl} name="profileurl" />
 
-                    </form>
+                        <form id="loginform" action={`${process.env.REACT_APP_SERVER_API}/projectmanagement/webclient/loginuser`} method="post">
+                            <input type="hidden" value={this.state.clientid} name="clientid" />
+                            <input type="hidden" value={this.state.client} name="client" />
+                            <input type="hidden" value={this.state.firstname} name="firstname" />
+                            <input type="hidden" value={this.state.lastname} name="lastname" />
+                            <input type="hidden" value={this.state.emailaddress} name="emailaddress" />
+                            <input type="hidden" value={this.state.phonenumber} name="phonenumber" />
+                            <input type="hidden" value={this.state.profileurl} name="profileurl" />
 
-                </div>
-            </div>)
+                        </form>
+
+                    </div>
+                </div>)
+        }
+        if (myuser) {
+            return (<Profile />)
+        } else {
+            return (Login())
+        }
+
+
+
     }
 }
 

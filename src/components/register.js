@@ -5,8 +5,11 @@ import * as actions from './actions';
 import { GoogleSigninIcon, AppleSigninIcon, RegisterNowIcon, checkClientIcon } from './svg'
 import { connect } from 'react-redux';
 import { showOccupations, UsStates, validateProviderID, validateName, validateEmail, validatePhoneNumber, validateZipcode, validatePassword } from './functions';
-import { CheckProviderID, CheckCommission, CheckEmailAddress } from './actions/api'
-import firebase from 'firebase'
+import { CheckProviderID, CheckCommission, CheckEmailAddress, RegisterUser } from './actions/api'
+import firebase from 'firebase';
+import { MyUserModel } from './functions'
+import PM from './pm';
+import Profile from './profile';
 class Register extends Component {
 
     constructor(props) {
@@ -59,7 +62,7 @@ class Register extends Component {
             return ``
         }
     }
-    handleSubmit(event) {
+    validateRegister(event) {
         let errmsg = "";
 
         if (this.state.emailcheck === "invalid") {
@@ -77,10 +80,9 @@ class Register extends Component {
         errmsg += validateName(this.state.firstname);
         errmsg += validateName(this.state.lastname)
         errmsg += this.getcommissionmessage()
-        if (errmsg) {
-            event.preventDefault();
-            this.setState({ message: errmsg })
-        }
+
+        return errmsg;
+
 
 
 
@@ -307,6 +309,40 @@ class Register extends Component {
         }
 
     }
+    async registeruser() {
+        let providerid = this.state.providerid;
+        let firstname = this.state.firstname;
+        let lastname = this.state.lastname;
+        let address = this.state.address;
+        let city = this.state.city;
+        let contactstate = this.state.contactstate;
+        let zipcode = this.state.zipcode;
+        let emailaddress = this.state.emailaddress;
+        let phonenumber = this.state.phonenumber;
+        let password = this.state.password;
+        let client = this.state.client;
+        let clientid = this.state.clientid;
+        let profileurl = this.state.profileurl;
+        let values = { providerid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, password, client, clientid, profileurl }
+        let errmsg = this.validateRegister();
+        console.log(errmsg);
+        if (!errmsg) {
+            let response = await RegisterUser(values)
+            if (response.hasOwnProperty("projects")) {
+                this.props.reduxProjects(response.projects.myproject)
+            }
+            if (response.hasOwnProperty("providerid")) {
+
+                let myusermodel = MyUserModel(response.providerid, response.client, response.clientid, response.firstname, response.lastname, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl)
+
+                this.props.updateUserModel(myusermodel)
+            }
+
+        } else {
+            this.setState({ message: errmsg })
+        }
+
+    }
     handleform() {
         let form = [];
 
@@ -322,26 +358,9 @@ class Register extends Component {
                 value={this.state.lastname}
                 className="project-field" />
         </div>)
-        form.push(<div className="register-field"> Occupation Category <br />
-            <select name="occupation" className="project-field"
-                value={this.state.occupation}
-                onChange={event => { this.setState({ occupation: event.target.value }) }}>
-                <option value=""> Select An Occupation Category</option>
-                {this.getOccupationcategories()}
-            </select>
-        </div>)
-        form.push(<div className="register-field"> Job Title  <br />
-            <input type="text" name="jobtitle"
-                onChange={event => this.setState({ jobtitle: event.target.value })}
-                value={this.state.jobtitle}
-                className="project-field" />
-        </div>)
-        form.push(<div className="register-field"> Company <br />
-            <input type="text" name="company"
-                onChange={event => { this.setState({ company: event.target.value }) }}
-                value={this.state.company}
-                className="project-field" />
-        </div>)
+
+
+
         form.push(<div className="register-field"> Address <br />
             <input type="text" name="address" onChange={event => { this.setState({ address: event.target.value }) }}
                 value={this.state.address} className="project-field" />
@@ -367,6 +386,7 @@ class Register extends Component {
             <input type="text" name="phonenumber" onChange={event => { this.setState({ phonenumber: event.target.value }) }}
                 value={this.state.phonenumber} className="project-field" />
         </div>)
+        form.push(<div className="register-field"> &nbsp;</div>)
         form.push(<div className="register-field"> *Email Address  <br />
             <input type="text" name="emailaddress" onChange={event => { this.setState({ emailaddress: event.target.value }) }}
                 value={this.state.emailaddress} className="project-field"
@@ -400,7 +420,7 @@ class Register extends Component {
             {AppleSigninIcon()}
         </button></div>)
         form.push(<div className="register-spanall register-aligncenter">
-            <button className="btnregisternow general-button">
+            <button className="btnregisternow general-button" onClick={event => { this.registeruser() }}>
                 {RegisterNowIcon()}
             </button>
         </div>)
@@ -425,35 +445,39 @@ class Register extends Component {
         return message;
     }
     render() {
-        let formpostURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/registernewuser";
-        return (
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        const Register = () => {
 
+            return (<div className="register-container">
+                <div className="register-aligncenter register-spanall titleFont">Register </div>
+                <div className="register-spanall register-errmessage">{this.state.message} </div>
+                <div className="register-field"> ProviderID <br />
+                    <input type="text" className="project-field"
+                        name="providerid"
+                        value={this.state.providerid}
+                        onChange={event => { this.handleProviderID(event.target.value) }}
+                        onFocus={event => { this.verifyProviderID(event) }}
+                        onBlur={event => { this.verifyProviderID(event) }}
+                    />
 
-            <form action={formpostURL} method="post"
-                onSubmit={event => { this.handleSubmit(event) }}>
-                <div className="register-container">
-                    <div className="register-aligncenter register-spanall titleFont">Register </div>
-                    <div className="register-spanall register-errmessage">{this.state.message} </div>
-                    <div className="register-field"> ProviderID <br />
-                        <input type="text" className="project-field"
-                            name="providerid"
-                            value={this.state.providerid}
-                            onChange={event => { this.handleProviderID(event.target.value) }}
-                            onFocus={event => { this.verifyProviderID(event) }}
-                            onBlur={event => { this.verifyProviderID(event) }}
-                        />
-
-                    </div>
-                    <div className="register-field">
-                        {this.handleprofileicon()}
-                    </div>
-                    <div className="register-spanall register-regularfont">   {this.getprovideridmessage()} </div>
-
-                    {this.handleform()}
                 </div>
-            </form>
+                <div className="register-field">
+                    {this.handleprofileicon()}
+                </div>
+                <div className="register-spanall register-regularfont">   {this.getprovideridmessage()} </div>
 
-        )
+                {this.handleform()}
+            </div>)
+
+        }
+        if (myuser) {
+            return (<Profile />)
+        } else {
+            return (Register())
+        }
+
+
     }
 }
 

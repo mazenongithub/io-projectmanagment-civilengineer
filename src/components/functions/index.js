@@ -2328,8 +2328,8 @@ export function UsStates() {
         { name: 'WYOMING', abbreviation: 'WY' }
     ])
 }
-export function MyUserModel(providerid, firstname, lastname, company, occupation, jobtitle, laborrate, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl, stripe) {
-    return ({ providerid, firstname, lastname, company, occupation, jobtitle, laborrate, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl, stripe })
+export function MyUserModel(providerid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl) {
+    return ({ providerid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl })
 }
 export function getampm(dateobj) {
     let hours = dateobj.getHours();
