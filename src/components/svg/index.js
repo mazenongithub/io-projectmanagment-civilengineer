@@ -278,6 +278,16 @@ export function dateYearDown() {
 export function dateMonthDown() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 66"><defs><style></style></defs><title>datemonthdown</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="datemonthdown-1" x="1" y="1" width="76" height="64" /><polygon className="datemonthdown-2" points="22 29 47 13 47 45 22 29" /></g></g></svg>)
 }
+export function projectSaveAll() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380.4 87.43"><defs><style></style></defs><title>projectsaveall</title><g id="Layer_2" data-name="Layer 2"><g id="hide"><rect className="projectsaveall-1" x="1.5" y="1.5" width="377.4" height="84.43" rx="7.66" /><text className="projectsaveall-2" transform="translate(6.05 58.16) scale(2 0.77)">Sa<tspan className="projectsaveall-3" x="59.16" y="0">v</tspan><tspan className="projectsaveall-4" x="84.8" y="0">eAll</tspan></text></g></g></svg>)
+}
+export function TouchIcon() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.4 85.71"><defs><style></style></defs><title>touchIcon</title><g id="Layer_2" data-name="Layer 2"><g id="hide"><path className="touchicon-1" d="M37.75,47.31,38,35.09a5.65,5.65,0,0,0-.85-1.71,6,6,0,0,0-4.32-2.45A6.26,6.26,0,0,0,29.15,32l-2,1.15" /><path className="touchicon-1" d="M48.65,49.1V38.74a4.9,4.9,0,0,0-.81-1.67A5.79,5.79,0,0,0,43,34.92a6.08,6.08,0,0,0-5.15,3.61" />
+        <path className="touchicon-1" d="M48.65,41.28c.13-.15,3.05-3.48,6.11-2.75s4.24,5.16,4.63,6.68a13.91,13.91,0,0,1,.38,2.43V58.05a29.49,29.49,0,0,1,0,5.6A23.25,23.25,0,0,1,59,68a19,19,0,0,1-4.8,7.71A25.76,25.76,0,0,1,46,81.88a27.23,27.23,0,0,1-13.45,2.26C29.08,84,21,83.61,14.87,77.89c-2-1.84-3-3.53-4.95-6.8-2.37-3.92-3.73-7.42-6-13.37-1-2.66-2.64-4.17-2.39-6.63a6,6,0,0,1,2.39-4.42,5.68,5.68,0,0,1,8.39,2.16l3.75,8V14.45a4.78,4.78,0,0,1,1.25-2.28C19.5,10,23.77,9.8,25.88,12a4.86,4.86,0,0,1,1.26,2.49V45.68" /><line className="touchicon-1" x1="11.54" y1="7.58" x2="7.8" y2="4.48" /><line className="touchicon-1" x1="21.33" y1="4.48" x2="21.33" /><line className="touchicon-1" x1="30.7" y1="7.58" x2="35.14" y2="4.48" /></g></g></svg>)
+}
+export function purpleCheck() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 104.19 88.42"><defs><style></style></defs><title>mambacheck</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="mamacheck-1" x="1.5" y="1.5" width="101.19" height="85.42" /><polygon className="mamacheck-2" points="83.23 21.1 40.08 64.41 24.88 49.16 29.49 44.53 39.93 55.01 78.48 16.33 83.23 21.1" /></g></g></svg>)
+}
 export function dateMonthUp() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 66"><defs><style></style></defs><title>datemonthup</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="datemonthup-1" x="1" y="1" width="76" height="64" /><polygon className="datemonthup-2" points="55 29 30 45 30 13 55 29" /></g></g></svg>)
 }

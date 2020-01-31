@@ -1,9 +1,9 @@
-import { PROJECT } from '../actions/types';
+import { ALLCOMPANYS } from '../actions/types';
 
 export default function (state = {}, action) {
 
     switch (action.type) {
-        case PROJECT:
+        case ALLCOMPANYS:
             return action.payload;
         default:
             return state;

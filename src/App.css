@@ -2,5 +2,15 @@
   width: 98%;
   margin: auto;
 }
-
+.calendar-grid {
+  max-width:540px;
+  display: grid;
+  grid-template-columns: 15% 14% 14% 14% 14% 14% 15%;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+  margin:auto;
+}
+.active-milestone-calender{
+  background-color: #B2EDAB;
+}
 @media screen and (min-width:1081px) {}

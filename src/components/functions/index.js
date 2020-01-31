@@ -263,6 +263,31 @@ export function getDateStringFromUTC(timeout) {
 
 
 }
+export function decreaseCalendarDaybyOneMonth(timein) {
+    let offset = getOffset();
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
+    let currentMonth = datein.getMonth() + 1;
+    let year = datein.getFullYear();
+    let decreaseMonth = currentMonth;
+    if (currentMonth === 1) {
+        decreaseMonth = 12;
+        year -= 1
+    } else {
+        decreaseMonth -= 1;
+    }
+
+    let day = datein.getDate();
+    if (decreaseMonth < 10) {
+        decreaseMonth = `0${decreaseMonth}`
+    }
+
+    if (day < 10) {
+        day = `0${day}`
+    }
+
+    let newDate = `${year}-${decreaseMonth}-${day}`
+    return (newDate)
+}
 export function subtractMonthDateObj(datein) {
     let month = datein.getMonth();
     let year = datein.getFullYear();
@@ -300,6 +325,7 @@ export function subtractMonthDateObj(datein) {
 
     return (new Date(`${year}/${month}/${date} ${hours}:${minutes}:${seconds}`))
 }
+
 export function addoneMonthDateObj(datein) {
     let month = datein.getMonth();
     let year = datein.getFullYear();
@@ -337,6 +363,47 @@ export function addoneMonthDateObj(datein) {
 
     return (new Date(`${year}/${month}/${date} ${hours}:${minutes}:${seconds}`))
 }
+export function increaseCalendarDayOneMonth(timein) {
+    let offset = getOffset();
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
+    let currentMonth = datein.getMonth() + 1;
+    let year = datein.getFullYear();
+    let increaseMonth = currentMonth;
+    if (currentMonth === 12) {
+        increaseMonth = 1;
+        year += 1
+    } else {
+        increaseMonth += 1;
+    }
+
+    let day = datein.getDate();
+    if (increaseMonth < 10) {
+        increaseMonth = `0${increaseMonth}`
+    }
+
+    if (day < 10) {
+        day = `0${day}`
+    }
+
+    let newDate = `${year}-${increaseMonth}-${day}`
+    return (newDate)
+}
+export function increaseCalendarDaybyOneYear(timein) {
+    let offset = getOffset();
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
+    let currentYear = datein.getFullYear();
+    let increaseYear = currentYear + 1;
+    let month = datein.getMonth() + 1;
+    let day = datein.getDate();
+    if (month < 10) {
+        month = `0${month}`
+    }
+    if (day < 10) {
+        day = `0${day}`
+    }
+    let newDate = `${increaseYear}-${month}-${day}`
+    return (newDate)
+}
 export function addoneYearDateObj(datein) {
     let month = datein.getMonth();
     let year = datein.getFullYear();
@@ -365,9 +432,40 @@ export function addoneYearDateObj(datein) {
         seconds = `0${seconds}`
     }
 
-
     return (new Date(`${year}/${month}/${date} ${hours}:${minutes}:${seconds}`))
 }
+
+export function decreaseCalendarDaybyOneYear(timein) {
+    let offset = getOffset();
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
+    let currentYear = datein.getFullYear();
+    let decreaseYear = currentYear - 1;
+    let month = datein.getMonth() + 1;
+    let day = datein.getDate();
+    if (month < 10) {
+        month = `0${month}`
+    }
+    if (day < 10) {
+        day = `0${day}`
+    }
+    let newDate = `${decreaseYear}-${month}-${day}`
+    return (newDate)
+}
+export function inputDatePickerOutputDateObj(value) {
+
+    let offset = new Date().getTimezoneOffset() / 60
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
+    }
+    if (Math.abs(offset) < 10) {
+        offset = `0${offset}`
+    }
+
+    let newDate = new Date(`${value.replace(/-/g, '-')} 00:00:00${sym}${offset}:00`)
+    return newDate;
+}
+
 export function subtractoneYearDateObj(datein) {
     let month = datein.getMonth();
     let year = datein.getFullYear();
@@ -1520,21 +1618,7 @@ export function makealocation(country, city, projectstate, zipcode) {
     let location = `${city},${projectstate} ${zipcode} ${country}`;
     return location;
 }
-export function inputDatePickerOutputDateObj(value) {
 
-    let offset = new Date().getTimezoneOffset() / 60
-    let sym = "+";
-    if (offset > 0) {
-        sym = "-";
-    }
-    if (Math.abs(offset) < 10) {
-        offset = `0${offset}`
-    }
-
-    let newDate = new Date(`${value.replace(/-/g, '-')} 00:00:00${sym}${offset}:00`)
-
-    return newDate;
-}
 export function makeDatefromObj(datein) {
     let year = datein.getFullYear();
     let month = datein.getMonth() + 1;
@@ -1589,6 +1673,19 @@ export function inputDateObjandSecReturnObj(dateencoded, datein) {
 
     newDate = new Date(`${month}/${day}/${year} ${hours}:${minutes}:${seconds}${sym}${offset}:00`)
     return newDate;
+}
+export function inputSecOutDateString(dateencoded) {
+    const newDate = new Date(dateencoded)
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    if (month < 10) {
+        month = `0${month}`
+    }
+    let day = newDate.getDate();
+    if (day < 10) {
+        day = `0${day}`
+    }
+    return (`${year}-${month}-${day}`)
 }
 export function sorttimes(timeina, timeinb) {
     timeina = new Date(timeina.replace(/-/g, '/'))
@@ -2272,6 +2369,9 @@ export function dbUTCoutputdateobject(datestring) {
     let mytime = new Date(gettime);
     return mytime;
 }
+export function CreateProject(projectid, title, scope, address, city, projectstate, zipcode) {
+    return ({ projectid, title, scope, address, city, projectstate, zipcode })
+}
 export function UsStates() {
     return ([
         { name: 'ALABAMA', abbreviation: 'AL' },
@@ -2647,8 +2747,42 @@ export function MyProjectModel(providerid, projectid, title, scope, address, cit
     let myproject = { providerid, projectid, title, scope, address, city, projectstate, zipcode }
     return myproject;
 }
-export function MyMilestone(milestoneid, milestone, projectid, start, completion) {
-    return ({ milestoneid, milestone, projectid, start, completion })
+export function returnCompanyList(allusers) {
+    let companys = [];
+
+    if (allusers.hasOwnProperty("myuser")) {
+        // eslint-disable-next-line
+        allusers.myuser.map(myuser => {
+
+            if (myuser.hasOwnProperty("company")) {
+                let checkcompany = true;
+                let companyid = myuser.company.companyid;
+                if (companys.length > 0) {
+                    // eslint-disable-next-line
+                    companys.map(company => {
+                        if (company.companyid === companyid) {
+                            checkcompany = false;
+                        }
+                    })
+                }
+                if (checkcompany) {
+
+                    companys.push(myuser.company)
+                }
+            }
+
+        })
+
+    }
+    return companys;
+}
+export function inputDateStringOutputSeconds(timein) {
+    let offset = getOffset()
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`);
+    return (datein.getTime())
+}
+export function MyMilestone(milestoneid, milestone, start, completion) {
+    return ({ milestoneid, milestone, start, completion })
 }
 export function mymaterial(projectid, materialid, milestoneid, datein, description, quantity, unit, unitcost, invoiceid) {
     return { projectid, materialid, milestoneid, datein, description, quantity, unit, unitcost, invoiceid }
@@ -2746,7 +2880,7 @@ export function ActualMaterial(materialid, providerid, projectid, timein, quanti
     })
 }
 export function TeamMember(providerid, role) {
-    return ({ myprovider: providerid, role })
+    return ({ providerid, role })
 }
 export function makeID(length) {
     let result = '';
@@ -2756,4 +2890,292 @@ export function makeID(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+export function TestUser() {
+    return ({
+        providerid: "stevenatwater",
+        client: "google",
+        clientid: "109676734658243948537",
+        firstname: "Steven",
+        lastname: "Atwater",
+        address: "",
+        city: "",
+        contactstate: "",
+        zipcode: "",
+        emailaddress: "immaisoncrosby@gmail.com",
+        phonenumber: "916-823-1652",
+        profileurl: "https://lh5.googleusercontent.com/-pwq6Zt4WHeY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfnjRVPJQYMRzgOWQD6aeRxVY7Nig/photo.jpg",
+        projects: {
+            myproject: [
+                {
+                    projectid: "constructionapp",
+                    title: "Title",
+                    scope: "Scope",
+                    address: "Address",
+                    city: "CityC",
+                    projectstate: "Ca",
+                    zipcode: "95757",
+                    projectteam: {
+                        myteam: [
+                            {
+                                providerid: "mazen",
+                                role: "Lead App Developer"
+                            }
+                        ]
+                    },
+                    projectmilestones: {
+                        mymilestone: [
+                            {
+                                milestoneid: "F7HX5X",
+                                projectid: "constructionapp",
+                                milestone: "Update to Web Client",
+                                start: "2019-12-06",
+                                completion: "2019-12-08"
+                            }
+                        ]
+                    },
+                    schedulelabor: {
+                        mylabor: [
+                            {
+                                projectid: "constructionapp",
+                                milestoneid: "F7HX5X",
+                                milestone: "",
+                                providerid: "mazen",
+                                laborid: "03AZLOPT",
+                                timein: "2019-12-08 21:04:00",
+                                timeout: "2019-12-09 01:04:00",
+                                laborrate: "30.0000",
+                                description: "Refomatting Client Layouts",
+                                proposalid: "R4WQ",
+                                profit: "15.0000"
+                            }
+                        ]
+                    },
+                    actuallabor: {
+                        mylabor: [
+                            {
+                                projectid: "constructionapp",
+                                milestoneid: "F7HX5X",
+                                milestone: "",
+                                providerid: "",
+                                laborid: "C9JXIHOD",
+                                timein: "2019-12-08 21:07:00",
+                                timeout: "2019-12-09 00:07:00",
+                                laborrate: "30.0000",
+                                description: "Reformatting Web Client",
+                                invoiceid: "POQV",
+                                profit: "15.0000"
+                            }
+                        ]
+                    },
+                    actualmaterials: {
+                        mymaterial: [
+                            {
+                                materialid: "myfirstmaterial",
+                                mymaterialid: "myfirstmaterial",
+                                providerid: "stevenatwater",
+                                csiid: "yyyyyy",
+                                timein: "2019-12-08",
+                                milestoneid: "F7HX5X",
+                                quantity: "1.00",
+                                unit: "mon",
+                                unitcost: "9.00",
+                                invoiceid: "POQV",
+                                profit: "15.0000"
+                            }
+                        ]
+                    },
+                    schedulematerials: {
+                        mymaterial: [
+                            {
+                                materialid: "myfirstmaterial",
+                                mymaterialid: "myfirstmaterial",
+                                providerid: "stevenatwater",
+                                csiid: "yyyyyy",
+                                timein: "2019-12-08",
+                                milestoneid: "F7HX5X",
+                                quantity: "1.00",
+                                unit: "mon",
+                                unitcost: "7.00",
+                                proposalid: "R4WQ",
+                                profit: "15.0000"
+                            }
+                        ]
+                    },
+                    scheduleequipment: {
+                        myequipment: {
+                            equipmentid: {},
+                            myequipmentid: "blaablabal",
+                            equipmentrate: "100.0000",
+                            milestoneid: "F7HX5X",
+                            csiid: "yyyyyy",
+                            timein: "2019-12-26 00:00:00",
+                            timeout: "2019-12-27 00:00:00",
+                            proposalid: "R4WQ",
+                            profit: "15.0000"
+                        }
+                    },
+                    actualequipment: {
+                        myequipment: [
+                            {
+                                equipmentid: {},
+                                myequipmentid: "myfirstlineid",
+                                equipmentrate: "100.0000",
+                                milestoneid: "F7HX5X",
+                                csiid: "yyyyyy",
+                                timein: "2019-05-30 18:33:33",
+                                timeout: "2019-05-31 00:33:33",
+                                invoiceid: "POQV",
+                                profit: "15.0000"
+                            },
+                            {
+                                equipmentid: {},
+                                myequipmentid: "sdewerwewcwwer",
+                                equipmentrate: "100.0000",
+                                milestoneid: "F7HX5X",
+                                csiid: "yyyyyy",
+                                timein: "2019-05-30 18:33:33",
+                                timeout: "2019-05-30 22:33:33",
+                                invoiceid: "POQV",
+                                profit: "15.0000"
+                            }
+                        ]
+                    },
+                    proposals: {
+                        myproposal: [
+                            {
+                                proposalid: "R4WQ",
+                                providerid: "mazen",
+                                updated: "2019-12-08 21:09:55",
+                                approved: "2019-12-08 21:10:35",
+                                bidschedule: {
+                                    biditem: {
+                                        lineid: "myfirstlineid",
+                                        csiid: "yyyyyy",
+                                        quantity: "40000.0000",
+                                        unit: "Yards"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    invoices: {
+                        myinvoice: [
+                            {
+                                invoiceid: "POQV",
+                                providerid: "mazen",
+                                updated: "2019-12-08 21:10:04",
+                                approved: "2019-12-27 13:39:52",
+                                bidschedule: {
+                                    biditem: {
+                                        lineid: "myfirstpayment",
+                                        csiid: "yyyyyy",
+                                        quantity: "44.0000",
+                                        unit: "yards"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        allusers: {
+            myuser: [
+                {
+                    providerid: "stevenatwater",
+                    companyid: {},
+                    emailaddress: "immaisoncrosby@gmail.com",
+                    firstname: "Steven",
+                    lastname: "Atwater",
+                    client: "google",
+                    clientid: "109676734658243948537",
+                    profileurl: "https://lh5.googleusercontent.com/-pwq6Zt4WHeY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfnjRVPJQYMRzgOWQD6aeRxVY7Nig/photo.jpg",
+                    stripe: ""
+                },
+                {
+                    providerid: "mazen",
+                    companyid: {},
+                    emailaddress: "mazen@civilengineer.io",
+                    firstname: "Mazen",
+                    lastname: "Khenaisser",
+                    client: "apple",
+                    clientid: "000353.66d2a1610de24944b898df602ab5e7a7.0305",
+                    profileurl: "",
+                    stripe: "acct_1CCcFoKDR2Pptlfl",
+                    company: {
+                        companyid: "civilengineer-io",
+                        company: "civilengineer.io",
+                        address: "5611 Loyalty Way",
+                        manager: "mazen",
+                        city: "Elk Grove",
+                        contactstate: "CA",
+                        zipcode: "95757"
+                    }
+                },
+                {
+                    providerid: "gusgfk",
+                    companyid: {},
+                    emailaddress: "gus.gfk@gmail.com",
+                    firstname: "Gus",
+                    lastname: "Khenaisser",
+                    client: "google",
+                    clientid: "116250742570414913162",
+                    profileurl: "",
+                    stripe: ""
+                },
+                {
+                    providerid: "gordonlum",
+                    companyid: {},
+                    emailaddress: "gocatlum@att.net",
+                    firstname: "Gordon",
+                    lastname: "Lum",
+                    client: "",
+                    clientid: "",
+                    profileurl: "",
+                    stripe: "",
+                    company: {
+                        companyid: "civilengineer-io",
+                        company: "civilengineer.io",
+                        address: "5611 Loyalty Way",
+                        manager: "mazen",
+                        city: "Elk Grove",
+                        contactstate: "CA",
+                        zipcode: "95757"
+                    }
+                },
+                {
+                    providerid: "selene",
+                    companyid: {},
+                    emailaddress: "ibarrolaselene5@gmail.com",
+                    firstname: "Selene",
+                    lastname: "ibarrola",
+                    client: "google",
+                    clientid: "100997823144314216130",
+                    profileurl: "",
+                    stripe: "",
+                    company: {
+                        companyid: "civilengineer-io",
+                        company: "civilengineer.io",
+                        address: "5611 Loyalty Way",
+                        manager: "mazen",
+                        city: "Elk Grove",
+                        contactstate: "CA",
+                        zipcode: "95757"
+                    }
+                },
+                {
+                    providerid: "allinone",
+                    companyid: {},
+                    emailaddress: "michaelicay@gmail.com",
+                    firstname: "Michael",
+                    lastname: "Icay",
+                    client: "google",
+                    clientid: "112500729328188710919",
+                    profileurl: "",
+                    stripe: ""
+                }
+            ]
+        }
+    })
 }

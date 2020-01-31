@@ -1,6 +1,5 @@
 /* global fetch */
 /* global Headers */
-
 export async function CheckUserLogin() {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checkuser`
@@ -23,6 +22,7 @@ export async function CheckUserLogin() {
         return resp.json();
     })
 }
+
 export async function ClientLogin(values) {
     console.log(values)
 
@@ -53,7 +53,6 @@ export async function ClientLogin(values) {
             return resp.json();
         })
 }
-
 
 
 export async function GoandHireMe(values) {
@@ -87,6 +86,7 @@ export async function GoandHireMe(values) {
             return resp.json();
         })
 }
+
 export async function ProviderEndPoint(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
@@ -119,6 +119,7 @@ export async function ProviderEndPoint(values) {
             return resp.json();
         })
 }
+
 export async function SaveAllProjects(values) {
     let providerid = values.providerid;
     let projectid = values.projectid;
