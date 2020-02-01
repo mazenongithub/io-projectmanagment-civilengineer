@@ -2,9 +2,10 @@ import React from 'react';
 import { ClientLogin } from './actions/api';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { MyUserModel } from './functions';
+import { returnCompanyList, sorttimes } from './functions';
 import { MyStylesheet } from './styles';
-import { projectSaveAll } from './svg'
+import { projectSaveAll } from './svg';
+import { LoadCSI } from './actions/api';
 
 class PM {
     getGoIcon() {
@@ -24,6 +25,151 @@ class PM {
             }
         }
         return user;
+    }
+
+    showlinedetail() {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const regularFont = pm.getRegularFont.call(this);
+        const totallabor = `$${Number(this.getlabortotal()).toFixed(2)}`
+        const totalmaterials = `$${Number(this.getmaterialtotal()).toFixed(2)}`
+        const totalequipment = `$${Number(this.getequipmenttotal()).toFixed(2)}`
+        const totalamount = `$${Number(this.getitemtotal()).toFixed(2)}`
+        const responsiveLayouts = () => {
+            if (this.state.width > 800) {
+                return (<div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1 }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Labor
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getlaboritems()}
+                                </div>
+
+
+                            </div>
+                            <div style={{ ...styles.flex1 }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Materials
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getmaterialitems()}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1 }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Equipment
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getequipmentitems()}
+                                </div>
+
+
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder }}>
+
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Labor {totallabor}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Materials {totalmaterials}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Equipment {totalequipment}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total {totalamount}
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>)
+
+            } else {
+                return (
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+
+                            <div style={{ ...styles.generalContainer }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Labor
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getlaboritems()}
+                                </div>
+
+                            </div>
+
+                            <div style={{ ...styles.generalContainer }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Materials
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getmaterialitems()}
+                                </div>
+
+
+                            </div>
+                            <div style={{ ...styles.generalContainer }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignCenter }}>
+                                    Equipment
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.showBorder }}>
+                                    {this.getequipmentitems()}
+                                </div>
+
+                            </div>
+                            <div style={{ ...styles.generalContainer }}>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Labor {totallabor}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Materials {totalmaterials}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total Equipment {totalequipment}
+                                </div>
+                                <div style={{ ...styles.generalContainer }}>
+                                    Total {totalamount}
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                )
+
+            }
+        }
+        return responsiveLayouts();
+
+    }
+    getproposals() {
+        const pm = new PM();
+        let proposals = false;
+        const myproject = pm.getproject.call(this);
+        if (myproject.hasOwnProperty("proposals")) {
+            proposals = myproject.proposals.myproposal;
+        }
+        return proposals;
     }
     getnavigation() {
         let navigation = false;
@@ -57,6 +203,135 @@ class PM {
             return;
         }
     }
+    getbidfield() {
+        if (this.state.width > 800) {
+            return ({ maxWidth: '138px' })
+        } else {
+            return ({ maxWidth: '90px' })
+        }
+    }
+    getAllSchedule() {
+        let schedules = [];
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+
+        if (myproject) {
+            if (myproject.hasOwnProperty("schedulelabor")) {
+                // eslint-disable-next-line
+                myproject.schedulelabor.mylabor.map(mylabor => {
+                    schedules.push(mylabor)
+                })
+            }
+            if (myproject.hasOwnProperty("scheduleequipment")) {
+                // eslint-disable-next-line
+                myproject.scheduleequipment.myequipment.map(myequipment => {
+                    schedules.push(myequipment)
+                })
+            }
+            if (myproject.hasOwnProperty("schedulematerials")) {
+                // eslint-disable-next-line
+                myproject.schedulematerials.mymaterial.map(mymaterial => {
+                    schedules.push(mymaterial)
+                })
+
+            }
+
+            schedules.sort((a, b) => {
+                return sorttimes(a.timein, b.timein)
+            })
+        }
+
+        return schedules;
+    }
+
+    getschedulecsibyid(csiid) {
+        let mycsi = false;
+        const pm = new PM();
+        const myproposals = pm.getproposals.call(this)
+        if (myproposals) {
+            // eslint-disable-next-line
+            myproposals.map(myproposal => {
+                if (myproposal.hasOwnProperty("bidschedule")) {
+                    // eslint-disable-next-line
+                    myproposal.bidschedule.biditem.map(biditem => {
+                        if (biditem.csiid === csiid) {
+                            mycsi = { csiid, csi: biditem.csi, title: biditem.title }
+
+                        }
+                    })
+                }
+            })
+
+
+        }
+        return mycsi;
+    }
+
+    async loadcsi(providerid) {
+        if (!this.props.csi.hasOwnProperty("length")) {
+            try {
+                let response = await LoadCSI(providerid);
+                if (response.hasOwnProperty("csicodes")) {
+                    this.props.reduxCSI(response.csicodes.code);
+                    this.setState({ render: 'render' })
+                }
+            } catch (err) {
+                alert(err)
+            }
+
+
+        }
+
+    }
+    getproposalbyid(proposalid) {
+        let proposal = false;
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+        if (myproject.hasOwnProperty("proposals")) {
+            // eslint-disable-next-line
+            myproject.proposals.myproposal.map(myproposal => {
+                if (myproposal.proposalid === proposalid) {
+                    proposal = myproposal;
+                }
+            })
+        }
+        return proposal;
+    }
+    showbidtable() {
+
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const regularFont = pm.getRegularFont.call(this);
+
+
+        if (this.state.width > 1200) {
+            return (
+                <table width="100%" border="1" style={{ ...regularFont, ...styles.generalFont }}>
+                    <tr>
+                        <td width="24%" style={{ ...styles.alignCenter }}>Line ID</td>
+                        <td width="12%" style={{ ...styles.alignCenter }}>Quantity</td>
+                        <td width="13%" style={{ ...styles.alignCenter }}>Unit</td>
+                        <td width="13%" style={{ ...styles.alignCenter }}>Direct Cost</td>
+                        <td width="13%" style={{ ...styles.alignCenter }}> Overhead and Profit %</td>
+                        <td width="13%" style={{ ...styles.alignCenter }}>Bid Price</td>
+                        <td width="12%" style={{ ...styles.alignCenter }}>Unit Price</td>
+                    </tr>
+                    {this.showbiditems()}
+                </table>
+
+            )
+        } else {
+            return (
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        {this.showbiditems()}
+
+                    </div>
+                </div>
+            )
+        }
+    }
     getHeaderFont() {
         const styles = MyStylesheet();
         if (this.state.width > 800) {
@@ -83,7 +358,7 @@ class PM {
         let pm = new PM();
         let myprojects = pm.getallprojects.call(this);
         let projectid = pm.getactiveprojectid.call(this);
-        console.log(myprojects, projectid)
+
         let myproject = false;
         if (myprojects && projectid) {
             // eslint-disable-next-line
@@ -115,7 +390,7 @@ class PM {
         if (this.props.project.hasOwnProperty("projectid")) {
             projectid = this.props.project.projectid;
         }
-        console.log(projectid)
+
         return projectid;
     }
     getprojects() {
@@ -137,16 +412,17 @@ class PM {
         }
     }
     getproviderbyid(providerid) {
+
         let provider = false;
         if (this.props.allusers) {
-            console.log(` PM FOUND ALL USERS`)
+
             if (this.props.allusers.hasOwnProperty("myuser")) {
-                console.log(` PM SEARCHING FOR ${providerid}`)
+
                 // eslint-disable-next-line
                 this.props.allusers.myuser.map(myuser => {
 
                     if (myuser.providerid === providerid) {
-                        console.log(` PROVIDER FOUND`)
+
                         provider = myuser;
                     }
                 })
@@ -273,7 +549,7 @@ class PM {
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this);
         const saveprojecticon = pm.getsaveprojecticon.call(this);
-        console.log(saveprojecticon)
+
         const styles = MyStylesheet();
         return (
             <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
@@ -313,14 +589,16 @@ class PM {
             let phonenumber = user.phoneNumber;
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
             const response = await ClientLogin(values);
-            if (response.hasOwnProperty("projects")) {
-                this.props.reduxProjects(response.projects.myproject)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+                delete response.allusers;
+
             }
             if (response.hasOwnProperty("providerid")) {
-
-                let myusermodel = MyUserModel(response.providerid, response.client, response.clientid, response.firstname, response.lastname, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl)
-
-                this.props.updateUserModel(myusermodel)
+                console.log(response)
+                this.props.reduxUser(response)
             }
 
 
@@ -361,16 +639,18 @@ class PM {
             let profileurl = user.providerData[0].photoURL;
             let phonenumber = user.phoneNumber;
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
-            console.log(values)
+
             const response = await ClientLogin(values);
-            if (response.hasOwnProperty("projects")) {
-                this.props.reduxProjects(response.projects.myproject)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+                delete response.allusers;
+
             }
             if (response.hasOwnProperty("providerid")) {
-
-                let myusermodel = MyUserModel(response.providerid, response.client, response.clientid, response.firstname, response.lastname, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl)
-
-                this.props.updateUserModel(myusermodel)
+                console.log(response)
+                this.props.reduxUser(response)
             }
 
 

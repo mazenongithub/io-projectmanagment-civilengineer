@@ -76,7 +76,7 @@ class Team extends Component {
         return validate;
     }
     addteam(providerid) {
-        console.log(providerid)
+
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         if (myuser) {
@@ -160,9 +160,9 @@ class Team extends Component {
         if (myproject.hasOwnProperty("projectteam")) {
             // eslint-disable-next-line
             myproject.projectteam.myteam.map(myteam => {
-                console.log(myteam)
+
                 let myuser = pm.getproviderbyid.call(this, myteam.providerid)
-                console.log(myuser)
+
                 myproviders.push(this.showprovider(myuser))
 
 

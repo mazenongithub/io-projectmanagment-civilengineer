@@ -131,8 +131,8 @@ class MyProjects extends Component {
           </div>
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              View Proposals
-          </div>
+              <Link to={`/${providerid}/myprojects/${myproject.projectid}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+            </div>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
               View Invoices
           </div>

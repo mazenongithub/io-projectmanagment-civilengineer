@@ -2865,6 +2865,20 @@ export function ScheduleMaterial(materialid, providerid, projectid, timein, quan
         unitcost
     })
 }
+export function formatDateStringDisplay(timein) {
+    timein.replace(/-/g, '/')
+    timein = timein.split('-')
+    let year = "";
+    let month = "";
+    let day = "";
+
+    if (timein.length === 3) {
+        year = timein[0]
+        month = timein[1]
+        day = timein[2]
+    }
+    return (`${month}/${day}/${year}`)
+}
 export function ActualMaterial(materialid, providerid, projectid, timein, quantity, unit, unitcost, description, milestoneid, invoiceid) {
     return ({
         description,
@@ -2878,6 +2892,27 @@ export function ActualMaterial(materialid, providerid, projectid, timein, quanti
         unit,
         unitcost
     })
+}
+
+export function ProfitForMaterial(item) {
+    return (Number(item.quantity) * Number(item.unitcost)) * (Number(item.profit) / 100)
+}
+export function DirectCostForMaterial(item) {
+    return (Number(item.quantity) * Number(item.unitcost))
+}
+export function DirectCostForLabor(item) {
+    return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.laborrate))
+}
+export function DirectCostForEquipment(item) {
+
+    return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.equipmentrate))
+}
+export function ProfitForEquipment(item) {
+
+    return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.equipmentrate)) * (Number(item.profit) / 100)
+}
+export function ProfitForLabor(item) {
+    return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.laborrate)) * (Number(item.profit) / 100)
 }
 export function TeamMember(providerid, role) {
     return ({ providerid, role })
@@ -2927,7 +2962,6 @@ export function TestUser() {
                         mymilestone: [
                             {
                                 milestoneid: "F7HX5X",
-                                projectid: "constructionapp",
                                 milestone: "Update to Web Client",
                                 start: "2019-12-06",
                                 completion: "2019-12-08"
@@ -2942,11 +2976,14 @@ export function TestUser() {
                                 milestone: "",
                                 providerid: "mazen",
                                 laborid: "03AZLOPT",
+                                firstname: "Steven",
+                                lastname: "Atwater",
                                 timein: "2019-12-08 21:04:00",
                                 timeout: "2019-12-09 01:04:00",
                                 laborrate: "30.0000",
                                 description: "Refomatting Client Layouts",
                                 proposalid: "R4WQ",
+                                csiid: "yyyyyy",
                                 profit: "15.0000"
                             }
                         ]
@@ -2959,6 +2996,8 @@ export function TestUser() {
                                 milestone: "",
                                 providerid: "",
                                 laborid: "C9JXIHOD",
+                                firstname: "Steven",
+                                lastname: "Atwater",
                                 timein: "2019-12-08 21:07:00",
                                 timeout: "2019-12-09 00:07:00",
                                 laborrate: "30.0000",
@@ -2973,6 +3012,7 @@ export function TestUser() {
                             {
                                 materialid: "myfirstmaterial",
                                 mymaterialid: "myfirstmaterial",
+                                material: "myfirstmaterial",
                                 providerid: "stevenatwater",
                                 csiid: "yyyyyy",
                                 timein: "2019-12-08",
@@ -2990,6 +3030,7 @@ export function TestUser() {
                             {
                                 materialid: "myfirstmaterial",
                                 mymaterialid: "myfirstmaterial",
+                                material: "myfirstmaterial",
                                 providerid: "stevenatwater",
                                 csiid: "yyyyyy",
                                 timein: "2019-12-08",
@@ -3003,23 +3044,27 @@ export function TestUser() {
                         ]
                     },
                     scheduleequipment: {
-                        myequipment: {
-                            equipmentid: {},
-                            myequipmentid: "blaablabal",
-                            equipmentrate: "100.0000",
-                            milestoneid: "F7HX5X",
-                            csiid: "yyyyyy",
-                            timein: "2019-12-26 00:00:00",
-                            timeout: "2019-12-27 00:00:00",
-                            proposalid: "R4WQ",
-                            profit: "15.0000"
-                        }
+                        myequipment: [
+                            {
+                                equipmentid: "blaablabal",
+                                myequipmentid: "blaablabal",
+                                equipmentrate: "100.0000",
+                                equipment: "John Deer Skid Steer Loader",
+                                milestoneid: "F7HX5X",
+                                csiid: "yyyyyy",
+                                timein: "2019-12-26 00:00:00",
+                                timeout: "2019-12-27 00:00:00",
+                                proposalid: "R4WQ",
+                                profit: "15.0000"
+                            }
+                        ]
                     },
                     actualequipment: {
                         myequipment: [
                             {
-                                equipmentid: {},
+                                equipmentid: "myfirstlineid",
                                 myequipmentid: "myfirstlineid",
+                                equipment: "John Deer Skid Steer Loader",
                                 equipmentrate: "100.0000",
                                 milestoneid: "F7HX5X",
                                 csiid: "yyyyyy",
@@ -3029,8 +3074,9 @@ export function TestUser() {
                                 profit: "15.0000"
                             },
                             {
-                                equipmentid: {},
+                                equipmentid: "sdewerwewcwwer",
                                 myequipmentid: "sdewerwewcwwer",
+                                equipment: "John Deer Skid Steer Loader",
                                 equipmentrate: "100.0000",
                                 milestoneid: "F7HX5X",
                                 csiid: "yyyyyy",
@@ -3049,12 +3095,16 @@ export function TestUser() {
                                 updated: "2019-12-08 21:09:55",
                                 approved: "2019-12-08 21:10:35",
                                 bidschedule: {
-                                    biditem: {
-                                        lineid: "myfirstlineid",
-                                        csiid: "yyyyyy",
-                                        quantity: "40000.0000",
-                                        unit: "Yards"
-                                    }
+                                    biditem: [
+                                        {
+                                            lineid: "myfirstlineid",
+                                            csiid: "yyyyyy",
+                                            csi: "312635",
+                                            title: "Excavation for Footing",
+                                            quantity: "40000.0000",
+                                            unit: "Yards"
+                                        }
+                                    ]
                                 }
                             }
                         ]
@@ -3066,13 +3116,15 @@ export function TestUser() {
                                 providerid: "mazen",
                                 updated: "2019-12-08 21:10:04",
                                 approved: "2019-12-27 13:39:52",
-                                bidschedule: {
-                                    biditem: {
-                                        lineid: "myfirstpayment",
-                                        csiid: "yyyyyy",
-                                        quantity: "44.0000",
-                                        unit: "yards"
-                                    }
+                                bid: {
+                                    biditem: [
+                                        {
+                                            lineid: "myfirstpayment",
+                                            csiid: "yyyyyy",
+                                            quantity: "44.0000",
+                                            unit: "yards"
+                                        }
+                                    ]
                                 }
                             }
                         ]
