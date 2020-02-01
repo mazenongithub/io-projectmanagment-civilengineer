@@ -171,6 +171,15 @@ class PM {
         }
         return proposals;
     }
+    getinvoices() {
+        const pm = new PM();
+        let invoices = false;
+        const myproject = pm.getproject.call(this);
+        if (myproject.hasOwnProperty("invoices")) {
+            invoices = myproject.invoices.myinvoice;
+        }
+        return invoices;
+    }
     getnavigation() {
         let navigation = false;
         if (this.props.navigation) {
@@ -210,6 +219,39 @@ class PM {
             return ({ maxWidth: '90px' })
         }
     }
+    getAllActual() {
+        let actuals = [];
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+
+        if (myproject) {
+            if (myproject.hasOwnProperty("actuallabor")) {
+                // eslint-disable-next-line
+                myproject.actuallabor.mylabor.map(mylabor => {
+                    actuals.push(mylabor)
+                })
+            }
+            if (myproject.hasOwnProperty("actualequipment")) {
+                // eslint-disable-next-line
+                myproject.actualequipment.myequipment.map(myequipment => {
+                    actuals.push(myequipment)
+                })
+            }
+            if (myproject.hasOwnProperty("actualmaterials")) {
+                // eslint-disable-next-line
+                myproject.actualmaterials.mymaterial.map(mymaterial => {
+                    actuals.push(mymaterial)
+                })
+
+            }
+
+            actuals.sort((a, b) => {
+                return sorttimes(a.timein, b.timein)
+            })
+        }
+
+        return actuals;
+    }
     getAllSchedule() {
         let schedules = [];
         const pm = new PM();
@@ -243,6 +285,29 @@ class PM {
 
         return schedules;
     }
+    getactualcsibyid(csiid) {
+        let mycsi = false;
+        const pm = new PM();
+        const myinvoices = pm.getinvoices.call(this)
+        if (myinvoices) {
+            // eslint-disable-next-line
+            myinvoices.map(myinvoice => {
+                if (myinvoice.hasOwnProperty("bid")) {
+                    // eslint-disable-next-line
+                    myinvoice.bid.biditem.map(biditem => {
+                        if (biditem.csiid === csiid) {
+                            mycsi = { csiid, csi: biditem.csi, title: biditem.title }
+
+                        }
+                    })
+                }
+            })
+
+
+        }
+        return mycsi;
+    }
+
 
     getschedulecsibyid(csiid) {
         let mycsi = false;
@@ -282,6 +347,20 @@ class PM {
 
         }
 
+    }
+    getinvoicebyid(invoiceid) {
+        let invoice = false;
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+        if (myproject.hasOwnProperty("invoices")) {
+            // eslint-disable-next-line
+            myproject.invoices.myinvoice.map(myinvoice => {
+                if (myinvoice.invoiceid === invoiceid) {
+                    invoice = myinvoice;
+                }
+            })
+        }
+        return invoice;
     }
     getproposalbyid(proposalid) {
         let proposal = false;

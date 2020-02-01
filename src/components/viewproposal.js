@@ -355,8 +355,7 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys,
-        csi: state.csi
+        allcompanys: state.allcompanys
     }
 }
 export default connect(mapStateToProps, actions)(ViewProposal)

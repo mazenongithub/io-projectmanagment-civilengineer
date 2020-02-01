@@ -5,25 +5,22 @@ import Header from './components/header';
 import Home from './components/home';
 import Join from './components/join';
 import Register from './components/register';
-// import RegisterClient from './components/registerclient';
 import Login from './components/login';
 import Profile from './components/profile';
 import MyProjects from './components/myprojects';
 // import Project from './components/project';
-// import ProjectScheduleLabor from './components/projectschedulelabor';
-// import ProjectScheduleMaterials from './components/projectschedulematerials';
-// import ActualLabor from './components/actuallabor';
-// import ActualMaterials from './components/actualmaterials';
 import Milestones from './components/milestones';
-// import Proposals from './components/proposals';
-// import ViewProposal from './components/viewproposal';
-// import ViewInvoice from './components/viewinvoice'
+import Proposals from './components/proposals';
+import ViewProposal from './components/viewproposal';
+import ScheduleBidItem from './components/schedulebiditem';
+import ActualBidItem from './components/actualbiditem';
+import ViewInvoice from './components/viewinvoice'
 import * as actions from './components/actions';
-// import Invoices from './components/invoices';
+import Invoices from './components/invoices';
 import Team from './components/team';
 // import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
-//import { CheckUserLogin } from './components/actions/api'
+import { CheckUserLogin } from './components/actions/api'
 
 import { TestUser, returnCompanyList } from './components/functions'
 import firebase from 'firebase'
@@ -45,8 +42,8 @@ class App extends Component {
     }
 
     async checkuserlogin() {
-        let response = TestUser();
-        //let response = await CheckUserLogin();
+        //let response = TestUser();
+        let response = await CheckUserLogin();
 
         if (response.hasOwnProperty("allusers")) {
             let companys = returnCompanyList(response.allusers);
@@ -78,6 +75,12 @@ class App extends Component {
                             <Route exact path="/:providerid/myprojects" component={MyProjects} />
                             <Route exact path="/:providerid/myprojects/:projectid/team" component={Team} />
                             <Route exact path="/:providerid/myprojects/:projectid/milestones" component={Milestones} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices" component={Invoices} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid" component={ViewInvoice} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid" component={ViewProposal} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid/csi/:csiid" component={ScheduleBidItem} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid/csi/:csiid" component={ActualBidItem} />
                         </Switch>
                     </div>
 

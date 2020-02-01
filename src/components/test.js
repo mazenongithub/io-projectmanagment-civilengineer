@@ -1,20 +1,22 @@
-getprofileurl() {
+getactualcsibyid(csiid) {
+    let mycsi = false;
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    let profileurl = "";
-    if (myuser) {
-        profileurl = myuser.profileurl;
-    }
+    const myinvoices = pm.getinvoices.call(this)
+    if (myinvoices) {
+        // eslint-disable-next-line
+        myinvoices.map(myinvoice => {
+            if (myosalprop.hasOwnProperty("bid")) {
+                // eslint-disable-next-line
+                myinvoice.bid.biditem.map(biditem => {
+                    if (biditem.csiid === csiid) {
+                        mycsi = { csiid, csi: biditem.csi, title: biditem.title }
 
-    return profileurl;
-}
-handleprofileurl(profileurl) {
-    const pm = new PM();
-    let myuser = pm.getuser.call(this);
-    if (myuser) {
-        myuser.profileurl = profileurl;
-        this.props.reduxUser(myuser)
-        this.setState({ render: 'render' });
-    }
+                    }
+                })
+            }
+        })
 
+
+    }
+    return mycsi;
 }

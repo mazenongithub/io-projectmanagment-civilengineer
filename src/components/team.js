@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './projectteam.css';
 import * as actions from './actions';
 import { connect } from 'react-redux';
 //import { Link } from 'react-router-dom';

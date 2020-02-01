@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './milestones.css';
 import * as actions from './actions';
 import { connect } from 'react-redux';
 import Start from './start';

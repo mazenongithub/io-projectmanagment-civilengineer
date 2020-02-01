@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import * as actions from './actions';
-import './invoices.css';
-import { loadmyprojects, LoadMyProviders, handleStripePayment } from './actions/api';
-import StripeCheckout from 'react-stripe-checkout';
-import {
-    MyUserModel,
-    sorttimes,
-    inputUTCStringForLaborID,
-    calculatetotalhours,
-    inputUTCStringForMaterialIDWithTime,
-    UTCStringFormatDateforProposal
-}
-    from './functions';
-//import { AuthorizeProposal } from './svg';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { MyStylesheet } from './styles';
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment } from './functions'
+import PM from './pm';
+
 
 class ViewInvoice extends Component {
     constructor(props) {
@@ -29,18 +21,10 @@ class ViewInvoice extends Component {
 
     }
     componentDidMount() {
-        let projectid = this.props.match.params.projectid;
-        this.props.ProjectID({ projectid });
-        this.props.reduxNavigation({ navigation: "invoices" })
-        window.addEventListener('resize', this.updateWindowDimensions);
-        if (!this.props.projects.hasOwnProperty("length") && !this.props.projectsprovider.hasOwnProperty("length")) {
-            let providerid = this.props.match.params.providerid;
-            this.getmyprojects(providerid);
-        }
-        if (!this.props.searchproviders.hasOwnProperty("searchproviders")) {
-            this.loadmysearchproviders()
-        }
+
         this.updateWindowDimensions()
+
+
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
@@ -49,340 +33,318 @@ class ViewInvoice extends Component {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
 
     }
-    async getmyprojects(providerid) {
-        let response = await loadmyprojects(providerid);
-        console.log(response)
-        if (response.hasOwnProperty("projectsprovider")) {
-            // eslint-disable-next-line
-            this.props.projectsProvider(response.projectsprovider.myproject)
-        }
-        if (response.hasOwnProperty("projectsmanaging")) {
-            this.props.reduxProjects(response.projectsmanaging.myproject)
-        }
-
-        if (response.hasOwnProperty("providerid")) {
-            let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
-
-            this.props.updateUserModel(myusermodel)
-
-        }
-        this.setState({ render: 'render' })
-    }
-    async loadmysearchproviders() {
-        let response = await LoadMyProviders();
-        console.log(response)
-        let myprovider = response.searchproviders.myprovider
-        this.props.searchProviders({ searchproviders: myprovider })
-    }
-    getproject() {
-        let projectid = this.props.match.params.projectid;
-        let servicetype = this.getservicetype();
-        let project = false;
-        if (servicetype === "manager") {
-            // eslint-disable-next-line
-            this.props.projects.map(myproject => {
-                if (myproject.projectid === projectid) {
-                    project = myproject;
-                }
-            })
-        }
-        else if (servicetype === "provider") {
-            // eslint-disable-next-line
-            this.props.projectsprovider.map(myproject => {
-                if (myproject.projectid === projectid) {
-                    project = myproject;
-                }
-            })
-        }
-        return project;
-    }
-    getservicetype() {
-        let servicetype = false;
-        if (this.props.projects || this.props.projectsprovider) {
-            let projectid = this.props.match.params.projectid;
-
-            if (this.props.projects.hasOwnProperty("length")) {
-                // eslint-disable-next-line
-                this.props.projects.map(myproject => {
-                    if (myproject.projectid === projectid) {
-                        servicetype = "manager"
-                    }
-                })
-
-            }
-            if (!servicetype) {
-
-                if (this.props.projectsprovider.hasOwnProperty("length")) {
-                    // eslint-disable-next-line
-                    this.props.projectsprovider.map(myproject => {
-                        if (myproject.projectid === projectid) {
-                            servicetype = "provider"
-                        }
-                    })
-                }
-            }
-        }
-        return servicetype;
-    }
-    showtitle() {
-        let myproject = this.getproject();
-        return `ProjectID ${myproject.projectid}/${myproject.title}`
-    }
-    showinvoicerows() {
-        let myproject = this.getproject();
+    invoiceitemsbycsiid(csiid) {
+        const invoiceid = this.props.match.params.invoiceid;
+        const pm = new PM();
+        let myproject = pm.getproject.call(this);
         let items = [];
-        let invoice = [];
-        let invoiceid = this.props.match.params.invoiceid;
         if (myproject.hasOwnProperty("actuallabor")) {
             // eslint-disable-next-line
             myproject.actuallabor.mylabor.map(mylabor => {
-                items.push(mylabor)
+                if (mylabor.csiid === csiid && (mylabor.invoiceid === invoiceid)) {
+                    items.push(mylabor)
+                }
             })
+
         }
         if (myproject.hasOwnProperty("actualmaterials")) {
             // eslint-disable-next-line
             myproject.actualmaterials.mymaterial.map(mymaterial => {
-                items.push(mymaterial);
+                if (mymaterial.csiid === csiid && (mymaterial.invoiceid === invoiceid)) {
+                    items.push(mymaterial)
+                }
             })
+
+        }
+        if (myproject.hasOwnProperty("actualequipment")) {
+            // eslint-disable-next-line
+            myproject.actualequipment.myequipment.map(myequipment => {
+                if (myequipment.csiid === csiid && (myequipment.invoiceid === invoiceid)) {
+                    items.push(myequipment)
+                }
+            })
+
         }
         items.sort((a, b) => {
             return sorttimes(a.timein, b.timein)
         })
+        return items;
+    }
+    getprofit(csiid) {
+        let profit = 0;
+        let directcost = 0;
+        let items = this.invoiceitemsbycsiid(csiid);
         // eslint-disable-next-line
         items.map(item => {
-            if (item.invoiceid === invoiceid) {
-                if (item.hasOwnProperty("laborid")) {
-                    invoice.push(this.showlaborid(item))
-                }
-                else if (item.hasOwnProperty("materialid")) {
-                    invoice.push(this.showmaterialid(item))
-                }
+            if (item.hasOwnProperty("laborid")) {
+                directcost += DirectCostForLabor(item);
+                profit += ProfitForLabor(item);
             }
+            if (item.hasOwnProperty("materialid")) {
+                directcost += DirectCostForMaterial(item);
+                profit += ProfitForMaterial(item);
+            }
+            if (item.hasOwnProperty("equipmentid")) {
+                directcost += DirectCostForEquipment(item);
+                profit += ProfitForEquipment(item);
+            }
+
         })
 
-        return invoice;
+        return ((profit / directcost) * 100)
 
     }
-    showmaterialid(mymaterial) {
-        return (<div className="general-flex">
-            <div className="flex-7">
-
-                <span className="regularFont">{inputUTCStringForMaterialIDWithTime(mymaterial.timein)}</span><br />
-                <span className="regularFont">{mymaterial.description}</span><br />
-                <span className="regularFont">{mymaterial.quantity} {mymaterial.unit} ${mymaterial.unitcost} = ${(mymaterial.quantity * mymaterial.unitcost).toFixed(2)}</span>
-
-            </div>
-
-        </div>)
-    }
-    showlaborid(mylabor) {
-        return (
-            <div className="general-flex">
-                <div className="flex-1">
-                    <span className="regularFont">{mylabor.description}</span> <br />
-                    <span className="regularFont">From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}</span><br />
-                    <span className="regularFont">${Number(mylabor.laborrate).toFixed(2)}/Hr x {calculatetotalhours(mylabor.timeout, mylabor.timein)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)).toFixed(2)}</span>
-                </div>
-
-            </div>
-        )
-
-    }
-    getinvoiceamount() {
-        let amount = 0;
-
+    getdirectcost(csiid) {
+        const pm = new PM()
+        let myproject = pm.getproject.call(this)
         let invoiceid = this.props.match.params.invoiceid;
-        let myproject = this.getproject();
-        if (myproject.hasOwnProperty("actuallabor")) {
+        let directcost = 0;
+        if (myproject) {
+            if (myproject.hasOwnProperty("actuallabor")) {
+                // eslint-disable-next-line
+                myproject.actuallabor.mylabor.map(mylabor => {
+
+                    if (mylabor.csiid === csiid && (mylabor.invoiceid === invoiceid)) {
+
+                        directcost += DirectCostForLabor(mylabor)
+
+
+                    }
+                })
+            }
+
+            if (myproject.hasOwnProperty("actualmaterials")) {
+                // eslint-disable-next-line
+                myproject.actualmaterials.mymaterial.map(mymaterial => {
+                    if (mymaterial.csiid === csiid && (mymaterial.invoiceid === invoiceid)) {
+                        directcost += DirectCostForMaterial(mymaterial)
+                    }
+
+                })
+            }
+        }
+
+        if (myproject.hasOwnProperty("actualequipment")) {
             // eslint-disable-next-line
-            myproject.actuallabor.mylabor.map(mylabor => {
-                if (mylabor.invoiceid === invoiceid) {
-                    amount += Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(mylabor.laborrate)
+            myproject.actualequipment.myequipment.map(myequipment => {
+                if (myequipment.csiid === csiid && (myequipment.invoiceid === invoiceid)) {
+                    directcost += DirectCostForEquipment(myequipment)
                 }
 
             })
         }
 
-        if (myproject.hasOwnProperty("actualmaterials")) {
-            // eslint-disable-next-line
-            myproject.actualmaterials.mymaterial.map(mymaterial => {
-                if (mymaterial.invoiceid === invoiceid) {
-                    amount += Number(mymaterial.quantity) * Number(mymaterial.unitcost)
-                }
-            })
-        }
+        return directcost;
 
-        return (amount)
     }
-    getupdated() {
-        let servicetype = this.getservicetype();
-        let updated = "";
-        if (servicetype === "manager") {
-            let myproject = this.getproject();
+    getbidprice(csiid) {
 
-            let invoiceid = this.props.match.params.invoiceid;
-            if (myproject.hasOwnProperty("invoices")) {
-                // eslint-disable-next-line
-                myproject.invoices.myinvoice.map(myinvoice => {
-                    if (myinvoice.invoiceid === invoiceid) {
-                        if (myinvoice.updated) {
-                            updated = UTCStringFormatDateforProposal(myinvoice.updated)
-                        }
+        let directcost = Number(this.getdirectcost(csiid));
+        let profit = Number(this.getprofit(csiid));
 
-                    }
-                })
-            }
+        if (!profit) {
+            profit = 1
+        } else {
+            profit = 1 + (profit / 100)
         }
-        if (updated) {
-            return `Last Updated ${updated}`
-        }
-        return updated;
+        let bidprice = directcost * profit;
+        return bidprice;
     }
+    getunitprice(csiid) {
 
-    getauthorized() {
-        let servicetype = this.getservicetype();
-        let authorized = "";
-        if (servicetype === "manager") {
-            let myproject = this.getproject();
+        let quantity = Number(this.getquantity(csiid));
+        let bidprice = Number(this.getbidprice(csiid));
 
-            let invoiceid = this.props.match.params.invoiceid;
-            if (myproject.hasOwnProperty("invoices")) {
-                // eslint-disable-next-line
-                myproject.invoices.myinvoice.map(myinvoice => {
-                    if (myinvoice.invoiceid === invoiceid) {
-                        if (myinvoice.approved) {
-                            authorized = UTCStringFormatDateforProposal(myinvoice.approved)
-                        }
+        if (quantity > 0 && bidprice > 0) {
+            return (bidprice / quantity)
 
-                    }
-                })
-            }
+        } else {
+            return;
         }
-        if (authorized) {
-            return `Paid on ${authorized}`
-        }
-        return authorized;
+
+
     }
-    getprovideridfrominvoiceid(invoiceid) {
-        let servicetype = this.getservicetype();
-        let obj = [];
-        let providerid = "";
-        if (servicetype === "manager") {
-            obj = this.props.projects;
-        }
-        else if (servicetype === "provider") {
-            obj = this.props.projectsprovider;
-        }
-        if (obj.length > 0) {
-            let projectid = this.props.match.params.projectid;
-            // eslint-disable-next-line
-            obj.map(myproject => {
-                if (myproject.projectid === projectid) {
+    showbiditem(item) {
 
-                    if (myproject.hasOwnProperty("invoices")) {
-                        // eslint-disable-next-line
-                        myproject.invoices.myinvoice.map(myinvoice => {
-                            if (myinvoice.invoiceid === invoiceid) {
-                                providerid = myinvoice.providerid;
-                            }
-                        })
-                    }
-                }
-            })
-        }
-        return providerid;
-    }
-    getproviderfromid(providerid) {
-        let provider = {};
-        if (this.props.searchproviders) {
-            if (this.props.searchproviders.hasOwnProperty("searchproviders")) {
-
-                // eslint-disable-next-line
-                this.props.searchproviders.searchproviders.map(myprovider => {
-                    if (myprovider.providerid === providerid) {
-                        provider = myprovider;
-                    }
-                })
-            }
-        }
-        return provider;
-    }
-    getlinktopay() {
-        let stripeform = [];
-
-        let servicetype = this.getservicetype();
-        if (servicetype === "manager") {
-            let invoiceid = this.props.match.params.invoiceid;
-            let providerid = this.getprovideridfrominvoiceid(invoiceid);
-            console.log(providerid)
-            let myprovider = this.getproviderfromid(providerid);
-            console.log(myprovider)
-            if (myprovider.stripe) {
-
-                stripeform.push(this.stripeform())
-            }
-
-        }
-        return stripeform;
-    }
-    async processStripe(token) {
+        const pm = new PM();
         let providerid = this.props.match.params.providerid;
         let projectid = this.props.match.params.projectid;
         let invoiceid = this.props.match.params.invoiceid;
-        let amount = Math.round(this.getinvoiceamount() * 100);
+        const styles = MyStylesheet();
+        const regularFont = pm.getRegularFont.call(this);
+        const csi = pm.getactualcsibyid.call(this, item.csiid);
+        console.log(csi)
+        let profit = Number(this.getprofit(item.csiid)).toFixed(4)
+        let quantity = item.quantity;
+        let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
+        let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
+        let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
+        let unit = item.unit;
 
-        let values = { providerid, projectid, token, invoiceid, amount }
-        let response = await handleStripePayment(values);
-        if (response.hasOwnProperty("projectsmanaging")) {
-            this.props.reduxProjects(response.projectsmanaging.myproject)
-        }
-        if (response.hasOwnProperty("message")) {
-            this.setState({ message: `${response.message} Last Updated  ${inputUTCStringForLaborID(response.dateupdated)}` })
-        }
+        if (this.state.width > 1200) {
+            return (
+                <tr>
+                    <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
+                    <td style={{ ...styles.alignCenter }}>
+                        {quantity}
+                    </td>
+                    <td style={{ ...styles.alignCenter }}>{unit}</td>
+                    <td style={{ ...styles.alignCenter }}>{directcost}</td>
+                    <td style={{ ...styles.alignCenter }}>{profit}</td>
+                    <td style={{ ...styles.alignCenter }}>{bidprice}</td>
+                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${unit}`}</td>
+                </tr>)
 
+
+        } else {
+            return (
+                <div style={{ ...styles.generalFlex }} key={item.lineid}>
+                    <div style={{ ...styles.flex1 }}>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
+                                <Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}/csi/${csi.csiid}`}> Line Item <br />
+                                    {csi.csi}-{csi.title} </Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Quantity <br />
+                                {quantity}
+
+                            </div>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Unit <br />
+                                {unit}
+
+                            </div>
+                        </div>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Direct Cost <br />
+                                ${directcost}
+                            </div>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Overhead And Profit % <br />
+                                {profit}
+
+
+                            </div>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Bid Price <br />
+                                ${bidprice}
+                            </div>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
+                                Unit Price
+                                {`$${unitprice}/${unit}`}
+                            </div>
+                        </div>
+                    </div>
+                </div>)
+        }
     }
-    stripeform() {
+    getinvoice() {
         let invoiceid = this.props.match.params.invoiceid;
-        let amount = Math.round(this.getinvoiceamount() * 100)
+        let invoice = false;
+        const pm = new PM();
+        let myproject = pm.getproject.call(this);
+        if (myproject.hasOwnProperty("invoices")) {
+            // eslint-disable-next-line
+            myproject.invoices.myinvoice.map(myinvoice => {
+                if (myinvoice.invoiceid === invoiceid) {
+                    invoice = myinvoice;
+                }
+            })
+        }
+        return invoice;
+    }
+    getactualitems() {
 
-        return (
-            <StripeCheckout
-                name="civilengineer.io"
-                description={`Payment on Invoice ID ${invoiceid}`}
-                amount={amount}
-                token={token => this.processStripe(token)}
-                stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
-            />
-        )
+        let actualitems = false;
+        let myinvoice = this.getinvoice();
+        if (myinvoice) {
+            if (myinvoice.hasOwnProperty("bid")) {
+                actualitems = myinvoice.bid.biditem
+            }
+        }
+        return actualitems;
+    }
+    getactualitem(csiid) {
+
+        let actualitems = this.getactualitems();
+
+        let actualitem = false;
+        if (actualitems) {
+            // eslint-disable-next-line
+            actualitems.map(item => {
+                if (item.csiid === csiid) {
+                    actualitem = item;
+                }
+            })
+        }
+        return actualitem;
+    }
+    getquantity(csiid) {
+
+        let actualitem = this.getactualitem(csiid);
+
+        if (actualitem) {
+            return Number(actualitem.quantity);
+        } else {
+            return;
+        }
 
     }
-    showauthorizebutton() {
-        let authorizedbutton = [];
-        let servicetype = this.getservicetype();
-        if (servicetype === "manager") {
-            authorizedbutton.push(<div className="show-invoice-title">{this.getlinktopay()}</div>)
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.state.message} </div>)
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.getupdated()}</div>);
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.getauthorized()}</div>);
+    getbiditems() {
+        let items = [];
+        const pm = new PM();
+        let invoiceid = this.props.match.params.invoiceid;
+        let myinvoice = pm.getinvoicebyid.call(this, invoiceid);
+        if (myinvoice.hasOwnProperty("bid")) {
+            // eslint-disable-next-line
+            items = myinvoice.bid.biditem;
+        }
 
-        }
-        else if (servicetype === "provider") {
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.state.message} </div>)
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.getupdated()}</div>);
-            authorizedbutton.push(<div className="invoice-amount-container"> {this.getauthorized()}</div>);
-        }
-        return authorizedbutton;
+
+
+
+        return (items)
 
     }
+    showbiditems() {
+
+        let biditems = this.getbiditems();
+
+        let lineids = [];
+        if (biditems.length > 0) {
+            // eslint-disable-next-line
+            biditems.map(item => {
+                lineids.push(this.showbiditem(item))
+            })
+        }
+
+        return lineids;
+    }
+
     render() {
+        const styles = MyStylesheet();
+        const projectid = this.props.match.params.projectid;
+        const pm = new PM();
+        const headerFont = pm.getHeaderFont.call(this)
+        const invoiceid = this.props.match.params.invoiceid;
         return (
-            (
-                <div className="show-invoice-container">
-                    <div className="show-invoice-title">{this.showtitle()} <br /> Invoice ID {this.props.match.params.invoiceid}</div>
-                    <div className="materials-main">{this.showinvoicerows()}</div>
-                    <div className="invoice-amount-container">The total amount of the invoice is ${this.getinvoiceamount().toFixed(2)} </div>
-                    {this.showauthorizebutton()}
-                </div>))
+            <div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1 }}>
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
+                            /{projectid} <br />
+                            View Invoice {invoiceid}
+                        </div>
+                    </div>
+                    {pm.showbidtable.call(this)}
+                </div>
+            </div>)
+
+
 
     }
 }
@@ -390,11 +352,12 @@ class ViewInvoice extends Component {
 function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
-        projectid: state.projectid,
-        projects: state.projects,
-        projectsprovider: state.projectsprovider,
-        searchproviders: state.searchproviders
+        navigation: state.navigation,
+        project: state.project,
+        allusers: state.allusers,
+        allcompanys: state.allcompanys
     }
 }
-
 export default connect(mapStateToProps, actions)(ViewInvoice)
+
+
