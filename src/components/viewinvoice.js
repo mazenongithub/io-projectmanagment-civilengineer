@@ -23,6 +23,8 @@ class ViewInvoice extends Component {
     componentDidMount() {
 
         this.updateWindowDimensions()
+        this.props.reduxNavigation({ navigation: "viewinvoice", invoiceid: this.props.match.params.invoiceid })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
 
     }
@@ -341,6 +343,7 @@ class ViewInvoice extends Component {
                         </div>
                     </div>
                     {pm.showbidtable.call(this)}
+                    {pm.showprojectid.call(this)}
                 </div>
             </div>)
 

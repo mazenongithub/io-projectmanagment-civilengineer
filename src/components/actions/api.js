@@ -77,9 +77,9 @@ export async function ClientLogin(values) {
 }
 
 
-export async function GoandHireMe(values) {
-    let providerid = values.providerid;
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/goandhireme`
+export async function SaveAllProfile(myuser) {
+    let providerid = myuser.myuser.providerid
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/saveallprofile`
 
     return fetch(APIURL, {
         method: 'post',
@@ -88,7 +88,7 @@ export async function GoandHireMe(values) {
             'Content-Type': 'application/json',
         }),
 
-        body: JSON.stringify(values)
+        body: JSON.stringify(myuser)
     })
         .then(resp => {
 

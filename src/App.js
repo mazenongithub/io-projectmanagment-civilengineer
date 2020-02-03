@@ -8,19 +8,23 @@ import Register from './components/register';
 import Login from './components/login';
 import Profile from './components/profile';
 import MyProjects from './components/myprojects';
-// import Project from './components/project';
+import Project from './components/project';
 import Milestones from './components/milestones';
 import Proposals from './components/proposals';
 import ViewProposal from './components/viewproposal';
-import ScheduleBidItem from './components/schedulebiditem';
-import ActualBidItem from './components/actualbiditem';
+import BidSchedule from './components/bidschedule';
+import BidScheduleItem from './components/bidscheduleitem';
+import Bid from './components/bid';
+import BidItem from './components/biditem';
+import ProposalBidItem from './components/proposalbiditem';
+import InvoiceBidItem from './components/invoicebiditem';
 import ViewInvoice from './components/viewinvoice'
 import * as actions from './components/actions';
 import Invoices from './components/invoices';
 import Team from './components/team';
 // import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
-import { CheckUserLogin } from './components/actions/api'
+//import { CheckUserLogin } from './components/actions/api'
 
 import { TestUser, returnCompanyList } from './components/functions'
 import firebase from 'firebase'
@@ -42,8 +46,8 @@ class App extends Component {
     }
 
     async checkuserlogin() {
-        //let response = TestUser();
-        let response = await CheckUserLogin();
+        let response = TestUser();
+        //let response = await CheckUserLogin();
 
         if (response.hasOwnProperty("allusers")) {
             let companys = returnCompanyList(response.allusers);
@@ -70,17 +74,21 @@ class App extends Component {
                             <Route exact path="/providers/join" component={Join} />
                             <Route exact path="/providers/register" component={Register} />
                             <Route exact path="/providers/login" component={Login} />
-                            <Route exact path="/providers/login/:message" component={Login} />
                             <Route exact path="/:providerid/profile" component={Profile} />
                             <Route exact path="/:providerid/myprojects" component={MyProjects} />
+                            <Route exact path="/:providerid/myprojects/:projectid" component={Project} />
                             <Route exact path="/:providerid/myprojects/:projectid/team" component={Team} />
                             <Route exact path="/:providerid/myprojects/:projectid/milestones" component={Milestones} />
                             <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />
                             <Route exact path="/:providerid/myprojects/:projectid/invoices" component={Invoices} />
+                            <Route exact path="/:providerid/myprojects/:projectid/bidschedule" component={BidSchedule} />
+                            <Route exact path="/:providerid/myprojects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />
                             <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid" component={ViewInvoice} />
+                            <Route exact path="/:providerid/myprojects/:projectid/bid" component={Bid} />
+                            <Route exact path="/:providerid/myprojects/:projectid/bid/csi/:csiid" component={BidItem} />
                             <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid" component={ViewProposal} />
-                            <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid/csi/:csiid" component={ScheduleBidItem} />
-                            <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid/csi/:csiid" component={ActualBidItem} />
+                            <Route exact path="/:providerid/myprojects/:projectid/proposals/:proposalid/csi/:csiid" component={ProposalBidItem} />
+                            <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid/csi/:csiid" component={InvoiceBidItem} />
                         </Switch>
                     </div>
 

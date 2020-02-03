@@ -2939,7 +2939,7 @@ export function TestUser() {
         zipcode: "",
         emailaddress: "immaisoncrosby@gmail.com",
         phonenumber: "916-823-1652",
-        profileurl: "https://lh5.googleusercontent.com/-pwq6Zt4WHeY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfnjRVPJQYMRzgOWQD6aeRxVY7Nig/photo.jpg",
+        profileurl: "https://civilengineer-io.s3.amazonaws.com/WLCLZstevenatwater.jpg",
         projects: {
             myproject: [
                 {
@@ -3001,6 +3001,7 @@ export function TestUser() {
                                 timein: "2019-12-08 21:07:00",
                                 timeout: "2019-12-09 00:07:00",
                                 laborrate: "30.0000",
+                                csiid: "yyyyyy",
                                 description: "Reformatting Web Client",
                                 invoiceid: "POQV",
                                 profit: "15.0000"
@@ -3121,6 +3122,8 @@ export function TestUser() {
                                         {
                                             lineid: "myfirstpayment",
                                             csiid: "yyyyyy",
+                                            csi: "312635",
+                                            title: "Excavation for Footing",
                                             quantity: "44.0000",
                                             unit: "yards"
                                         }
@@ -3142,7 +3145,7 @@ export function TestUser() {
                     lastname: "Atwater",
                     client: "google",
                     clientid: "109676734658243948537",
-                    profileurl: "https://lh5.googleusercontent.com/-pwq6Zt4WHeY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rfnjRVPJQYMRzgOWQD6aeRxVY7Nig/photo.jpg",
+                    profileurl: "https://civilengineer-io.s3.amazonaws.com/WLCLZstevenatwater.jpg",
                     stripe: ""
                 },
                 {

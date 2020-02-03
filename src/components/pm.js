@@ -2,10 +2,11 @@ import React from 'react';
 import { ClientLogin } from './actions/api';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { LoadCSI } from './actions/api';
+import { SaveAllProfile } from './actions/api';
+import { Link } from 'react-router-dom';
 
 class PM {
     getGoIcon() {
@@ -285,6 +286,7 @@ class PM {
 
         return schedules;
     }
+
     getactualcsibyid(csiid) {
         let mycsi = false;
         const pm = new PM();
@@ -308,8 +310,61 @@ class PM {
         return mycsi;
     }
 
+    showprojectid() {
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const headerFont = pm.getHeaderFont.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+        const myuser = pm.getuser.call(this)
+
+        if (myuser) {
+            const providerid = myuser.providerid;
+            const myproject = pm.getactiveproject.call(this)
+            if (myproject) {
+
+                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.projectid}</Link>
+                            </div>
+                        </div>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Team</Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Create Milestones</Link>
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid Schedule </Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid </Link>
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Invoices </Link>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>)
+
+            }
+        }
+    }
 
     getschedulecsibyid(csiid) {
+
         let mycsi = false;
         const pm = new PM();
         const myproposals = pm.getproposals.call(this)
@@ -322,6 +377,7 @@ class PM {
                         if (biditem.csiid === csiid) {
                             mycsi = { csiid, csi: biditem.csi, title: biditem.title }
 
+
                         }
                     })
                 }
@@ -329,25 +385,11 @@ class PM {
 
 
         }
+
         return mycsi;
     }
 
-    async loadcsi(providerid) {
-        if (!this.props.csi.hasOwnProperty("length")) {
-            try {
-                let response = await LoadCSI(providerid);
-                if (response.hasOwnProperty("csicodes")) {
-                    this.props.reduxCSI(response.csicodes.code);
-                    this.setState({ render: 'render' })
-                }
-            } catch (err) {
-                alert(err)
-            }
 
-
-        }
-
-    }
     getinvoicebyid(invoiceid) {
         let invoice = false;
         const pm = new PM();
@@ -466,11 +508,13 @@ class PM {
     }
     getactiveprojectid() {
         let projectid = "";
-        if (this.props.project.hasOwnProperty("projectid")) {
-            projectid = this.props.project.projectid;
-        }
+        if (this.props.project) {
+            if (this.props.project.hasOwnProperty("projectid")) {
+                projectid = this.props.project.projectid;
+            }
 
-        return projectid;
+            return projectid;
+        }
     }
     getprojects() {
         let projects = [];
@@ -624,6 +668,121 @@ class PM {
         }
 
     }
+    async saveallprofilebyuser(myuser) {
+
+        if (myuser) {
+            try {
+                let response = await SaveAllProfile({ myuser });
+                if (response.hasOwnProperty("allusers")) {
+                    let companys = returnCompanyList(response.allusers);
+                    this.props.reduxAllCompanys(companys)
+                    this.props.reduxAllUsers(response.allusers);
+                    delete response.allusers;
+
+                }
+                if (response.hasOwnProperty("providerid")) {
+                    console.log(response)
+                    this.props.reduxUser(response)
+                }
+                if (response.hasOwnProperty("message")) {
+                    let lastupdated = inputUTCStringForLaborID(response.lastupdated)
+                    this.setState({ message: `${response.message} Last updated ${lastupdated}` })
+                }
+            } catch (err) {
+                alert(err)
+            }
+        }
+    }
+    async saveallprofile() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            try {
+                let response = await SaveAllProfile({ myuser });
+                if (response.hasOwnProperty("allusers")) {
+                    let companys = returnCompanyList(response.allusers);
+                    this.props.reduxAllCompanys(companys)
+                    this.props.reduxAllUsers(response.allusers);
+                    delete response.allusers;
+
+                }
+                if (response.hasOwnProperty("providerid")) {
+                    console.log(response)
+                    this.props.reduxUser(response)
+                }
+                if (response.hasOwnProperty("message")) {
+                    let lastupdated = inputUTCStringForLaborID(response.lastupdated)
+                    this.setState({ message: `${response.message} Last updated ${lastupdated}` })
+                }
+            } catch (err) {
+                alert(err)
+            }
+        }
+    }
+    getFolderSize() {
+        if (this.state.width > 1200) {
+            return (
+                {
+                    width: '142px',
+                    height: '88px'
+                })
+
+        } else if (this.state.width > 800) {
+            return (
+                {
+                    width: '93px',
+                    height: '76px'
+                })
+
+        } else {
+            return (
+                {
+                    width: '88px',
+                    height: '61px'
+                })
+        }
+
+    }
+    getArrowHeight() {
+        if (this.state.width > 800) {
+            return (
+                {
+                    width: '55px',
+                    height: '48px'
+                })
+
+        } else {
+            return (
+                {
+                    width: '45px',
+                    height: '34px'
+                })
+        }
+
+    }
+    getprofiledimensions() {
+        if (this.state.width > 1200) {
+            return (
+                {
+                    width: '392px',
+                    height: '327px'
+                })
+
+        } else if (this.state.width > 800) {
+            return (
+                {
+                    width: '285px',
+                    height: '249px'
+                })
+
+        } else {
+            return (
+                {
+                    width: '167px',
+                    height: '145px'
+                })
+        }
+    }
     showsaveproject() {
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this);
@@ -633,11 +792,11 @@ class PM {
         return (
             <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.generalFont, ...regularFont, ...styles.topMargin15, ...styles.bottomMargin15 }}>
-                    &nbsp;
-            </div>
+                    {this.state.message}
+                </div>
 
                 <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                    <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.savemyproject.call(this) }}>{projectSaveAll()}</button>
+                    <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.saveallprofile.call(this) }}>{projectSaveAll()}</button>
                 </div>
             </div>)
     }

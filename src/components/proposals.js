@@ -20,6 +20,8 @@ class Proposals extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
+        this.props.reduxNavigation({ navigation: "proposals" })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
     }
 
     componentWillUnmount() {
@@ -87,6 +89,8 @@ class Proposals extends Component {
                     </div>
 
                     {this.showproposals()}
+
+                    {pm.showprojectid.call(this)}
 
                 </div>
             </div>)

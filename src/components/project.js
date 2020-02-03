@@ -1,652 +1,296 @@
 import React, { Component } from 'react';
-import './myprojects.css'
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import { SaveAllProjects } from './actions/api';
-import { Link } from 'react-router-dom';
-import { SaveProjectManagerIcon } from './svg'
-import {
-  validateProjectTitle,
-  validateZipcode,
-  validateCity,
-  validateScope,
-  validateProjectAddress,
-  MyUserModel,
-  getstatelist,
-  inputUTCStringForLaborID
+import { MyStylesheet } from './styles';
+import PM from './pm';
+import { TouchIcon } from './svg';
+//import { CreateProject } from './functions';
+import { InsertMyProject } from './actions/api'
+import { returnCompanyList } from './functions'
 
-}
-  from './functions';
-
-//import _ from 'lodash';
 class Project extends Component {
   constructor(props) {
     super(props);
-    this.state = { title: '' }
+    this.state = {
+      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false
+    }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
+
+
   }
   componentDidMount() {
-    this.props.reduxNavigation({
-      err: 0,
-      navigation: "project",
-      projectid: this.props.match.params.projectid
-    })
-
-    let projectid = this.props.match.params.projectid;
-    this.props.ProjectID({ projectid })
-
+    window.addEventListener('resize', this.updateWindowDimensions);
+    this.updateWindowDimensions();
+    this.props.reduxNavigation({ navigation: "project" })
+    this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
   }
-
-  getservicetype() {
-    let projectid = this.props.match.params.projectid;
-    let servicetype = "";
-    if (this.props.projects.hasOwnProperty("length")) {
-      // eslint-disable-next-line
-      this.props.projects.map((myproject) => {
-        if (myproject.projectid === projectid) {
-          servicetype = myproject.servicetype;
-
-        }
-      })
-    }
-    if (!servicetype) {
-      if (this.props.projectsprovider.hasOwnProperty("length")) {
-        // eslint-disable-next-line
-        this.props.projectsprovider.map((myproject) => {
-          if (myproject.projectid === projectid) {
-            servicetype = myproject.servicetype;
-
-          }
-        })
-      }
-    }
-
-    return (servicetype)
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
   }
-  updateValues(myproject) {
-    let servicetype = this.getservicetype();
-    if (servicetype === "manager") {
-      let obj = this.props.projects;
-      this.props.reduxProjects(obj);
-    }
-    else if (servicetype === "provider") {
-      let obj = this.props.projectsprovider;
-      this.props.projectsProvider(obj);
-    }
-
-    this.updateState();
-  }
-  updateState() {
-
-    this.setState({ render: 'render' })
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
-  getlinkword() {
+  async insertnewproject() {
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
 
-  }
-
-  showschedulelabor() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype()
-      let providerid = this.props.match.params.providerid;
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/schedulelabor`}>View Schedule Labor </Link>);
+      let providerid = myuser.providerid;
+      let projectid = this.state.projectid;
+      let title = this.state.title;
+      let scope = this.state.scope;
+      let address = this.state.address;
+      let city = this.state.city
+      let projectstate = this.state.projectstate;
+      let zipcode = this.state.zipcode;
+      let values = { providerid, projectid, title, scope, address, city, projectstate, zipcode }
+      let response = await InsertMyProject(values);
+      console.log(response)
+      if (response.hasOwnProperty("allusers")) {
+        let companys = returnCompanyList(response.allusers);
+        this.props.reduxAllCompanys(companys)
+        this.props.reduxAllUsers(response.allusers);
+        delete response.allusers;
 
       }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/schedulelabor`}>Add Schedule Labor </Link>);
-
+      if (response.hasOwnProperty("providerid")) {
+        console.log(response)
+        this.props.reduxUser(response)
       }
-
+      this.props.reduxProject({ projectid })
+      this.setState({ projectid: '', projectidcheck: false })
     }
   }
-  showactuallabor() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype();
-      let providerid = this.props.match.params.providerid;
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/actuallabor`}> View Actual Labor </Link>);
+  showactiveprojectid(projectid) {
+    const pm = new PM();
+    const styles = MyStylesheet();
+    const regularFont = pm.getRegularFont.call(this)
+    let activeprojectid = pm.getactiveprojectid.call(this);
+    const touchIcon = pm.gettouchicon.call(this)
+    let activebackground = pm.getactiveprojectbackground.call(this, projectid)
+    if (activeprojectid === projectid) {
+      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject(false) }}>
+        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>Active Project ID is {projectid}, Touch to Make unactive
+  </div>)
+    } else {
+      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject({ projectid }) }}>
+        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>   Touch to Make Active
+</div>)
+    }
+  }
 
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/actuallabor`}> Add Actual Labor </Link>);
+
+  handlescope(scope) {
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
+      const myproject = pm.getactiveproject.call(this);
+      if (myproject) {
+        let i = pm.getactiveprojectkey.call(this);
+        myuser.projects.myproject[i].scope = scope;
+        this.props.reduxUser(myuser)
+        this.setState({ render: 'render' })
 
       }
 
     }
 
   }
-
-  showschedulematerials() {
-
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let providerid = this.props.match.params.providerid;
-      let servicetype = this.getservicetype()
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/schedulematerials`}> View Schedule Materials </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/schedulematerials`}>Add Schedule Materials </Link>);
-
-      }
-
+  getscope() {
+    let pm = new PM();
+    let myproject = pm.getactiveproject.call(this);
+    if (myproject) {
+      return (myproject.scope)
+    } else {
+      return this.state.scope;
     }
-  }
-  showactualmaterials() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let providerid = this.props.match.params.providerid;
-      let servicetype = this.getservicetype()
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/actualmaterials`}>View Actual Materials </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/actualmaterials`}>Add Actual Materials </Link>);
-
-      }
-
-
-    }
-  }
-  showproposals() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let providerid = this.props.match.params.providerid;
-      let servicetype = this.getservicetype()
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/proposals`}>View Proposals </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/proposals`}>Add Proposals </Link>);
-
-      }
-
-
-    }
-
-  }
-
-  showinvoices() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype();
-      let providerid = this.props.match.params.providerid;
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/invoices`}>View Invoices </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/invoices`}>Add Invoices </Link>);
-
-      }
-
-
-    }
-
-  }
-
-
-
-  showmilestone() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype();
-      let providerid = this.props.match.params.providerid;
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/milestones`}> Add Project Milestones </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/milestones`}> View Project Milestones </Link>);
-
-      }
-
-
-    }
-
-  }
-
-  showteam() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype();
-      let providerid = this.props.match.params.providerid;
-      if (servicetype === "manager") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/projectteam`}> Add Your Team </Link>);
-
-      }
-      else if (servicetype === "provider") {
-        return (<Link className="showprojectlink" to={`/${providerid}/myprojects/${projectid}/projectteam`}> View Your Team </Link>);
-      }
-
-
-    }
-  }
-
-
-  displayprojectid() {
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-      let servicetype = this.getservicetype();
-      let obj = {};
-      if (servicetype === "manager") {
-        obj = this.props.projects;
-      }
-      else if (servicetype === "provider") {
-        obj = this.props.projectsprovider;;
-      }
-
-      // eslint-disable-next-line
-      return (obj.map(myproject => {
-        if (myproject.projectid === projectid) {
-          return (`Project ID: ${projectid}/${myproject.title}`)
-        }
-      }))
-
-    }
-  }
-
-  handleinsertbutton() {
-    if (this.props.projects.hasOwnProperty("length")) {
-      let projectid = this.props.projectid.projectid;
-      if (projectid) {
-        // eslint-disable-next-line
-        return (this.props.projects.map(myproject => {
-          if (myproject.projectid === projectid) {
-            return (<div className="project-element project-title-row">
-              <button className="btn-updateproject" onClick={event => { this.handleSaveAllProjects() }}>
-                {SaveProjectManagerIcon()}
-              </button></div>)
-          }
-        })
-
-
-        )
-      } //
-    }
-  }
-  getprojectclass() {
-    let projectclass = "";
-    if (this.props.projects.hasOwnProperty("length") || this.props.projectsprovider.hasOwnProperty("length")) {
-      let projectid = this.props.projectid.projectid;
-      if (projectid) {
-
-        let servicetype = this.getservicetype();
-        if (servicetype === "manager") {
-          // eslint-disable-next-line
-          this.props.projects.map(myproject => {
-            if (myproject.projectid === projectid) {
-              projectclass = 'project-manager'
-            }
-          })
-        }
-        if (!projectclass && servicetype === "provider") {
-          // eslint-disable-next-line
-          this.props.projectsprovider.map(myproject => {
-            if (myproject.projectid === projectid) {
-              projectclass = 'project-provider'
-            }
-          })
-        }
-
-
-      }
-
-
-    }
-    return projectclass;
-  }
-
-
-  geterrormessages() {
-    let errmsg = "";
-
-    if (this.props.projects.hasOwnProperty("length")) {
-      let projectid = this.props.match.params.projectid;
-
-      // eslint-disable-next-line
-      this.props.projects.map(myproject => {
-        if (myproject.projectid === projectid) {
-          errmsg += validateProjectTitle(myproject.title)
-          errmsg += validateZipcode(myproject.zipcode);
-          errmsg += validateCity(myproject.city);
-          errmsg += validateScope(myproject.scope)
-          errmsg += validateProjectAddress(myproject.address)
-        }
-      })
-    }
-    return errmsg;
-  }
-  gettitle() {
-    let title = "";
-    let myproject = this.getprojectmanager();
-    title = myproject.title;
-    return title;
-  }
-  handletitle(title) {
-    if (this.props.projects) {
-
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].title = title
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
-
-      }
-
-
-    }
-  }
-  loadstates() {
-    let states = getstatelist();
-    let mystates = [<option value=""> Select A State </option>]
-    if (states.hasOwnProperty("length")) {
-      // eslint-disable-next-line
-      states.map(mystate => {
-        mystates.push(<option value={mystate.abbreviation}>{mystate.name} </option>)
-      })
-    }
-    return mystates;
-  }
-  handleprojecttitle() {
-    let projecttitle = [];
-    if (this.props.projects || this.props.projectsprovider) {
-      let servicetype = this.getservicetype();
-      if (servicetype === "manager") {
-        projecttitle.push(<div className="projectprovider-container">Project Title<br />
-          <input type="text"
-            value={this.gettitle()}
-            onChange={event => { this.handletitle(event.target.value) }}
-            className="project-field" /> </div>)
-      }
-
-    }
-    return projecttitle;
-  }
-  getprojectmanager() {
-    let project = {};
-    if (this.props.projects) {
-      if (this.props.projects.hasOwnProperty("length")) {
-
-        let projectid = this.props.match.params.projectid;
-        // eslint-disable-next-line
-        this.props.projects.map(myproject => {
-          if (myproject.projectid === projectid) {
-            project = myproject;
-          }
-        })
-      }
-    }
-    return project;
-  }
-  getprojectprovider() {
-    let project = {};
-    if (this.props.projectsprovider) {
-      if (this.props.projectsprovider.hasOwnProperty("length")) {
-
-        let projectid = this.props.match.params.projectid;
-        // eslint-disable-next-line
-        this.props.projectsprovider.map(myproject => {
-          if (myproject.projectid === projectid) {
-            project = myproject;
-          }
-        })
-      }
-    }
-    return project;
   }
   handleaddress(address) {
-    if (this.props.projects) {
-
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].address = address;
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
+      const myproject = pm.getactiveproject.call(this);
+      if (myproject) {
+        let i = pm.getactiveprojectkey.call(this);
+        myuser.projects.myproject[i].address = address;
+        this.props.reduxUser(myuser)
+        this.setState({ render: 'render' })
 
       }
-
 
     }
 
   }
   getaddress() {
-    let address = "";
-    let myproject = this.getprojectmanager();
-    address = myproject.address;
-    return address;
+    let pm = new PM();
+    let myproject = pm.getactiveproject.call(this);
+    if (myproject) {
+      return (myproject.address)
+    } else {
+      return this.state.address;
+    }
   }
+
   handlecity(city) {
-    if (this.props.projects) {
-
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].city = city;
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
+      const myproject = pm.getactiveproject.call(this);
+      if (myproject) {
+        let i = pm.getactiveprojectkey.call(this);
+        myuser.projects.myproject[i].city = city;
+        this.props.reduxUser(myuser)
+        this.setState({ render: 'render' })
 
       }
 
-
     }
-  }
-  getstate() {
-    let projectstate = "";
-    let myproject = this.getprojectmanager();
-    projectstate = myproject.projectstate;
-    return projectstate;
-  }
-  handlestate(projectstate) {
-    if (this.props.projects) {
 
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].projectstate = projectstate;
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
-
-      }
-
-
-    }
   }
   getcity() {
-    let city = "";
-    let myproject = this.getprojectmanager();
-    city = myproject.city;
-    return city;
+    let pm = new PM();
+    let myproject = pm.getactiveproject.call(this);
+    if (myproject) {
+      return (myproject.city)
+    } else {
+      return this.state.city;
+    }
+  }
+  handleprojectstate(projectstate) {
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
+      const myproject = pm.getactiveproject.call(this);
+      if (myproject) {
+        let i = pm.getactiveprojectkey.call(this);
+        myuser.projects.myproject[i].projectstate = projectstate;
+        this.props.reduxUser(myuser)
+        this.setState({ render: 'render' })
+
+      }
+
+    }
+
+  }
+  getprojectstate() {
+    let pm = new PM();
+    let myproject = pm.getactiveproject.call(this);
+    if (myproject) {
+      return (myproject.projectstate)
+    } else {
+      return this.state.projectstate;
+    }
   }
   handlezipcode(zipcode) {
-    if (this.props.projects) {
-
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].zipcode = zipcode;
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
+    const pm = new PM();
+    const myuser = pm.getuser.call(this);
+    if (myuser) {
+      const myproject = pm.getactiveproject.call(this);
+      if (myproject) {
+        let i = pm.getactiveprojectkey.call(this);
+        myuser.projects.myproject[i].zipcode = zipcode;
+        this.props.reduxUser(myuser)
+        this.setState({ render: 'render' })
 
       }
 
-
     }
+
   }
   getzipcode() {
-    let zipcode = "";
-    let myproject = this.getprojectmanager();
-    zipcode = myproject.zipcode;
-    return zipcode;
-  }
-  changescope(scope) {
-    if (this.props.projects) {
-
-      if (this.props.projects.hasOwnProperty("length")) {
-        let projectid = this.props.match.params.projectid
-        // eslint-disable-next-line
-        this.props.projects.map((myproject, i) => {
-          if (myproject.projectid === projectid) {
-            this.props.projects[i].scope = scope;
-            let obj = this.props.projects;
-            this.props.reduxProjects(obj)
-            this.setState({ render: 'render' })
-          }
-        })
-
-
-      }
-
-
+    let pm = new PM();
+    let myproject = pm.getactiveproject.call(this);
+    if (myproject) {
+      return (myproject.zipcode)
+    } else {
+      return this.state.zipcode;
     }
   }
+  showprojectform() {
+    const pm = new PM();
+    const myproject = pm.getactiveproject.call(this);
+    const styles = MyStylesheet();
+    const regularFont = pm.getRegularFont.call(this)
+    if (myproject) {
+      return (<div style={{ ...styles.generalFlex }}>
+        <div style={{ ...styles.flex1 }}>
+          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+            <div style={{ ...styles.flex1 }}>
+              Scope of Work
+              <textarea style={{ ...styles.generalField, ...regularFont, ...styles.generalFont }}
+                value={this.getscope()}
+                onChange={event => { this.handlescope(event.target.value) }}></textarea>
+            </div>
+          </div>
 
-  getscope() {
-    let scope = "";
-    let myproject = this.getprojectmanager();
-    scope = myproject.scope;
-    return scope;
-  }
+          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+            <div style={{ ...styles.flex1 }}>
+              Address
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+                value={this.getaddress()}
+                onChange={event => { this.handleaddress(event.target.value) }}
+              />
+            </div>
+            <div style={{ ...styles.flex1 }}>
+              City
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+                value={this.getcity()}
+                onChange={event => { this.handlecity(event.target.value) }}
+              />
+            </div>
+          </div>
 
-  handleprojectlocation() {
-    let projectlocation = []
-    if (this.props.projects || this.props.projectsprovider) {
-      let servicetype = this.getservicetype();
-
-      if (servicetype === "manager") {
-
-        projectlocation.push(<div className="projecthome-element-2a"> Address <br />
-          <input type="text" onChange={event => { this.handleaddress(event.target.value) }} value={this.getaddress()} className="project-field" />
-        </div>)
-        projectlocation.push(<div className="projecthome-element-2b"> Zipcode <br /><input type="text" className="project-field" onChange={event => { this.handlezipcode(event.target.value) }} value={this.getzipcode()} /></div>)
-        projectlocation.push(<div className="projecthome-element-3"> City <br /><input type="text" className="project-field" onChange={event => { this.handlecity(event.target.value) }} value={this.getcity()} /></div>)
-        projectlocation.push(<div className="projecthome-element-3">State <br /><select className="project-field" onChange={event => { this.handlestate(event.target.value) }} value={this.getstate()}>{this.loadstates()} </select></div>)
-      }
-      else if (servicetype === "provider") {
-        let myproject = this.getprojectprovider();
-        projectlocation.push(<div className="project-title-row">
-          {myproject.address} <br />{myproject.city}, {myproject.projectstate} {myproject.zipcode}
-        </div>)
-      }
-      else {
-
-        projectlocation.push(<div className="projectprovider-container">&nbsp;</div>)
-      }
-    }
-    return projectlocation
-  }
-  handlescope() {
-    let scope = [];
-    if (this.props.projects || this.props.projectsprovider) {
-      let servicetype = this.getservicetype();
-      if (servicetype === "provider") {
-        let myproject = this.getprojectprovider();
-        let sow = myproject.scope;
-        let body = [];
-        sow = sow.split(/\n/g)
-        sow.forEach(content => {
-
-          body.push(<p> {content} </p>)
-
-        })
-        scope.push(<div className="projectprovider-container">{body}</div>)
-
-      }
-      else if (servicetype === "manager") {
-        scope.push(<div className="projecthome-element-1">Scope of Work <br /> <textarea className="project-field" onChange={event => { this.changescope(event.target.value) }} value={this.getscope()} >
-        </textarea> </div>)
-      }
-      else {
-        scope.push(<div className="projectprovider-container">&nbsp;</div>)
-      }
-
-    }
-    return scope;
-  }
-
-  async handleSaveAllProjects() {
-    let providerid = this.props.myusermodel.providerid;
-    let projectid = this.props.projectid.projectid;
-    let myproject = this.getprojectmanager();
-    let myusermodel = this.props.myusermodel;
-    let values = { projectid, providerid, myusermodel, myproject }
-
-    let response = await SaveAllProjects(values)
-    console.log(response)
-    if (response.hasOwnProperty("providerid")) {
-      let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
-
-      this.props.updateUserModel(myusermodel)
-    }
-    if (response.hasOwnProperty("projectsmanaging")) {
-      this.props.reduxProjects(response.projectsmanaging.myproject)
-    }
-    if (response.hasOwnProperty("message")) {
-      this.setState({ message: `${response.message} Last Updated ${inputUTCStringForLaborID(response.dateupdated)}`, activeprovider: "" })
-    }
-
-  }
-  render() {
-    return (
-      <div>
-        <div className="myproject-container">
-          <div className="project-element project-title-row">{this.displayprojectid()} </div>
-          {this.handleprojecttitle()}
-          {this.handleprojectlocation()}
-          {this.handlescope()}
-          <div className="projectmessage-container">{this.state.message} </div>
-          {this.handleinsertbutton()}
-
-          <div className="project-element project-title-row">Project Components </div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showmilestone()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showteam()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulelabor()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showschedulematerials()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showactuallabor()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`} >{this.showactualmaterials()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showproposals()}</div>
-          <div className={`project-component-link ${this.getprojectclass()}`}>{this.showinvoices()}</div>
+          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+            <div style={{ ...styles.flex1 }}>
+              State
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+                value={this.getprojectstate()}
+                onChange={event => { this.handleprojectstate(event.target.value) }}
+              />
+            </div>
+            <div style={{ ...styles.flex1 }}>
+              Zipcode
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+                value={this.getzipcode()}
+                onChange={event => { this.handlezipcode(event.target.value) }}
+              />
+            </div>
+          </div>
         </div>
+      </div>)
+    } else {
+      return;
+    }
+  }
 
 
+
+
+  render() {
+    const pm = new PM();
+    const styles = MyStylesheet();
+    const regularFont = pm.getRegularFont.call(this)
+
+    return (
+      <div style={{ ...styles.generalFlex }}>
+        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+
+
+
+
+          {this.showprojectform()}
+
+
+          {pm.showsaveproject.call(this)}
+
+          {pm.showprojectid.call(this)}
+
+
+
+
+        </div>
       </div>)
   }
 }
@@ -654,9 +298,10 @@ class Project extends Component {
 function mapStateToProps(state) {
   return {
     myusermodel: state.myusermodel,
-    projectid: state.projectid,
-    projects: state.projects,
-    projectsprovider: state.projectsprovider
+    navigation: state.navigation,
+    project: state.project,
+    allusers: state.allusers,
   }
 }
+
 export default connect(mapStateToProps, actions)(Project)

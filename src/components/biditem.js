@@ -7,7 +7,7 @@ import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, inpu
 import PM from './pm';
 
 
-class ActualBidItem extends Component {
+class BidItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,8 +21,12 @@ class ActualBidItem extends Component {
 
     }
     componentDidMount() {
-
+        const pm = new PM();
         this.updateWindowDimensions()
+        const csiid = this.props.match.params.csiid;
+        const csi = pm.getactualcsibyid.call(this, csiid);
+        this.props.reduxNavigation({ navigation: "biditem", csiid, csi: csi.csi })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
 
     }
@@ -39,12 +43,11 @@ class ActualBidItem extends Component {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("laborid")) && (item.csiid === csiid) && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("laborid")) && (item.csiid === csiid)) {
                 laboritems.push(item)
             }
         })
@@ -63,12 +66,11 @@ class ActualBidItem extends Component {
         const actual = pm.getAllActual.call(this)
         console.log(actual)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
         let laboritems = [];
 
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("laborid")) && (item.csiid === csiid) && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("laborid")) && (item.csiid === csiid)) {
                 laboritems.push(item)
             }
         })
@@ -91,12 +93,11 @@ class ActualBidItem extends Component {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("materialid")) && item.csiid === csiid && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("materialid")) && item.csiid === csiid) {
                 laboritems.push(item)
             }
         })
@@ -115,11 +116,10 @@ class ActualBidItem extends Component {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
         let materialitems = [];
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("materialid")) && item.csiid === csiid && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("materialid")) && item.csiid === csiid) {
                 materialitems.push(item)
             }
         })
@@ -144,12 +144,12 @@ class ActualBidItem extends Component {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
+
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("equipmentid")) && item.csiid === csiid && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("equipmentid")) && item.csiid === csiid) {
                 laboritems.push(item)
             }
         })
@@ -169,11 +169,10 @@ class ActualBidItem extends Component {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
         let csiid = this.props.match.params.csiid;
-        let invoiceid = this.props.match.params.invoiceid;
         let laboritems = [];
         // eslint-disable-next-line
         actual.map(item => {
-            if ((item.hasOwnProperty("equipmentid")) && item.csiid === csiid && (item.invoiceid === invoiceid)) {
+            if ((item.hasOwnProperty("equipmentid")) && item.csiid === csiid) {
                 laboritems.push(item)
             }
         })
@@ -262,6 +261,7 @@ class ActualBidItem extends Component {
                     </div>
 
                     {pm.showlinedetail.call(this)}
+                    {pm.showprojectid.call(this)}
 
 
                 </div>
@@ -281,4 +281,4 @@ function mapStateToProps(state) {
         csi: state.csi
     }
 }
-export default connect(mapStateToProps, actions)(ActualBidItem)
+export default connect(mapStateToProps, actions)(BidItem)

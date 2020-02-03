@@ -1,453 +1,453 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './profile.css';
-import { MyUserModel, getstatelist } from './functions'
-import { UploadProfileImage } from './actions/api'
-import { newStripeConnectIcon, uploadnewProfilePictureIcon, UpdatePasswordIcon, defaultProfilePhoto } from './svg';
+//import { getstatelist } from './functions'
+//import { UploadProfileImage } from './actions/api';
+import { folderIcon, scrollImageDown } from './svg'
 import * as actions from './actions';
+import { MyStylesheet } from './styles'
+import { UploadProfileImage } from './actions/api';
+import { returnCompanyList, inputUTCStringForLaborID } from './functions';
 import PM from './pm'
 
 class Profile extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            message: "Press Save to Update Password",
-            windowwidth: 0,
-            stripe: '',
-            view: '',
-            passwordmessage: ''
-        }
-
+        this.state = { render: '', width: 0, height: 0, message: '' }
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
-
     componentDidMount() {
-
-        this.props.reduxNavigation({ navigation: "profile" })
-
+        window.addEventListener('resize', this.updateWindowDimensions);
+        this.updateWindowDimensions();
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    }
+    getHeaderFont() {
+        const styles = MyStylesheet();
+        if (this.state.width > 800) {
+            return (styles.font40)
+        }
+        return (styles.font30)
     }
 
-
-    handleSubmit(event) {
-        event.preventDefault();
-        let errormessage = this.geterrormessages();
-        if (!errormessage) {
-            let emailaddress = this.props.myusermodel.emailaddress;
-            let firstname = this.props.myusermodel.firstname;
-            let lastname = this.props.myusermodel.lastname;
-            let occupation = this.props.myusermodel.occupation;
-            let jobtitle = this.props.myusermodel.jobtitle;
-            let laborrate = this.props.myusermodel.laborrate;
-            let company = this.props.myusermodel.company;
-            let address = this.props.myusermodel.address;
-            let city = this.props.myusermodel.city;
-            let sta = this.props.myusermodel.contactstate;
-            let zipcode = this.props.myusermodel.zipcode
-            let phonenumber = this.props.myusermodel.phonenumber;
-            let profileurl = this.props.myusermodel.profileurl;
-            let values = { emailaddress, firstname, lastname, occupation, jobtitle, laborrate, company, address, city, sta, zipcode, phonenumber, profileurl }
-            console.log(values)
-            this.props.updateUser(values);
-
+    getRegularFont() {
+        const styles = MyStylesheet();
+        if (this.state.width > 800) {
+            return (styles.font30)
         }
-        else {
-            this.props.myusermodel.message = errormessage;
-
-            this.setState({ render: 'render' })
-        }
+        return (styles.font24)
     }
-
-    getemptycontainer() {
-        let width = window.innerWidth;
-        if (width < 1081) {
-            return (<div className="profile-element-b-field">&nbsp; </div>)
-        }
-    }
-    showstripe() {
+    getuser() {
+        let user = false;
         if (this.props.myusermodel) {
-            if (this.props.myusermodel.stripe) {
-                return (<div className="profile-element-b-field">Your Profile is accepting payments through Stripe </div>)
-
+            if (this.props.myusermodel.hasOwnProperty("providerid")) {
+                user = this.props.myusermodel;
             }
-            else {
-                let stripe_redirect = `${process.env.REACT_APP_SERVER_API}/projectmanagement/stripe/updatepaymentid`
-                stripe_redirect = encodeURIComponent(stripe_redirect);
-                //redirect_uri=http://webdevbootcamp-mazenoncloud9.c9users.io:8081/projectmanagement/stripe/updatepaymentid&response_type=code&client_id=ca_ETdAZ69zcymVDO45aRGOnspAT9xHuv43&scope=read_write
-                const stripe = `https://connect.stripe.com/oauth/authorize?response_type=code&redirect_uri=${stripe_redirect}&client_id=${process.env.REACT_APP_STRIPE_CONNECT}&state=${this.props.myusermodel.providerid}&stripe_user[business_type]=company&scope=read_write`
-                //https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_EWyUHyjDxSqZWHmDdvqSeRmdeQXH6fjN&scope=read_write
-                return (<div className="profile-element-b-field"><a href={stripe}><button className="btnstripeconnect">{newStripeConnectIcon()} </button> </a></div>)
-            }
-
         }
-        else {
-            return (<div className="profile-element-b-field">&nbsp; </div>)
-        }
-
-
+        return user;
     }
-    getprofileimage() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this)
+    getprofiledimensions() {
+        if (this.state.width > 1200) {
+            return (
+                {
+                    width: '392px',
+                    height: '327px'
+                })
 
-        if (myuser) {
-            return <img src={myuser.profileurl}
-                alt={`${myuser.firstname} ${myuser.lastanem}`}
-                className="profile-img" />
-        }
-        else {
-            return (defaultProfilePhoto())
+        } else if (this.state.width > 800) {
+            return (
+                {
+                    width: '285px',
+                    height: '249px'
+                })
+
+        } else {
+            return (
+                {
+                    width: '167px',
+                    height: '145px'
+                })
         }
     }
+    getFolderSize() {
+        if (this.state.width > 1200) {
+            return (
+                {
+                    width: '142px',
+                    height: '88px'
+                })
 
+        } else if (this.state.width > 800) {
+            return (
+                {
+                    width: '93px',
+                    height: '76px'
+                })
 
-
-    async uploadprofileimage(event) {
-        let formData = new FormData();
-        let providerid = this.props.match.params.providerid;
-        let myfile = document.getElementById("uploadprofileimage");
-        // HTML file input, chosen by user
-        formData.append("profilephoto", myfile.files[0]);
-        let response = await UploadProfileImage(formData, providerid);
-        console.log(response)
-
-        if (response.hasOwnProperty("providerid")) {
-
-            let myusermodel = MyUserModel(response.providerid, response.firstname, response.lastname, response.company, response.occupation, response.jobtitle, response.laborrate, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl, response.stripe)
-            this.props.updateUserModel(myusermodel)
-
-        }
-        this.updateState();
-    }
-    updateState() {
-        this.setState({ render: 'render' })
-    }
-    getfirstname() {
-        let firstname = "";
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-            firstname = myuser.firstname;
-        };
-        return firstname;
-    }
-    handlefirstname(firstname) {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.firstname = firstname;
-            this.props.reduxUser(myuser);
-            this.setState({ render: 'render' });
+        } else {
+            return (
+                {
+                    width: '88px',
+                    height: '61px'
+                })
         }
 
     }
-    getlastname() {
-        const pm = new PM();
-        let lastname = "";
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-            lastname = myuser.lastname;
-        }
-        return lastname
-    }
-    handlelastname(lastname) {
-        this.props.myusermodel.lastname = lastname;
-        let myusermodel = this.props.myusermodel;
-        this.props.updateUserModel(myusermodel);
-        this.setState({ render: 'render' });
-    }
+    getArrowHeight() {
+        if (this.state.width > 800) {
+            return (
+                {
+                    width: '55px',
+                    height: '48px'
+                })
 
-
-
-    getaddress() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let address = "";
-        if (myuser) {
-            address = myuser.address;
-        }
-
-        return address;
-    }
-    handleaddress(address) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.address = address;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
-        }
-
-    }
-    getcity() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let city = "";
-        if (myuser) {
-            city = myuser.city;
-        }
-
-        return city;
-    }
-    handlecity(city) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.city = city;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
-        }
-
-    }
-    getcontactstate() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let contactstate = "";
-        if (myuser) {
-            contactstate = myuser.contactstate;
-        }
-
-        return contactstate;
-    }
-    handlecontactstate(contactstate) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.contactstate = contactstate;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
-        }
-
-    }
-    getzipcode() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let zipcode = "";
-        if (myuser) {
-            zipcode = myuser.zipcode;
-        }
-
-        return zipcode;
-    }
-    handlezipcode(zipcode) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.zipcode = zipcode;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
-        }
-
-    }
-
-    getemailaddress() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let emailaddress = "";
-        if (myuser) {
-            emailaddress = myuser.emailaddress;
-        }
-
-        return emailaddress;
-    }
-    handleemailaddress(emailaddress) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.emailaddress = emailaddress;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
-        }
-
-    }
-    getphonenumber() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        let phonenumber = "";
-        if (myuser) {
-            phonenumber = myuser.phonenumber;
-        }
-
-        return phonenumber;
-    }
-    handlephonenumber(phonenumber) {
-        const pm = new PM();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
-            myuser.phonenumber = phonenumber;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
+        } else {
+            return (
+                {
+                    width: '45px',
+                    height: '34px'
+                })
         }
 
     }
     getprofileurl() {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
-        let profileurl = "";
-        if (myuser) {
-            profileurl = myuser.profileurl;
-        }
+        return myuser.profileurl;
 
-        return profileurl;
+
     }
-    handleprofileurl(profileurl) {
+    showprofileurl() {
+        const styles = MyStylesheet();
+        const regularFontHeight = this.getRegularFont();
+        if (this.state.width > 800) {
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
+                    Profile URL <input type="text" style={{ ...styles.addLeftMargin, ...styles.regularFont, ...regularFontHeight, ...styles.generalField }}
+                        value={this.getprofileurl()}
+
+                    />
+
+                </div>
+
+            </div>)
+
+        } else {
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
+                    Profile URL <br /> <input type="text" style={{ ...styles.regularFont, ...regularFontHeight, ...styles.generalField }}
+                        value={this.getprofileurl()}
+                    />
+                </div>
+
+            </div>)
+
+        }
+    }
+    getclientmessage() {
+        let user = this.getuser();
+        if (user) {
+            return `Your Profile is connected with ${user.client}`
+        } else {
+            return;
+        }
+    }
+    getfirstname() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.firstname;
+    }
+    handlefirstname(firstname) {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
         if (myuser) {
-            myuser.profileurl = profileurl;
-            this.props.reduxUser(myuser)
-            this.setState({ render: 'render' });
+            myuser.firstname = firstname;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
         }
 
     }
-
-    loadstates() {
-        let states = getstatelist();
-        let mystates = [<option value=""> Select A State </option>]
-        if (states.hasOwnProperty("length")) {
-            // eslint-disable-next-line
-            states.map(mystate => {
-                mystates.push(<option value={mystate.abbreviation}>{mystate.name} </option>)
-            })
+    getemailaddress() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.emailaddress;
+    }
+    handleemailaddress(emailaddress) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.emailaddress = emailaddress;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
         }
-        return mystates;
-    }
-
-
-    showmyprofile() {
-        let myprofile = [];
-        myprofile.push(<div className="profile-titlerow"> Update Profile Information </div>)
-
-        myprofile.push(<div className="profile-element-b-field-half">
-            First Name <br /><input type="text" className="project-field" value={this.getfirstname()} onChange={event => { this.handlefirstname(event.target.value) }} />
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            Last Name <br /> <input type="text" className="project-field" value={this.getlastname()} onChange={event => { this.handlelastname(event.target.value) }} />
-        </div>)
-
-        myprofile.push(<div className="profile-element-b-field-half">
-            Address <br />   <input type="text" className="project-field" value={this.getaddress()} onChange={event => { this.handleaddress(event.target.value) }} />
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            City <br />  <input type="text" className="project-field" value={this.getcity()} onChange={event => { this.handlecity(event.target.value) }} />
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            State <br /><select className="project-field" onChange={event => { this.handlecontactstate(event.target.value) }} value={this.getcontactstate()}> {this.loadstates()} </select>
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            Zipcode <br /> <input type="text" className="project-field" value={this.getzipcode()} onChange={event => { this.handlezipcode(event.target.value) }} />
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            Email Address <br />  <input type="text" className="project-field" value={this.getemailaddress()} onChange={event => { this.handleemailaddress(event.target.value) }} />
-        </div>)
-        myprofile.push(<div className="profile-element-b-field-half">
-            Phone Number <input type="text" className="project-field" value={this.getphonenumber()} onChange={event => { this.handlephonenumber(event.target.value) }} />
-        </div>)
-
-
-        return myprofile;
-    }
-    updatemypassword() {
-        let updatemypassword = [];
-        updatemypassword.push(<div className="profile-titlerow"> Update User Access </div>)
-        updatemypassword.push(<div className="profile-element-b-field-half">
-            <input type="password" className="project-field" id="userupdatepassword" />
-        </div>)
-        updatemypassword.push(<div className="profile-element-b-field-half">
-            <button onClick={event => { this.updatepassword(event) }} className="btn-updatepassword">
-                {UpdatePasswordIcon()}
-            </button>
-        </div>)
-        updatemypassword.push(<div className="profile-element-b-field">
-            {this.state.passwordmessage}
-        </div>)
-        return updatemypassword;
 
     }
-    getprofileimageurl() {
-        let profileurl = "";
-        if (this.props.myusermodel) {
-            if (this.props.myusermodel.hasOwnProperty("profileurl")) {
-                profileurl = this.props.myusermodel.profileurl;
-            }
+    getlastname() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.lastname;
+    }
+    handlelastname(lastname) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.lastname = lastname;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
         }
-        return profileurl;
+
     }
-    showuploadprofileform() {
-        let profileform = [];
-        profileform.push(<div className="profile-titlerow"> Manage Your Profile Image  </div>)
-        profileform.push(<div className="profile-element-b-field-half">
-            <input type="file" name="profileimage" id="uploadprofileimage" className="project-field" /></div>)
-        profileform.push(<div className="profile-element-b-field-half">
-            <button className="uploadprofileimage"
-                onClick={event => { this.uploadprofileimage(event) }}>
-                {uploadnewProfilePictureIcon()}
-            </button>
-        </div>);
-        profileform.push(<div className="profile-element-b-field"> Your current image is found at {this.getprofileimageurl()} </div>)
-        return profileform;
+    getaddress() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.address;
     }
-
-    getmyprofileurl() {
-        return (<div className="profile-element-b-field-half">
-            Profile URL <input type="text" className="project-field" value={this.getprofileurl()} onChange={event => { this.handleprofileurl(event.target.value) }} />
-        </div>)
-    }
-    showmenus() {
-        let showmenu = [];
-        let menus = [{ id: "myprofile", title: 'My Profile' },
-        { id: "picture", title: 'Profile Picture' },
-        { id: "loginpassword", title: 'Login Password' }
-
-        ]
-        // eslint-disable-next-line
-        menus.map(menu => {
-            showmenu.push(<div className="showprofilemenu-container" id={menu.id} key={menu.id} onClick={event => { this.setState({ view: menu.id }) }}><span className="profile-menu-font"> {menu.title} </span></div>)
-        })
-
-
-        return showmenu;
-    }
-
-
-    handleview() {
-        let view = this.state.view;
-        let myview = [];
-        switch (view) {
-            case "myprofile":
-                return (this.showmyprofile())
-            case "picture":
-                return (this.showuploadprofileform());
-            case "loginpassword":
-                return (this.updatemypassword())
-            default:
-                return myview;
+    handleaddress(address) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.address = address;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
         }
+
     }
-    handleProfile() {
-        if (this.props.myusermodel) {
-            if (this.props.myusermodel.hasOwnProperty("providerid")) {
-                let providerid = this.props.myusermodel.providerid
-                return (
-                    <div className="myprofile-container">
-                        <div className="profile-titlerow">Your profile can be view at {process.env.REACT_APP_CLIENT_API}/{providerid}  </div>
-                        <div className="profile-main"> <div className="profilepicture-container">{this.getprofileimage()} </div> </div>
-                        <div className="profile-main">Select From the Following </div>
-                        {this.showmenus()}
-                        {this.handleview()}
+    getcity() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.city;
+    }
+    handlecity(city) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.city = city;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
+        }
+
+    }
+    getcontactstate() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.contactstate;
+    }
+    handlecontactstate(contactstate) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.contactstate = contactstate;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
+        }
+
+    }
+    getzipcode() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.zipcode;
+    }
+    handlezipcode(zipcode) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.zipcode = zipcode;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
+        }
+
+    }
+    getphonenumber() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.phonenumber;
+    }
+    handlephonenumber(phonenumber) {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        if (myuser) {
+            myuser.phonenumber = phonenumber;
+            this.props.reduxUser(myuser);
+            this.setState({ render: 'render' })
+        }
+
+    }
+    showlogininfo() {
+        const styles = MyStylesheet();
+        const regularFontHeight = this.getRegularFont();
+        return (<div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
+                        {this.getclientmessage()}
                     </div>
+                </div>
 
-                )
-            } else {
-                return (<div>&nbsp; </div>)
-            }
+                <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                        Email <br />
+                        <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
+                            value={this.getemailaddress()}
+                            onChange={event => { this.handleemailaddress(event.target.value) }}
+                        />
+                    </div>
+                </div>
 
+            </div>
+        </div>)
+
+    }
+    showadditional() {
+        const styles = MyStylesheet();
+        const regularFontHeight = this.getRegularFont();
+        return (<div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                        First Name <br />
+                        <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
+                            value={this.getfirstname()}
+                            onChange={event => { this.handlefirstname(event.target.value) }}
+                        />
+                    </div>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                        Last Name <br />
+                        <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
+                            value={this.getlastname()}
+                            onChange={event => { this.handlelastname(event.target.value) }}
+                        />
+                    </div>
+                </div>
+
+
+                <div style={{ ...styles.generalFlex }}>
+
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                        Phone Number <br />
+                        <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
+                            value={this.getphonenumber()}
+                            onChange={event => { this.handlephonenumber(event.target.value) }}
+                        />
+                    </div>
+                </div>
+
+            </div>
+        </div>)
+    }
+    showprofileimage() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        const profileImage = pm.getprofiledimensions.call(this)
+        console.log(myuser)
+        if (myuser.profileurl) {
+            return (<img src={myuser.profileurl} style={{ ...profileImage }} alt={`${myuser.firstname} ${myuser.lastname}`} />)
+        } else {
+            return;
         }
-        else {
-            return (<div>&nbsp; </div>)
+
+    }
+    async uploadprofileimage() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+            const providerid = myuser.providerid;
+            let formData = new FormData();
+            let myfile = document.getElementById("profile-image");
+            formData.append("profilephoto", myfile.files[0]);
+            formData.append("myuser", JSON.stringify(myuser))
+            try {
+                let response = await UploadProfileImage(formData, providerid);
+                console.log(response)
+                if (response.hasOwnProperty("allusers")) {
+                    let companys = returnCompanyList(response.allusers);
+                    this.props.reduxAllCompanys(companys)
+                    this.props.reduxAllUsers(response.allusers);
+                    delete response.allusers;
+
+                }
+                if (response.hasOwnProperty("providerid")) {
+                    console.log(response)
+                    this.props.reduxUser(response)
+                }
+                let message = "";
+                if (response.hasOwnProperty("message")) {
+                    let lastupdated = inputUTCStringForLaborID(response.lastupdated)
+                    message = `${response.message} Last updated ${lastupdated}`
+
+                }
+                this.setState({ message })
+            } catch (err) {
+                alert(err)
+            }
         }
     }
     render() {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const headerFont = pm.getHeaderFont.call(this);
+        const regularFont = pm.getRegularFont.call(this);
+        let myuser = pm.getuser.call(this)
+        const profileDimensions = pm.getprofiledimensions.call(this);
+        const folderSize = pm.getFolderSize.call(this);
+        const arrowHeight = pm.getArrowHeight.call(this);
 
-        return (this.handleProfile())
+
+        return (<div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
+                        /{myuser.providerid}
+                    </div>
+                </div>
+
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex2 }}>
+                        <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.margin10, ...styles.alignRight }}>
+                            {this.showprofileimage()}
+                        </div>
+                    </div>
+                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
+                        <input type="file" id="profile-image" />
+                        <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { this.uploadprofileimage() }}>
+                            {folderIcon()}
+                        </button>
+                    </div>
+                </div>
+
+                {this.showprofileurl()}
+
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
+                        Login Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
+                            {scrollImageDown()}
+                        </button>
+                    </div>
+                </div>
+
+                {this.showlogininfo()}
+
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
+                        Additional Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
+                            {scrollImageDown()}
+                        </button>
+                    </div>
+                </div>
+
+                {this.showadditional()}
+
+                {pm.showsaveproject.call(this)}
+
+
+            </div>
+        </div>)
     }
 }
 

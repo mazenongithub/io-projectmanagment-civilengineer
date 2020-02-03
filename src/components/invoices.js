@@ -20,6 +20,8 @@ class Invoices extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
+        this.props.reduxNavigation({ navigation: "invoices" })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
     }
 
     componentWillUnmount() {
@@ -87,6 +89,8 @@ class Invoices extends Component {
                     </div>
 
                     {this.showinvoices()}
+
+                    {pm.showprojectid.call(this)}
 
                 </div>
             </div>)

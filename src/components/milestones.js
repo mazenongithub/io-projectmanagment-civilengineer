@@ -28,6 +28,8 @@ class Milestones extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
+        this.props.reduxNavigation({ navigation: "milestones" })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
     }
 
@@ -228,8 +230,11 @@ class Milestones extends Component {
                     </div>
 
                     {this.handleTimes()}
+                    {pm.showsaveproject.call(this)}
 
                     {this.loadmilestoneids()}
+
+                    {pm.showprojectid.call(this)}
 
 
                 </div>

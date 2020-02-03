@@ -21,51 +21,51 @@ class Header extends Component {
         this.setState({ widthofwindow: window.innerWidth });
     }
     showlogout() {
-        var logoutURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/user/logout";
-        if (this.props.myusermodel.hasOwnProperty("providerid")) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+
+        if (myuser) {
+            const logoutURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/user/logout";
             return (<a href={logoutURL}
                 className="nav-link"> <span className="nav-link">Logout </span> </a>);
         }
-        else if (this.props.myusermodel.hasOwnProperty("message")) {
+        else {
 
             return (<Link className="nav-link" to="/providers/login"><span className="nav-link"> Login  </span></Link>);
 
-        }
-        else {
-            return (<div> &nbsp;</div>)
         }
 
 
     }
 
     handleregister() {
-        if (this.props.myusermodel.hasOwnProperty("providerid")) {
-            let providerid = this.props.myusermodel.providerid;
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const providerid = myuser.providerid;
             return (<Link to={`/${providerid}/profile`} className="nav-link"> Profile </Link>);
         }
-        else if (this.props.myusermodel.hasOwnProperty("message")) {
+        else {
 
             return (<Link to="/providers/register" className="nav-link"> Register </Link>);
 
         }
-        else {
-            return (<div> &nbsp;</div>)
-        }
+
 
     }
 
     showdashboard() {
-        if (this.props.myusermodel.hasOwnProperty("providerid")) {
-            let providerid = this.props.myusermodel.providerid;
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+            let providerid = myuser.providerid;
             return (<Link className="nav-link" to={`/${providerid}/myprojects`}>  Projects  </Link>);
         }
-        else if (this.props.myusermodel) {
+        else {
             return (<Link className="nav-link" to="/"> Home </Link>)
         }
 
-        else {
-            return (<div> &nbsp;</div>)
-        }
+
 
     }
     getextradiv() {
@@ -79,10 +79,18 @@ class Header extends Component {
         let pm = new PM();
         let navigation = pm.getnavigation.call(this);
         const myuser = pm.getuser.call(this)
+        let providerid = "";
+        if (myuser) {
+            providerid = myuser.providerid;
+        }
         if (navigation) {
-            let providerid = this.props.myusermodel.providerid;
+
             let navigation = this.props.navigation.navigation;
-            let projectid = this.props.navigation.projectid;
+            let projectid = pm.getactiveprojectid.call(this)
+            let proposalid = this.props.navigation.proposalid;
+            let invoiceid = this.props.navigation.invoiceid;
+            let csi = this.props.navigation.csi;
+            let csiid = this.props.navigation.csiid;
             switch (navigation) {
                 case "register":
                     myjsx.push(<Link to={`/providers/register`} className="nav-link">  /register </Link>)
@@ -90,73 +98,73 @@ class Header extends Component {
                 case "login":
                     myjsx.push(<Link to={`/providers/login`} className="nav-link">  /login </Link>)
                     break;
-                case "join":
-                    myjsx.push(<Link to={`/providers/join`} className="nav-link">  /join </Link>)
-                    break;
-                case "providerjoin":
-                    providerid = myuser.providerid;
-                    myjsx.push(<Link to={`/${providerid}`} className="nav-link">  /{providerid} </Link>)
-                    myjsx.push(<Link to={`/providers/join/${providerid}`} className="nav-link">  /join </Link>)
-                    break;
                 case "myprojects":
-                    providerid = myuser.providerid;
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     return (myjsx);
                 case "viewprofile":
-                    providerid = navigation;
+                    providerid = this.props.navigation.providerid;
                     myjsx.push(<Link to={`/${providerid}`} className="nav-link">  /{providerid} </Link>)
                     return (myjsx);
                 case "profile":
-                    providerid = myuser.providerid;
                     return (<Link to={`/${providerid}/profile`} className="nav-link">  /profile </Link>)
                 case "project":
-                    providerid = myuser.providerid;
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     return (myjsx);
                 case "milestones":
-                    providerid = myuser.providerid;
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>)
                     return (myjsx);
-                case "projectteam":
+                case "team":
                     providerid = myuser.providerid;
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/team`} className="nav-link">  {`/team`}  </Link>)
                     return (myjsx);
-
                 case "proposals":
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
                     return (myjsx);
                 case "invoices":
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
+                    return (myjsx);
+                case "bid":
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>)
+                    return (myjsx);
+                case "biditem":
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>)
+                    return (myjsx);
+                case "bidschedule":
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>)
+                    return (myjsx);
+                case "bidscheduleitem":
+                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>)
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>)
                     return (myjsx);
                 case "viewinvoice":
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
-
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} className="nav-link">  {`/${invoiceid}`}  </Link>)
                     return (myjsx);
                 case "viewproposal":
-                    providerid = this.props.myusermodel.providerid;
-
-
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
-
+                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} className="nav-link">  {`/${proposalid}`}  </Link>)
                     return (myjsx);
                 default:
 
@@ -194,7 +202,8 @@ function mapStateToProps(state) {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
         project: state.project,
-        allusers: state.allusers
+        allusers: state.allusers,
+        allcompanys: state.allcompanys
     }
 }
 

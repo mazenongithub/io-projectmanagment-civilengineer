@@ -25,7 +25,8 @@ class Team extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-
+        this.props.reduxNavigation({ navigation: "team" })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
     }
 
@@ -103,6 +104,14 @@ class Team extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
+
+        const SearchPhoto = () => {
+            if (myuser.profileurl) {
+                return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...styles.searchphoto }} />)
+            } else {
+                return;
+            }
+        }
         const location = () => {
             let address = "";
             let city = "";
@@ -123,8 +132,8 @@ class Team extends Component {
                 <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }} onClick={() => this.addteam(myuser.providerid)}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalContainer, ...styles.searchphoto, ...styles.showBorder }}>
-                            &nbsp;
-                         </div>
+                            {SearchPhoto()}
+                        </div>
                     </div>
                     <div style={{ ...styles.flex5, ...styles.generalFont, ...regularFont }}>
                         {myuser.firstname} {myuser.lastname}
@@ -139,7 +148,7 @@ class Team extends Component {
                     <div style={{ ...styles.flex1 }}>
 
                         <div style={{ ...styles.generalContainer, ...styles.searchphoto, ...styles.showBorder }}>
-                            &nbsp;
+                            {SearchPhoto()}
                         </div>
 
                     </div>
@@ -161,6 +170,7 @@ class Team extends Component {
             myproject.projectteam.myteam.map(myteam => {
 
                 let myuser = pm.getproviderbyid.call(this, myteam.providerid)
+
 
                 myproviders.push(this.showprovider(myuser))
 
@@ -240,10 +250,11 @@ class Team extends Component {
         }
     }
     showprovider(myuser) {
-
+        console.log(myuser)
         const styles = MyStylesheet();
         const pm = new PM();
         let regularFont = pm.getRegularFont.call(this);
+        const teamProfile = pm.getteamprofile.call(this)
         const company = () => {
             if (myuser.hasOwnProperty("company")) {
                 return myuser.company.company;
@@ -254,6 +265,15 @@ class Team extends Component {
         const location = () => {
             if (myuser.hasOwnProperty("company")) {
                 return (`${myuser.company.address} ${myuser.company.city} ${myuser.company.contactstate} ${myuser.company.zipcode}  `)
+            } else {
+                return;
+            }
+        }
+        const ProfileImage = () => {
+            console.log(myuser)
+            if (myuser.profileurl) {
+
+                return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
             } else {
                 return;
             }
@@ -272,7 +292,7 @@ class Team extends Component {
                 </div>)
             }
         }
-        const teamProfile = pm.getteamprofile.call(this)
+
         return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }}>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                 {myuser.firstname} {myuser.lastname}
@@ -282,7 +302,7 @@ class Team extends Component {
             </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                 <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
-
+                    {ProfileImage()}
                 </div>
             </div>
 
@@ -341,6 +361,9 @@ class Team extends Component {
                         {this.showteamids()}
                     </div>
 
+                    {pm.showsaveproject.call(this)}
+
+                    {pm.showprojectid.call(this)}
 
                 </div>
             </div>
