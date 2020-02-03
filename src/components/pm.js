@@ -527,6 +527,43 @@ class PM {
         }
         return projects;
     }
+    getproviderkeybyid(providerid) {
+        const pm = new PM();
+        let key = false;
+        const myproject = pm.getactiveproject.call(this);
+        if (myproject.hasOwnProperty("projectteam")) {
+
+            // eslint-disable-next-line
+            myproject.projectteam.myteam.map((myteam, i) => {
+                if (myteam.providerid === providerid) {
+                    key = i;
+                }
+            })
+
+        }
+        return key;
+    }
+    getmilestonekeybyid(milestoneid) {
+        const pm = new PM();
+        let key = false;
+        const myproject = pm.getactiveproject.call(this);
+        if (myproject.hasOwnProperty("projectmilestones")) {
+            // eslint-disable-next-line
+            myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
+                if (mymilestone.milestoneid === milestoneid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+    getremoveicon() {
+        if (this.state.width > 800) {
+            return ({ width: '47px', height: '47px' })
+        } else {
+            return ({ width: '36px', height: '36px' })
+        }
+    }
     getteamprofile() {
         if (this.state.width > 800) {
             return ({ width: '200px', height: '150px' })

@@ -6,6 +6,7 @@ import { MyStylesheet } from './styles';
 import PM from './pm';
 //import { Link } from 'react-router-dom';
 import { TeamMember } from './functions';
+import { removeIconSmall } from './svg'
 
 class Team extends Component {
 
@@ -249,12 +250,30 @@ class Team extends Component {
             this.setState({ activeprovider: providerid, role: '' })
         }
     }
+    removeprovider(myteam) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+
+            if (window.confirm(`Are you sure you want to delete Provider ${myteam.providerid}?`)) {
+
+                const i = pm.getprojectkey.call(this);
+                const j = pm.getproviderkeybyid.call(this, myteam.providerid);
+                myuser.projects.myproject[i].projectteam.myteam.splice(j, 1);
+                this.props.reduxUser(myuser);
+                this.setState({ activeprovider: false })
+
+            }
+
+        }
+    }
     showprovider(myuser) {
         console.log(myuser)
         const styles = MyStylesheet();
         const pm = new PM();
         let regularFont = pm.getRegularFont.call(this);
-        const teamProfile = pm.getteamprofile.call(this)
+        const teamProfile = pm.getteamprofile.call(this);
+        const removeIcon = pm.getremoveicon.call(this);
         const company = () => {
             if (myuser.hasOwnProperty("company")) {
                 return myuser.company.company;
@@ -294,6 +313,9 @@ class Team extends Component {
         }
 
         return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }}>
+            <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
+                <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeprovider(myuser) }}>{removeIconSmall()}</button>
+            </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                 {myuser.firstname} {myuser.lastname}
             </div>

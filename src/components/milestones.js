@@ -6,6 +6,7 @@ import Completion from './completion'
 import { MyStylesheet } from './styles';
 import { makeID, makeDatefromObj, MyMilestone, milestoneformatdatestring } from './functions';
 import PM from './pm';
+import { removeIconSmall } from './svg';
 
 class Milestones extends Component {
     constructor(props) {
@@ -182,10 +183,27 @@ class Milestones extends Component {
             this.setState({ activemilestoneid: milestoneid })
         }
     }
+    removemilestone(milestone) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+
+            if (window.confirm(`Are you sure you want to delete milestone ${milestone.milestone}?`)) {
+                const i = pm.getactiveprojectkey.call(this);
+                const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
+                myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
+                this.props.reduxUser(myuser)
+                this.setState({ activemilestoneid: false })
+
+            }
+        }
+
+    }
     showmilestone(mymilestone) {
         const styles = MyStylesheet();
         const pm = new PM();
-        const regularFont = pm.getRegularFont.call(this)
+        const regularFont = pm.getRegularFont.call(this);
+        const removeIcon = pm.getremoveicon.call(this)
         const activebackground = (milestoneid) => {
             if (milestoneid === this.state.activemilestoneid) {
                 return ({ backgroundColor: '#89F786' })
@@ -194,10 +212,14 @@ class Milestones extends Component {
             }
         }
         return (
-            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15, ...activebackground(mymilestone.milestoneid) }} key={mymilestone.milestoneid} onClick={() => { this.makemilestoneactive(mymilestone.milestoneid) }}>
-                <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15, ...activebackground(mymilestone.milestoneid) }} key={mymilestone.milestoneid}>
+                <div style={{ ...styles.flex5, ...styles.generalFont, ...regularFont }} onClick={() => { this.makemilestoneactive(mymilestone.milestoneid) }}>
                     {mymilestone.milestone} From {milestoneformatdatestring(mymilestone.start)} to {milestoneformatdatestring(mymilestone.completion)}
 
+
+                </div>
+                <div style={{ ...styles.flex1 }}>
+                    <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight }} onClick={() => { this.removemilestone(mymilestone) }}>{removeIconSmall()}</button>
                 </div>
             </div>
         )

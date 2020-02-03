@@ -141,6 +141,9 @@ export function MyStylesheet() {
         alignRight: {
             float: 'right'
         },
+        textAlignRight: {
+            textAlign: 'right'
+        },
         fontBold: {
             fontWeight: 600
         },
