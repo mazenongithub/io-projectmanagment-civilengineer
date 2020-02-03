@@ -24,9 +24,9 @@ import Invoices from './components/invoices';
 import Team from './components/team';
 // import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
-//import { CheckUserLogin } from './components/actions/api'
+import { CheckUserLogin } from './components/actions/api'
 
-import { TestUser, returnCompanyList } from './components/functions'
+import { returnCompanyList } from './components/functions'
 import firebase from 'firebase'
 import { firebaseconfig } from './components/firebase'
 class App extends Component {
@@ -46,8 +46,8 @@ class App extends Component {
     }
 
     async checkuserlogin() {
-        let response = TestUser();
-        //let response = await CheckUserLogin();
+        //let response = TestUser();
+        let response = await CheckUserLogin();
 
         if (response.hasOwnProperty("allusers")) {
             let companys = returnCompanyList(response.allusers);
