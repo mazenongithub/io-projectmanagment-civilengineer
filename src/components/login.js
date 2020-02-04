@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { GoogleSigninIcon, loginNowIcon, AppleSigninIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
-import { LoginUser, ClientLogin } from './actions/api';
+import { ClientLogin } from './actions/api';
 import Profile from './profile';
 import PM from './pm'
 import firebase from 'firebase';
@@ -25,7 +25,6 @@ class Login extends Component {
             profileurl: '',
             phonenumber: '',
             pass: '',
-            providerid: ''
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -151,9 +150,10 @@ class Login extends Component {
 
             let emailaddress = this.state.emailaddress;
             let pass = this.state.pass;
-
-            let values = { emailaddress, pass }
-            const response = await LoginUser(values);
+            let clientid = this.state.clientid;
+            let client = this.state.client;
+            let values = { emailaddress, pass, clientid, client }
+            const response = await ClientLogin(values);
             console.log(response)
             if (response.hasOwnProperty("allusers")) {
                 let companys = returnCompanyList(response.allusers);
@@ -232,8 +232,36 @@ class Login extends Component {
             let emailaddress = user.providerData[0].email;
             let profileurl = user.providerData[0].photoURL;
             let phonenumber = user.phoneNumber;
-            let providerid = this.state.providerid;
-            this.setState({ providerid, client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
+
+            if (emailaddress && clientid && client) {
+                try {
+
+
+                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
+                    const response = await ClientLogin(values);
+                    console.log(response)
+                    if (response.hasOwnProperty("allusers")) {
+                        let companys = returnCompanyList(response.allusers);
+                        this.props.reduxAllCompanys(companys)
+                        this.props.reduxAllUsers(response.allusers);
+                        delete response.allusers;
+
+                    }
+                    if (response.hasOwnProperty("providerid")) {
+                        console.log(response)
+                        this.props.reduxUser(response)
+                    }
+                    if (response.hasOwnProperty("message")) {
+                        this.setState({ message: response.message })
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+
+            } else {
+                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
+            }
+
 
 
 
@@ -274,19 +302,8 @@ class Login extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
         const showpassword = () => {
-            if (this.state.client && this.state.clientid) {
-                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                    <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
-                        ProviderID
-                    </div>
-                    <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
-                        <input type="text" style={{ ...styles.generalField, ...regularFont, ...styles.generalFont }}
-                            value={this.state.providerid}
-                            onChange={event => { this.setState({ providerid: event.target.value }) }}
-                        />
-                    </div>
-                </div>)
-            } else {
+            if (!this.state.client && !this.state.clientid) {
+
                 return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                     <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
                         Password
@@ -298,6 +315,8 @@ class Login extends Component {
                         />
                     </div>
                 </div>)
+            } else {
+                return;
             }
         }
         const Login = () => {
