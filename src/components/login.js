@@ -60,6 +60,7 @@ class Login extends Component {
             let result = await firebase.auth().signInWithPopup(provider)
             // The signed-in user info.
             var user = result.user;
+            console.log(user)
             let firstname = "";
             let lastname = "";
             if (user.providerData[0].displayName) {
@@ -354,7 +355,7 @@ class Login extends Component {
                         <div className="general-flex">
                             <div className="flex-1 general-container">
                                 <div className="flex-1 general-container login-aligncenter titleFont">
-                                    <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn.call() }}>
+                                    <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn() }}>
                                         {AppleSigninIcon()}
                                     </button>
                                 </div>
@@ -403,9 +404,12 @@ class Login extends Component {
 
 function mapStateToProps(state) {
     return {
-        emailaddress: state.emailaddress,
-        password: state.password,
-        myusermodel: state.myusermodel
+        myusermodel: state.myusermodel,
+        navigation: state.navigation,
+        project: state.project,
+        allusers: state.allusers,
+        allcompanys: state.allcompanys
     }
 }
-export default connect(mapStateToProps, actions)(Login)
+
+export default connect(mapStateToProps, actions)(Login);

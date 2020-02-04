@@ -367,7 +367,6 @@ class Register extends Component {
             provider.addScope('profile');
             let result = await firebase.auth().signInWithPopup(provider)
             var user = result.user;
-            console.log(user.providerData[0]);
             let client = 'google';
             let clientid = user.providerData[0].uid;
             let firstname = '';
@@ -405,7 +404,7 @@ class Register extends Component {
 
             // The signed-in user info.
             var user = result.user;
-            console.log(user.providerData[0])
+
             let client = 'apple';
             let clientid = user.providerData[0].uid;
             let firstname = '';
@@ -531,12 +530,14 @@ class Register extends Component {
 
     }
 }
-
 function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
-        providerid: state.providerid
-
+        navigation: state.navigation,
+        project: state.project,
+        allusers: state.allusers,
+        allcompanys: state.allcompanys
     }
 }
-export default connect(mapStateToProps, actions)(Register)
+
+export default connect(mapStateToProps, actions)(Register);
