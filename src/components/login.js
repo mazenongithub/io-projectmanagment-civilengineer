@@ -58,10 +58,8 @@ class Login extends Component {
         provider.addScope('name');
         try {
             let result = await firebase.auth().signInWithPopup(provider)
-
             // The signed-in user info.
             var user = result.user;
-            console.log(user)
             let firstname = "";
             let lastname = "";
             if (user.providerData[0].displayName) {
@@ -88,7 +86,6 @@ class Login extends Component {
 
                     }
                     if (response.hasOwnProperty("providerid")) {
-                        console.log(response)
                         this.props.reduxUser(response)
                     }
                     if (response.hasOwnProperty("message")) {
@@ -174,7 +171,6 @@ class Login extends Component {
 
             }
             if (response.hasOwnProperty("providerid")) {
-                console.log(response)
                 this.props.reduxUser(response)
             }
             if (response.hasOwnProperty("message")) {
@@ -207,7 +203,6 @@ class Login extends Component {
 
             }
             if (response.hasOwnProperty("providerid")) {
-                console.log(response)
                 this.props.reduxUser(response)
             }
             if (response.hasOwnProperty("message")) {
@@ -228,7 +223,6 @@ class Login extends Component {
             provider.addScope('profile');
             let result = await firebase.auth().signInWithPopup(provider)
             var user = result.user;
-            console.log(user.providerData[0]);
             let client = 'google';
             let clientid = user.providerData[0].uid;
             let firstname = '';
@@ -259,7 +253,6 @@ class Login extends Component {
 
                     }
                     if (response.hasOwnProperty("providerid")) {
-                        console.log(response)
                         this.props.reduxUser(response)
                     }
                     if (response.hasOwnProperty("message")) {
