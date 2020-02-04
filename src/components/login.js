@@ -62,39 +62,50 @@ class Login extends Component {
             // The signed-in user info.
             var user = result.user;
             console.log(user)
-            let emailaddress = user.providerData[0].email;
             let firstname = "";
             let lastname = "";
             if (user.providerData[0].displayName) {
                 firstname = user.providerData[0].displayName.split(' ')[0]
                 lastname = user.providerData[0].displayName.split(' ')[1]
-            } else {
-                firstname = "";
-                lastname = "";
             }
             let phonenumber = user.providerData[0].phoneNumber
             let profileurl = user.providerData[0].photoURL;
             let client = 'apple';
             let clientid = user.providerData[0].uid;
-            this.setState({ clientid, client, firstname, lastname, emailaddress, phonenumber, profileurl })
-            let loginform = document.getElementById("loginform")
-            loginform.submit();
+            let emailaddress = user.providerData[0].email;
+
+            if (emailaddress && clientid && client) {
+                try {
+
+                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
+                    const response = await ClientLogin(values);
+                    console.log(response)
+                    if (response.hasOwnProperty("allusers")) {
+                        let companys = returnCompanyList(response.allusers);
+                        this.props.reduxAllCompanys(companys)
+                        this.props.reduxAllUsers(response.allusers);
+                        delete response.allusers;
+
+                    }
+                    if (response.hasOwnProperty("providerid")) {
+                        console.log(response)
+                        this.props.reduxUser(response)
+                    }
+                    if (response.hasOwnProperty("message")) {
+                        this.setState({ message: response.message })
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+
+            } else {
+                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
+            }
 
 
             // ...
-        } catch (error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            console.log(errorCode)
-            var errorMessage = error.message;
-            console.log(errorMessage)
-            // The email of the user's account used.
-            var email = error.email;
-            console.log(email)
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            console.log(credential)
-
+        } catch (err) {
+            alert(err)
             // ...
         };
 
@@ -350,7 +361,7 @@ class Login extends Component {
                         <div className="general-flex">
                             <div className="flex-1 general-container">
                                 <div className="flex-1 general-container login-aligncenter titleFont">
-                                    <button className="btnclientlogin general-button" onClick={() => { pm.appleSignIn.call(this) }}>
+                                    <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn.call() }}>
                                         {AppleSigninIcon()}
                                     </button>
                                 </div>

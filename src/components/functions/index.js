@@ -2700,14 +2700,16 @@ export function validateProjectScope(title) {
     return message;
 }
 export function validatePassword(val) {
-    let errmsg = "";
-    if (!val) {
-        errmsg += `Password is required `;
 
+    const reg_ex = /^[a-zA-Z0-9!#$%&?"]{6,}$/
+    let test = reg_ex.test(val)
+    let errmsg = false;
+    if (val.length < 6) {
+        errmsg = `Password min length is 6 `;
+    } else if (!test) {
+        errmsg = `Invalid Password format`;
     }
-    else if (val.length < 6) {
-        errmsg += `Password min length is 6 `;
-    }
+
     return errmsg;
 }
 export function validatePhoneNumber(val) {

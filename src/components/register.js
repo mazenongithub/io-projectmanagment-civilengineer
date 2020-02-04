@@ -4,7 +4,7 @@ import './svg/svg.css';
 import * as actions from './actions';
 import { purpleCheck, RegisterNowIcon, GoogleSigninIcon, AppleSigninIcon } from './svg'
 import { connect } from 'react-redux';
-import { validateProviderID, validateEmail, returnCompanyList } from './functions';
+import { validateProviderID, validateEmail, returnCompanyList, validatePassword } from './functions';
 import firebase from 'firebase/app';
 import { RegisterUser } from './actions/api';
 import 'firebase/auth';
@@ -27,7 +27,9 @@ class Register extends Component {
             profileurl: '',
             phonenumber: '',
             emailcheck: true,
-            providerid: ''
+            providerid: '',
+            pass: '',
+            passwordcheck: false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -199,7 +201,7 @@ class Register extends Component {
                         <div style={{ ...styles.flex2 }}>
                             <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
                                 value={this.state.emailaddress}
-                                onChange={event => { this.setState({ emailaddress: event.target.value }) }}
+                                onChange={event => { this.handleemailaddress(event.target.value) }}
                                 onBlur={event => { pm.checkemailaddress.call(this, event.target.value) }}
                             />
                         </div>
@@ -212,27 +214,99 @@ class Register extends Component {
             </div>)
         }
     }
+
+    handlepassword(pass) {
+        this.setState({ pass })
+        let errmsg = validatePassword(pass);
+
+        if (!errmsg) {
+            this.setState({ passwordcheck: true, message: '' })
+        } else {
+            this.setState({ passwordcheck: false, message: errmsg })
+        }
+    }
+    showpassword() {
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+        const goIcon = pm.getGoIcon.call(this)
+
+        const showButton = () => {
+            if (this.state.pass && this.state.passwordcheck) {
+                return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
+            } else {
+                return;
+            }
+        }
+        if (this.state.emailaddress || (this.state.clientid && this.state.client)) {
+            if (this.state.width > 800) {
+                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
+                        Password
+                </div>
+                    <div style={{ ...styles.flex3 }}>
+                        <input type="password" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                            value={this.state.pass}
+                            onChange={event => { this.handlepassword(event.target.value) }}
+
+                        />
+                    </div>
+                    <div style={{ ...styles.flex1 }}>
+                        {showButton()}
+                    </div>
+                </div>)
+            } else {
+                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                                Password
+                        </div>
+                        </div>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex2 }}>
+                                <input type="Password" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                                    value={this.state.pass}
+                                    onChange={event => { this.handlepassword(event.target.value) }}
+
+                                />
+                            </div>
+                            <div style={{ ...styles.flex1 }}>
+                                {showButton()}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>)
+            }
+        } else {
+            return;
+        }
+    }
     validateprovider() {
-        let emailaddress = this.state.emailaddress;
-        let providerid = this.state.providerid;
+
         let errmsg = false;
-        let email = validateEmail(emailaddress);
-        if (email) {
-            errmsg += email;
-        }
-        let provider = validateProviderID(providerid);
-        if (provider) {
-            errmsg += provider;
-        }
+
         if (!this.state.emailcheck) {
+            errmsg += validateEmail(this.state.emailaddress)
             errmsg += this.state.message;
         }
+
         if (!this.state.provideridcheck) {
+            errmsg += validateProviderID(this.state.providerid);
             errmsg += this.state.message;
         }
+
         if (!this.state.client || !this.state.clientid) {
             errmsg += `Missing Client ID`
         }
+
+        if (!this.state.passwordcheck) {
+            errmsg += validatePassword(this.state.pass);
+        }
+
         return errmsg;
     }
     async registernewuser() {
@@ -245,7 +319,9 @@ class Register extends Component {
             let profileurl = this.state.profileurl;
             let phonenumber = this.state.phonumber;
             let providerid = this.state.providerid;
-            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, providerid }
+            let pass = this.state.pass;
+            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, providerid, pass }
+
             let response = await RegisterUser(values);
             console.log(response)
             if (response.hasOwnProperty("allusers")) {
@@ -432,6 +508,8 @@ class Register extends Component {
                     {this.showcreateprovider()}
 
                     {this.showemailaddress()}
+
+                    {this.showpassword()}
 
                     {this.showregisternow()}
 
