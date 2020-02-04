@@ -2,475 +2,448 @@ import React, { Component } from 'react';
 import './register.css';
 import './svg/svg.css';
 import * as actions from './actions';
-import { GoogleSigninIcon, AppleSigninIcon, RegisterNowIcon, checkClientIcon } from './svg'
+import { purpleCheck, RegisterNowIcon, GoogleSigninIcon, AppleSigninIcon } from './svg'
 import { connect } from 'react-redux';
-import { showOccupations, UsStates, validateProviderID, validateName, validateEmail, validatePhoneNumber, validateZipcode, validatePassword } from './functions';
-import { CheckProviderID, CheckCommission, CheckEmailAddress, RegisterUser } from './actions/api'
-import firebase from 'firebase';
-import { MyUserModel } from './functions'
-import PM from './pm';
+import { validateProviderID, validateEmail, returnCompanyList } from './functions';
+import firebase from 'firebase/app';
+import { RegisterUser } from './actions/api';
+import 'firebase/auth';
 import Profile from './profile';
+
+import PM from './pm';
+//import Profile from './profile';
+import { MyStylesheet } from './styles'
 class Register extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            provideridcheck: false,
-            commissioncheck: false,
-            provideridmsg: '',
-            providerid: '',
-            firstname: '',
-            lastname: '',
-            occupation: '',
-            jobtitle: '',
-            address: '',
-            city: '',
-            contactstate: '',
-            zipcode: '',
-            emailaddress: '',
-            phonenumber: '',
-            password: '',
+            provideridcheck: true,
             client: '',
             clientid: '',
+            firstname: '',
+            lastname: '',
+            emailaddress: '',
             profileurl: '',
-            commissionmessage: 'Enter the Provider ID if you were referred by another Service Provider ?',
-            emailcheck: '',
-            emailmessage: ''
+            phonenumber: '',
+            emailcheck: true,
+            providerid: ''
         }
-
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    }
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+        this.props.reduxNavigation({ navigation: "register" })
     }
 
-    componentDidMount() {
-        this.props.reduxNavigation({ navigation: "register" })
-        if (this.props.providerid) {
-            if (this.props.providerid.hasOwnProperty("client")) {
-                let myusermodel = this.props.providerid;
-                let firstname = myusermodel.firstname;
-                let lastname = myusermodel.lastname;
-                let emailaddress = myusermodel.emailaddress;
-                let client = myusermodel.client;
-                let clientid = myusermodel.clientid;
-                this.setState({ firstname, lastname, emailaddress, client, clientid })
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    }
+    handleproviderid(providerid) {
+        this.setState({ providerid })
+        const errmsg = validateProviderID(providerid);
+        if (errmsg) {
+            this.setState({ provideridcheck: false, message: errmsg })
+        } else {
+            this.setState({ provideridcheck: true, message: "" })
+        }
+    }
+    showcreateprovider() {
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+        const goIcon = pm.getGoIcon.call(this)
+        const showButton = () => {
+            if (this.state.providerid && this.state.provideridcheck) {
+                return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
+            } else {
+                return;
             }
         }
-    }
-    getcommissionmessage() {
-        if (this.state.commission && !this.state.commissioncheck) {
-            return `Referred Provider ID ${this.state.commission} is invalid `
-        }
-        else {
-            return ``
-        }
-    }
-    validateRegister(event) {
-        let errmsg = "";
+        const content = () => {
+            if (this.state.width > 800) {
+                return (
 
-        if (this.state.emailcheck === "invalid") {
-            errmsg += this.state.emailmessage;
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
+                            Create A Provider ID
+                         </div>
+                        <div style={{ ...styles.flex3 }}>
+                            <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                                value={this.state.providerid}
+                                onChange={event => { this.handleproviderid(event.target.value) }}
+                                onBlur={event => { pm.checkproviderid.call(this, event.target.value) }}
+                            />
+                        </div>
+                        <div style={{ ...styles.flex1 }}>
+                            {showButton()}
+                        </div>
+                    </div>)
+
+            } else {
+
+                return (
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1 }}>
+
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                                    Create A Provider ID
+                                </div>
+                            </div>
+
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex2 }}>
+                                    <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                                        value={this.state.providerid}
+                                        onChange={event => { this.setState({ providerid: event.target.value }) }}
+                                        onBlur={event => { pm.checkproviderid.call(this, event.target.value) }}
+                                    />
+                                </div>
+                                <div style={{ ...styles.flex1 }}>
+                                    {showButton()}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>)
+
+            }
+
+        }
+
+        const ProviderMessage = () => {
+
+            if (this.state.providerid && this.state.provideridcheck) {
+                return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }}>
+                    Your profile will be hosted at {process.env.REACT_APP_CLIENT_API}/{this.state.providerid}
+                </div>)
+            }
+
+        }
+
+        return (
+            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                <div style={{ ...styles.flex1 }}>
+
+
+                    {content()}
+                    {ProviderMessage()}
+
+
+
+
+                </div>
+            </div>
+        )
+
+    }
+    handleemailaddress(emailaddress) {
+        this.setState({ emailaddress })
+        let errmsg = validateEmail(emailaddress)
+        if (errmsg) {
+            this.setState({ emailcheck: false, message: errmsg })
         } else {
-            errmsg += validateEmail(this.state.emailaddress);
+            this.setState({ emailcheck: true, message: "" })
+        }
+
+    }
+
+    showemailaddress() {
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+        const goIcon = pm.getGoIcon.call(this)
+
+        const showButton = () => {
+            if (this.state.emailaddress && this.state.emailcheck) {
+                return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
+            } else {
+                return;
+            }
+        }
+
+        if (this.state.width > 800) {
+            return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
+                    Email Address
+                </div>
+                <div style={{ ...styles.flex3 }}>
+                    <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                        value={this.state.emailaddress}
+                        onChange={event => { this.handleemailaddress(event.target.value) }}
+                        onBlur={event => { pm.checkemailaddress.call(this, event.target.value) }}
+                    />
+                </div>
+                <div style={{ ...styles.flex1 }}>
+                    {showButton()}
+                </div>
+            </div>)
+        } else {
+            return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                <div style={{ ...styles.flex1 }}>
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                            Email Address
+                        </div>
+                    </div>
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex2 }}>
+                            <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
+                                value={this.state.emailaddress}
+                                onChange={event => { this.setState({ emailaddress: event.target.value }) }}
+                                onBlur={event => { pm.checkemailaddress.call(this, event.target.value) }}
+                            />
+                        </div>
+                        <div style={{ ...styles.flex1 }}>
+                            {showButton()}
+                        </div>
+                    </div>
+
+                </div>
+            </div>)
+        }
+    }
+    validateprovider() {
+        let emailaddress = this.state.emailaddress;
+        let providerid = this.state.providerid;
+        let errmsg = false;
+        let email = validateEmail(emailaddress);
+        if (email) {
+            errmsg += email;
+        }
+        let provider = validateProviderID(providerid);
+        if (provider) {
+            errmsg += provider;
+        }
+        if (!this.state.emailcheck) {
+            errmsg += this.state.message;
         }
         if (!this.state.provideridcheck) {
-            errmsg += this.state.provideridmsg;
+            errmsg += this.state.message;
         }
-        errmsg += validateProviderID(this.state.providerid)
-        errmsg += validatePhoneNumber(this.state.phonenumber);
-        errmsg += validateZipcode(this.state.zipcode);
-        errmsg += validatePassword(this.state.password);
-        errmsg += validateName(this.state.firstname);
-        errmsg += validateName(this.state.lastname)
-        errmsg += this.getcommissionmessage()
-
+        if (!this.state.client || !this.state.clientid) {
+            errmsg += `Missing Client ID`
+        }
         return errmsg;
-
-
-
-
-
     }
-    getOccupationcategories() {
-        let categories = showOccupations();
-        if (categories.hasOwnProperty("length")) {
-            // eslint-disable-next-line
-            return (categories.map(mycategory => {
-                return (<option value={mycategory.code}> {mycategory.code}-{mycategory.name}</option>)
-            }))
+    async registernewuser() {
+        try {
+            let client = this.state.client;
+            let clientid = this.state.clientid;
+            let firstname = this.state.firstname;
+            let lastname = this.state.lastname;
+            let emailaddress = this.state.emailaddress;
+            let profileurl = this.state.profileurl;
+            let phonenumber = this.state.phonumber;
+            let providerid = this.state.providerid;
+            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, providerid }
+            let response = await RegisterUser(values);
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+                delete response.allusers;
+
+            }
+            if (response.hasOwnProperty("providerid")) {
+                console.log(response)
+                this.props.reduxUser(response)
+            }
+        } catch (err) {
+            alert(err)
         }
-    }
-
-    showstates() {
-        const MyStates = UsStates();
-        return MyStates.map((state) => {
-            return (<option value={state.abbreviation} key={state.abbreviation}>{state.name} </option>)
-        })
 
     }
-    handleprofileicon() {
-        if (this.state.provideridcheck) {
-            return (<div className="profile-icon-container">{checkClientIcon()} </div>)
-        }
-        else {
+    showregisternow() {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const registerIcon = pm.getsaveprojecticon.call(this);
+        const validate = this.validateprovider();
+
+
+        if (!validate) {
+            return (<div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.bottomMargin15 }}>
+                <button style={{ ...styles.generalButton, ...registerIcon }} onClick={() => { this.registernewuser() }}>{RegisterNowIcon()}</button>
+            </div>)
+        } else {
             return;
         }
-
     }
-    getprovideridmessage() {
-        let message = "";
-        if (this.state.provideridcheck) {
-            message = `Your Profile will appear as ${process.env.REACT_APP_CLIENT_API}/${this.state.providerid}`
 
-        }
-        else {
-            message = this.state.provideridmsg;
-        }
-        return message;
-    }
-    async verifyCommission() {
-        let commission = this.state.commission;
-        if (commission) {
-            let response = await CheckCommission(commission);
-            console.log(response)
-            if (response.hasOwnProperty("valid")) {
-
-                this.setState({ commissioncheck: true, commissionmessage: `${commission} is a valid ProviderID for referal` })
-            }
-            else {
-                this.setState({ commissioncheck: false, commissionmessage: 'Enter the Provider ID if you were referred by another Service Provider ?' })
-            }
-        }
-    }
-    async verifyProviderID() {
-        let providerid = this.state.providerid;
-
-        let errmsg = validateProviderID(providerid);
-        if (errmsg) {
-            this.setState({ provideridcheck: false, provideridmsg: errmsg })
-        }
-        else {
-            let response = await CheckProviderID(providerid)
-            console.log(response)
-            if (response.hasOwnProperty("valid")) {
-                this.setState({ providerid, provideridcheck: true });
-            }
-            else {
-                this.setState({ providerid, provideridcheck: false, provideridmsg: response.message });
-            }
-
-        }
-
-
-    }
-    handleProviderID(providerid) {
-
-        let errmsg = validateProviderID(providerid);
-        if (errmsg) {
-            this.setState({ providerid, provideridcheck: false, provideridmsg: errmsg })
-        }
-        else {
-            this.setState({ providerid, provideridcheck: true, provideridmsg: '' })
-        }
-
-    }
     async googleSignIn() {
-        let provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
-        let client = "";
-        let clientid = "";
-        let profileurl = "";
-        let emailaddress = this.state.emailaddress;
-        let phonenumber = this.state.phonenumber;
-        let firstname = this.state.firstname;
-        let lastname = this.state.lastname;
+
+
         try {
+
+
+            let provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('email');
+            provider.addScope('profile');
             let result = await firebase.auth().signInWithPopup(provider)
-
-            // The signed-in user info.
-
             var user = result.user;
-            console.log(user)
-            profileurl = user.providerData[0].photoURL;
-            client = 'google';
-            clientid = user.providerData[0].uid;
-            let emailcheck = 'invalid';
-            if (!emailaddress) {
-                emailaddress = user.providerData[0].email;
-                emailcheck = 'valid'
-            }
-            if (!firstname && user.providerData[0].displayName) {
+            console.log(user.providerData[0]);
+            let client = 'google';
+            let clientid = user.providerData[0].uid;
+            let firstname = '';
+            if (user.providerData[0].displayName) {
                 firstname = user.providerData[0].displayName.split(' ')[0]
             }
-            if (!lastname && user.providerData[0].displayName) {
+
+            let lastname = '';
+            if (user.providerData[0].displayName) {
                 lastname = user.providerData[0].displayName.split(' ')[1]
             }
-            if (!phonenumber) {
-                phonenumber = user.providerData[0].phoneNumber
-            }
-
-            //var accessToken = result.credential.accessToken;
-            //var idToken = result.credential.idToken;
-
-
-            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname, emailcheck })
+            let emailaddress = user.providerData[0].email;
+            let profileurl = user.providerData[0].photoURL;
+            let phonenumber = user.phoneNumber;
+            this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
 
 
 
 
-
-            // ...
         } catch (error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            console.log(errorCode)
-            var errorMessage = error.message;
-            console.log(errorMessage)
-            // The email of the user's account used.
-            var email = error.email;
-            console.log(email)
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            console.log(credential)
-
-            // ...
+            alert(error)
         }
+
+
+
 
     }
     async appleSignIn() {
         let provider = new firebase.auth.OAuthProvider('apple.com');
-        let client = "";
-        let clientid = "";
-        let profileurl = "";
-        let emailaddress = this.state.emailaddress;
-        let phonenumber = this.state.phonenumber;
-        let firstname = this.state.firstname;
-        let lastname = this.state.lastname;
+
         provider.addScope('email');
         provider.addScope('name');
         try {
             let result = await firebase.auth().signInWithPopup(provider)
 
             // The signed-in user info.
-
             var user = result.user;
-            console.log(user)
-            profileurl = user.providerData[0].photoURL;
-            client = 'apple';
-            clientid = user.providerData[0].uid;
-            if (!emailaddress) {
-                emailaddress = user.providerData[0].email;
-            }
-            if (!firstname && user.providerData[0].displayName) {
+            console.log(user.providerData[0])
+            let client = 'apple';
+            let clientid = user.providerData[0].uid;
+            let firstname = '';
+            if (user.providerData[0].displayName) {
                 firstname = user.providerData[0].displayName.split(' ')[0]
             }
-            if (!lastname && user.providerData[0].displayName) {
+
+            let lastname = '';
+            if (user.providerData[0].displayName) {
                 lastname = user.providerData[0].displayName.split(' ')[1]
             }
-            if (!phonenumber) {
-                phonenumber = user.providerData[0].phoneNumber
-            }
-            //var accessToken = result.credential.accessToken;
-            //var idToken = result.credential.idToken;
+            let emailaddress = user.providerData[0].email;
+            let profileurl = user.providerData[0].photoURL;
+            let phonenumber = user.phoneNumber;
+            this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
 
-            this.setState({ client, clientid, profileurl, phonenumber, emailaddress, firstname, lastname })
+
 
         } catch (error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            console.log(errorCode)
-            var errorMessage = error.message;
-            console.log(errorMessage)
-            // The email of the user's account used.
-            var email = error.email;
-            console.log(email)
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential;
-            console.log(credential)
 
-            // ...
-        };
+            alert(error.message);
+
+        }
 
 
     }
-    async checkemailaddress() {
-        let providerid = "";
-        let emailaddress = this.state.emailaddress;
-        let values = { providerid, emailaddress }
-        try {
-            let response = await CheckEmailAddress(values);
 
-            if (response.hasOwnProperty("invalid")) {
-                this.setState({ emailcheck: "invalid", emailmessage: response.message })
+    signinIcons() {
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this)
+        const styles = MyStylesheet();
+        const buttonWidth = pm.getsaveprojecticon.call(this)
+        const registerIcons = () => {
+            if (this.state.width > 800) {
+                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                        Secure your Sign in
+                </div>
+                    <div style={{ ...styles.flex1 }}>
+                        <button style={{ ...styles.generalButton, ...buttonWidth }} onClick={() => { this.googleSignIn() }}>{GoogleSigninIcon()}</button>
+                    </div>
+                    <div style={{ ...styles.flex1 }}>
+                        <button style={{ ...styles.generalButton, ...buttonWidth }} onClick={() => { this.appleSignIn() }}>{AppleSigninIcon()}</button>
+                    </div>
+                </div>)
             } else {
-                this.setState({ emailcheck: "valid", emailmessage: "" })
-            }
+                return (
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1 }}>
 
-        } catch (err) {
-            alert(err)
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                                    Secure your Sign in
+                                </div>
+                            </div>
+
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1 }}>
+                                    <button style={{ ...styles.generalButton, ...buttonWidth }} onClick={() => { this.googleSignIn() }}>{GoogleSigninIcon()}</button>
+                                </div>
+                                <div style={{ ...styles.flex1 }}>
+                                    <button style={{ ...styles.generalButton, ...buttonWidth }} onClick={() => { this.appleSignIn() }}>{AppleSigninIcon()}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>)
+
+            }
         }
-
-    }
-    async registeruser() {
-        let providerid = this.state.providerid;
-        let firstname = this.state.firstname;
-        let lastname = this.state.lastname;
-        let address = this.state.address;
-        let city = this.state.city;
-        let contactstate = this.state.contactstate;
-        let zipcode = this.state.zipcode;
-        let emailaddress = this.state.emailaddress;
-        let phonenumber = this.state.phonenumber;
-        let password = this.state.password;
-        let client = this.state.client;
-        let clientid = this.state.clientid;
-        let profileurl = this.state.profileurl;
-        let values = { providerid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, password, client, clientid, profileurl }
-        let errmsg = this.validateRegister();
-        console.log(errmsg);
-        if (!errmsg) {
-            let response = await RegisterUser(values)
-            if (response.hasOwnProperty("projects")) {
-                this.props.reduxProjects(response.projects.myproject)
-            }
-            if (response.hasOwnProperty("providerid")) {
-
-                let myusermodel = MyUserModel(response.providerid, response.client, response.clientid, response.firstname, response.lastname, response.address, response.city, response.contactstate, response.zipcode, response.emailaddress, response.phonenumber, response.profileurl)
-
-                this.props.updateUserModel(myusermodel)
-            }
-
-        } else {
-            this.setState({ message: errmsg })
-        }
-
-    }
-    handleform() {
-        let form = [];
-
-        form.push(<div className="register-field">  *First Name <br />
-            <input type="text" name="firstname"
-                onChange={event => { this.setState({ firstname: event.target.value }) }}
-                value={this.state.firstname}
-                className="project-field" />
-        </div>)
-        form.push(<div className="register-field"> *Last Name  <br />
-            <input type="text" name="lastname"
-                onChange={event => { this.setState({ lastname: event.target.value }) }}
-                value={this.state.lastname}
-                className="project-field" />
-        </div>)
-
-
-
-        form.push(<div className="register-field"> Address <br />
-            <input type="text" name="address" onChange={event => { this.setState({ address: event.target.value }) }}
-                value={this.state.address} className="project-field" />
-        </div>)
-        form.push(<div className="register-field"> City <br />
-            <input type="text" name="city" onChange={event => { this.setState({ city: event.target.value }) }}
-                value={this.state.city} className="project-field" />
-        </div>)
-        form.push(<div className="register-field">State  <br />
-            <select onChange={event => { this.setState({ contactstate: event.target.value }) }}
-                value={this.state.contactstate}
-                className="project-field"
-                name="contactstate">
-                <option value=""> Select State </option>
-                {this.showstates()}
-            </select>
-        </div>)
-        form.push(<div className="register-field"> Zipcode <br />
-            <input type="text" name="zipcode" onChange={event => { this.setState({ zipcode: event.target.value }) }}
-                value={this.state.zipcode} className="project-field" />
-        </div>)
-        form.push(<div className="register-field"> *Phone  <br />
-            <input type="text" name="phonenumber" onChange={event => { this.setState({ phonenumber: event.target.value }) }}
-                value={this.state.phonenumber} className="project-field" />
-        </div>)
-        form.push(<div className="register-field"> &nbsp;</div>)
-        form.push(<div className="register-field"> *Email Address  <br />
-            <input type="text" name="emailaddress" onChange={event => { this.setState({ emailaddress: event.target.value }) }}
-                value={this.state.emailaddress} className="project-field"
-                onBlur={event => { this.checkemailaddress() }} />
-
-        </div>)
-        form.push(<div className="register-field"> *Password <br />
-            <input type="password" name="password" onChange={event => { this.setState({ password: event.target.value }) }}
-                value={this.state.password} className="project-field" />
-        </div>)
-
-        form.push(<div className="register-field"> {this.state.commissionmessage} </div>)
-        form.push(<div className="register-field"> <input type="text" name="commission"
-            value={this.state.commission}
-            onFocus={() => { this.verifyCommission() }}
-            onBlur={() => { this.verifyCommission() }}
-            onChange={(event) => { this.setState({ commission: event.target.value }) }}
-            className="project-field" />  </div>)
-        form.push(
-            <div className="register-spanall register-regularfont client-container register-regularFont register-aligncenter">
-                {this.clientmessage()}
-                <input type="hidden" id="register-clientid" value={this.state.clientid} name="clientid" />
-                <input type="hidden" id="register-client" value={this.state.client} name="client" />
-                <input type="hidden" id="register-profileurl" value={this.state.profileurl} name="profileurl" />
+        const confirmed = () => {
+            return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont }}>
+                Your Signin is secure with {this.state.client}
             </div>)
-
-        form.push(<div className="register-field register-aligncenter"> <button type="button" className="btnclientregister general-button" onClick={() => { this.googleSignIn() }}>
-            {GoogleSigninIcon()}
-        </button></div>)
-        form.push(<div className="register-field register-aligncenter"><button type="button" className="btnclientregister general-button" onClick={() => { this.appleSignIn() }}>
-            {AppleSigninIcon()}
-        </button></div>)
-        form.push(<div className="register-spanall register-aligncenter">
-            <button className="btnregisternow general-button" onClick={event => { this.registeruser() }}>
-                {RegisterNowIcon()}
-            </button>
-        </div>)
-
-
-        return form;
-    }
-    clientmessage() {
-        let client = this.state.client;
-
-        let message = "";
-        if (client === 'google') {
-            console.log("googlesignin", client)
-            message = `Your preferred signin method is ${client}`
-        } else if (client === 'apple') {
-            console.log("googlesignin", client)
-            message = `Your preferred signin method is ${client}`
-        } else {
-            message = `Add your Client Account for Easy Sign In`
         }
 
-        return message;
+
+        if (this.state.client && this.state.clientid) {
+            return (confirmed())
+        } else {
+            return (registerIcons())
+        }
     }
     render() {
         const pm = new PM();
-        const myuser = pm.getuser.call(this);
+        const styles = MyStylesheet();
+        const headerFont = pm.getHeaderFont.call(this);
+        const regularFont = pm.getRegularFont.call(this);
         const Register = () => {
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1 }}>
 
-            return (<div className="register-container">
-                <div className="register-aligncenter register-spanall titleFont">Register </div>
-                <div className="register-spanall register-errmessage">{this.state.message} </div>
-                <div className="register-field"> ProviderID <br />
-                    <input type="text" className="project-field"
-                        name="providerid"
-                        value={this.state.providerid}
-                        onChange={event => { this.handleProviderID(event.target.value) }}
-                        onFocus={event => { this.verifyProviderID(event) }}
-                        onBlur={event => { this.verifyProviderID(event) }}
-                    />
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.alignCenter }}>
+                            Register
+                        </div>
+                    </div>
+
+                    {this.signinIcons()}
+
+                    {this.showcreateprovider()}
+
+                    {this.showemailaddress()}
+
+                    {this.showregisternow()}
+
+                    <div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>
+                        {this.state.message}
+                    </div>
+
 
                 </div>
-                <div className="register-field">
-                    {this.handleprofileicon()}
-                </div>
-                <div className="register-spanall register-regularfont">   {this.getprovideridmessage()} </div>
-
-                {this.handleform()}
             </div>)
-
         }
+        const myuser = pm.getuser.call(this)
         if (myuser) {
             return (<Profile />)
         } else {

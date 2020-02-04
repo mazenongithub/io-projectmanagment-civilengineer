@@ -5,7 +5,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProviderID } from './actions/api';
 import { Link } from 'react-router-dom';
 
 class PM {
@@ -885,7 +885,41 @@ class PM {
         }
 
 
+    } o
+
+    async checkproviderid(providerid) {
+        if (providerid) {
+            try {
+                let response = await CheckProviderID(providerid);
+                console.log(response)
+                if (response.hasOwnProperty("invalid")) {
+                    this.setState({ provideridcheck: false, message: response.message })
+                } else if (response.hasOwnProperty("valid")) {
+                    this.setState({ provideridcheck: true, message: "" })
+                }
+            } catch (err) {
+                alert(err)
+            }
+        }
     }
+    async checkemailaddress(emailaddress) {
+        if (emailaddress) {
+            try {
+                let response = await CheckEmailAddress(emailaddress);
+                console.log(response)
+                if (response.hasOwnProperty("invalid")) {
+                    this.setState({ emailcheck: false, message: response.message })
+                } else if (response.hasOwnProperty("valid")) {
+                    this.setState({ emailcheck: true, message: "" })
+                }
+            } catch (err) {
+                alert(err)
+            }
+
+        }
+
+    }
+
 
     async googleSignIn() {
 

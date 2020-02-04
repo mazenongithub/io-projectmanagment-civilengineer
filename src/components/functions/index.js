@@ -2649,7 +2649,7 @@ export function validateProviderID(value) {
     const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,34}(?:[A-Za-z0-9_]))?)$/
     const test = reg_ex.test(value);
     value = value.trim();
-    let errmsg = "";
+    let errmsg = false;
     if (!value) {
         errmsg = " ProviderID is required ";
 

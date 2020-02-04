@@ -174,19 +174,14 @@ export async function SaveAllProjects(values) {
             return resp.json();
         })
 }
-export async function CheckEmailAddress(values) {
+export async function CheckEmailAddress(emailaddress) {
 
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/user/checkemailaddress`
-    console.log(values, APIURL)
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${emailaddress}/checkemailaddress`
+
     return fetch(APIURL, {
-        method: 'post',
-        credentials: 'same-origin',
-        headers: new Headers({
-            'Content-Type': 'application/json',
-        }),
+        credentials: 'same-origin'
 
-        body: JSON.stringify(values)
     })
         .then(resp => {
 
