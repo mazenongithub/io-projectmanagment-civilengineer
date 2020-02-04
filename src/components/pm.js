@@ -947,9 +947,11 @@ class PM {
             let emailaddress = user.providerData[0].email;
             let profileurl = user.providerData[0].photoURL;
             let phonenumber = user.phoneNumber;
-            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
+            let providerid = this.state.providerid;
+            let values = { providerid, client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
 
             const response = await ClientLogin(values);
+            console.log(response)
             if (response.hasOwnProperty("allusers")) {
                 let companys = returnCompanyList(response.allusers);
                 this.props.reduxAllCompanys(companys)
