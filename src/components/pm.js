@@ -736,17 +736,18 @@ class PM {
         if (myuser) {
             try {
                 let response = await SaveAllProfile({ myuser });
+
                 if (response.hasOwnProperty("allusers")) {
                     let companys = returnCompanyList(response.allusers);
                     this.props.reduxAllCompanys(companys)
                     this.props.reduxAllUsers(response.allusers);
-                    delete response.allusers;
 
                 }
-                if (response.hasOwnProperty("providerid")) {
-                    console.log(response)
-                    this.props.reduxUser(response)
+                if (response.hasOwnProperty("myuser")) {
+
+                    this.props.reduxUser(response.myuser)
                 }
+
                 if (response.hasOwnProperty("message")) {
                     let lastupdated = inputUTCStringForLaborID(response.lastupdated)
                     this.setState({ message: `${response.message} Last updated ${lastupdated}` })

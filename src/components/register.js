@@ -328,12 +328,11 @@ class Register extends Component {
                 let companys = returnCompanyList(response.allusers);
                 this.props.reduxAllCompanys(companys)
                 this.props.reduxAllUsers(response.allusers);
-                delete response.allusers;
 
             }
-            if (response.hasOwnProperty("providerid")) {
-                console.log(response)
-                this.props.reduxUser(response)
+            if (response.hasOwnProperty("myuser")) {
+
+                this.props.reduxUser(response.myuser)
             }
         } catch (err) {
             alert(err)

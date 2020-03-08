@@ -52,12 +52,11 @@ class MyProjects extends Component {
         let companys = returnCompanyList(response.allusers);
         this.props.reduxAllCompanys(companys)
         this.props.reduxAllUsers(response.allusers);
-        delete response.allusers;
 
       }
-      if (response.hasOwnProperty("providerid")) {
-        console.log(response)
-        this.props.reduxUser(response)
+      if (response.hasOwnProperty("myuser")) {
+
+        this.props.reduxUser(response.myuser)
       }
       let message = "";
       if (response.hasOwnProperty("message")) {
@@ -329,18 +328,23 @@ class MyProjects extends Component {
       return;
     }
   }
+
   async checkprojectid(projectid) {
 
+    try {
 
-    let response = await CheckProjectID(projectid);
-    if (response.hasOwnProperty("valid")) {
-      this.setState({ projectidcheck: true })
+      let response = await CheckProjectID(projectid);
+      if (response.hasOwnProperty("valid")) {
+        this.setState({ projectidcheck: true, message: '' })
 
-    } else if (response.hasOwnProperty("invalid")) {
-      this.setState({ projectidcheck: false })
+      } else if (response.hasOwnProperty("invalid")) {
+        this.setState({ projectidcheck: false, message: response.message })
 
+      }
+
+    } catch (err) {
+      alert(err)
     }
-
 
   }
 

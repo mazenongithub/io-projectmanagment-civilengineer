@@ -168,11 +168,11 @@ class Login extends Component {
                 let companys = returnCompanyList(response.allusers);
                 this.props.reduxAllCompanys(companys)
                 this.props.reduxAllUsers(response.allusers);
-                delete response.allusers;
 
             }
-            if (response.hasOwnProperty("providerid")) {
-                this.props.reduxUser(response)
+            if (response.hasOwnProperty("myuser")) {
+
+                this.props.reduxUser(response.myuser)
             }
             if (response.hasOwnProperty("message")) {
                 this.setState({ message: response.message })

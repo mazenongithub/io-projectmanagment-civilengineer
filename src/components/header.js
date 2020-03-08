@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Logo } from './svg';
 import PM from './pm';
+import { LogoutUser } from './actions/api';
+import { MyStylesheet } from './styles';
+import * as actions from './actions';
 
 class Header extends Component {
     constructor(props) {
@@ -20,14 +23,24 @@ class Header extends Component {
     updateWindowDimensions() {
         this.setState({ widthofwindow: window.innerWidth });
     }
+    async logoutuser() {
+        try {
+            let response = await LogoutUser();
+            if (response.hasOwnProperty("message")) {
+                this.props.reduxUser(response)
+            }
+        } catch (err) {
+            alert(err)
+        }
+
+    }
     showlogout() {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
-
+        const headerFont = pm.getHeaderFont.call(this)
+        const styles = MyStylesheet();
         if (myuser) {
-            const logoutURL = process.env.REACT_APP_SERVER_API + "/projectmanagement/user/logout";
-            return (<a href={logoutURL}
-                className="nav-link"> <span className="nav-link">Logout </span> </a>);
+            return (<div className="linkhover" style={{ ...headerFont, ...styles.generalFont }} onClick={() => { this.logoutuser() }}> Logout </div>);
         }
         else {
 
@@ -207,4 +220,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(Header)
+export default connect(mapStateToProps, actions)(Header)

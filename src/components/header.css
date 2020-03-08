@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,500,700');
-
+.linkhover:hover{
+    cursor: pointer;
+}
 .navigation-liststyle {
     list-style-type: none;
     padding: 0px;

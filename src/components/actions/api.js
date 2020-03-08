@@ -24,8 +24,31 @@ export async function LoadCSI(providerid) {
 }
 export async function CheckUserLogin() {
 
-    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checkuser`
+    let APIURL = `https://civilengineer.io/projectmanagement/api/loadresponse.php`
     console.log(APIURL)
+    return fetch(APIURL, { credentials: 'include' }).then(resp => {
+
+        if (!resp.ok) {
+            if (resp.status >= 400 && resp.status < 500) {
+                return resp.json().then(data => {
+                    let err = { errorMessage: data.message };
+                    throw err;
+                })
+            }
+            else {
+                let err = { errorMessage: 'Please try again later, server is not responding' };
+                throw err;
+            }
+        }
+
+        return resp.json();
+    })
+}
+export async function LogoutUser() {
+
+    let APIURL = `https://civilengineer.io/projectmanagement/api/logout.php`
+    console.log(APIURL)
+
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
         if (!resp.ok) {
@@ -48,7 +71,7 @@ export async function CheckUserLogin() {
 export async function ClientLogin(values) {
     console.log(values)
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/clientlogin`
+    var APIURL = `https://civilengineer.io/projectmanagement/api/loginclient.php`
     console.log(APIURL)
 
     return fetch(APIURL, {
@@ -78,8 +101,8 @@ export async function ClientLogin(values) {
 
 
 export async function SaveAllProfile(myuser) {
-    let providerid = myuser.myuser.providerid
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/saveallprofile`
+
+    var APIURL = `https://civilengineer.io/projectmanagement/api/userendpoint.php`
 
     return fetch(APIURL, {
         method: 'post',
@@ -177,7 +200,7 @@ export async function SaveAllProjects(values) {
 export async function CheckEmailAddress(emailaddress) {
 
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${emailaddress}/checkemailaddress`
+    var APIURL = `https://civilengineer.io/projectmanagement/api/checkemailaddress.php?emailaddress=${emailaddress}`
 
     return fetch(APIURL, {
         credentials: 'same-origin'
@@ -202,7 +225,7 @@ export async function CheckEmailAddress(emailaddress) {
         })
 }
 export async function CheckProjectID(projectid) {
-    const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${projectid}/checkprojectid`
+    const APIURL = `https://civilengineer.io/projectmanagement/api/checknewprojectid.php?projectid=${projectid}`
     return fetch(APIURL)
         .then(resp => {
 
@@ -224,7 +247,7 @@ export async function CheckProjectID(projectid) {
 }
 export async function CheckProviderID(providerid) {
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/checkproviderid`
+    var APIURL = `https://civilengineer.io/projectmanagement/api/checkproviderid.php?providerid=${providerid}`
 
     return fetch(APIURL)
         .then(resp => {
@@ -448,9 +471,8 @@ export async function AddCommission(commission) {
 }
 
 export async function InsertMyProject(values) {
-    console.log(values)
-    let providerid = values.providerid;
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/projects/insertmyproject`
+
+    var APIURL = `https://civilengineer.io/projectmanagement/api/insertmyproject.php`
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',
@@ -533,7 +555,7 @@ export async function DeleteMyProject(values) {
 export async function RegisterUser(values) {
     console.log(values)
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/registernewuser`
+    var APIURL = `https://civilengineer.io/projectmanagement/api/register.php`
     console.log(APIURL)
 
     return fetch(APIURL, {
