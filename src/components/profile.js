@@ -357,10 +357,11 @@ class Profile extends Component {
         const myuser = pm.getuser.call(this);
         if (myuser) {
             const providerid = myuser.providerid;
+            const values = { providerid: myuser.providerid, client: myuser.client, clientid: myuser.clientid, firstname: myuser.firstname, lastname: myuser.lastname, emailaddress: myuser.emailaddress, phonenumber: myuser.phonenumber, profileurl: myuser.profileurl }
             let formData = new FormData();
             let myfile = document.getElementById("profile-image");
             formData.append("profilephoto", myfile.files[0]);
-            formData.append("myuser", JSON.stringify(myuser))
+            formData.append("myuser", JSON.stringify(values))
             try {
                 let response = await UploadProfileImage(formData, providerid);
                 console.log(response)
@@ -368,20 +369,18 @@ class Profile extends Component {
                     let companys = returnCompanyList(response.allusers);
                     this.props.reduxAllCompanys(companys)
                     this.props.reduxAllUsers(response.allusers);
-                    delete response.allusers;
 
                 }
-                if (response.hasOwnProperty("providerid")) {
-                    console.log(response)
-                    this.props.reduxUser(response)
+                if (response.hasOwnProperty("myuser")) {
+
+                    this.props.reduxUser(response.myuser)
                 }
-                let message = "";
+
                 if (response.hasOwnProperty("message")) {
                     let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                    message = `${response.message} Last updated ${lastupdated}`
-
+                    this.setState({ message: `${response.message} Last updated ${lastupdated}` })
                 }
-                this.setState({ message })
+
             } catch (err) {
                 alert(err)
             }
