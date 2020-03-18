@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import './profile.css';
 //import { getstatelist } from './functions'
 //import { UploadProfileImage } from './actions/api';
-import { folderIcon, scrollImageDown } from './svg'
+import { folderIcon, scrollImageDown, purpleCheck } from './svg'
 import * as actions from './actions';
 import { MyStylesheet } from './styles'
 import { UploadProfileImage } from './actions/api';
-import { returnCompanyList, inputUTCStringForLaborID } from './functions';
+import { returnCompanyList, inputUTCStringForLaborID, validateProviderID } from './functions';
+import { CheckProfile } from './actions/api'
 import PM from './pm'
 
 class Profile extends Component {
@@ -276,6 +277,37 @@ class Profile extends Component {
         }
 
     }
+
+    handleprofile(profile) {
+        const pm = new PM();
+        const validate = validateProviderID(profile);
+        let myuser = pm.getuser.call(this);
+        if (!validate) {
+
+            if (myuser.hasOwnProperty("invalid")) {
+                delete myuser.invalid;
+            }
+            if (myuser) {
+                myuser.profile = profile;
+                this.props.reduxUser(myuser);
+                this.setState({ message: '' })
+            }
+
+        } else {
+            myuser.profile = profile;
+            myuser.invalid = validate;
+            this.props.reduxUser(myuser);
+            this.setState({ message: validate })
+
+        }
+
+    }
+
+    getprofile() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this);
+        return myuser.profile;
+    }
     showlogininfo() {
         const styles = MyStylesheet();
         const regularFontHeight = this.getRegularFont();
@@ -344,7 +376,6 @@ class Profile extends Component {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
         const profileImage = pm.getprofiledimensions.call(this)
-        console.log(myuser)
         if (myuser.profileurl) {
             return (<img src={myuser.profileurl} style={{ ...profileImage }} alt={`${myuser.firstname} ${myuser.lastname}`} />)
         } else {
@@ -386,6 +417,34 @@ class Profile extends Component {
             }
         }
     }
+    async checkprofile(profile) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+
+        if (myuser) {
+            let validate = validateProviderID(profile)
+            if (profile && !validate) {
+                try {
+                    let response = await CheckProfile(profile);
+                    console.log(response)
+                    if (response.hasOwnProperty("invalid")) {
+                        myuser.invalid = response.invalid;
+                        this.props.reduxUser(myuser);
+                        this.setState({ message: response.message })
+                    } else if (response.hasOwnProperty("valid")) {
+
+                        if (myuser.hasOwnProperty("invalid")) {
+                            delete myuser.invalid;
+                            this.setState({ message: '' })
+                        }
+                    }
+                } catch (err) {
+                    alert(err)
+                }
+            }
+
+        }
+    }
     render() {
         const pm = new PM();
         const styles = MyStylesheet();
@@ -395,16 +454,30 @@ class Profile extends Component {
         const profileDimensions = pm.getprofiledimensions.call(this);
         const folderSize = pm.getFolderSize.call(this);
         const arrowHeight = pm.getArrowHeight.call(this);
+        const goIcon = pm.getGoIcon.call(this)
 
+        const showButton = () => {
+
+            if (!myuser.hasOwnProperty("invalid") && myuser.profile) {
+                return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
+            } else {
+                return;
+            }
+        }
 
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
                 <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1, ...styles.regularFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
-                        /{myuser.providerid}
+                    <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
+                        /<input type="text" value={myuser.profile}
+                            onChange={event => { this.handleprofile(event.target.value) }}
+                            style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
+                            onBlur={event => { this.checkprofile(event.target.value) }}
+                        /> {showButton()}
                     </div>
                 </div>
+
 
                 <div style={{ ...styles.generalFlex }}>
                     <div style={{ ...styles.flex2 }}>

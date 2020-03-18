@@ -5,7 +5,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProviderID } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile } from './actions/api';
 import { Link } from 'react-router-dom';
 
 class PM {
@@ -319,7 +319,7 @@ class PM {
 
         if (myuser) {
             const providerid = myuser.providerid;
-            const myproject = pm.getactiveproject.call(this)
+            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject) {
 
                 return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
@@ -327,32 +327,32 @@ class PM {
 
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.projectid}</Link>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
                             </div>
                         </div>
 
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Team</Link>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Team</Link>
                             </div>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Create Milestones</Link>
-                            </div>
-                        </div>
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid Schedule </Link>
-                            </div>
-                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid </Link>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Create Milestones</Link>
                             </div>
                         </div>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid Schedule </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-                                <Link to={`/${providerid}/myprojects/${myproject.projectid}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Invoices </Link>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid </Link>
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Invoices </Link>
                             </div>
                         </div>
 
@@ -475,15 +475,42 @@ class PM {
         return allprojects;
 
     }
-    getactiveproject() {
+    getprojectkeytitle(title) {
         let pm = new PM();
-        let myprojects = pm.getallprojects.call(this);
-        let projectid = pm.getactiveprojectid.call(this);
+        let myprojects = pm.getprojects.call(this);
+        let key = false;
+        if (myprojects) {
+            // eslint-disable-next-line
+            myprojects.map((project, i) => {
+                if (project.title === title) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+    getprojectbytitle(title) {
+        let pm = new PM();
+        let myprojects = pm.getprojects.call(this);
+        let myproject = false;
+        if (myprojects) {
+            // eslint-disable-next-line
+            myprojects.map((project, i) => {
+                if (project.title === title) {
+                    myproject = project;
+                }
+            })
+        }
+        return myproject;
+    }
 
+    getprojectbyid(projectid) {
+        let pm = new PM();
+        let myprojects = pm.getprojects.call(this);
         let myproject = false;
         if (myprojects && projectid) {
             // eslint-disable-next-line
-            myprojects.map(project => {
+            myprojects.map((project, i) => {
                 if (project.projectid === projectid) {
                     myproject = project;
                 }
@@ -491,21 +518,8 @@ class PM {
         }
         return myproject;
     }
-    getactiveprojectkey() {
-        let pm = new PM();
-        let myprojects = pm.getprojects.call(this);
-        let projectid = pm.getactiveprojectid.call(this);
-        let key = false;
-        if (myprojects && projectid) {
-            // eslint-disable-next-line
-            myprojects.map((project, i) => {
-                if (project.projectid === projectid) {
-                    key = i;
-                }
-            })
-        }
-        return key;
-    }
+
+
     getactiveprojectid() {
         let projectid = "";
         if (this.props.project) {
@@ -530,7 +544,7 @@ class PM {
     getproviderkeybyid(providerid) {
         const pm = new PM();
         let key = false;
-        const myproject = pm.getactiveproject.call(this);
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         if (myproject.hasOwnProperty("projectteam")) {
 
             // eslint-disable-next-line
@@ -546,7 +560,7 @@ class PM {
     getmilestonekeybyid(milestoneid) {
         const pm = new PM();
         let key = false;
-        const myproject = pm.getactiveproject.call(this);
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         if (myproject.hasOwnProperty("projectmilestones")) {
             // eslint-disable-next-line
             myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
@@ -643,6 +657,21 @@ class PM {
         }
         return key;
     }
+    getprojectkeybyid(projectid) {
+        const pm = new PM();
+        let key = false;
+        const projects = pm.getprojects.call(this)
+        if (projects) {
+
+            // eslint-disable-next-line
+            projects.map((myproject, i) => {
+                if (myproject.projectid === projectid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
     getprojectid() {
         let projectid = "";
         if (this.props.project) {
@@ -730,28 +759,103 @@ class PM {
             }
         }
     }
+    handlereplaceids(response) {
+
+        if (response.hasOwnProperty("replaceids")) {
+            if (response.replaceids.hasOwnProperty("milestones")) {
+                // eslint-disable-next-line
+                response.replaceids.milestones.map(milestone => {
+                    let oldmilestoneid = milestone.oldmilestoneid;
+                    let milestoneid = milestone.milestoneid;
+                    if (this.state.activemilestoneid === oldmilestoneid) {
+                        this.setState({ activemilestoneid: false })
+                        this.props.reduxUser(response.myuser)
+                        this.setState({ activemilestoneid: milestoneid })
+                    }
+                })
+            }
+            if (response.replaceids.hasOwnProperty("project")) {
+                // eslint-disable-next-line
+                response.replaceids.project.map(project => {
+                    let oldprojectid = project.oldprojectid;
+                    let projectid = project.projectid;
+                    if (this.state.activeprojectid === oldprojectid) {
+
+                        this.setState({ activeprojectid: projectid })
+                    }
+                })
+            }
+        }
+
+
+
+    }
+    validateprofilesave() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        const validate = {};
+        validate.validate = true;
+        validate.message = "";
+        if (myuser) {
+            if (myuser.hasOwnProperty("invalid")) {
+                validate.validate = false;
+                validate.message += this.state.message;
+            }
+            if (myuser.hasOwnProperty("projects")) {
+                // eslint-disable-next-line
+                myuser.projects.myproject.map(myproject => {
+
+                    if (myproject.hasOwnProperty("invalid")) {
+                        validate.validate = false;
+                        validate.message += this.state.message
+                    }
+
+
+                })
+            }
+        }
+        return validate;
+    }
     async saveallprofile() {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         if (myuser) {
+
             try {
-                let response = await SaveAllProfile({ myuser });
+                const validate = pm.validateprofilesave.call(this);
+                if (validate.validate) {
 
-                if (response.hasOwnProperty("allusers")) {
-                    let companys = returnCompanyList(response.allusers);
-                    this.props.reduxAllCompanys(companys)
-                    this.props.reduxAllUsers(response.allusers);
+                    let response = await SaveAllProfile({ myuser });
+                    console.log(response)
 
+                    if (response.hasOwnProperty("allusers")) {
+                        let companys = returnCompanyList(response.allusers);
+                        this.props.reduxAllCompanys(companys)
+                        this.props.reduxAllUsers(response.allusers);
+
+                    }
+                    if (response.hasOwnProperty("myuser")) {
+                        if (response.hasOwnProperty("replaceids")) {
+                            if (response.replaceids.hasOwnProperty("milestones")) {
+
+                            }
+                            pm.handlereplaceids.call(this, response)
+                        }
+
+
+
+
+                    }
+
+                    if (response.hasOwnProperty("message")) {
+                        let lastupdated = inputUTCStringForLaborID(response.lastupdated)
+                        this.setState({ message: `${response.message} Last updated ${lastupdated}` })
+                    }
+
+                } else {
+                    this.setState({ message: validate.message })
                 }
-                if (response.hasOwnProperty("myuser")) {
 
-                    this.props.reduxUser(response.myuser)
-                }
-
-                if (response.hasOwnProperty("message")) {
-                    let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                    this.setState({ message: `${response.message} Last updated ${lastupdated}` })
-                }
             } catch (err) {
                 alert(err)
             }
@@ -886,17 +990,17 @@ class PM {
         }
 
 
-    } o
+    }
 
-    async checkproviderid(providerid) {
-        if (providerid) {
+    async checkprofile(profile) {
+        if (profile) {
             try {
-                let response = await CheckProviderID(providerid);
+                let response = await CheckProfile(profile);
                 console.log(response)
                 if (response.hasOwnProperty("invalid")) {
-                    this.setState({ provideridcheck: false, message: response.message })
+                    this.setState({ profilecheck: false, message: response.message })
                 } else if (response.hasOwnProperty("valid")) {
-                    this.setState({ provideridcheck: true, message: "" })
+                    this.setState({ profilecheck: true, message: "" })
                 }
             } catch (err) {
                 alert(err)

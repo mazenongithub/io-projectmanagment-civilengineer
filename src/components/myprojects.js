@@ -4,16 +4,17 @@ import * as actions from './actions';
 import { MyStylesheet } from './styles';
 import PM from './pm';
 import { purpleCheck, TouchIcon } from './svg';
-//import { CreateProject } from './functions';
+import { CreateProject } from './functions';
 import { Link } from 'react-router-dom';
-import { CheckProjectID, InsertMyProject } from './actions/api'
-import { returnCompanyList, inputUTCStringForLaborID } from './functions'
+import { CheckProjectID } from './actions/api'
+import { validateTitle } from './functions';
+import MakeID from './makeids';
 
 class MyProjects extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: '', render: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false
+      message: '', render: '', activeprojectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false
     }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
 
@@ -31,101 +32,136 @@ class MyProjects extends Component {
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
-
-  async insertnewproject() {
+  gettitle() {
     const pm = new PM();
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid);
+      return myproject.title;
+    } else {
+      return this.state.title;
+    }
+  }
+
+  handletitle(title) {
+    const pm = new PM();
+    const makeID = new MakeID();
     const myuser = pm.getuser.call(this);
+
+
     if (myuser) {
 
-      let providerid = myuser.providerid;
-      let projectid = this.state.projectid;
-      let title = this.state.title;
-      let scope = this.state.scope;
-      let address = this.state.address;
-      let city = this.state.city
-      let projectstate = this.state.projectstate;
-      let zipcode = this.state.zipcode;
-      let values = { providerid, projectid, title, scope, address, city, projectstate, zipcode }
-      let response = await InsertMyProject(values);
-      console.log(response)
-      if (response.hasOwnProperty("allusers")) {
-        let companys = returnCompanyList(response.allusers);
-        this.props.reduxAllCompanys(companys)
-        this.props.reduxAllUsers(response.allusers);
+      if (this.state.activeprojectid) {
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
+
+        myuser.projects.myproject[i].title = title;
+        this.props.reduxUser(myuser)
+        const validatetitle = validateTitle(title);
+        console.log(i, validatetitle)
+        if (validatetitle) {
+          myuser.projects.myproject[i].invalid = title;
+          this.setState({ message: validatetitle })
+        } else {
+          if (myuser.projects.myproject[i].hasOwnProperty("invalid")) {
+            delete myuser.projects.myproject[i].invalid;
+          }
+          this.setState({ message: '' })
+
+        }
+
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let scope = this.state.scope;
+        let address = this.state.address;
+        let city = this.state.city
+        let projectstate = this.state.projectstate;
+        let zipcode = this.state.zipcode;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.props.reduxUser(myuser)
+        this.setState({ activeprojectid: projectid })
+
 
       }
-      if (response.hasOwnProperty("myuser")) {
 
-        this.props.reduxUser(response.myuser)
-      }
-      let message = "";
-      if (response.hasOwnProperty("message")) {
-        let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-        message = `${response.message} last updated ${lastupdated}`
-      }
-      this.props.reduxProject({ projectid })
-      this.setState({ projectid: '', projectidcheck: false, message })
+
     }
 
+
+
+
+
+
   }
-  showactiveprojectid(projectid) {
-    const pm = new PM();
-    const styles = MyStylesheet();
-    const regularFont = pm.getRegularFont.call(this)
-    let activeprojectid = pm.getactiveprojectid.call(this);
-    const touchIcon = pm.gettouchicon.call(this)
-    let activebackground = pm.getactiveprojectbackground.call(this, projectid)
-    if (activeprojectid === projectid) {
-      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject(false) }}>
-        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>Active Project ID is {projectid}, Touch to Make unactive
-  </div>)
-    } else {
-      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject({ projectid }) }}>
-        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>   Touch to Make Active
-</div>)
-    }
-  }
+
+
   showprojectid(myproject) {
     const styles = MyStylesheet();
     const pm = new PM();
-    const headerFont = pm.getHeaderFont.call(this)
-    const regularFont = pm.getRegularFont.call(this)
+    const headerFont = pm.getHeaderFont.call(this);
+    const regularFont = pm.getRegularFont.call(this);
     const myuser = pm.getuser.call(this);
+    const touchIcon = pm.gettouchicon.call(this);
+    const activebackground = () => {
+      if (this.state.activeprojectid === myproject.projectid) {
+        return (styles.activebackground)
+      } else {
+        return;
+      }
+
+    }
+    const activeprojectid = () => {
+
+      if (this.state.activeprojectid === myproject.projectid) {
+        return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground() }} onClick={() => { this.setState({ activeprojectid: false }) }}>
+          <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>Active Project is {myproject.title}, Touch to Make unactive
+        </div>)
+      } else {
+        return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground() }} onClick={() => { this.setState({ activeprojectid: myproject.projectid }) }}>
+          <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>   Touch to Make Active
+        </div>)
+      }
+
+    }
     if (myuser) {
       let providerid = myuser.providerid;
       return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
         <div style={{ ...styles.flex1 }}>
 
-          {this.showactiveprojectid(myproject.projectid)}
+          {activeprojectid(myproject.projectid)}
 
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.projectid}</Link>
+              <Link to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
             </div>
           </div>
 
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Team</Link>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Team</Link>
             </div>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Create Milestones</Link>
-            </div>
-          </div>
-          <div style={{ ...styles.generalFlex }}>
-            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid Schedule </Link>
-            </div>
-            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid </Link>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Create Milestones</Link>
             </div>
           </div>
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid Schedule </Link>
             </div>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.projectid}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Invoices </Link>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Bid </Link>
+            </div>
+          </div>
+          <div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Proposals</Link>
+            </div>
+            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> View Invoices </Link>
             </div>
           </div>
 
@@ -149,13 +185,33 @@ class MyProjects extends Component {
   handlescope(scope) {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
+    const makeID = new MakeID();
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
-      if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
+
+
+      if (this.state.activeprojectid) {
+
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
         myuser.projects.myproject[i].scope = scope;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
+
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let title = this.state.title;
+        let address = this.state.address;
+        let city = this.state.city
+        let projectstate = this.state.projectstate;
+        let zipcode = this.state.zipcode;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.setState({ activeprojectid: projectid })
+
 
       }
 
@@ -164,8 +220,9 @@ class MyProjects extends Component {
   }
   getscope() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
-    if (myproject) {
+
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid)
       return (myproject.scope)
     } else {
       return this.state.scope;
@@ -174,13 +231,32 @@ class MyProjects extends Component {
   handleaddress(address) {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
+    const makeID = new MakeID();
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
-      if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
+
+      if (this.state.activeprojectid) {
+
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
         myuser.projects.myproject[i].address = address;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
+
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let title = this.state.title;
+        let scope = this.state.scope;
+        let city = this.state.city
+        let projectstate = this.state.projectstate;
+        let zipcode = this.state.zipcode;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.setState({ activeprojectid: projectid })
+
 
       }
 
@@ -189,8 +265,8 @@ class MyProjects extends Component {
   }
   getaddress() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
-    if (myproject) {
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid);
       return (myproject.address)
     } else {
       return this.state.address;
@@ -200,23 +276,44 @@ class MyProjects extends Component {
   handlecity(city) {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
+    const makeID = new MakeID();
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
-      if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
+
+      if (this.state.activeprojectid) {
+
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
         myuser.projects.myproject[i].city = city;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let title = this.state.title;
+        let scope = this.state.scope;
+        let address = this.state.address
+        let projectstate = this.state.projectstate;
+        let zipcode = this.state.zipcode;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.setState({ activeprojectid: projectid })
+
+
       }
+
 
     }
 
   }
   getcity() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
-    if (myproject) {
+
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid);
       return (myproject.city)
     } else {
       return this.state.city;
@@ -224,24 +321,45 @@ class MyProjects extends Component {
   }
   handleprojectstate(projectstate) {
     const pm = new PM();
+    const makeID = new MakeID();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
-      if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
+
+      if (this.state.activeprojectid) {
+
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
         myuser.projects.myproject[i].projectstate = projectstate;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let title = this.state.title;
+        let scope = this.state.scope;
+        let city = this.state.city
+        let address = this.state.address;
+        let zipcode = this.state.zipcode;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.setState({ activeprojectid: projectid })
+
+
       }
+
 
     }
 
   }
   getprojectstate() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
-    if (myproject) {
+
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid);
       return (myproject.projectstate)
     } else {
       return this.state.projectstate;
@@ -249,24 +367,45 @@ class MyProjects extends Component {
   }
   handlezipcode(zipcode) {
     const pm = new PM();
+    const makeID = new MakeID();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
-      if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
+
+      if (this.state.activeprojectid) {
+
+        let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
         myuser.projects.myproject[i].zipcode = zipcode;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
+      } else {
+        let providerid = myuser.providerid;
+        let projectid = makeID.projectid.call(this);
+        let title = this.state.title;
+        let scope = this.state.scope;
+        let city = this.state.city
+        let projectstate = this.state.projectstate;
+        let address = this.state.address;
+        let newProject = CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode);
+        if (myuser.hasOwnProperty("projects")) {
+          myuser.projects.myproject.push(newProject)
+        } else {
+          myuser.projects = { myproject: [newProject] }
+        }
+        this.setState({ activeprojectid: projectid })
+
+
       }
+
 
     }
 
   }
   getzipcode() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
-    if (myproject) {
+
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid);
       return (myproject.zipcode)
     } else {
       return this.state.zipcode;
@@ -274,76 +413,102 @@ class MyProjects extends Component {
   }
   showprojectform() {
     const pm = new PM();
-    const myproject = pm.getactiveproject.call(this);
+
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
-    if (myproject) {
-      return (<div style={{ ...styles.generalFlex }}>
-        <div style={{ ...styles.flex1 }}>
-          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-            <div style={{ ...styles.flex1 }}>
-              Scope of Work
+
+    return (<div style={{ ...styles.generalFlex }}>
+      <div style={{ ...styles.flex1 }}>
+        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+          <div style={{ ...styles.flex1 }}>
+            Scope of Work
               <textarea style={{ ...styles.generalField, ...regularFont, ...styles.generalFont }}
-                value={this.getscope()}
-                onChange={event => { this.handlescope(event.target.value) }}></textarea>
-            </div>
-          </div>
-
-          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-            <div style={{ ...styles.flex1 }}>
-              Address
-              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
-                value={this.getaddress()}
-                onChange={event => { this.handleaddress(event.target.value) }}
-              />
-            </div>
-            <div style={{ ...styles.flex1 }}>
-              City
-              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
-                value={this.getcity()}
-                onChange={event => { this.handlecity(event.target.value) }}
-              />
-            </div>
-          </div>
-
-          <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-            <div style={{ ...styles.flex1 }}>
-              State
-              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
-                value={this.getprojectstate()}
-                onChange={event => { this.handleprojectstate(event.target.value) }}
-              />
-            </div>
-            <div style={{ ...styles.flex1 }}>
-              Zipcode
-              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
-                value={this.getzipcode()}
-                onChange={event => { this.handlezipcode(event.target.value) }}
-              />
-            </div>
+              value={this.getscope()}
+              onChange={event => { this.handlescope(event.target.value) }}></textarea>
           </div>
         </div>
-      </div>)
-    } else {
-      return;
-    }
+
+        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+          <div style={{ ...styles.flex1 }}>
+            Address
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+              value={this.getaddress()}
+              onChange={event => { this.handleaddress(event.target.value) }}
+            />
+          </div>
+          <div style={{ ...styles.flex1 }}>
+            City
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+              value={this.getcity()}
+              onChange={event => { this.handlecity(event.target.value) }}
+            />
+          </div>
+        </div>
+
+        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+          <div style={{ ...styles.flex1 }}>
+            State
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+              value={this.getprojectstate()}
+              onChange={event => { this.handleprojectstate(event.target.value) }}
+            />
+          </div>
+          <div style={{ ...styles.flex1 }}>
+            Zipcode
+              <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
+              value={this.getzipcode()}
+              onChange={event => { this.handlezipcode(event.target.value) }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>)
+
   }
 
-  async checkprojectid(projectid) {
+  async checkprojectid(title) {
+    const pm = new PM();
+    const myuser = pm.getuser.call(this)
+    if (myuser) {
+      let myproject = pm.getprojectbytitle.call(this, title);
 
-    try {
+      if (!myproject.hasOwnProperty("invalid")) {
+        try {
 
-      let response = await CheckProjectID(projectid);
-      if (response.hasOwnProperty("valid")) {
-        this.setState({ projectidcheck: true, message: '' })
+          let response = await CheckProjectID(title);
+          console.log(response)
 
-      } else if (response.hasOwnProperty("invalid")) {
-        this.setState({ projectidcheck: false, message: response.message })
+
+          if (myproject) {
+            let i = pm.getprojectkeytitle.call(this, title)
+            if (response.hasOwnProperty("valid")) {
+
+              if (myuser.projects.myproject[i].hasOwnProperty("valid")) {
+                delete myuser.projects.myproject[i].invalid;
+                this.props.reduxUser(myuser)
+                this.setState({ message: '' })
+              }
+
+
+
+            } else if (response.hasOwnProperty("invalid") && myproject) {
+              myuser.projects.myproject[i].invalid = response.invalid;
+              this.props.reduxUser(myuser)
+              this.setState({ message: response.message })
+
+            }
+
+          }
+
+
+
+        } catch (err) {
+          alert(err)
+        }
 
       }
 
-    } catch (err) {
-      alert(err)
+
     }
 
   }
@@ -358,34 +523,26 @@ class MyProjects extends Component {
       return;
     }
   }
-  handleshowprojectid() {
+  showprojectmenu() {
     const pm = new PM();
-    const myproject = pm.getactiveproject.call(this);
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this);
-    const activebackground = pm.getactiveprojectbackground.call(this, myproject.projectid)
-    const touchIcon = pm.gettouchicon.call(this)
-    if (myproject) {
 
-      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject(false) }}>
-        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>  Active Project ID is {myproject.projectid}, Touch to Make Unactive
-      </div>)
 
-    } else {
-      return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-        <div style={{ ...styles.flex5, ...styles.generalFont, ...regularFont }}>
-          Create A Project ID
+    return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+      <div style={{ ...styles.flex5, ...styles.generalFont, ...regularFont }}>
+        Create A Project URL
           <input type="text" style={{ ...styles.generalFont, ...regularFont, ...styles.addLeftMargin, ...styles.generalField }}
-            value={this.state.projectid}
-            onChange={event => { this.setState({ projectid: event.target.value }) }}
-            onBlur={event => { this.checkprojectid(event.target.value) }}
-          />
-        </div>
-        <div style={{ ...styles.flex1 }}>
-          {this.handleregisternow()}
-        </div>
-      </div>)
-    }
+          value={this.gettitle()}
+          onChange={event => { this.handletitle(event.target.value) }}
+          onBlur={event => { this.checkprojectid(event.target.value) }}
+        />
+      </div>
+      <div style={{ ...styles.flex1 }}>
+        {this.handleregisternow()}
+      </div>
+    </div>)
+
   }
   render() {
     const pm = new PM();
@@ -396,7 +553,7 @@ class MyProjects extends Component {
       <div style={{ ...styles.generalFlex }}>
         <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
 
-          {this.handleshowprojectid()}
+          {this.showprojectmenu()}
 
 
 

@@ -162,8 +162,8 @@ export async function CheckEmailAddress(emailaddress) {
             return resp.json();
         })
 }
-export async function CheckProjectID(projectid) {
-    const APIURL = `https://civilengineer.io/projectmanagement/api/checknewprojectid.php?projectid=${projectid}`
+export async function CheckProjectID(title) {
+    const APIURL = `https://civilengineer.io/projectmanagement/api/checknewprojectid.php?title=${title}`
     return fetch(APIURL)
         .then(resp => {
 
@@ -183,11 +183,11 @@ export async function CheckProjectID(projectid) {
             return resp.json();
         })
 }
-export async function CheckProviderID(providerid) {
+export async function CheckProfile(profile) {
 
-    var APIURL = `https://civilengineer.io/projectmanagement/api/checkproviderid.php?providerid=${providerid}`
+    var APIURL = `https://civilengineer.io/projectmanagement/api/checkproviderid.php?profile=${profile}`
 
-    return fetch(APIURL)
+    return fetch(APIURL, { credentials: 'include' })
         .then(resp => {
 
             if (!resp.ok) {

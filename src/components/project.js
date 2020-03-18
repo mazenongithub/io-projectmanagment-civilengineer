@@ -67,17 +67,17 @@ class Project extends Component {
     const pm = new PM();
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
-    let activeprojectid = pm.getactiveprojectid.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     const touchIcon = pm.gettouchicon.call(this)
     let activebackground = pm.getactiveprojectbackground.call(this, projectid)
-    if (activeprojectid === projectid) {
+    if (myproject.projectid === projectid) {
       return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject(false) }}>
         <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>Active Project ID is {projectid}, Touch to Make unactive
-  </div>)
+      </div>)
     } else {
       return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject({ projectid }) }}>
         <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>   Touch to Make Active
-</div>)
+      </div>)
     }
   }
 
@@ -86,7 +86,7 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
+      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
       if (myproject) {
         let i = pm.getactiveprojectkey.call(this);
         myuser.projects.myproject[i].scope = scope;
@@ -100,7 +100,7 @@ class Project extends Component {
   }
   getscope() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     if (myproject) {
       return (myproject.scope)
     } else {
@@ -111,7 +111,7 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
+      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
       if (myproject) {
         let i = pm.getactiveprojectkey.call(this);
         myuser.projects.myproject[i].address = address;
@@ -125,7 +125,7 @@ class Project extends Component {
   }
   getaddress() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     if (myproject) {
       return (myproject.address)
     } else {
@@ -137,7 +137,7 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
+      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
       if (myproject) {
         let i = pm.getactiveprojectkey.call(this);
         myuser.projects.myproject[i].city = city;
@@ -151,7 +151,7 @@ class Project extends Component {
   }
   getcity() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     if (myproject) {
       return (myproject.city)
     } else {
@@ -162,7 +162,7 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
+      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
       if (myproject) {
         let i = pm.getactiveprojectkey.call(this);
         myuser.projects.myproject[i].projectstate = projectstate;
@@ -176,7 +176,7 @@ class Project extends Component {
   }
   getprojectstate() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     if (myproject) {
       return (myproject.projectstate)
     } else {
@@ -187,7 +187,7 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getactiveproject.call(this);
+      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
       if (myproject) {
         let i = pm.getactiveprojectkey.call(this);
         myuser.projects.myproject[i].zipcode = zipcode;
@@ -201,7 +201,7 @@ class Project extends Component {
   }
   getzipcode() {
     let pm = new PM();
-    let myproject = pm.getactiveproject.call(this);
+    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
     if (myproject) {
       return (myproject.zipcode)
     } else {
@@ -210,7 +210,7 @@ class Project extends Component {
   }
   showprojectform() {
     const pm = new PM();
-    const myproject = pm.getactiveproject.call(this);
+    const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
     if (myproject) {

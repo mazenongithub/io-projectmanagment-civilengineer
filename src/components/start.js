@@ -30,7 +30,7 @@ import PM from './pm';
 class Start {
 
     setDay(dateencoded) {
-        console.log(dateencoded)
+
         const pm = new PM();
         if (this.state.activemilestoneid) {
             let myuser = pm.getuser.call(this)
@@ -38,7 +38,7 @@ class Start {
             let j = this.getactivemilestonekey();
 
             let newtimein = inputSecOutDateString(dateencoded)
-            console.log(newtimein)
+
             myuser.projects.myproject[i].projectmilestones.mymilestone[j].start = newtimein;
             this.props.reduxUser(myuser)
             this.setState({ render: 'render' })
@@ -588,7 +588,7 @@ class Start {
             let timein = mymilestone.start;
 
             let datein = new Date(`${timein.replace(/-/g, '/')} UTC`);
-            console.log(datein)
+
             showgrid.push(Datein.showgridcalender.call(this, datein))
 
         }

@@ -4,6 +4,7 @@ export function formatDate(timein) {
     return datestring;
 
 }
+
 export function getFirstIsOn(mydate) {
     let monthdisplay = mydate.getMonth() + 1;
     let fullyear = mydate.getFullYear();
@@ -2369,8 +2370,8 @@ export function dbUTCoutputdateobject(datestring) {
     let mytime = new Date(gettime);
     return mytime;
 }
-export function CreateProject(projectid, title, scope, address, city, projectstate, zipcode) {
-    return ({ projectid, title, scope, address, city, projectstate, zipcode })
+export function CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode) {
+    return ({ providerid, projectid, title, scope, address, city, projectstate, zipcode })
 }
 export function UsStates() {
     return ([
@@ -2645,6 +2646,25 @@ export function validateLaborRate(value) {
     }
     return errmsg;
 }
+export function validateTitle(value) {
+    const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,58}(?:[A-Za-z0-9_]))?)$/
+    const test = reg_ex.test(value);
+    value = value.trim();
+    let errmsg = false;
+    if (!value) {
+        errmsg = " Project Title is missing ";
+
+    }
+    else if (value.length > 60) {
+        errmsg = " Title should be less than 60 chars ";
+    }
+    else if (!test) {
+        errmsg = ` Invalid URL / format check your value: ${value} `;
+    }
+
+    return errmsg;
+}
+
 export function validateProviderID(value) {
     const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,34}(?:[A-Za-z0-9_]))?)$/
     const test = reg_ex.test(value);

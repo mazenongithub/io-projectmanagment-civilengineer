@@ -6,7 +6,7 @@ import { purpleCheck, RegisterNowIcon, GoogleSigninIcon, AppleSigninIcon } from 
 import { connect } from 'react-redux';
 import { validateProviderID, validateEmail, returnCompanyList, validatePassword } from './functions';
 import firebase from 'firebase/app';
-import { RegisterUser } from './actions/api';
+import { RegisterUser, CheckProfile } from './actions/api';
 import 'firebase/auth';
 import Profile from './profile';
 
@@ -18,7 +18,7 @@ class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            provideridcheck: true,
+            profilecheck: true,
             client: '',
             clientid: '',
             firstname: '',
@@ -27,7 +27,7 @@ class Register extends Component {
             profileurl: '',
             phonenumber: '',
             emailcheck: true,
-            providerid: '',
+            profile: '',
             pass: '',
             passwordcheck: false
         }
@@ -46,13 +46,31 @@ class Register extends Component {
     updateWindowDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
-    handleproviderid(providerid) {
-        this.setState({ providerid })
-        const errmsg = validateProviderID(providerid);
+    handleprofile(profile) {
+        this.setState({ profile })
+        const errmsg = validateProviderID(profile);
         if (errmsg) {
-            this.setState({ provideridcheck: false, message: errmsg })
+            this.setState({ profilecheck: false, message: errmsg })
         } else {
-            this.setState({ provideridcheck: true, message: "" })
+            this.setState({ profilecheck: true, message: "" })
+        }
+    }
+    async checkprofile(profile) {
+        let validate = validateProviderID(profile)
+
+        if (profile && !validate) {
+            try {
+
+                let response = await CheckProfile(profile);
+                console.log(response)
+                if (response.hasOwnProperty("invalid")) {
+                    this.setState({ profilecheck: false, message: response.message })
+                } else if (response.hasOwnProperty("valid")) {
+                    this.setState({ profilecheck: true, message: "" })
+                }
+            } catch (err) {
+                alert(err)
+            }
         }
     }
     showcreateprovider() {
@@ -61,7 +79,7 @@ class Register extends Component {
         const regularFont = pm.getRegularFont.call(this);
         const goIcon = pm.getGoIcon.call(this)
         const showButton = () => {
-            if (this.state.providerid && this.state.provideridcheck) {
+            if (this.state.profile && this.state.profilecheck) {
                 return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
             } else {
                 return;
@@ -77,9 +95,9 @@ class Register extends Component {
                          </div>
                         <div style={{ ...styles.flex3 }}>
                             <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
-                                value={this.state.providerid}
-                                onChange={event => { this.handleproviderid(event.target.value) }}
-                                onBlur={event => { pm.checkproviderid.call(this, event.target.value) }}
+                                value={this.state.profile}
+                                onChange={event => { this.handleprofile(event.target.value) }}
+                                onBlur={event => { this.checkprofile(event.target.value) }}
                             />
                         </div>
                         <div style={{ ...styles.flex1 }}>
@@ -96,16 +114,16 @@ class Register extends Component {
 
                             <div style={{ ...styles.generalFlex }}>
                                 <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                                    Create A Provider ID
+                                    Create A Profile ID
                                 </div>
                             </div>
 
                             <div style={{ ...styles.generalFlex }}>
                                 <div style={{ ...styles.flex2 }}>
                                     <input type="text" style={{ ...styles.generalField, ...styles.generalFont, ...regularFont }}
-                                        value={this.state.providerid}
-                                        onChange={event => { this.setState({ providerid: event.target.value }) }}
-                                        onBlur={event => { pm.checkproviderid.call(this, event.target.value) }}
+                                        value={this.state.profile}
+                                        onChange={event => { this.handleprofile(event.target.value) }}
+                                        onBlur={event => { pm.checkprofile.call(this, event.target.value) }}
                                     />
                                 </div>
                                 <div style={{ ...styles.flex1 }}>
@@ -122,9 +140,9 @@ class Register extends Component {
 
         const ProviderMessage = () => {
 
-            if (this.state.providerid && this.state.provideridcheck) {
+            if (this.state.profile && this.state.profilecheck) {
                 return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }}>
-                    Your profile will be hosted at {process.env.REACT_APP_CLIENT_API}/{this.state.providerid}
+                    Your profile will be hosted at {process.env.REACT_APP_CLIENT_API}/{this.state.profile}
                 </div>)
             }
 
@@ -294,8 +312,8 @@ class Register extends Component {
             errmsg += this.state.message;
         }
 
-        if (!this.state.provideridcheck) {
-            errmsg += validateProviderID(this.state.providerid);
+        if (!this.state.profilecheck) {
+            errmsg += validateProviderID(this.state.profile);
             errmsg += this.state.message;
         }
 
@@ -318,9 +336,9 @@ class Register extends Component {
             let emailaddress = this.state.emailaddress;
             let profileurl = this.state.profileurl;
             let phonenumber = this.state.phonumber;
-            let providerid = this.state.providerid;
+            let profile = this.state.profile;
             let pass = this.state.pass;
-            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, providerid, pass }
+            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, pass }
 
             let response = await RegisterUser(values);
             console.log(response)

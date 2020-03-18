@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import Start from './start';
 import Completion from './completion'
 import { MyStylesheet } from './styles';
-import { makeID, makeDatefromObj, MyMilestone, milestoneformatdatestring } from './functions';
+import { makeDatefromObj, MyMilestone, milestoneformatdatestring } from './functions';
 import PM from './pm';
+import MakeID from './makeids'
 import { removeIconSmall } from './svg';
 
 class Milestones extends Component {
@@ -29,8 +30,7 @@ class Milestones extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxNavigation({ navigation: "milestones" })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+
 
     }
 
@@ -48,7 +48,7 @@ class Milestones extends Component {
         if (this.state.activemilestoneid) {
             let milestoneid = this.state.activemilestoneid;
             const pm = new PM();
-            const myproject = pm.getproject.call(this)
+            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
                 myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
@@ -66,7 +66,7 @@ class Milestones extends Component {
         if (this.state.activemilestoneid) {
             let milestoneid = this.state.activemilestoneid;
             const pm = new PM();
-            const myproject = pm.getproject.call(this)
+            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
                 myproject.projectmilestones.mymilestone.map((mymilestone) => {
@@ -83,10 +83,11 @@ class Milestones extends Component {
 
     handlemilestone(milestone) {
         let pm = new PM();
+        const makeID = new MakeID();
         let myuser = pm.getuser.call(this);
         if (myuser) {
             let myproject = pm.getproject.call(this)
-            let i = pm.getprojectkey.call(this);
+            let i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
             if (this.state.activemilestoneid) {
 
                 let j = this.getactivemilestonekey();
@@ -95,10 +96,11 @@ class Milestones extends Component {
                 this.setState({ render: 'render' })
 
             } else {
-                let milestoneid = makeID(16)
+                let milestoneid = makeID.milestoneid.call(this)
                 let start = makeDatefromObj(this.state.datein);
                 let completion = makeDatefromObj(this.state.completion);
                 let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
+
                 if (myproject.hasOwnProperty("projectmilestones")) {
                     myuser.projects.myproject[i].projectmilestones.mymilestone.push(mymilestone);
 
@@ -166,13 +168,18 @@ class Milestones extends Component {
     }
     loadmilestoneids() {
         const pm = new PM();
-        const myproject = pm.getproject.call(this);
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         let ids = [];
         if (myproject) {
-            // eslint-disable-next-line
-            myproject.projectmilestones.mymilestone.map(mymilestone => {
-                ids.push(this.showmilestone(mymilestone))
-            })
+
+            if (myproject.hasOwnProperty("projectmilestones")) {
+                // eslint-disable-next-line
+                myproject.projectmilestones.mymilestone.map(mymilestone => {
+                    ids.push(this.showmilestone(mymilestone))
+                })
+
+            }
+
         }
         return ids;
     }
@@ -189,7 +196,7 @@ class Milestones extends Component {
         if (myuser) {
 
             if (window.confirm(`Are you sure you want to delete milestone ${milestone.milestone}?`)) {
-                const i = pm.getactiveprojectkey.call(this);
+                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
                 const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
                 myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
                 this.props.reduxUser(myuser)
@@ -230,14 +237,14 @@ class Milestones extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const headerFont = pm.getHeaderFont.call(this);
-        const myproject = pm.getproject.call(this)
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.alignCenter, ...styles.generalFont, ...headerFont }}>
-                            /{myproject.projectid} <br />
+                            /{myproject.title} <br />
                             Project Milestones
                         </div>
                     </div>

@@ -198,6 +198,9 @@ export function MyStylesheet() {
             height: '122px'
 
         },
+        activebackground: {
+            backgroundColor: '#F7DAF4'
+        },
         generalButton: {
             border: '0px',
             backgroundColor: '#FFFFFF'

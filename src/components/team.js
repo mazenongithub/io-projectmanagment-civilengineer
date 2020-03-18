@@ -86,7 +86,7 @@ class Team extends Component {
                 const myteam = pm.getprojectteam.call(this);
                 const role = this.state.role;
                 let newteam = TeamMember(providerid, role)
-                const i = pm.getprojectkey.call(this);
+                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
                 if (myteam) {
 
                     myuser.projects.myproject[i].projectteam.myteam.push(newteam)
@@ -163,7 +163,7 @@ class Team extends Component {
     }
     showteamids() {
         const pm = new PM();
-        const myproject = pm.getproject.call(this);
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
 
         let myproviders = [];
         if (myproject.hasOwnProperty("projectteam")) {
@@ -186,7 +186,7 @@ class Team extends Component {
         let provider = false;
         if (this.state.activeprovider) {
             const providerid = this.state.activeprovider;
-            const myproject = pm.getproject.call(this);
+            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
 
             if (myproject.hasOwnProperty("projectteam")) {
                 // eslint-disable-next-line
@@ -205,7 +205,7 @@ class Team extends Component {
         let key = false;
         if (this.state.activeprovider) {
             const providerid = this.state.activeprovider;
-            const myproject = pm.getproject.call(this);
+            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
             if (myproject.hasOwnProperty("projectteam")) {
                 // eslint-disable-next-line
                 myproject.projectteam.myteam.map((myteam, i) => {
@@ -232,7 +232,7 @@ class Team extends Component {
         const myuser = pm.getuser.call(this);
         if (myuser) {
             if (this.state.activeprovider) {
-                const i = pm.getprojectkey.call(this)
+                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
                 const j = this.getactiveproviderkey();
                 myuser.projects.myproject[i].projectteam.myteam[j].role = role;
                 this.props.reduxUser(myuser);
@@ -257,7 +257,7 @@ class Team extends Component {
 
             if (window.confirm(`Are you sure you want to delete Provider ${myteam.providerid}?`)) {
 
-                const i = pm.getprojectkey.call(this);
+                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
                 const j = pm.getproviderkeybyid.call(this, myteam.providerid);
                 myuser.projects.myproject[i].projectteam.myteam.splice(j, 1);
                 this.props.reduxUser(myuser);
@@ -268,7 +268,7 @@ class Team extends Component {
         }
     }
     showprovider(myuser) {
-        console.log(myuser)
+
         const styles = MyStylesheet();
         const pm = new PM();
         let regularFont = pm.getRegularFont.call(this);
@@ -289,7 +289,7 @@ class Team extends Component {
             }
         }
         const ProfileImage = () => {
-            console.log(myuser)
+
             if (myuser.profileurl) {
 
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
@@ -335,7 +335,7 @@ class Team extends Component {
     }
     projectteamtitle() {
         const pm = new PM();
-        const myproject = pm.getproject.call(this);
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
         if (myproject.hasOwnProperty("projectteam")) {
