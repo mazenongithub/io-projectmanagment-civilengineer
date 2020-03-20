@@ -258,6 +258,7 @@ class PM {
         const pm = new PM();
         const myproject = pm.getproject.call(this);
 
+
         if (myproject) {
             if (myproject.hasOwnProperty("schedulelabor")) {
                 // eslint-disable-next-line
@@ -318,7 +319,7 @@ class PM {
         const myuser = pm.getuser.call(this)
 
         if (myuser) {
-            const providerid = myuser.providerid;
+            const providerid = myuser.profile;
             const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject) {
 
@@ -616,21 +617,7 @@ class PM {
     }
     getproject() {
         let pm = new PM();
-        let myuser = pm.getuser.call(this)
-        let project = false;
-        let projectid = this.props.match.params.projectid;
-        if (myuser) {
-            if (myuser.hasOwnProperty("projects")) {
-                // eslint-disable-next-line
-                myuser.projects.myproject.map(myproject => {
-                    if (myproject.projectid === projectid) {
-                        project = myproject;
-                    }
-                })
-            }
-
-        }
-
+        let project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
         return project;
     }
     getSmallFont() {
@@ -739,6 +726,7 @@ class PM {
         if (myuser) {
             try {
                 let response = await SaveAllProfile({ myuser });
+                console.log(response)
                 if (response.hasOwnProperty("allusers")) {
                     let companys = returnCompanyList(response.allusers);
                     this.props.reduxAllCompanys(companys)
@@ -747,7 +735,7 @@ class PM {
 
                 }
                 if (response.hasOwnProperty("providerid")) {
-                    console.log(response)
+
                     this.props.reduxUser(response)
                 }
                 if (response.hasOwnProperty("message")) {
@@ -952,7 +940,6 @@ class PM {
 
             // The signed-in user info.
             var user = result.user;
-            console.log(user.providerData[0])
             let client = 'apple';
             let clientid = user.providerData[0].uid;
             let firstname = '';
@@ -969,6 +956,7 @@ class PM {
             let phonenumber = user.phoneNumber;
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
             const response = await ClientLogin(values);
+            console.log(response)
             if (response.hasOwnProperty("allusers")) {
                 let companys = returnCompanyList(response.allusers);
                 this.props.reduxAllCompanys(companys)
@@ -977,7 +965,7 @@ class PM {
 
             }
             if (response.hasOwnProperty("providerid")) {
-                console.log(response)
+
                 this.props.reduxUser(response)
             }
 
@@ -1037,7 +1025,7 @@ class PM {
             provider.addScope('profile');
             let result = await firebase.auth().signInWithPopup(provider)
             var user = result.user;
-            console.log(user.providerData[0]);
+
             let client = 'google';
             let clientid = user.providerData[0].uid;
             let firstname = '';
@@ -1065,7 +1053,7 @@ class PM {
 
             }
             if (response.hasOwnProperty("providerid")) {
-                console.log(response)
+
                 this.props.reduxUser(response)
             }
 

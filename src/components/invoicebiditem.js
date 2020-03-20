@@ -61,7 +61,6 @@ class InvoiceBidItem extends Component {
     getlabor() {
         const pm = new PM();
         const actual = pm.getAllActual.call(this)
-        console.log(actual)
         let csiid = this.props.match.params.csiid;
         let invoiceid = this.props.match.params.invoiceid;
         let laboritems = [];

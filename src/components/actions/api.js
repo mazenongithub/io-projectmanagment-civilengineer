@@ -25,7 +25,7 @@ export async function LoadCSI(providerid) {
 export async function CheckUserLogin() {
 
     let APIURL = `https://civilengineer.io/projectmanagement/api/loadresponse.php`
-    console.log(APIURL)
+
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
         if (!resp.ok) {
@@ -47,7 +47,7 @@ export async function CheckUserLogin() {
 export async function LogoutUser() {
 
     let APIURL = `https://civilengineer.io/projectmanagement/api/logout.php`
-    console.log(APIURL)
+
 
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
@@ -69,11 +69,7 @@ export async function LogoutUser() {
 }
 
 export async function ClientLogin(values) {
-    console.log(values)
-
     var APIURL = `https://civilengineer.io/projectmanagement/api/loginclient.php`
-    console.log(APIURL)
-
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',
@@ -302,10 +298,10 @@ export async function InsertMyProject(values) {
 
 
 export async function RegisterUser(values) {
-    console.log(values)
+
 
     var APIURL = `https://civilengineer.io/projectmanagement/api/register.php`
-    console.log(APIURL)
+
 
     return fetch(APIURL, {
         method: 'post',

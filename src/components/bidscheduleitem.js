@@ -66,7 +66,6 @@ class BidScheduleItem extends Component {
     getlabor() {
         const pm = new PM();
         const schedule = pm.getAllSchedule.call(this)
-        console.log(schedule)
         let csiid = this.props.match.params.csiid;
         let laboritems = [];
 

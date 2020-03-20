@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
 import PM from './pm';
 
 
@@ -169,33 +169,51 @@ class ViewInvoice extends Component {
     showbiditem(item) {
 
         const pm = new PM();
-        let providerid = this.props.match.params.providerid;
-        let projectid = this.props.match.params.projectid;
-        let invoiceid = this.props.match.params.invoiceid;
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const csi = pm.getactualcsibyid.call(this, item.csiid);
-        console.log(csi)
-        let profit = Number(this.getprofit(item.csiid)).toFixed(4)
-        let quantity = item.quantity;
+
         let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
         let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
         let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
-        let unit = item.unit;
+        let providerid = this.props.match.params.providerid;
 
+        let projectid = this.props.match.params.projectid;
+        let invoiceid = this.props.match.params.invoiceid;
+        let profit = () => {
+            return (
+                Number(this.getprofit(item.csiid)).toFixed(4)
+            )
+        }
+        const quantity = () => {
+            return (<div style={{ ...styles.generalContainer }}>
+                Quantity <br />
+                {this.getquantity(csi.csiid)}
+
+            </div>)
+        }
+        const unit = () => {
+            return (
+                <div style={{ ...styles.generalContainer }}>
+                    Unit <br />
+                    {this.getunit(csi.csiid)}
+                </div>)
+        }
         if (this.state.width > 1200) {
             return (
                 <tr>
-                    <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
+                    <td> <Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}/csi/${csi.csiid}`}> Line Item <br />
+                        {csi.csi}-{csi.title} </Link></td>
                     <td style={{ ...styles.alignCenter }}>
-                        {quantity}
+                        {quantity()}
                     </td>
-                    <td style={{ ...styles.alignCenter }}>{unit}</td>
+                    <td style={{ ...styles.alignCenter }}>{unit()}</td>
                     <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit}</td>
+                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
                     <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${unit}`}</td>
+                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
+
 
 
         } else {
@@ -209,12 +227,12 @@ class ViewInvoice extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Quantity <br />
-                                {quantity}
+                                {this.getquantity(csi.csiid)}
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit <br />
-                                {unit}
+                                {this.getunit(csi.csiid)}
 
                             </div>
                         </div>
@@ -226,9 +244,7 @@ class ViewInvoice extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Overhead And Profit % <br />
-                                {profit}
-
-
+                                {+Number(this.getprofit(csi.csiid).toFixed(4))}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
@@ -236,7 +252,7 @@ class ViewInvoice extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${unit}`}
+                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -295,25 +311,76 @@ class ViewInvoice extends Component {
         }
 
     }
-    getbiditems() {
-        let items = [];
+    getitems() {
         const pm = new PM();
         let invoiceid = this.props.match.params.invoiceid;
-        let myinvoice = pm.getinvoicebyid.call(this, invoiceid);
-        if (myinvoice.hasOwnProperty("bid")) {
+        let payitems = pm.getAllActual.call(this)
+
+        let items = [];
+        const validateNewItem = (items, item) => {
+            let validate = true;
             // eslint-disable-next-line
-            items = myinvoice.bid.biditem;
+            items.map(myitem => {
+                if (myitem.csiid === item.csiid) {
+                    validate = false;
+                }
+            })
+            return validate;
+        }
+        // eslint-disable-next-line
+        payitems.map(item => {
+
+            if (item.hasOwnProperty("laborid")) {
+                if (item.invoiceid === invoiceid) {
+                    items.push(item)
+                }
+
+            }
+            if (item.hasOwnProperty("materialid")) {
+                if (item.invoiceid === invoiceid) {
+                    items.push(item)
+                }
+
+            }
+            if (item.hasOwnProperty("equipmentid")) {
+                if (item.invoiceid === invoiceid) {
+                    items.push(item)
+                }
+
+            }
+
+        })
+        let csis = [];
+        if (items.length > 0) {
+            // eslint-disable-next-line
+            items.map(lineitem => {
+                if (validateNewItem(csis, lineitem)) {
+
+                    let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    csis.push(newItem)
+                }
+            })
         }
 
+        return csis;
+    }
+    getunit(csiid) {
+
+        let scheduleitem = this.getactualitem(csiid);
+
+        if (scheduleitem) {
+
+            return scheduleitem.unit;
 
 
-
-        return (items)
+        } else {
+            return ""
+        }
 
     }
     showbiditems() {
 
-        let biditems = this.getbiditems();
+        let biditems = this.getitems();
 
         let lineids = [];
         if (biditems.length > 0) {

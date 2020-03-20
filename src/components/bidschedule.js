@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
 import PM from './pm';
 
 
@@ -77,23 +77,22 @@ class ViewBidSchedule extends Component {
         let profit = 0;
         let directcost = 0;
         let items = this.itemsbycsiid(csiid);
-        console.log(items)
         // eslint-disable-next-line
         items.map(item => {
             if (item.hasOwnProperty("laborid")) {
                 directcost += DirectCostForLabor(item);
                 profit += ProfitForLabor(item);
-                console.log(profit)
+
             }
             if (item.hasOwnProperty("materialid")) {
                 directcost += DirectCostForMaterial(item);
                 profit += ProfitForMaterial(item);
-                console.log(profit)
+
             }
             if (item.hasOwnProperty("equipmentid")) {
                 directcost += DirectCostForEquipment(item);
                 profit += ProfitForEquipment(item);
-                console.log(profit)
+
             }
 
         })
@@ -170,40 +169,81 @@ class ViewBidSchedule extends Component {
 
 
     }
+    getunit(csiid) {
+        let unit = ""
+        const pm = new PM();
+        let myproposal = pm.getproposals.call(this)
+        if (myproposal) {
+            // eslint-disable-next-line
+            myproposal.map(proposals => {
+
+                if (proposals.hasOwnProperty("bidschedule")) {
+                    // eslint-disable-next-line
+                    proposals.bidschedule.biditem.map(item => {
+                        if (item.csiid === csiid) {
+                            unit = item.unit
+                        }
+                    })
+                }
+
+
+            })
+
+        }
+        return unit;
+
+    }
     showbiditem(item) {
 
         const pm = new PM();
         let providerid = this.props.match.params.providerid;
         let projectid = this.props.match.params.projectid;
+
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const csi = pm.getschedulecsibyid.call(this, item.csiid);
-        console.log(csi, item.csiid)
-        let profit = Number(this.getprofit(item.csiid)).toFixed(4)
-        let quantity = item.quantity;
+        let profit = () => {
+            return (
+                Number(this.getprofit(item.csiid)).toFixed(4)
+            )
+        }
         let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
         let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
         let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
-        let unit = item.unit;
+
+        const unit = () => {
+            return (
+                <div style={{ ...styles.generalContainer }}>
+                    Unit <br />
+                    {this.getunit(csi.csiid)}
+                </div>)
+        }
+        const quantity = () => {
+            return (<div style={{ ...styles.generalContainer }}>
+                Quantity <br />
+                {this.getquantity()}
+
+            </div>)
+        }
 
         if (this.state.width > 1200) {
             return (
-                <tr>
+                <tr>                                                                                             /:providerid/myprojects/:projectid/bidschedule/csi/:csiid
                     <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
                     <td style={{ ...styles.alignCenter }}>
-                        {quantity}
+                        {quantity()}
                     </td>
-                    <td style={{ ...styles.alignCenter }}>{unit}</td>
+                    <td style={{ ...styles.alignCenter }}>{unit()}</td>
                     <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit}</td>
+                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
                     <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${unit}`}</td>
+                    <td style={{ ...styles.alignCenter }}>  {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
         } else {
             return (
-                <div style={{ ...styles.generalFlex }} key={item.lineid}>
+                <div style={{ ...styles.generalFlex }} key={csi.csiid}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
@@ -212,12 +252,12 @@ class ViewBidSchedule extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Quantity <br />
-                                {quantity}
+                                {this.getquantity(csi.csiid)}
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit <br />
-                                {unit}
+                                {this.getunit(csi.csiid)}
 
                             </div>
                         </div>
@@ -229,9 +269,7 @@ class ViewBidSchedule extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Overhead And Profit % <br />
-                                {profit}
-
-
+                                {+Number(this.getprofit(csi.csiid).toFixed(4))}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
@@ -239,7 +277,7 @@ class ViewBidSchedule extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${unit}`}
+                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -306,34 +344,61 @@ class ViewBidSchedule extends Component {
         }
 
     }
-    getbiditems() {
-        let items = [];
+    getitems() {
         const pm = new PM();
-        let proposals = pm.getproposals.call(this);
-        if (proposals) {
+        let payitems = pm.getAllSchedule.call(this)
+
+        let items = [];
+        const validateNewItem = (items, item) => {
+            let validate = true;
             // eslint-disable-next-line
-            proposals.map(myproposal => {
-                if (myproposal.hasOwnProperty("bidschedule")) {
-                    // eslint-disable-next-line
-                    myproposal.bidschedule.biditem.map(item => {
-                        items.push(item)
-                    })
-
+            items.map(myitem => {
+                if (myitem.csiid === item.csiid) {
+                    validate = false;
                 }
-
             })
+            return validate;
+        }
+        // eslint-disable-next-line
+        payitems.map(item => {
+
+            if (item.hasOwnProperty("laborid")) {
+
+                items.push(item)
 
 
+            }
+            if (item.hasOwnProperty("materialid")) {
 
+                items.push(item)
+
+
+            }
+            if (item.hasOwnProperty("equipmentid")) {
+
+                items.push(item)
+
+
+            }
+
+        })
+        let csis = [];
+        if (items.length > 0) {
+            // eslint-disable-next-line
+            items.map(lineitem => {
+                if (validateNewItem(csis, lineitem)) {
+
+                    let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    csis.push(newItem)
+                }
+            })
         }
 
-        return (items)
-
+        return csis;
     }
     showbiditems() {
 
-        let biditems = this.getbiditems();
-
+        let biditems = this.getitems();
         let lineids = [];
         if (biditems.length > 0) {
             // eslint-disable-next-line

@@ -2646,6 +2646,10 @@ export function validateLaborRate(value) {
     }
     return errmsg;
 }
+export function CreateBidScheduleItem(csiid, unit, quantity) {
+    return ({ csiid, unit, quantity })
+}
+
 export function validateTitle(value) {
     const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,58}(?:[A-Za-z0-9_]))?)$/
     const test = reg_ex.test(value);

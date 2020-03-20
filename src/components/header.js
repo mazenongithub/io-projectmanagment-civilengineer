@@ -55,7 +55,7 @@ class Header extends Component {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            const providerid = myuser.providerid;
+            const providerid = myuser.profile;
             return (<Link to={`/${providerid}/profile`} className="nav-link"> Profile </Link>);
         }
         else {
@@ -71,7 +71,7 @@ class Header extends Component {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
         if (myuser) {
-            let providerid = myuser.providerid;
+            let providerid = myuser.profile;
             return (<Link className="nav-link" to={`/${providerid}/myprojects`}>  Projects  </Link>);
         }
         else {
@@ -94,7 +94,7 @@ class Header extends Component {
         const myuser = pm.getuser.call(this)
         let providerid = "";
         if (myuser) {
-            providerid = myuser.providerid;
+            providerid = myuser.profile;
         }
         if (navigation) {
 
@@ -130,7 +130,7 @@ class Header extends Component {
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>)
                     return (myjsx);
                 case "team":
-                    providerid = myuser.providerid;
+                    providerid = myuser.profile;
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/team`} className="nav-link">  {`/team`}  </Link>)

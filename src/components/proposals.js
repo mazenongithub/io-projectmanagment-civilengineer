@@ -40,23 +40,31 @@ class Proposals extends Component {
         const projectid = this.props.match.params.projectid;
         const proposalid = myproposal.proposalid;
 
-        const company = () => {
-            if (myprovider.hasOwnProperty("company")) {
-                return myprovider.company.company;
+       
+        const handlemyprovider = () => {
+            if (myprovider) {
+                return (`by ${myprovider.firstname} ${myprovider.lastname}`)
             } else {
                 return;
             }
         }
-        const handlemyprovider = () => {
-            if (myprovider) {
-                return (`by ${myprovider.firstname} ${myprovider.lastname} ${company()}`)
+        const lastupdated = () => {
+            if(myproposal.updated) {
+                return(<span>Last Updated {inputUTCStringForLaborID(myproposal.updated)}</span>)
             } else {
-                return;
+                return (<span>&nbsp;</span>)
+            }
+        }
+        const lastapproved= () => {
+            if(myproposal.approved) {
+                return(<span>Last Approved ${inputUTCStringForLaborID(myproposal.approved)}`</span>)
+            } else {
+                return (<span>&nbsp;</span>)
             }
         }
 
         return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
-            <Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> ProposalID {proposalid} {handlemyprovider()} Last Updated {inputUTCStringForLaborID(myproposal.updated)} Last Approved {inputUTCStringForLaborID(myproposal.approved)}</Link>
+            <Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> ProposalID {proposalid} {lastupdated()} {lastapproved()} {handlemyprovider()} </Link>
         </div>)
     }
     showproposals() {

@@ -128,7 +128,7 @@ class MyProjects extends Component {
 
     }
     if (myuser) {
-      let providerid = myuser.providerid;
+      let providerid = myuser.profile;
       return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
         <div style={{ ...styles.flex1 }}>
 

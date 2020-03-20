@@ -40,23 +40,32 @@ class Invoices extends Component {
         const projectid = this.props.match.params.projectid;
         const invoiceid = myinvoice.invoiceid;
 
-        const company = () => {
-            if (myprovider.hasOwnProperty("company")) {
-                return myprovider.company.company;
-            } else {
-                return;
-            }
-        }
+        
         const handlemyprovider = () => {
             if (myprovider) {
-                return (`by ${myprovider.firstname} ${myprovider.lastname} ${company()}`)
+                return (`by ${myprovider.firstname} ${myprovider.lastname}`)
             } else {
-                return;
+                return (<span>&nbsp;</span>)
             }
         }
+            const lastupdated = () => {
+                if(myinvoice.updated) {
+                    return(<span>Last Updated {inputUTCStringForLaborID(myinvoice.updated)}</span>)
+                } else {
+                    return (<span>&nbsp;</span>)
+                }
+            }
+            const lastapproved= () => {
+                if(myinvoice.approved) {
+                    return(<span>Last Approved ${inputUTCStringForLaborID(myinvoice.approved)}`</span>)
+                } else {
+                    return (<span>&nbsp;</span>)
+                }
+            }
 
+        
         return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
-            <Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> InvoiceID {invoiceid} {handlemyprovider()} Last Updated {inputUTCStringForLaborID(myinvoice.updated)} Last Approved {inputUTCStringForLaborID(myinvoice.approved)}</Link>
+            <Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> InvoiceID {invoiceid} {lastupdated()} {lastapproved()} {handlemyprovider()} </Link>
         </div>)
     }
     showinvoices() {

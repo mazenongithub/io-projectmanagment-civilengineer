@@ -9,7 +9,8 @@ import {
     DirectCostForLabor, ProfitForLabor, DirectCostForMaterial,
     ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment,
     UTCTimefromCurrentDate,
-    UTCStringFormatDateforProposal
+    UTCStringFormatDateforProposal,
+    CreateBidScheduleItem
 } from './functions'
 import PM from './pm';
 
@@ -173,56 +174,90 @@ class ViewProposal extends Component {
 
 
     }
-    showbiditem(item) {
+    getunit(csiid) {
 
+        let scheduleitem = this.getscheduleitem(csiid);
+
+        if (scheduleitem) {
+
+            return scheduleitem.unit;
+
+
+        } else {
+            return ""
+        }
+
+    }
+    showbiditem(item) {
         const pm = new PM();
         let providerid = this.props.match.params.providerid;
         let projectid = this.props.match.params.projectid;
         let proposalid = this.props.match.params.proposalid;
+
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
+        const bidField = pm.getbidfield.call(this)
         const csi = pm.getschedulecsibyid.call(this, item.csiid);
-
-        let profit = Number(this.getprofit(item.csiid)).toFixed(4)
-        let quantity = item.quantity;
+        let profit = () => {
+            return (
+                <input type="text"
+                    value={Number(this.getprofit(item.csiid)).toFixed(4)}
+                    onChange={event => { this.handlechangeprofit(event.target.value, item.csiid) }}
+                    style={{ ...styles.generalFont, ...regularFont, ...styles.generalFont, ...bidField }}
+                />)
+        }
         let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
         let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
         let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
-        let unit = item.unit;
+
+        const unit = () => {
+            return (
+                <div style={{ ...styles.generalContainer }}>
+                    Unit <br />
+                    {this.getunit(csi.csiid)}
+
+                </div>)
+        }
+        const quantity = () => {
+            return (<div style={{ ...styles.generalContainer }}>
+                Quantity <br />
+                {this.getquantity()}
+
+            </div>)
+        }
 
         if (this.state.width > 1200) {
             return (
                 <tr>
                     <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
                     <td style={{ ...styles.alignCenter }}>
-                        {quantity}
+                        {quantity()}
                     </td>
-                    <td style={{ ...styles.alignCenter }}>{unit}</td>
+                    <td style={{ ...styles.alignCenter }}>{unit()}</td>
                     <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit}</td>
+                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
                     <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${unit}`}</td>
+                    <td style={{ ...styles.alignCenter }}>  {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
         } else {
             return (
-                <div style={{ ...styles.generalFlex }} key={item.lineid}>
+                <div style={{ ...styles.generalFlex }} key={csi.csiid}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
+
                                 <Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}/csi/${csi.csiid}`}> Line Item <br />
                                     {csi.csi}-{csi.title} </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Quantity <br />
-                                {quantity}
-
+                                {this.getquantity(csi.csiid)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit <br />
-                                {unit}
-
+                                {this.getunit(csi.csiid)}
                             </div>
                         </div>
 
@@ -233,9 +268,7 @@ class ViewProposal extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Overhead And Profit % <br />
-                                {profit}
-
-
+                                {+Number(this.getprofit(csi.csiid).toFixed(4))}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
@@ -243,7 +276,7 @@ class ViewProposal extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${unit}`}
+                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -317,25 +350,62 @@ class ViewProposal extends Component {
         }
 
     }
-    getbiditems() {
-        let items = [];
+    getitems() {
         const pm = new PM();
         let proposalid = this.props.match.params.proposalid;
-        let myproposal = pm.getproposalbyid.call(this, proposalid);
-        if (myproposal.hasOwnProperty("bidschedule")) {
+        let payitems = pm.getAllSchedule.call(this)
+
+        let items = [];
+        const validateNewItem = (items, item) => {
+            let validate = true;
             // eslint-disable-next-line
-            items = myproposal.bidschedule.biditem;
+            items.map(myitem => {
+                if (myitem.csiid === item.csiid) {
+                    validate = false;
+                }
+            })
+            return validate;
+        }
+        // eslint-disable-next-line
+        payitems.map(item => {
+
+            if (item.hasOwnProperty("laborid")) {
+                if (item.proposalid === proposalid) {
+                    items.push(item)
+                }
+
+            }
+            if (item.hasOwnProperty("materialid")) {
+                if (item.proposalid === proposalid) {
+                    items.push(item)
+                }
+
+            }
+            if (item.hasOwnProperty("equipmentid")) {
+                if (item.proposalid === proposalid) {
+                    items.push(item)
+                }
+
+            }
+
+        })
+        let csis = [];
+        if (items.length > 0) {
+            // eslint-disable-next-line
+            items.map(lineitem => {
+                if (validateNewItem(csis, lineitem)) {
+
+                    let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    csis.push(newItem)
+                }
+            })
         }
 
-
-
-
-        return (items)
-
+        return csis;
     }
     showbiditems() {
 
-        let biditems = this.getbiditems();
+        let biditems = this.getitems();
 
         let lineids = [];
         if (biditems.length > 0) {
@@ -370,7 +440,9 @@ class ViewProposal extends Component {
         const proposal = this.getproposal();
         let updated = "";
         if (proposal) {
-            updated = `Updated On: ${UTCStringFormatDateforProposal(proposal.updated)}`;
+            if (proposal.updated) {
+                updated = `Updated On: ${UTCStringFormatDateforProposal(proposal.updated)}`;
+            }
         }
         return updated;
     }
@@ -379,7 +451,11 @@ class ViewProposal extends Component {
         const proposal = this.getproposal();
         let approved = "";
         if (proposal) {
-            approved = `Approved On: ${UTCStringFormatDateforProposal(proposal.approved)}`;
+
+            if (proposal.approved) {
+                console.log(proposal.approved)
+                approved = `Approved On: ${UTCStringFormatDateforProposal(proposal.approved)}`;
+            }
         }
         return approved;
 
