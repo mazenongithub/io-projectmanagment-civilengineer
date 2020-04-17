@@ -329,18 +329,19 @@ export async function RegisterUser(values) {
 }
 
 export async function UpdateUserPassword(values) {
-    let providerid = values.providerid;
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/updateuserpassword`
-    return fetch(APIURL, {
+    console.log('API', values)
+    var APIURL = `https://civilengineer.io/projectmanagement/api/updateuserpassword.php`
+        return fetch(APIURL, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         }),
 
         body: JSON.stringify(values)
     })
         .then(resp => {
+
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
@@ -353,7 +354,7 @@ export async function UpdateUserPassword(values) {
                     throw err;
                 }
             }
+
             return resp.json();
         })
-
 }

@@ -9,6 +9,17 @@ import { Link } from 'react-router-dom';
 
 
 class PM {
+
+    getupdatepassword() {
+        return({width:'266px',height:'64px'})
+    }
+    getplusicon() {
+        return({width:'63px', height:'63px'})
+    }
+    getminusicon() {
+        return({width:'63px', height:'18px'})
+    }
+    
     getLoginButton() {
         if (this.state.width > 1200) {
             return ({ width: '276px', height: '63px' })
@@ -962,11 +973,11 @@ class PM {
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)
-                this.setState({ client: '', clientid: '', emailaddress: '', message:'' })
+                this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
             } else if (response.hasOwnProperty("message")) {
                 this.setState({ message: response.message })
             }
-           
+
         } catch (err) {
             alert(err)
         }
@@ -992,15 +1003,15 @@ class PM {
             let clientid = user.providerData[0].uid;
             let emailaddress = user.providerData[0].email;
             let emailaddresscheck = false;
-            if(emailaddress) {
+            if (emailaddress) {
                 emailaddresscheck = true;
             }
             let profile = this.state.profile;
-            this.setState({ client,clientid,firstname,lastname,profileurl,phonenumber,emailaddress, emailaddresscheck})
+            this.setState({ client, clientid, firstname, lastname, profileurl, phonenumber, emailaddress, emailaddresscheck })
             if (emailaddress && clientid && client && (this.state.login || this.state.profile)) {
                 try {
 
-                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber,profile }
+                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
                     const response = await ClientLogin(values);
                     console.log(response)
                     if (response.hasOwnProperty("allusers")) {
@@ -1010,7 +1021,7 @@ class PM {
                     }
                     if (response.hasOwnProperty("myuser")) {
                         this.props.reduxUser(response.myuser)
-                        this.setState({ client: '', clientid: '', emailaddress: '', message:'' })
+                        this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
                     } else if (response.hasOwnProperty("message")) {
                         this.setState({ message: response.message })
                     }
@@ -1018,8 +1029,6 @@ class PM {
                     alert(err)
                 }
 
-            } else {
-                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
             }
 
 
@@ -1091,12 +1100,12 @@ class PM {
             }
             let emailaddress = user.providerData[0].email;
             let emailaddresscheck = false;
-            if(emailaddress) {
+            if (emailaddress) {
                 emailaddresscheck = true;
             }
             let profileurl = user.providerData[0].photoURL;
             let phonenumber = user.phoneNumber;
-            this.setState({client,clientid, emailaddress, firstname,lastname,profileurl,phonenumber,emailaddresscheck})
+            this.setState({ client, clientid, emailaddress, firstname, lastname, profileurl, phonenumber, emailaddresscheck })
 
             if (emailaddress && clientid && client && (this.state.login || this.state.profile)) {
                 let profile = this.state.profile;
@@ -1104,7 +1113,7 @@ class PM {
 
 
                     let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
-                    
+
                     const response = await ClientLogin(values);
                     console.log(response)
                     if (response.hasOwnProperty("allusers")) {
@@ -1114,7 +1123,7 @@ class PM {
                     }
                     if (response.hasOwnProperty("myuser")) {
                         this.props.reduxUser(response.myuser)
-                        this.setState({ client: '', clientid: '', emailaddress: '', message:'' })
+                        this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
                     } else if (response.hasOwnProperty("message")) {
                         this.setState({ message: response.message })
                     }
