@@ -314,12 +314,7 @@ class Profile extends Component {
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
-                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
-                        {this.getclientmessage()}
-                    </div>
-                </div>
-
+              
                 <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
                     <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         Email <br />

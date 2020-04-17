@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { GoogleSigninIcon, loginNowIcon, AppleSigninIcon } from './svg';
+import { loginNowIcon } from './svg';
 import * as actions from './actions';
 import './login.css';
-import { ClientLogin } from './actions/api';
 import Profile from './profile';
 import PM from './pm'
-import firebase from 'firebase';
-import { returnCompanyList } from './functions'
-import { MyStylesheet } from './styles'
+import { MyStylesheet } from './styles';
+import ClientID from './clientid';
+import EmailAddress from './emailaddress';
+import Password from './password';
+
 
 
 class Login extends Component {
@@ -24,98 +25,23 @@ class Login extends Component {
             emailaddress: '',
             profileurl: '',
             phonenumber: '',
-            pass: '',
+            password: '',
+            width: '',
+            height: '',
+            login: true,
+            register: false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
-
         window.addEventListener('resize', this.updateWindowDimensions);
         this.props.reduxNavigation({ navigation: "login" })
-        let windowwidth = window.innerWidth;
-        let message = ""
-        if (this.props.hasOwnProperty("match")) {
-            if (this.props.match.hasOwnProperty("params")) {
-                if (this.props.match.params.hasOwnProperty("message")) {
-
-
-                    message = this.props.match.params.message
-
-
-
-
-                }
-            }
-        }
-        this.setState({ message, windowwidth })
-
+        this.updateWindowDimensions();
     }
-
-
-    async appleSignIn() {
-        let provider = new firebase.auth.OAuthProvider('apple.com');
-        provider.addScope('email');
-        provider.addScope('name');
-        try {
-            let result = await firebase.auth().signInWithPopup(provider)
-            // The signed-in user info.
-            var user = result.user;
-            console.log(user)
-            let firstname = "";
-            let lastname = "";
-            if (user.providerData[0].displayName) {
-                firstname = user.providerData[0].displayName.split(' ')[0]
-                lastname = user.providerData[0].displayName.split(' ')[1]
-            }
-            let phonenumber = user.providerData[0].phoneNumber
-            let profileurl = user.providerData[0].photoURL;
-            let client = 'apple';
-            let clientid = user.providerData[0].uid;
-            let emailaddress = user.providerData[0].email;
-
-            if (emailaddress && clientid && client) {
-                try {
-
-                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
-                    const response = await ClientLogin(values);
-                    console.log(response)
-                    if (response.hasOwnProperty("allusers")) {
-                        let companys = returnCompanyList(response.allusers);
-                        this.props.reduxAllCompanys(companys)
-                        this.props.reduxAllUsers(response.allusers);
-                        delete response.allusers;
-
-                    }
-                    if (response.hasOwnProperty("providerid")) {
-                        this.props.reduxUser(response)
-                    }
-                    if (response.hasOwnProperty("message")) {
-                        this.setState({ message: response.message })
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-
-            } else {
-                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
-            }
-
-
-            // ...
-        } catch (err) {
-            alert(err)
-            // ...
-        };
-
-
-    }
-
-
 
 
     updateWindowDimensions() {
-        let windowwidth = window.innerWidth;
-        this.setState({ windowwidth })
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
     handleSubmit(event) {
         if (this.props.emailaddress.hasOwnProperty("errmsg") || this.props.password.hasOwnProperty("errmsg")) {
@@ -132,264 +58,82 @@ class Login extends Component {
         return
 
     }
-    showextrarow() {
-        if (this.state.windowwidth > 720 && this.state.windowwidth < 1080) {
-
-            return (<div className="login-buttonrow">
-                &nbsp; </div>)
-        }
-    }
-    showmessagerow() {
-
-    }
-
-    getLoginMessage() {
-        let message;
-        if (this.props.hasOwnProperty("match")) {
-            if (this.props.match.hasOwnProperty("params")) {
-                message = this.props.match.params.message;
-            }
-        }
-        return message;
-    }
-
-    async loginuser() {
-        try {
-
-
-            let emailaddress = this.state.emailaddress;
-            let pass = this.state.pass;
-            let clientid = this.state.clientid;
-            let client = this.state.client;
-            let values = { emailaddress, pass, clientid, client }
-            const response = await ClientLogin(values);
-            console.log(response)
-            if (response.hasOwnProperty("allusers")) {
-                let companys = returnCompanyList(response.allusers);
-                this.props.reduxAllCompanys(companys)
-                this.props.reduxAllUsers(response.allusers);
-
-            }
-            if (response.hasOwnProperty("myuser")) {
-
-                this.props.reduxUser(response.myuser)
-            }
-            if (response.hasOwnProperty("message")) {
-                this.setState({ message: response.message })
-            }
-        } catch (err) {
-            alert(err)
-        }
-    }
-
-    async clientlogin() {
-        try {
-
-            let client = this.state.client;
-            let clientid = this.state.clientid;
-            let firstname = this.state.firstname;
-            let lastname = this.state.lastname;
-            let emailaddress = this.state.emailaddress;
-            let profileurl = this.state.profileurl;
-            let phonenumber = this.state.phonumber;
-            let providerid = this.state.providerid;
-            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, providerid }
-            const response = await ClientLogin(values);
-            console.log(response)
-            if (response.hasOwnProperty("allusers")) {
-                let companys = returnCompanyList(response.allusers);
-                this.props.reduxAllCompanys(companys)
-                this.props.reduxAllUsers(response.allusers);
-                delete response.allusers;
-
-            }
-            if (response.hasOwnProperty("providerid")) {
-                this.props.reduxUser(response)
-            }
-            if (response.hasOwnProperty("message")) {
-                this.setState({ message: response.message })
-            }
-        } catch (err) {
-            alert(err)
-        }
-    }
-    async googleSignIn() {
-
-
-        try {
-
-
-            let provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('email');
-            provider.addScope('profile');
-            let result = await firebase.auth().signInWithPopup(provider)
-            var user = result.user;
-            let client = 'google';
-            let clientid = user.providerData[0].uid;
-            let firstname = '';
-            if (user.providerData[0].displayName) {
-                firstname = user.providerData[0].displayName.split(' ')[0]
-            }
-
-            let lastname = '';
-            if (user.providerData[0].displayName) {
-                lastname = user.providerData[0].displayName.split(' ')[1]
-            }
-            let emailaddress = user.providerData[0].email;
-            let profileurl = user.providerData[0].photoURL;
-            let phonenumber = user.phoneNumber;
-
-            if (emailaddress && clientid && client) {
-                try {
-
-
-                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber }
-                    const response = await ClientLogin(values);
-                    console.log(response)
-                    if (response.hasOwnProperty("allusers")) {
-                        let companys = returnCompanyList(response.allusers);
-                        this.props.reduxAllCompanys(companys)
-                        this.props.reduxAllUsers(response.allusers);
-                        delete response.allusers;
-
-                    }
-                    if (response.hasOwnProperty("providerid")) {
-                        this.props.reduxUser(response)
-                    }
-                    if (response.hasOwnProperty("message")) {
-                        this.setState({ message: response.message })
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-
-            } else {
-                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
-            }
 
 
 
 
-
-        } catch (error) {
-            alert(error)
-        }
-
-
-
-
-    }
-    handleloginicon() {
-        const pm = new PM();
-        const styles = MyStylesheet();
-        const projectIcon = pm.getsaveprojecticon.call(this)
-        if (this.state.client && this.state.clientid && this.state.providerid) {
-            return (<div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1, ...styles.generalFont, ...styles.alignCenter }}>
-                    <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { this.clientlogin() }}>
-                        {loginNowIcon()}
-                    </button>
-                </div>
-            </div>)
-        } else if (this.state.emailaddress && this.state.pass) {
-            return (<div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1, ...styles.generalFont, ...styles.alignCenter }}>
-                    <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { this.loginuser() }}>
-                        {loginNowIcon()}
-                    </button>
-                </div>
-            </div>)
-        }
-    }
     render() {
         let pm = new PM();
         let myuser = pm.getuser.call(this);
         const styles = MyStylesheet();
-        const regularFont = pm.getRegularFont.call(this)
+        const clientid = new ClientID();
+        const emailaddress = new EmailAddress();
+        const password = new Password();
+        const headerFont = pm.getHeaderFont.call(this);
+        const regularFont = pm.getRegularFont.call(this);
         const showpassword = () => {
             if (!this.state.client && !this.state.clientid) {
+                return (password.showpassword.call(this))
+            } else {
+                return (<span>&nbsp;</span>)
+            }
+        }
+        const loginNow = () => {
 
+            const pm = new PM();
+            const styles = MyStylesheet();
+            const projectIcon = pm.getsaveprojecticon.call(this)
+            if (this.state.client && this.state.clientid && this.state.emailaddress) {
                 return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                    <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                        Password
-                        </div>
-                    <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
-                        <input type="password" name="pass" style={{ ...styles.generalField, ...regularFont }}
-                            value={this.state.pass}
-                            onChange={event => { this.setState({ pass: event.target.value }) }}
-                        />
+                    <div style={{ ...styles.flex1, ...styles.generalFont, ...styles.alignCenter }}>
+                        <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { pm.clientlogin.call(this) }}>
+                            {loginNowIcon()}
+                        </button>
+                    </div>
+                </div>)
+            } else if (this.state.emailaddress && this.state.password) {
+                return (<div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1, ...styles.generalFont, ...styles.alignCenter }}>
+                        <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { pm.clientlogin.call(this) }}>
+                            {loginNowIcon()}
+                        </button>
                     </div>
                 </div>)
             } else {
-                return;
+                return (<span>&nbsp;</span>)
             }
         }
+
         const Login = () => {
 
-
-
             return (
-                <div className="general-flex">
-                    <div className="flex-1 general-container">
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
 
-                        <div className="general-flex">
-                            <div className="flex-1 general-container">
-                                <div className="flex-1 general-container login-aligncenter titleFont">
-                                    Login
-                                </div>
-                            </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont }}>
+                                Login
+                    </div>
                         </div>
 
-                        <div className="general-flex">
-                            <div className="flex-1 general-container">
+                        {clientid.showclientid.call(this)}
 
-                                <div className="flex-1 general-container login-aligncenter titleFont">
-                                    <button className="btnclientlogin general-button" onClick={() => { this.googleSignIn() }}>
-                                        {GoogleSigninIcon()}
-                                    </button>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div className="general-flex">
-                            <div className="flex-1 general-container">
-                                <div className="flex-1 general-container login-aligncenter titleFont">
-                                    <button className="btnclientlogin general-button" onClick={() => { this.appleSignIn() }}>
-                                        {AppleSigninIcon()}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                                Email
-                            </div>
-                            <div style={{ ...styles.flex2, ...styles.generalFont, ...regularFont }}>
-                                <input type="text" name="emailaddress" style={{ ...styles.generalField, ...regularFont, ...styles.generalFont }}
-                                    value={this.state.emailaddress}
-                                    onChange={event => { this.setState({ emailaddress: event.target.value }) }} />
-                            </div>
-                        </div>
+                        {emailaddress.showemailaddress.call(this)}
 
                         {showpassword()}
 
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...styles.generalFont, ...styles.alignCenter, ...regularFont }}>
+                        {loginNow()}
+
+
+                        <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                            <div style={{ ...styles.flex1, ...styles.alignCenter, ...regularFont }}>
                                 {this.state.message}
                             </div>
                         </div>
 
-                        {this.handleloginicon()}
-
-
-
-
-
                     </div>
-                </div>)
+                </div>
+            )
         }
         if (myuser) {
             return (<Profile />)

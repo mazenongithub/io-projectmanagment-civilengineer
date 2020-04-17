@@ -20,9 +20,10 @@ import ProposalBidItem from './components/proposalbiditem';
 import InvoiceBidItem from './components/invoicebiditem';
 import ViewInvoice from './components/viewinvoice'
 import * as actions from './components/actions';
+import Privacy from './components/privacy'
 import Invoices from './components/invoices';
 import Team from './components/team';
-// import ViewProfile from './components/viewprofile';
+//import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
 import { CheckUserLogin } from './components/actions/api'
 
@@ -70,6 +71,7 @@ class App extends Component {
                         <Header />
                         <Switch>
                             <Route exact path="/" component={Home} />
+                            <Route exact path="/providers/privacy_policy" component={Privacy} />
                             <Route exact path="/providers/join" component={Join} />
                             <Route exact path="/providers/register" component={Register} />
                             <Route exact path="/providers/login" component={Login} />
