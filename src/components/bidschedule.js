@@ -97,8 +97,21 @@ class ViewBidSchedule extends Component {
 
         })
 
-        return ((profit / directcost) * 100)
+        return (((profit / directcost)+.03) * 100)
 
+    }
+
+    getoverhead(csiid) {
+        let directcost = Number(this.getdirectcost(csiid));
+        let profit = Number(this.getprofit(csiid));
+
+        if (!profit) {
+            profit = 1
+        } else {
+            profit = 1 + (profit / 100)
+        }
+        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        return overhead;
     }
     getdirectcost(csiid) {
         const pm = new PM()
@@ -146,13 +159,14 @@ class ViewBidSchedule extends Component {
 
         let directcost = Number(this.getdirectcost(csiid));
         let profit = Number(this.getprofit(csiid));
+        let overhead = this.getoverhead();
 
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = directcost * profit;
+        let bidprice = (directcost * profit) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {

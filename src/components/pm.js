@@ -765,6 +765,7 @@ class PM {
             }
         }
     }
+
     handlereplaceids(response) {
 
         if (response.hasOwnProperty("replaceids")) {
@@ -842,10 +843,8 @@ class PM {
                     }
                     if (response.hasOwnProperty("myuser")) {
                         if (response.hasOwnProperty("replaceids")) {
-                            if (response.replaceids.hasOwnProperty("milestones")) {
-
-                            }
                             pm.handlereplaceids.call(this, response)
+                            this.props.reduxUser(response.myuser)
                         }
 
 

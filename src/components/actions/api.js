@@ -1,5 +1,32 @@
 /* global fetch */
 /* global Headers */
+export function payInvoice(providerid,invoiceid,token,amount) {
+    const values = {providerid,invoiceid,token,amount}
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/invoicepayment/${invoiceid}`
+    return fetch(APIURL, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+        }),
+
+        body: JSON.stringify(values)
+    })
+        .then(resp => {
+
+            if (!resp.ok) {
+                if (resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+
+                        throw data.message;
+                    })
+                }
+
+            }
+
+            return resp.json();
+        })
+}
 export async function LoadCSI(providerid) {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/loadcsi`

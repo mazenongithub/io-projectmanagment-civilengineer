@@ -101,8 +101,21 @@ class ViewProposal extends Component {
 
         })
 
-        return ((profit / directcost) * 100)
+        return (((profit / directcost)+.03) * 100)
 
+    }
+
+    getoverhead(csiid) {
+        let directcost = Number(this.getdirectcost(csiid));
+        let profit = Number(this.getprofit(csiid));
+
+        if (!profit) {
+            profit = 1
+        } else {
+            profit = 1 + (profit / 100)
+        }
+        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        return overhead;
     }
     getdirectcost(csiid) {
         const pm = new PM()
@@ -149,15 +162,15 @@ class ViewProposal extends Component {
     }
     getbidprice(csiid) {
 
-        let directcost = Number(this.getdirectcost(csiid));
-        let profit = Number(this.getprofit(csiid));
-
+        let directcost =this.getdirectcost(csiid);
+        let profit =this.getprofit(csiid);
+        let overhead = this.getoverhead();
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = directcost * profit;
+        let bidprice = (directcost * (profit)) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {
@@ -267,7 +280,7 @@ class ViewProposal extends Component {
                                 ${directcost}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Overhead And Profit % <br />
+                                Profit % <br />
                                 {+Number(this.getprofit(csi.csiid).toFixed(4))}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>

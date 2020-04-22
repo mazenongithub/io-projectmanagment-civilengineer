@@ -97,7 +97,7 @@ class Bid extends Component {
 
         })
 
-        return ((profit / directcost) * 100)
+        return (((profit / directcost)+.03) * 100)
 
     }
     getdirectcost(csiid) {
@@ -146,13 +146,13 @@ class Bid extends Component {
 
         let directcost = Number(this.getdirectcost(csiid));
         let profit = Number(this.getprofit(csiid));
-
+        let overhead = this.getoverhead(csiid);
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = directcost * profit;
+        let bidprice =(directcost * profit) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {
@@ -192,6 +192,18 @@ class Bid extends Component {
         }
         return unit;
 
+    }
+    getoverhead(csiid) {
+        let directcost = Number(this.getdirectcost(csiid));
+        let profit = Number(this.getprofit(csiid));
+
+        if (!profit) {
+            profit = 1
+        } else {
+            profit = 1 + (profit / 100)
+        }
+        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        return overhead;
     }
     showbiditem(item) {
 

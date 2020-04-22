@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
 import PM from './pm';
-
+import StripeCheckout from 'react-stripe-checkout';
+import { payInvoice } from './actions/api'
 
 class ViewInvoice extends Component {
     constructor(props) {
@@ -93,7 +94,7 @@ class ViewInvoice extends Component {
 
         })
 
-        return ((profit / directcost) * 100)
+        return (((profit / directcost)+.03) * 100)
 
     }
     getdirectcost(csiid) {
@@ -139,8 +140,7 @@ class ViewInvoice extends Component {
         return directcost;
 
     }
-    getbidprice(csiid) {
-
+    getoverhead(csiid) {
         let directcost = Number(this.getdirectcost(csiid));
         let profit = Number(this.getprofit(csiid));
 
@@ -149,7 +149,21 @@ class ViewInvoice extends Component {
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = directcost * profit;
+        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        return overhead;
+    }
+    getbidprice(csiid) {
+
+        let directcost = this.getdirectcost(csiid);
+        let profit = this.getprofit(csiid);
+        let overhead = this.getoverhead(csiid)
+
+        if (!profit) {
+            profit = 1
+        } else {
+            profit = 1 + (profit / 100)
+        }
+        let bidprice = (directcost * (profit)) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {
@@ -166,6 +180,19 @@ class ViewInvoice extends Component {
 
 
     }
+    getamount() {
+        let biditems = this.getitems();
+        let amount = 0;
+        if (biditems.length > 0) {
+            // eslint-disable-next-line
+            biditems.map(item => {
+                amount += this.getbidprice(item.csiid)
+            })
+        }
+        return Math.round((amount * 100) + 30)
+
+
+    }
     showbiditem(item) {
 
         const pm = new PM();
@@ -173,7 +200,7 @@ class ViewInvoice extends Component {
         const regularFont = pm.getRegularFont.call(this);
         const csi = pm.getactualcsibyid.call(this, item.csiid);
 
-        let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
+        let bidprice = this.getbidprice(item.csiid).toFixed(2);
         let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
         let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
         let providerid = this.props.match.params.providerid;
@@ -182,7 +209,7 @@ class ViewInvoice extends Component {
         let invoiceid = this.props.match.params.invoiceid;
         let profit = () => {
             return (
-                Number(this.getprofit(item.csiid)).toFixed(4)
+                this.getprofit(item.csiid) 
             )
         }
         const quantity = () => {
@@ -243,8 +270,8 @@ class ViewInvoice extends Component {
                                 ${directcost}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Overhead And Profit % <br />
-                                {+Number(this.getprofit(csi.csiid).toFixed(4))}
+                               Profit % <br />
+                                {profit()}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
@@ -258,6 +285,29 @@ class ViewInvoice extends Component {
                     </div>
                 </div>)
         }
+    }
+
+    async processStripe(token, amount) {
+        const providerid = this.props.match.params.providerid;
+        const invoiceid = this.props.match.params.invoiceid;
+        let response = await payInvoice(providerid, invoiceid, token, amount)
+        console.log(response)
+
+    }
+
+    stripeform() {
+        const invoiceid = this.props.match.params.invoiceid;
+        const amount = this.getamount();
+
+        return (
+            <StripeCheckout
+                name="CivilEngineer.io"
+                description={`Payment for Invoice ID ${invoiceid}`}
+                amount={amount}
+                token={token => this.processStripe(token, amount)}
+                stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
+            />
+        )
     }
     getinvoice() {
         let invoiceid = this.props.match.params.invoiceid;
@@ -410,7 +460,15 @@ class ViewInvoice extends Component {
                         </div>
                     </div>
                     {pm.showbidtable.call(this)}
+
+                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
+                            {this.stripeform()}
+                        </div>
+                    </div>
                     {pm.showprojectid.call(this)}
+
+
                 </div>
             </div>)
 
