@@ -2723,6 +2723,111 @@ export function validateProjectScope(title) {
     }
     return message;
 }
+export function balanceAvailable() {
+    
+        return({
+        "id": "evt_1FvYGsAaUD8nQT7tpCiQ97MG",
+        "object": "event",
+        "api_version": "2019-02-11",
+        "created": 1577750858,
+        "data": {
+          "object": {
+            "object": "balance",
+            "available": [
+              {
+                "amount": 28453,
+                "currency": "usd",
+                "source_types": {
+                  "card": 28453
+                }
+              }
+            ],
+            "connect_reserved": [
+              {
+                "amount": 0,
+                "currency": "usd"
+              }
+            ],
+            "livemode": false,
+            "pending": [
+              {
+                "amount": 0,
+                "currency": "usd",
+                "source_types": {
+                  "card": 0
+                }
+              }
+            ]
+          }
+        },
+        "livemode": false,
+        "pending_webhooks": 0,
+        "request": {
+          "id": null,
+          "idempotency_key": null
+        },
+        "type": "balance.available"
+      })
+     
+}
+export function StripeChargeObj() {
+    return(
+        { id: 'evt_1Gak5TAaUD8nQT7t2tn71GF6',
+    object: 'event',
+    api_version: '2019-02-11',
+    created: 1587567727,
+    data: 
+     { object: 
+        { id: 'ch_1Gak5TAaUD8nQT7tzOnEOU4G',
+          object: 'charge',
+          amount: 97113,
+          amount_refunded: 0,
+          application: null,
+          application_fee: null,
+          application_fee_amount: null,
+          balance_transaction: 'txn_1Gak5TAaUD8nQT7tiFUbIhsi',
+          billing_details: [Object],
+          calculated_statement_descriptor: 'CIVILENGINEER.IO',
+          captured: true,
+          created: 1587567727,
+          currency: 'usd',
+          customer: null,
+          description: 'Payment for Invoice 85XL',
+          destination: null,
+          dispute: null,
+          disputed: false,
+          failure_code: null,
+          failure_message: null,
+          fraud_details: {},
+          invoice: null,
+          livemode: false,
+          metadata: {},
+          on_behalf_of: null,
+          order: null,
+          outcome: [Object],
+          paid: true,
+          payment_intent: null,
+          payment_method: 'card_1Gak5PAaUD8nQT7tORX70TXr',
+          payment_method_details: [Object],
+          receipt_email: null,
+          receipt_number: null,
+          receipt_url: 'https://pay.stripe.com/receipts/acct_1E3uN4AaUD8nQT7t/ch_1Gak5TAaUD8nQT7tzOnEOU4G/rcpt_H929H1eIniA6WNbKGJdi4bf5AmbnW4I',
+          refunded: false,
+          refunds: [Object],
+          review: null,
+          shipping: null,
+          source: [Object],
+          source_transfer: null,
+          statement_descriptor: null,
+          statement_descriptor_suffix: null,
+          status: 'succeeded',
+          transfer_data: null,
+          transfer_group: null } },
+    livemode: false,
+    pending_webhooks: 1,
+    request: { id: 'req_t8AAjCOfjlZki0', idempotency_key: null },
+    type: 'charge.succeeded' })
+}
 export function validatePassword(val) {
     let validate = {};
     validate.validate = true;

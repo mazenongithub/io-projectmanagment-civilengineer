@@ -46,6 +46,23 @@ class PM {
         return user;
     }
 
+    getinvoicekeybyid(invoiceid) {
+        const pm = new PM();
+        let key = false;
+        let myproject = pm.getprojectbyid.call(this,this.props.match.params.projectid)
+
+        if (myproject.hasOwnProperty("invoices")) {
+            // eslint-disable-next-line
+            myproject.invoices.myinvoice.map((myinvoice, i) => {
+                if (myinvoice.invoiceid === invoiceid) {
+                    key = i;
+                }
+            })
+
+        }
+        return key;
+    }
+
     showlinedetail() {
         const pm = new PM();
         const styles = MyStylesheet();

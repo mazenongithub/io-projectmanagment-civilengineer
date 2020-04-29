@@ -3,10 +3,13 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal } from './functions'
 import PM from './pm';
 import StripeCheckout from 'react-stripe-checkout';
-import { payInvoice } from './actions/api'
+import { payInvoice, NodeLogin } from './actions/api'
+import { GoogleSigninIcon, AppleSigninIcon } from './svg';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 class ViewInvoice extends Component {
     constructor(props) {
@@ -94,7 +97,7 @@ class ViewInvoice extends Component {
 
         })
 
-        return (((profit / directcost)+.03) * 100)
+        return (((profit / directcost)) * 100)
 
     }
     getdirectcost(csiid) {
@@ -140,16 +143,25 @@ class ViewInvoice extends Component {
         return directcost;
 
     }
+    getmyoverhead(csiid) {
+
+        let directcost = this.getdirectcost(csiid);
+        let profit = this.getprofit(csiid);
+        let myoverhead = .03 * (directcost * 1 + (profit / 100));
+        return myoverhead;
+    }
     getoverhead(csiid) {
-        let directcost = Number(this.getdirectcost(csiid));
-        let profit = Number(this.getprofit(csiid));
+
+        let directcost = this.getdirectcost(csiid);
+        let profit = this.getprofit(csiid)
+        let myoverhead = this.getmyoverhead(csiid);
 
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        let overhead = ((directcost * profit) + myoverhead) * .029 + .029 * (((directcost * profit) + myoverhead) * .029) + .029 * (.029 * (((directcost * profit) + myoverhead) * .029)) + .029 * (+ .029 * (.029 * (((directcost * profit) + myoverhead) * .029))) + .029 * (.029 * (+ .029 * (.029 * (((directcost * profit) + myoverhead) * .029))))
         return overhead;
     }
     getbidprice(csiid) {
@@ -157,13 +169,14 @@ class ViewInvoice extends Component {
         let directcost = this.getdirectcost(csiid);
         let profit = this.getprofit(csiid);
         let overhead = this.getoverhead(csiid)
+        let myoverhead = this.getmyoverhead(csiid)
 
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = (directcost * (profit)) + overhead;
+        let bidprice = ((directcost * profit) + myoverhead) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {
@@ -209,7 +222,7 @@ class ViewInvoice extends Component {
         let invoiceid = this.props.match.params.invoiceid;
         let profit = () => {
             return (
-                this.getprofit(item.csiid) 
+                this.getprofit(item.csiid)
             )
         }
         const quantity = () => {
@@ -270,7 +283,7 @@ class ViewInvoice extends Component {
                                 ${directcost}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                               Profit % <br />
+                                Profit % <br />
                                 {profit()}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
@@ -287,27 +300,231 @@ class ViewInvoice extends Component {
         }
     }
 
-    async processStripe(token, amount) {
-        const providerid = this.props.match.params.providerid;
-        const invoiceid = this.props.match.params.invoiceid;
-        let response = await payInvoice(providerid, invoiceid, token, amount)
-        console.log(response)
+    getapproved() {
+        const pm = new PM();
+
+        const invoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid)
+        let approved = "";
+        if (invoice) {
+
+            if (invoice.approved) {
+
+                approved = `Stripe Payment Captured On: ${UTCStringFormatDateforProposal(invoice.approved)}`;
+            }
+        }
+        return approved;
 
     }
 
+    async processStripe(token, amount) {
+        const pm = new PM();
+        const providerid = this.props.match.params.providerid;
+        const invoiceid = this.props.match.params.invoiceid;
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+            try {
+
+
+                let response = await payInvoice(providerid, invoiceid, token, amount)
+                console.log(response)
+                if (response.hasOwnProperty("approved")) {
+                    const i = pm.getprojectkeybyid.call(this, this.props.match.params.projectid);
+                    const j = pm.getinvoicekeybyid.call(this, this.props.match.params.invoiceid);
+                    myuser.projects.myproject[i].invoices.myinvoice[j].approved = response.approved;
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+
+                }
+
+            } catch (err) {
+                alert(err)
+            }
+
+        }
+
+    }
+
+    async loginclientnode(emailaddress, client, clientid) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+
+
+            let values = { emailaddress, client, clientid }
+
+            try {
+                let response = await NodeLogin(values)
+                console.log(response)
+                if (response.hasOwnProperty("myuser")) {
+                    myuser.node = true;
+                    this.props.reduxUser(myuser)
+                    this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
+                } else if (response.hasOwnProperty("message")) {
+                    this.setState({ message: response.message })
+                }
+            } catch (err) {
+                alert(err)
+            }
+
+        }
+
+    }
+
+    async appleSignIn() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+            let provider = new firebase.auth.OAuthProvider('apple.com');
+            provider.addScope('email');
+            provider.addScope('name');
+
+            try {
+                let result = await firebase.auth().signInWithPopup(provider)
+                // The signed-in user info.
+                var user = result.user;
+                console.log(user)
+
+                let client = 'apple';
+                let clientid = user.providerData[0].uid;
+                let emailaddress = user.providerData[0].email;
+
+
+                if (emailaddress && clientid && client) {
+                    try {
+
+                        let values = { client, clientid, emailaddress }
+                        const response = await NodeLogin(values);
+                        console.log(response)
+                        if (response.hasOwnProperty("myuser")) {
+                            myuser.node = true;
+                            this.props.reduxUser(myuser)
+                            this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
+                        } else if (response.hasOwnProperty("message")) {
+                            this.setState({ message: response.message })
+                        }
+                    } catch (err) {
+                        alert(err)
+                    }
+
+                }
+
+
+                // ...
+            } catch (err) {
+                alert(err)
+                // ...
+            }
+
+        }
+
+
+    }
+    async googleSignIn() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if (myuser) {
+
+            try {
+
+
+                let provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                let result = await firebase.auth().signInWithPopup(provider)
+                var user = result.user;
+                let client = 'google';
+                let clientid = user.providerData[0].uid;
+                let emailaddress = user.providerData[0].email;
+
+
+                console.log(emailaddress, clientid, client)
+                if (emailaddress && clientid && client) {
+
+                    try {
+
+
+                        let values = { client, clientid, emailaddress }
+
+                        let response = await NodeLogin(values)
+                        console.log(response)
+                        if (response.hasOwnProperty("myuser")) {
+                            myuser.node = true;
+                            this.props.reduxUser(myuser)
+                            this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
+                        } else if (response.hasOwnProperty("message")) {
+                            this.setState({ message: response.message })
+                        }
+
+                    } catch (err) {
+                        alert(err)
+                    }
+
+                }
+
+
+            } catch (error) {
+                alert(error)
+            }
+
+        }
+
+
+    }
     stripeform() {
+        const pm = new PM();
         const invoiceid = this.props.match.params.invoiceid;
         const amount = this.getamount();
+        const invoice = pm.getinvoicebyid.call(this, invoiceid)
+        const myuser = pm.getuser.call(this);
+        const styles = MyStylesheet();
+        const loginButton = pm.getLoginButton.call(this);
+        const regularFont = pm.getRegularFont.call(this)
+        if (!invoice.approved) {
 
-        return (
-            <StripeCheckout
-                name="CivilEngineer.io"
-                description={`Payment for Invoice ID ${invoiceid}`}
-                amount={amount}
-                token={token => this.processStripe(token, amount)}
-                stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
-            />
-        )
+            if (myuser.node) {
+                return (
+                    <StripeCheckout
+                        name="CivilEngineer.io"
+                        description={`Payment for Invoice ID ${invoiceid}`}
+                        amount={amount}
+                        token={token => this.processStripe(token, amount)}
+                        stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
+                    />
+                )
+
+
+            } else {
+
+                return (
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1 }}>
+
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1, ...regularFont, ...styles.alignCenter }}>
+                                    Login in to Payments to Secure Transaction
+                                </div>
+                            </div>
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1 }}>
+
+
+                                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { this.googleSignIn() }}>
+                                        {GoogleSigninIcon()}
+                                    </button>
+                                </div>
+                                <div style={{ ...styles.flex1 }}>
+                                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { this.appleSignIn() }}>
+                                        {AppleSigninIcon()}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>)
+
+            }
+
+        }
     }
     getinvoice() {
         let invoiceid = this.props.match.params.invoiceid;
@@ -449,6 +666,7 @@ class ViewInvoice extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const invoiceid = this.props.match.params.invoiceid;
+        const regularFont = pm.getRegularFont.call(this)
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -460,6 +678,12 @@ class ViewInvoice extends Component {
                         </div>
                     </div>
                     {pm.showbidtable.call(this)}
+
+                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...regularFont, ...styles.generalFont }}>
+                            {this.getapproved()}
+                        </div>
+                    </div>
 
                     <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
                         <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>

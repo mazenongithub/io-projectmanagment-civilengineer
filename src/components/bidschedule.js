@@ -97,7 +97,7 @@ class ViewBidSchedule extends Component {
 
         })
 
-        return (((profit / directcost)+.03) * 100)
+        return (((profit / directcost)) * 100)
 
     }
 
