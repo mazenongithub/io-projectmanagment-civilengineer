@@ -10,12 +10,11 @@ import { UploadProfileImage } from './actions/api';
 import { returnCompanyList, inputUTCStringForLaborID, validateProviderID } from './functions';
 import { CheckProfile } from './actions/api'
 import PM from './pm'
-import UpdatePassword from './updatepassword'
 
 class Profile extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', width: 0, height: 0, message: '',showpassword:false, password:'', passwordcheck:false  }
+        this.state = { render: '', width: 0, height: 0, message: '', showpassword: false, password: '', passwordcheck: false }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
     componentDidMount() {
@@ -315,7 +314,7 @@ class Profile extends Component {
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
-              
+
                 <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
                     <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         Email <br />
@@ -451,7 +450,7 @@ class Profile extends Component {
         const folderSize = pm.getFolderSize.call(this);
         const arrowHeight = pm.getArrowHeight.call(this);
         const goIcon = pm.getGoIcon.call(this);
-        const updatepassword = new UpdatePassword();
+
 
         const showButton = () => {
 
@@ -514,7 +513,7 @@ class Profile extends Component {
 
                 {pm.showsaveproject.call(this)}
 
-                {updatepassword.showupdatepassword.call(this)}
+
 
 
             </div>
