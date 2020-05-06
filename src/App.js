@@ -48,19 +48,24 @@ class App extends Component {
 
     async checkuserlogin() {
         //let response = TestUser();
-        let response = await CheckUserLogin();
-        console.log(response)
-        if (response.hasOwnProperty("allusers")) {
-            let companys = returnCompanyList(response.allusers);
-            this.props.reduxAllCompanys(companys)
-            this.props.reduxAllUsers(response.allusers);
+        try {
 
+
+            let response = await CheckUserLogin();
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+
+            }
+            if (response.hasOwnProperty("myuser")) {
+
+                this.props.reduxUser(response.myuser)
+            }
+        } catch (err) {
+            alert(err)
         }
-        if (response.hasOwnProperty("myuser")) {
-
-            this.props.reduxUser(response.myuser)
-        }
-
 
     }
     render() {

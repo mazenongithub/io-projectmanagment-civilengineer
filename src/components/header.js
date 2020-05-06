@@ -24,15 +24,20 @@ class Header extends Component {
         this.setState({ widthofwindow: window.innerWidth });
     }
     async logoutuser() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+
+       const providerid = myuser.providerid;
         try {
-            let response = await LogoutUser();
+            let response = await LogoutUser(providerid);
             if (response.hasOwnProperty("message")) {
                 this.props.reduxUser(response)
             }
         } catch (err) {
             alert(err)
         }
-
+    }
     }
     showlogout() {
         const pm = new PM();

@@ -4,9 +4,6 @@ import * as actions from './actions';
 import { MyStylesheet } from './styles';
 import PM from './pm';
 import { TouchIcon } from './svg';
-//import { CreateProject } from './functions';
-import { InsertMyProject } from './actions/api'
-import { returnCompanyList } from './functions'
 
 class Project extends Component {
   constructor(props) {
@@ -32,37 +29,7 @@ class Project extends Component {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
 
-  async insertnewproject() {
-    const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
 
-      let providerid = myuser.providerid;
-      let projectid = this.state.projectid;
-      let title = this.state.title;
-      let scope = this.state.scope;
-      let address = this.state.address;
-      let city = this.state.city
-      let projectstate = this.state.projectstate;
-      let zipcode = this.state.zipcode;
-      let values = { providerid, projectid, title, scope, address, city, projectstate, zipcode }
-      let response = await InsertMyProject(values);
-      console.log(response)
-      if (response.hasOwnProperty("allusers")) {
-        let companys = returnCompanyList(response.allusers);
-        this.props.reduxAllCompanys(companys)
-        this.props.reduxAllUsers(response.allusers);
-        delete response.allusers;
-
-      }
-      if (response.hasOwnProperty("providerid")) {
-        console.log(response)
-        this.props.reduxUser(response)
-      }
-      this.props.reduxProject({ projectid })
-      this.setState({ projectid: '', projectidcheck: false })
-    }
-  }
   showactiveprojectid(projectid) {
     const pm = new PM();
     const styles = MyStylesheet();

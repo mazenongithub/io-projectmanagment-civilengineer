@@ -4,7 +4,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, ClientLogin } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
 import { Link } from 'react-router-dom';
 
 
@@ -978,7 +978,7 @@ class PM {
             let password = this.state.password;
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, password }
             console.log(values)
-            const response = await ClientLogin(values);
+            const response = await NodeLogin(values);
             console.log(response)
             if (response.hasOwnProperty("allusers")) {
                 let companys = returnCompanyList(response.allusers);
@@ -1028,7 +1028,7 @@ class PM {
                 try {
 
                     let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
-                    const response = await ClientLogin(values);
+                    const response = await NodeLogin(values);
                     console.log(response)
                     if (response.hasOwnProperty("allusers")) {
                         let companys = returnCompanyList(response.allusers);
@@ -1130,7 +1130,7 @@ class PM {
 
                     let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
 
-                    const response = await ClientLogin(values);
+                    const response = await NodeLogin(values);
                     console.log(response)
                     if (response.hasOwnProperty("allusers")) {
                         let companys = returnCompanyList(response.allusers);

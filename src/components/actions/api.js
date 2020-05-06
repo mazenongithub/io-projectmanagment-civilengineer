@@ -55,31 +55,32 @@ export function payInvoice(providerid, invoiceid, token, amount) {
             return resp.json();
         })
 }
-export async function LoadCSI(providerid) {
 
-    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/loadcsi`
-
-    return fetch(APIURL, { credentials: 'include' }).then(resp => {
-
-        if (!resp.ok) {
-            if (resp.status >= 400 && resp.status < 500) {
-                return resp.json().then(data => {
-                    let err = { errorMessage: data.message };
-                    throw err;
-                })
-            }
-            else {
-                let err = { errorMessage: 'Please try again later, server is not responding' };
-                throw err;
-            }
-        }
-
-        return resp.json();
-    })
-}
 export async function CheckUserLogin() {
 
-    let APIURL = `https://civilengineer.io/projectmanagement/api/loadresponse.php`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checkuser`
+
+    return fetch(APIURL, { credentials: 'include' }).then(resp => {
+
+        if (!resp.ok) {
+            if (resp.status >= 400 && resp.status < 500) {
+                return resp.json().then(data => {
+                    throw data.message
+                })
+            }
+            else {
+                let err = { errorMessage: 'Please try again later, server is not responding' };
+                throw err;
+            }
+        }
+
+        return resp.json();
+    })
+}
+export async function LogoutUser(providerid) {
+
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/logout`
+
 
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
@@ -99,61 +100,13 @@ export async function CheckUserLogin() {
         return resp.json();
     })
 }
-export async function LogoutUser() {
-
-    let APIURL = `https://civilengineer.io/projectmanagement/api/logout.php`
 
 
-    return fetch(APIURL, { credentials: 'include' }).then(resp => {
-
-        if (!resp.ok) {
-            if (resp.status >= 400 && resp.status < 500) {
-                return resp.json().then(data => {
-                    let err = { errorMessage: data.message };
-                    throw err;
-                })
-            }
-            else {
-                let err = { errorMessage: 'Please try again later, server is not responding' };
-                throw err;
-            }
-        }
-
-        return resp.json();
-    })
-}
-
-export async function ClientLogin(values) {
-    var APIURL = `https://civilengineer.io/projectmanagement/api/loginclient.php`
-    return fetch(APIURL, {
-        method: 'post',
-        credentials: 'include',
-        headers: new Headers({
-            'Content-Type': 'application/json',
-        }),
-
-        body: JSON.stringify(values)
-    })
-        .then(resp => {
-
-            if (!resp.ok) {
-                if (resp.status >= 400 && resp.status < 500) {
-                    return resp.json().then(data => {
-
-                        throw data.message;
-                    })
-                }
-
-            }
-
-            return resp.json();
-        })
-}
 
 
 export async function SaveAllProfile(myuser) {
-
-    var APIURL = `https://civilengineer.io/projectmanagement/api/userendpoint.php`
+    const providerid = myuser.myuser.providerid;
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/saveallprofile`
 
     return fetch(APIURL, {
         method: 'post',
@@ -258,8 +211,8 @@ export async function CheckProfile(profile) {
         })
 }
 
-export async function UploadProfileImage(formdata) {
-    var APIURL = `https://civilengineer.io/projectmanagement/api/uploadprofilephoto.php`
+export async function UploadProfileImage(formdata, providerid) {
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/uploadprofilephoto`
 
     return fetch(APIURL, {
         method: 'post',
@@ -319,97 +272,3 @@ export async function handleStripePayment(values) {
         })
 }
 
-
-export async function InsertMyProject(values) {
-
-    var APIURL = `https://civilengineer.io/projectmanagement/api/insertmyproject.php`
-    return fetch(APIURL, {
-        method: 'post',
-        credentials: 'include',
-        headers: new Headers({
-            'Content-Type': 'application/json',
-        }),
-
-        body: JSON.stringify(values)
-    })
-        .then(resp => {
-
-            if (!resp.ok) {
-                if (resp.status >= 400 && resp.status < 500) {
-                    return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
-                    })
-                }
-                else {
-                    let err = { errorMessage: 'Please try again later, server is not responding' };
-                    throw err;
-                }
-            }
-
-            return resp.json();
-        })
-}
-
-
-export async function RegisterUser(values) {
-
-
-    var APIURL = `https://civilengineer.io/projectmanagement/api/register.php`
-
-
-    return fetch(APIURL, {
-        method: 'post',
-        credentials: 'include',
-        headers: new Headers({
-            'Content-Type': 'application/json',
-        }),
-
-        body: JSON.stringify(values)
-    })
-        .then(resp => {
-
-            if (!resp.ok) {
-                if (resp.status >= 400 && resp.status < 500) {
-                    return resp.json().then(data => {
-
-                        throw data.message;
-                    })
-                }
-
-            }
-
-            return resp.json();
-        })
-}
-
-export async function UpdateUserPassword(values) {
-    console.log('API', values)
-    var APIURL = `https://civilengineer.io/projectmanagement/api/updateuserpassword.php`
-    return fetch(APIURL, {
-        method: 'post',
-        credentials: 'include',
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        }),
-
-        body: JSON.stringify(values)
-    })
-        .then(resp => {
-
-            if (!resp.ok) {
-                if (resp.status >= 400 && resp.status < 500) {
-                    return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
-                    })
-                }
-                else {
-                    let err = { errorMessage: 'Please try again later, server is not responding' };
-                    throw err;
-                }
-            }
-
-            return resp.json();
-        })
-}
