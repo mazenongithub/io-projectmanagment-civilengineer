@@ -8,7 +8,6 @@ import 'firebase/auth';
 import Profile from './profile';
 import ProviderID from './providerid';
 import EmailAddress from './emailaddress';
-import Password from './password';
 import ClientID from './clientid';
 import PM from './pm';
 //import Profile from './profile';
@@ -58,7 +57,7 @@ class Register extends Component {
         const clientid = new ClientID();
         const providerid = new ProviderID();
         const emailaddress = new EmailAddress();
-        const password = new Password();
+    
         const RegisterNow = () => {
             if(this.state.clientid && this.state.client && this.state.profile && this.state.profilecheck && this.state.emailaddress && this.state.emailaddresscheck) {
                 return (<div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.bottomMargin15 }}>
@@ -72,14 +71,7 @@ class Register extends Component {
                 return(<span>&nbsp;</span>)
             }
         }
-        const showpassword = () => {
-            if(!this.state.client && !this.state.clientid) {
-                return(password.showpassword.call(this))
-            } else {
-                return(<span>&nbsp;</span>)
-            }
-
-        }
+    
         const Register = () => {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -93,7 +85,7 @@ class Register extends Component {
                     {clientid.showclientid.call(this)}
                     {providerid.showproviderid.call(this)}
                     {emailaddress.showemailaddress.call(this)}
-                    {showpassword()}
+           
                     {RegisterNow()}
 
                     <div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>

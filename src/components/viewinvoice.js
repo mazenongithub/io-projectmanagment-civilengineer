@@ -6,10 +6,8 @@ import { MyStylesheet } from './styles';
 import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal } from './functions'
 import PM from './pm';
 import StripeCheckout from 'react-stripe-checkout';
-import { payInvoice, NodeLogin } from './actions/api'
-import { GoogleSigninIcon, AppleSigninIcon } from './svg';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { payInvoice } from './actions/api'
+
 
 class ViewInvoice extends Component {
     constructor(props) {
@@ -344,144 +342,17 @@ class ViewInvoice extends Component {
 
     }
 
-    async loginclientnode(emailaddress, client, clientid) {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+  
 
-
-            let values = { emailaddress, client, clientid }
-
-            try {
-                let response = await NodeLogin(values)
-                console.log(response)
-                if (response.hasOwnProperty("myuser")) {
-                    myuser.node = true;
-                    this.props.reduxUser(myuser)
-                    this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
-                } else if (response.hasOwnProperty("message")) {
-                    this.setState({ message: response.message })
-                }
-            } catch (err) {
-                alert(err)
-            }
-
-        }
-
-    }
-
-    async appleSignIn() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-            let provider = new firebase.auth.OAuthProvider('apple.com');
-            provider.addScope('email');
-            provider.addScope('name');
-
-            try {
-                let result = await firebase.auth().signInWithPopup(provider)
-                // The signed-in user info.
-                var user = result.user;
-                console.log(user)
-
-                let client = 'apple';
-                let clientid = user.providerData[0].uid;
-                let emailaddress = user.providerData[0].email;
-
-
-                if (emailaddress && clientid && client) {
-                    try {
-
-                        let values = { client, clientid, emailaddress }
-                        const response = await NodeLogin(values);
-                        console.log(response)
-                        if (response.hasOwnProperty("myuser")) {
-                            myuser.node = true;
-                            this.props.reduxUser(myuser)
-                            this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
-                        } else if (response.hasOwnProperty("message")) {
-                            this.setState({ message: response.message })
-                        }
-                    } catch (err) {
-                        alert(err)
-                    }
-
-                }
-
-
-                // ...
-            } catch (err) {
-                alert(err)
-                // ...
-            }
-
-        }
-
-
-    }
-    async googleSignIn() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-
-            try {
-
-
-                let provider = new firebase.auth.GoogleAuthProvider();
-                provider.addScope('email');
-                provider.addScope('profile');
-                let result = await firebase.auth().signInWithPopup(provider)
-                var user = result.user;
-                let client = 'google';
-                let clientid = user.providerData[0].uid;
-                let emailaddress = user.providerData[0].email;
-
-
-                console.log(emailaddress, clientid, client)
-                if (emailaddress && clientid && client) {
-
-                    try {
-
-
-                        let values = { client, clientid, emailaddress }
-
-                        let response = await NodeLogin(values)
-                        console.log(response)
-                        if (response.hasOwnProperty("myuser")) {
-                            myuser.node = true;
-                            this.props.reduxUser(myuser)
-                            this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
-                        } else if (response.hasOwnProperty("message")) {
-                            this.setState({ message: response.message })
-                        }
-
-                    } catch (err) {
-                        alert(err)
-                    }
-
-                }
-
-
-            } catch (error) {
-                alert(error)
-            }
-
-        }
-
-
-    }
     stripeform() {
         const pm = new PM();
         const invoiceid = this.props.match.params.invoiceid;
         const amount = this.getamount();
         const invoice = pm.getinvoicebyid.call(this, invoiceid)
-        const myuser = pm.getuser.call(this);
-        const styles = MyStylesheet();
-        const loginButton = pm.getLoginButton.call(this);
-        const regularFont = pm.getRegularFont.call(this)
+  
         if (!invoice.approved) {
 
-            if (myuser.node) {
+         
                 return (
                     <StripeCheckout
                         name="CivilEngineer.io"
@@ -493,36 +364,7 @@ class ViewInvoice extends Component {
                 )
 
 
-            } else {
-
-                return (
-
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1 }}>
-
-                            <div style={{ ...styles.generalFlex }}>
-                                <div style={{ ...styles.flex1, ...regularFont, ...styles.alignCenter }}>
-                                    Login in to Payments to Secure Transaction
-                                </div>
-                            </div>
-                            <div style={{ ...styles.generalFlex }}>
-                                <div style={{ ...styles.flex1 }}>
-
-
-                                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { this.googleSignIn() }}>
-                                        {GoogleSigninIcon()}
-                                    </button>
-                                </div>
-                                <div style={{ ...styles.flex1 }}>
-                                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { this.appleSignIn() }}>
-                                        {AppleSigninIcon()}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>)
-
-            }
+           
 
         }
     }

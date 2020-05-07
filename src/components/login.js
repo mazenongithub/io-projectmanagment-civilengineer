@@ -8,7 +8,7 @@ import PM from './pm'
 import { MyStylesheet } from './styles';
 import ClientID from './clientid';
 import EmailAddress from './emailaddress';
-import Password from './password';
+
 
 
 
@@ -68,16 +68,10 @@ class Login extends Component {
         const styles = MyStylesheet();
         const clientid = new ClientID();
         const emailaddress = new EmailAddress();
-        const password = new Password();
+      
         const headerFont = pm.getHeaderFont.call(this);
         const regularFont = pm.getRegularFont.call(this);
-        const showpassword = () => {
-            if (!this.state.client && !this.state.clientid) {
-                return (password.showpassword.call(this))
-            } else {
-                return (<span>&nbsp;</span>)
-            }
-        }
+   
         const loginNow = () => {
 
             const pm = new PM();
@@ -120,7 +114,6 @@ class Login extends Component {
 
                         {emailaddress.showemailaddress.call(this)}
 
-                        {showpassword()}
 
                         {loginNow()}
 
