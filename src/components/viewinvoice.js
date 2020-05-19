@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal, inputUTCStringForLaborID } from './functions'
 import PM from './pm';
 import StripeCheckout from 'react-stripe-checkout';
 import { payInvoice } from './actions/api'
@@ -191,13 +191,125 @@ class ViewInvoice extends Component {
 
 
     }
-    getamount() {
-        let biditems = this.getitems();
+    invoicesummary() {
+        const pm = new PM();
+        let invoiceamount = 0
+        const biditems = this.getitems();
+        const styles = MyStylesheet();
+        const headerFont = pm.getHeaderFont.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+        if (biditems.length > 0) {
+            // eslint-disable-next-line
+            biditems.map(item => {
+                invoiceamount += this.getbidprice(item.csiid)
+            })
+        }
+        invoiceamount = invoiceamount + .3;
+
+        const charges = pm.getchargesbyinvoiceid.call(this, this.props.match.params.invoiceid)
+        let payments = 0;
+        if (charges) {
+            // eslint-disable-next-line
+            charges.map(charge => {
+                payments += charge.amount;
+            })
+        }
+        invoiceamount = Number(invoiceamount).toFixed(2)
+        payments = Number(payments).toFixed(2);
+        const summary = () => {
+        if (invoiceamount > payments) {
+            return (
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
+                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                            <div style={{ ...styles.flex1,...styles.generalFont, ...regularFont }}>
+                                Please Pay the Amount of ${Number(this.getamount()/100).toFixed(2)}
+                            </div>
+
+                        </div>
+                        <div style={{...styles.generalFlex,...styles.bottomMargin15}}>
+                            <div style={{...styles.flex1,...styles.alignCenter}}>
+                            {this.stripeform()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            )
+        } else {
+            return (<div style={{ ...styles.generalFont, ...regularFont }}>There is no Balance Due</div>)
+        }
+
+    }
+        
+        return(
+            <div style={{ ...styles.generalFlex }}>
+        <div style={{ ...styles.flex1}}>
+        <div style={{ ...styles.generalFlex }}>
+        <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
+            <u>Invoice Summary </u>
+        </div>
+        </div>
+        {summary()}
+    </div>
+    </div>)
+
+
+
+    }
+    showsummary() {
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this)
+        const headerFont = pm.getHeaderFont.call(this)
+        const styles = MyStylesheet();
+        const biditems = this.getitems();
         let amount = 0;
         if (biditems.length > 0) {
             // eslint-disable-next-line
             biditems.map(item => {
                 amount += this.getbidprice(item.csiid)
+            })
+        }
+        if (amount > 0) {
+
+            return (
+                <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
+                                <u>Invoice {this.props.match.params.invoiceid}</u>
+                            </div>
+                        </div>
+
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
+                                Please Pay the Amount of ${Number(amount + .3).toFixed(2)}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            )
+        }
+    }
+    getamount() {
+        const pm = new PM();
+        const charges = pm.getchargesbyinvoiceid.call(this, this.props.match.params.invoiceid)
+        const biditems = this.getitems();
+        let amount = 0;
+        if (biditems.length > 0) {
+            // eslint-disable-next-line
+            biditems.map(item => {
+                amount += this.getbidprice(item.csiid)
+            })
+        }
+
+        if (charges) {
+            // eslint-disable-next-line
+            charges.map(charge => {
+                amount = amount - Number(charge.amount)
             })
         }
         return Math.round((amount * 100) + 30)
@@ -322,17 +434,27 @@ class ViewInvoice extends Component {
         if (myuser) {
             try {
 
-
                 let response = await payInvoice(providerid, invoiceid, token, amount)
                 console.log(response)
-                if (response.hasOwnProperty("approved")) {
-                    const i = pm.getprojectkeybyid.call(this, this.props.match.params.projectid);
-                    const j = pm.getinvoicekeybyid.call(this, this.props.match.params.invoiceid);
-                    myuser.projects.myproject[i].invoices.myinvoice[j].approved = response.approved;
-                    this.props.reduxUser(myuser);
-                    this.setState({ render: 'render' })
+                if(response.hasOwnProperty("invoice")) {
+                    const invoice = response.invoice;
+                    const invoiceid = invoice.invoiceid;
+                    const myinvoice = pm.getinvoicebyid.call(this,invoiceid)
+                    const myproject = pm.getprojectbyid.call(this,this.props.match.params.projectid)
+                    if(myproject) {
+                        const i = pm.getprojectkeybyid.call(this,this.props.match.params.projectid)
+                    if(myinvoice) {
+                
+                    const j = pm.getinvoicekeybyid.call(this,invoiceid)
+                    myuser.projects.myproject[i].invoices.myinvoice[j] = response.invoice;
+                    this.props.reduxUser(myuser)
+                    this.setState({render:'render'})
+
+                    }
 
                 }
+                }
+              
 
             } catch (err) {
                 alert(err)
@@ -342,31 +464,25 @@ class ViewInvoice extends Component {
 
     }
 
-  
+
 
     stripeform() {
-        const pm = new PM();
         const invoiceid = this.props.match.params.invoiceid;
         const amount = this.getamount();
-        const invoice = pm.getinvoicebyid.call(this, invoiceid)
-  
-        if (!invoice.approved) {
+        if (amount > 0) {
 
-         
-                return (
-                    <StripeCheckout
-                        name="CivilEngineer.io"
-                        description={`Payment for Invoice ID ${invoiceid}`}
-                        amount={amount}
-                        token={token => this.processStripe(token, amount)}
-                        stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
-                    />
-                )
-
-
-           
+            return (
+                <StripeCheckout
+                    name="CivilEngineer.io"
+                    description={`Payment for Invoice ID ${invoiceid}`}
+                    amount={amount}
+                    token={token => this.processStripe(token, amount)}
+                    stripeKey={process.env.REACT_APP_STRIPE_PUBLIC}
+                />
+            )
 
         }
+
     }
     getinvoice() {
         let invoiceid = this.props.match.params.invoiceid;
@@ -501,6 +617,54 @@ class ViewInvoice extends Component {
 
         return lineids;
     }
+    showcharge(charge) {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const created = inputUTCStringForLaborID(charge.created);
+        const regularFont = pm.getRegularFont.call(this)
+        return (<div style={{ ...regularFont, ...styles.generalFont }} key={charge.chargeid}>
+            Charge Captured on {created} for the Amount ${charge.amount} </div>)
+
+    }
+    showcharges() {
+        const pm = new PM();
+        const invoiceid = this.props.match.params.invoiceid;
+        const charges = pm.getchargesbyinvoiceid.call(this, invoiceid)
+        const styles = MyStylesheet();
+        const headerFont = pm.getHeaderFont.call(this)
+        let chargeids = [];
+        const jsx = (chargeids) => {
+            return (
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
+                                <u>Summary of Payments</u>
+                            </div>
+                        </div>
+
+                        {chargeids}
+
+                    </div>
+                </div>
+            )
+
+
+        }
+        if (charges) {
+            // eslint-disable-next-line
+            charges.map(charge => {
+                chargeids.push(this.showcharge(charge))
+            })
+
+            return jsx(chargeids)
+
+        } else {
+            return;
+        }
+
+    }
 
     render() {
         const styles = MyStylesheet();
@@ -527,11 +691,12 @@ class ViewInvoice extends Component {
                         </div>
                     </div>
 
-                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                            {this.stripeform()}
-                        </div>
-                    </div>
+                    {this.showsummary()}
+
+                    {this.showcharges()}
+
+                    {this.invoicesummary()}
+
                     {pm.showprojectid.call(this)}
 
 

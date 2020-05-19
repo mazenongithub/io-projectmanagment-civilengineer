@@ -62,7 +62,18 @@ class PM {
         }
         return key;
     }
+getchargesbyinvoiceid(invoiceid) {
+    const pm = new PM()
+    const invoice = pm.getinvoicebyid.call(this,invoiceid)
+    let charges = false;
+    if(invoice) {
+        if(invoice.hasOwnProperty("charges")) {
+            charges = invoice.charges.charge;
 
+        }
+    }
+    return charges;
+}
     showlinedetail() {
         const pm = new PM();
         const styles = MyStylesheet();
