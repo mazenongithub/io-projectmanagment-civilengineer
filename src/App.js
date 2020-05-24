@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Header from './components/header';
-import Home from './components/home';
 import Join from './components/join';
 import Register from './components/register';
 import Login from './components/login';
@@ -26,25 +25,35 @@ import Team from './components/team';
 //import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
 import { CheckUserLogin } from './components/actions/api'
-
+import Landing from './components/landing'
 import { returnCompanyList } from './components/functions'
 import firebase from 'firebase'
 import { firebaseconfig } from './components/firebase'
+import PM from './components/pm';
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '' }
+        this.state = { render: '',activeslideid:'myprojects' }
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
 
     componentDidMount() {
         document.title = "projectmanagement.civilengineer.io";
-
         const configs = firebaseconfig()
         firebase.initializeApp(configs);
-
         this.checkuserlogin();
+        this.updateWindowDimensions();
 
     }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+      }
+      updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+      }
+    
+    
 
     async checkuserlogin() {
         //let response = TestUser();
@@ -69,13 +78,26 @@ class App extends Component {
 
     }
     render() {
+
+        const landing = new Landing();
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        const showlanding = () => {
+          if(myuser) {
+            return(<Profile/>)
+          } else {
+            return(landing.showlanding.call(this))
+          }
+    
+        }
         return (
             <div className="appbody-container">
                 <BrowserRouter>
                     <div>
                         <Header />
+
                         <Switch>
-                            <Route exact path="/" component={Home} />
+                            <Route exact path="/" component={showlanding} />
                             <Route exact path="/providers/privacy_policy" component={Privacy} />
                             <Route exact path="/providers/join" component={Join} />
                             <Route exact path="/providers/register" component={Register} />

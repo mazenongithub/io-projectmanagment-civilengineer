@@ -1,30 +1,134 @@
-import React, { Component } from 'react';
-import './home.css'
+import React from 'react';
+import { MyStylesheet } from './styles'
+import PM from './pm'
 
+class Landing  {
+    showslide(slide) {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const smallslide = pm.getsmallslide.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+        return(
+        <div style={{...styles.generalFlex}}>
+            <div style={{...styles.flex1}}>
 
-class Landing extends Component {
-    render() {
-        return (<div className="landing-container">
-        <div className="landing-spanall headerrow">Its Project Management Online, 
-        Register as a Service Provider to join the network to perform services on Projects to get paid
+        <div style={{...styles.generalContainer,...styles.showBorder,...smallslide,...styles.marginAuto}} onClick={()=>{this.setState({activeslideid:slide.id})}}>
+            <img src={slide.url} alt={slide.title} style={{...smallslide}}  />
         </div>
-        <div className="landing-spanall bodyrow">
+        <div style={{...styles.generalContainer,...styles.marginAuto,...styles.alignCenter}} onClick={()=>{this.setState({activeslideid:slide.id})}}>
+            <span style={{...styles.generalFont,...regularFont}}>{slide.title}</span>
+        </div>
+
+
+        </div>
+        </div> )
+
+    }
+    
+
+    showslides() {
+        const pm = new PM();
+        const slides = pm.getslides.call(this);
+        const styles = MyStylesheet();
+        const allslides = [];
+        const landing = new Landing()
+        if(slides) {
+            // eslint-disable-next-line
+            slides.map(slide=> {
+                allslides.push(landing.showslide.call(this,slide))
+
+            })
+        }
+        const templatecolumns = () => {
+           
+            if(this.state.width>800) {
+            return (styles.triplegrid)
+            } else {
+                return (styles.doublegrid)
+            }
+        }
         
-        <img src="https://www.goandhireme.com/png/sitemap.png" alt="app.goandhireme.com site map" className="sitemap" /> </div>
-        <div className="landing-spanall headerrow"> The Design Process when Creating a Project </div>
-        
-        
-        <div className="landing-spanall bodyrow"> 
-        <ol>
-        <li>Create the Project. Give it a title, location and define the scope of work. A scope of work is an overview description of the end result. Scope of work answers the question what? </li>
-        <li>Create a Sequential step series of milestones to get from where you are to where you want to be at the end of your project. Then it will be up to the service providers to match your expectation which you laid out in your milestones to your service providers. </li>
-        <li>Build your Design Team. Use the search bar to find members to add to your project. For each provider, define what their specific role is on the project. Once you save your design team it will send an email notification to you and the person. </li>
-        <li>Build a Schedule when you authorize work. The service provider receives the work request and they build a schedule for  their role on your project. When they enter a schedule, they must include  one milestone you created for each work item they enter. They would be entering labor and materials. </li>
-        <li>Receive Services. You have authorized schedule and budget and you will receive the services you requested. As the provider, you are responsible for accurately entering your actual costs as they occur identically to what you put into the schedule. You can easily update the schedule and receive authorization prior to including additional costs to your client. It is important to receive authorization prior to performing services if you are going to request invoice. </li>
-        <li>Project Closeout. You have received your service. You are happy with  the end result and the price you were able to get using the program and building your project this way. You pay the invoices to complete the project closeout to restore the project balances to $0.00 and the project is done.   </li>
-        </ol>
-       </div>
+        return(<div style={{...styles.generalGrid,...templatecolumns(),...styles.bottomMargin15}}>
+            {allslides}
         </div>)
+        
+        
+    }
+
+    showlanding() {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const mainslide = pm.getmainslide.call(this)
+        const landing = new Landing();
+        const headerFont = pm.getHeaderFont.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+
+        const myslide = () => {
+            if(this.state.activeslideid) {
+            return(pm.getslidebyid.call(this,this.state.activeslideid))
+            } else {
+                return false;
+            }
+        }
+        const showmainslide = () => {
+ 
+            if(myslide()) {
+                return(<div style={{...styles.generalContainer,...styles.showBorder,...mainslide,...styles.marginAuto}}>
+                    <img src={myslide().url} alt={myslide().title} style={{...mainslide}}  />
+                </div> )
+            }
+
+        }
+        const showmaintitle = () => {
+
+            if(myslide()) {
+                return(<span style={{...styles.generalFont,...headerFont}}>{myslide().title}</span>)
+            }
+
+        }
+
+        const showmaincaption = () => {
+
+            if(myslide()) {
+                return(<span style={{...styles.generalFont,...regularFont}}>{myslide().caption}</span>)
+            }
+
+        }
+        return (
+            <div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+
+                          {showmaintitle()}
+
+                        </div>
+                    </div>
+
+
+                    <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+
+                          {showmainslide()}
+
+                        </div>
+                    </div>
+
+                    <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+
+                          {showmaincaption()}
+
+                        </div>
+                    </div>
+
+                    {landing.showslides.call(this)}
+
+                </div>
+            </div>
+        )
     }
 }
+
 export default Landing;

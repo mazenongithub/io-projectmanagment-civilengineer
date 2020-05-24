@@ -46,6 +46,72 @@ class PM {
         return user;
     }
 
+    getmainslide() {
+        if (this.state.width > 1200) {
+            return ({ width:'1087px',height:'1035px' })
+        } else if (this.state.width > 800) {
+            return ({ width:'762px',height:'725px' })
+        } else {
+            return ({ width:'356px',height:'339px' })
+        }
+    }
+
+    getslides() {
+        const slides = () => {
+            return([
+                {
+                    title:'Project Management by civilengineer.io',
+                    id:'myprojects',
+                    url:'http://civilengineer.io/projectmanagment/slides/myprojects.png',
+                    caption:`Project Management by Civilenginer.io`
+
+                },
+                {
+                    title:'Project Team',
+                    id:'myteam',
+                    url:'http://civilengineer.io/projectmanagment/slides/myteam.png',
+                    caption:`Build your project team from the construction network`
+
+                },
+                {
+                    title:'Milestones',
+                    id:'milestones',
+                    url:'http://civilengineer.io/projectmanagment/slides/milestones.png',
+                    caption:`Create Project Milestones`
+
+                },
+                
+        ])
+        }
+        return slides();
+    }
+
+    getslidebyid(id) {
+        const pm = new PM();
+        const slides = pm.getslides.call(this)
+        let myslide = false;
+        if(slides) {
+            // eslint-disable-next-line
+            slides.map(slide=>{
+                if(slide.id === id) {
+                    myslide = slide;
+                }
+            })
+        }
+        return myslide;
+    }
+
+    getsmallslide() {
+        if (this.state.width > 1200) {
+            return ({ width:'362px',height:'345px' })
+        } else if (this.state.width > 800) {
+            return ({ width:'254px',height:'241px' })
+        } else {
+            return ({ width:'178px',height:'169px' })
+        }
+    
+    }
+    
     getinvoicekeybyid(invoiceid) {
         const pm = new PM();
         let key = false;

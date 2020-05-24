@@ -90,6 +90,17 @@ export function MyStylesheet() {
             width: '109px',
             height: '66px'
         },
+        generalGrid:{
+            display:'grid',
+            gridRowGap:'15px',
+            gridColumnGap:'15px'
+        },
+        doublegrid:{
+            gridTemplateColumns:'50% 50%'
+        },
+        triplegrid:{
+            gridTemplateColumns:'33% 33% 33%'
+        },
         marginAuto: {
             margin: 'auto'
         },
@@ -122,9 +133,6 @@ export function MyStylesheet() {
         },
         flex3: {
             flex: 3
-        },
-        generalGrid: {
-            display: 'grid'
         },
         flex4: {
             flex: 4
