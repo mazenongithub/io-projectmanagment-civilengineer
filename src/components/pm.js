@@ -80,7 +80,19 @@ class PM {
                     caption:`Create Project Milestones`
 
                 },
-                
+                {
+                    title:'Invoice',
+                    id:'invoice',
+                    url:'http://civilengineer.io/projectmanagment/slides/invoice.png',
+                    caption:`Project Invoice after Payment. Credit card payments are accepted `
+
+                },
+                {
+                    title:'Labor, Equipment, Materials',
+                    id:'invoice',
+                    url:'http://civilengineer.io/projectmanagment/slides/lem.png',
+                    caption:`Labor, Equipment, Materials, breakdown for each construction pay item `
+                }   
         ])
         }
         return slides();
