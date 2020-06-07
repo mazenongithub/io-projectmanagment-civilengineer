@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID,sortpart} from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
@@ -11,15 +11,15 @@ import { Link } from 'react-router-dom';
 class PM {
 
     getupdatepassword() {
-        return({width:'266px',height:'64px'})
+        return ({ width: '266px', height: '64px' })
     }
     getplusicon() {
-        return({width:'63px', height:'63px'})
+        return ({ width: '63px', height: '63px' })
     }
     getminusicon() {
-        return({width:'63px', height:'18px'})
+        return ({ width: '63px', height: '18px' })
     }
-    
+
     getLoginButton() {
         if (this.state.width > 1200) {
             return ({ width: '276px', height: '63px' })
@@ -48,64 +48,162 @@ class PM {
 
     getmainslide() {
         if (this.state.width > 1200) {
-            return ({ width:'1087px',height:'1035px' })
+            return ({ width: '1087px', height: '1035px' })
         } else if (this.state.width > 800) {
-            return ({ width:'762px',height:'725px' })
+            return ({ width: '762px', height: '725px' })
         } else {
-            return ({ width:'356px',height:'339px' })
+            return ({ width: '356px', height: '339px' })
         }
     }
 
     getslides() {
         const slides = () => {
-            return([
+            return ([
                 {
-                    title:'Project Management by civilengineer.io',
-                    id:'myprojects',
-                    url:'http://civilengineer.io/projectmanagment/slides/myprojects.png',
-                    caption:`Project Management by Civilenginer.io`
+                    title: 'Project Management by civilengineer.io',
+                    id: 'myprojects',
+                    url: 'http://civilengineer.io/projectmanagment/slides/myprojects.png',
+                    caption: `Project Management by Civilenginer.io`
 
                 },
                 {
-                    title:'Project Team',
-                    id:'myteam',
-                    url:'http://civilengineer.io/projectmanagment/slides/myteam.png',
-                    caption:`Build your project team from the construction network`
+                    title: 'Project Team',
+                    id: 'myteam',
+                    url: 'http://civilengineer.io/projectmanagment/slides/myteam.png',
+                    caption: `Build your project team from the construction network`
 
                 },
                 {
-                    title:'Milestones',
-                    id:'milestones',
-                    url:'http://civilengineer.io/projectmanagment/slides/milestones.png',
-                    caption:`Create Project Milestones`
+                    title: 'Milestones',
+                    id: 'milestones',
+                    url: 'http://civilengineer.io/projectmanagment/slides/milestones.png',
+                    caption: `Create Project Milestones`
 
                 },
                 {
-                    title:'Invoice',
-                    id:'invoice',
-                    url:'http://civilengineer.io/projectmanagment/slides/invoice.png',
-                    caption:`Project Invoice after Payment. Credit card payments are accepted `
+                    title: 'Invoice',
+                    id: 'invoice',
+                    url: 'http://civilengineer.io/projectmanagment/slides/invoice.png',
+                    caption: `Project Invoice after Payment. Credit card payments are accepted `
 
                 },
                 {
-                    title:'Labor, Equipment, Materials',
-                    id:'invoice',
-                    url:'http://civilengineer.io/projectmanagment/slides/lem.png',
-                    caption:`Labor, Equipment, Materials, breakdown for each construction pay item `
-                }   
-        ])
+                    title: 'Labor, Equipment, Materials',
+                    id: 'lem',
+                    url: 'http://civilengineer.io/projectmanagment/slides/lem.png',
+                    caption: `Labor, Equipment, Materials, breakdown for each construction pay item `
+                },
+                {
+                    title: 'Engineering Cost Estimate',
+                    id: 'costestimate',
+                    url: 'http://civilengineer.io/projectmanagment/slides/costestimate.png',
+                    caption: `Construction Cost Estimates from Engineering `
+                },
+                {
+                    title: 'Construction Specifications',
+                    id: 'specifications',
+                    url: 'http://civilengineer.io/projectmanagment/slides/specifications.png',
+                    caption: `Construction Specfications created by Engineering `
+                }
+            ])
         }
         return slides();
+    }
+
+    
+    getspecficationbycsi(projectid, csiid) {
+        const pm = new PM();
+        const specs = pm.getspecficationsbyprojectid.call(this, projectid)
+        let myspec = false;
+        if (specs) {
+            // eslint-disable-next-line
+            specs.map(spec => {
+                if (spec.csiid === csiid) {
+                    myspec = spec;
+                }
+            })
+        }
+        return myspec;
+    }
+
+    getsectionbyid(projectid, csiid, sectionid) {
+        const pm = new PM();
+        const spec = pm.getspecficationbycsi.call(this, projectid, csiid)
+        let mysection = false;
+        if (spec) {
+
+            if (spec.hasOwnProperty("sections")) {
+                // eslint-disable-next-line
+                spec.sections.map(section => {
+                    if (section.sectionid === sectionid) {
+                        mysection = section;
+                    }
+                })
+            }
+        }
+        return mysection;
+    }
+
+    getsectionnumberbyid(projectid, csiid, sectionid) {
+        const pm = new PM();
+        const spec = pm.getspecficationbycsi.call(this, projectid, csiid)
+        let mycounter = "";
+        if (spec.hasOwnProperty("sections")) {
+            const section = pm.getsectionbyid.call(this, projectid, csiid, sectionid)
+            if (section) {
+                let part = section.part;
+
+                spec.sections.sort((b, a) => {
+                    return sortpart(b, a)
+                })
+
+                let counter = 1;
+                // eslint-disable-next-line
+                spec.sections.map((section, i) => {
+                    if (section.part === part) {
+
+                        if (section.sectionid === sectionid) {
+                            mycounter = counter;
+                        } else {
+                            counter += 1;
+                        }
+
+                    }
+
+
+
+                })
+
+            }
+
+        }
+        if (Number(mycounter) < 10) {
+            mycounter = `0${mycounter}`
+        }
+        return mycounter;
+    }
+
+    getspecficationsbyprojectid(projectid) {
+        const pm = new PM();
+        const project = pm.getprojectbyid.call(this,projectid)
+        console.log(project, projectid)
+        let specs = false;
+        if(project) {
+            if(project.hasOwnProperty("specifications")) {
+                specs = project.specifications;
+            }
+        }
+        return specs;
     }
 
     getslidebyid(id) {
         const pm = new PM();
         const slides = pm.getslides.call(this)
         let myslide = false;
-        if(slides) {
+        if (slides) {
             // eslint-disable-next-line
-            slides.map(slide=>{
-                if(slide.id === id) {
+            slides.map(slide => {
+                if (slide.id === id) {
                     myslide = slide;
                 }
             })
@@ -115,19 +213,19 @@ class PM {
 
     getsmallslide() {
         if (this.state.width > 1200) {
-            return ({ width:'362px',height:'345px' })
+            return ({ width: '362px', height: '345px' })
         } else if (this.state.width > 800) {
-            return ({ width:'254px',height:'241px' })
+            return ({ width: '254px', height: '241px' })
         } else {
-            return ({ width:'178px',height:'169px' })
+            return ({ width: '178px', height: '169px' })
         }
-    
+
     }
-    
+
     getinvoicekeybyid(invoiceid) {
         const pm = new PM();
         let key = false;
-        let myproject = pm.getprojectbyid.call(this,this.props.match.params.projectid)
+        let myproject = pm.getprojectbyid.call(this, this.props.match.params.projectid)
 
         if (myproject.hasOwnProperty("invoices")) {
             // eslint-disable-next-line
@@ -140,18 +238,18 @@ class PM {
         }
         return key;
     }
-getchargesbyinvoiceid(invoiceid) {
-    const pm = new PM()
-    const invoice = pm.getinvoicebyid.call(this,invoiceid)
-    let charges = false;
-    if(invoice) {
-        if(invoice.hasOwnProperty("charges")) {
-            charges = invoice.charges.charge;
+    getchargesbyinvoiceid(invoiceid) {
+        const pm = new PM()
+        const invoice = pm.getinvoicebyid.call(this, invoiceid)
+        let charges = false;
+        if (invoice) {
+            if (invoice.hasOwnProperty("charges")) {
+                charges = invoice.charges.charge;
 
+            }
         }
+        return charges;
     }
-    return charges;
-}
     showlinedetail() {
         const pm = new PM();
         const styles = MyStylesheet();
@@ -411,6 +509,34 @@ getchargesbyinvoiceid(invoiceid) {
 
         return schedules;
     }
+    getcostestimate() {
+        const pm = new PM();
+        let estimate = false;
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+        if (myproject) {
+            if (myproject.hasOwnProperty("costestimate")) {
+                estimate = myproject.costestimate;
+            }
+        }
+        return estimate;
+    }
+    getcsibyid(csiid) {
+        const pm = new PM();
+        const estimate = pm.getcostestimate.call(this);
+        console.log(estimate)
+        let mycsi = false;
+        if(estimate) {
+            if(estimate.hasOwnProperty("bidschedule")) {
+                // eslint-disable-next-line
+                estimate.bidschedule.map(bid=> {
+                    if(bid.csiid === csiid) {
+                       mycsi = {csi:bid.csi,title:bid.title,csiid,quantity:bid.quantity,unit:bid.unit}
+                    }
+                })
+            }
+        }
+        return mycsi;
+    }
 
     getactualcsibyid(csiid) {
         let mycsi = false;
@@ -453,6 +579,14 @@ getchargesbyinvoiceid(invoiceid) {
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
                                 <Link to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/specifications`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</Link>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/costestimate`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Cost Estimate</Link>
                             </div>
                         </div>
 

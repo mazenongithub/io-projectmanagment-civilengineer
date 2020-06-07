@@ -30,6 +30,10 @@ import { returnCompanyList } from './components/functions'
 import firebase from 'firebase'
 import { firebaseconfig } from './components/firebase'
 import PM from './components/pm';
+import CostEstimate from './components/costestimate';
+import LineItem from './components/lineitem';
+import Specifications from './components/specifications';
+import Specification from './components/specification'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -109,6 +113,10 @@ class App extends Component {
                             <Route exact path="/:providerid/myprojects/:projectid/milestones" component={Milestones} />
                             <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />
                             <Route exact path="/:providerid/myprojects/:projectid/invoices" component={Invoices} />
+                            <Route exact path="/:providerid/myprojects/:projectid/specifications" component={Specifications} />
+                            <Route exact path="/:providerid/myprojects/:projectid/specifications/:csiid" component={Specification} />
+                            <Route exact path="/:providerid/myprojects/:projectid/costestimate" component={CostEstimate} />
+                            <Route exact path="/:providerid/myprojects/:projectid/costestimate/:csiid" component={LineItem} />
                             <Route exact path="/:providerid/myprojects/:projectid/bidschedule" component={BidSchedule} />
                             <Route exact path="/:providerid/myprojects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />
                             <Route exact path="/:providerid/myprojects/:projectid/invoices/:invoiceid" component={ViewInvoice} />

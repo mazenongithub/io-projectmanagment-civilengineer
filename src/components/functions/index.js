@@ -3027,6 +3027,28 @@ export function ActualMaterial(materialid, providerid, projectid, timein, quanti
         unitcost
     })
 }
+export function sortpart(b, a) {
+    if (Number(b.part) < Number(a.part)) {
+        return -1
+
+    } else {
+        return 1;
+    }
+
+}
+export function LetterCounter(i) {
+    switch (Number(i)) {
+        case 1:
+            return 'A'
+        case 2:
+            return 'B'
+        case 3:
+            return 'C'
+
+        default:
+            break;
+    }
+}
 
 export function ProfitForMaterial(item) {
     return (Number(item.quantity) * Number(item.unitcost)) * (Number(item.profit) / 100)

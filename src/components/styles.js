@@ -82,6 +82,12 @@ export function MyStylesheet() {
             width: '99%',
             maxWidth: '65px'
         },
+        marginLeft30:{
+            marginLeft:'30px'
+        },
+        marginLeft60:{
+            marginLeft:'60px'
+        },
         timecellContainer: {
             minHeight: '180px',
             maxWidth: '77px'
