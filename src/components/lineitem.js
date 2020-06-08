@@ -40,10 +40,8 @@ class LineItem extends Component {
 
 
     getlaboritems() {
-        const pm = new PM();
         const labor = this.getlabor();
         let csiid = this.props.match.params.csiid;
-        let laboritems = [];
         let items = [];
         if (labor) {
             // eslint-disable-next-line
@@ -86,7 +84,6 @@ class LineItem extends Component {
         return cost;
     }
     getmaterialitems() {
-        const pm = new PM();
         const materials = this.getmaterial();
         const csiid = this.props.match.params.csiid;
         let items = [];
@@ -106,7 +103,6 @@ class LineItem extends Component {
         const pm = new PM();
         let materialitems = [];
         const estimate = pm.getcostestimate.call(this)
-        let csiid = this.props.match.params.csiid;
         if (estimate.hasOwnProperty("materials")) {
             materialitems = estimate.materials;
         }

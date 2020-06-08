@@ -33,7 +33,6 @@ class Specifications extends Component {
         const regularFont = pm.getRegularFont.call(this)
         const profile = this.props.match.params.providerid;
         const projectid = this.props.match.params.projectid;
-        const companyid = this.props.match.params.companyid;
         return (
         <div style={{ ...styles.generalContainer }}>
         <Link style={{...styles.generalFont, ...regularFont,...styles.generalLink}} to={`/${profile}/myprojects/${projectid}/specifications/${csi.csiid}`}>{csi.csi} - {csi.title}</Link>

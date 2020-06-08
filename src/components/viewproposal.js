@@ -436,7 +436,7 @@ class ViewProposal extends Component {
         if (window.confirm(`Are you Sure you Want to Authorize the Proposal?`)) {
             if (myuser) {
                 let approved = UTCTimefromCurrentDate();
-                const myproject = pm.getactiveproject.call(this);
+                const myproject = pm.getproject.call(this)
                 if (myproject) {
                     const i = pm.getprojectkey.call(this);
                     const j = this.getproposalkey();

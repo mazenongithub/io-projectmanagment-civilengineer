@@ -3,7 +3,7 @@ import { MyStylesheet } from './styles'
 import PM from './pm'
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, ProfitForEquipment, ProfitForMaterial, ProfitForLabor, CreateBidItem, isNumeric} from './functions'
+import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, ProfitForEquipment, ProfitForMaterial, ProfitForLabor} from './functions'
 import {Link} from 'react-router-dom'
 
 class CostEstimate extends Component {

@@ -983,6 +983,7 @@ class PM {
 
         if (myuser) {
             try {
+                console.log(myuser)
                 let response = await SaveAllProfile({ myuser });
                 console.log(response)
                 if (response.hasOwnProperty("allusers")) {
@@ -1071,7 +1072,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-
+                    console.log(myuser)
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 

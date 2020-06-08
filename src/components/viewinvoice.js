@@ -454,6 +454,10 @@ class ViewInvoice extends Component {
 
                 }
                 }
+
+                if(response.hasOwnProperty("message")) {
+                    this.setState({message:response.message})
+                }
               
 
             } catch (err) {
@@ -696,6 +700,12 @@ class ViewInvoice extends Component {
                     {this.showcharges()}
 
                     {this.invoicesummary()}
+
+                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                            <span style={{...regularFont, ...styles.generalFont}}>{this.state.message}</span>
+                        </div>
+                    </div>
 
                     {pm.showprojectid.call(this)}
 
