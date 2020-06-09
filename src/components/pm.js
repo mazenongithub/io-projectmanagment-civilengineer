@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID,sortpart} from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
@@ -110,7 +110,7 @@ class PM {
         return slides();
     }
 
-    
+
     getspecficationbycsi(projectid, csiid) {
         const pm = new PM();
         const specs = pm.getspecficationsbyprojectid.call(this, projectid)
@@ -185,11 +185,11 @@ class PM {
 
     getspecficationsbyprojectid(projectid) {
         const pm = new PM();
-        const project = pm.getprojectbyid.call(this,projectid)
-        console.log(project, projectid)
+        const project = pm.getprojectbyid.call(this, projectid)
+
         let specs = false;
-        if(project) {
-            if(project.hasOwnProperty("specifications")) {
+        if (project) {
+            if (project.hasOwnProperty("specifications")) {
                 specs = project.specifications;
             }
         }
@@ -509,6 +509,46 @@ class PM {
 
         return schedules;
     }
+    getengineerkeybyid(engineerid) {
+        const pm = new PM();
+        const engineers = pm.getengineering.call(this);
+        let key = "";
+        if (engineers) {
+            // eslint-disable-next-line
+            engineers.map((engineer, i) => {
+                if (engineer.providerid === engineerid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+
+    }
+    getengineerbyid(engineerid) {
+        const pm = new PM();
+        const engineers = pm.getengineering.call(this);
+        let myengineer = "";
+        if (engineers) {
+            // eslint-disable-next-line
+            engineers.map(engineer => {
+                if (engineer.providerid === engineerid) {
+                    myengineer = engineer;
+                }
+            })
+        }
+        return myengineer;
+
+    }
+    getengineering() {
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+        let engineers = "";
+        if (myproject.hasOwnProperty("engineering")) {
+            engineers = myproject.engineering;
+        }
+        return engineers;
+
+    }
     getcostestimate() {
         const pm = new PM();
         let estimate = false;
@@ -523,14 +563,14 @@ class PM {
     getcsibyid(csiid) {
         const pm = new PM();
         const estimate = pm.getcostestimate.call(this);
-        console.log(estimate)
+
         let mycsi = false;
-        if(estimate) {
-            if(estimate.hasOwnProperty("bidschedule")) {
+        if (estimate) {
+            if (estimate.hasOwnProperty("bidschedule")) {
                 // eslint-disable-next-line
-                estimate.bidschedule.map(bid=> {
-                    if(bid.csiid === csiid) {
-                       mycsi = {csi:bid.csi,title:bid.title,csiid,quantity:bid.quantity,unit:bid.unit}
+                estimate.bidschedule.map(bid => {
+                    if (bid.csiid === csiid) {
+                        mycsi = { csi: bid.csi, title: bid.title, csiid, quantity: bid.quantity, unit: bid.unit }
                     }
                 })
             }
@@ -845,23 +885,23 @@ class PM {
         }
     }
     getproviderbyid(providerid) {
+        const pm = new PM();
+        const allusers = pm.getallusers.call(this)
 
         let provider = false;
-        if (this.props.allusers) {
+        if (allusers) {
 
-            if (this.props.allusers.hasOwnProperty("myuser")) {
+            // eslint-disable-next-line
+            allusers.map(myuser => {
 
-                // eslint-disable-next-line
-                this.props.allusers.myuser.map(myuser => {
+                if (myuser.providerid === providerid) {
 
-                    if (myuser.providerid === providerid) {
+                    provider = myuser;
+                }
+            })
 
-                        provider = myuser;
-                    }
-                })
-
-            }
         }
+
         return provider;
     }
     getprojectteam() {
@@ -983,7 +1023,7 @@ class PM {
 
         if (myuser) {
             try {
-                console.log(myuser)
+            
                 let response = await SaveAllProfile({ myuser });
                 console.log(response)
                 if (response.hasOwnProperty("allusers")) {
@@ -1072,7 +1112,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-                    console.log(myuser)
+              
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
@@ -1201,7 +1241,7 @@ class PM {
             let profile = this.state.profile
             let password = this.state.password;
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, password }
-            console.log(values)
+
             const response = await NodeLogin(values);
             console.log(response)
             if (response.hasOwnProperty("allusers")) {
@@ -1230,7 +1270,7 @@ class PM {
             let result = await firebase.auth().signInWithPopup(provider)
             // The signed-in user info.
             var user = result.user;
-            console.log(user)
+
             let firstname = "";
             let lastname = "";
             if (user.providerData[0].displayName) {

@@ -17,6 +17,7 @@ class Team extends Component {
             width: 0,
             height: 0,
             activeprovider: '',
+            activeengineer: '',
             search: '',
             message: '',
             role: ''
@@ -62,6 +63,30 @@ class Team extends Component {
         return results;
 
     }
+
+    showdesignresults() {
+        const pm = new PM();
+        const allusers = pm.getallusers.call(this);
+        let results = [];
+        let search = "";
+        if (this.state.design) {
+            search = this.state.design
+            if (allusers) {
+                // eslint-disable-next-line
+                allusers.map(myuser => {
+
+                    if (myuser.firstname.toLowerCase().startsWith(search.toLowerCase()) || myuser.lastname.toLowerCase().startsWith(search.toLowerCase())) {
+                        results.push(this.showdesignsearchid(myuser))
+                    }
+
+                })
+
+            }
+
+        }
+        return results;
+
+    }
     validateprovider(providerid) {
         let validate = true;
         const pm = new PM();
@@ -75,6 +100,38 @@ class Team extends Component {
             })
         }
         return validate;
+    }
+    addDesignTeam(providerid) {
+
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        const validate = (providerid) => {
+            return true;
+        }
+        if (myuser) {
+
+            const myproject = pm.getproject.call(this);
+            if (myproject) {
+                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
+                if (validate(providerid)) {
+                    const myengineers = pm.getengineering.call(this);
+                    const role = this.state.role;
+                    let newteam = TeamMember(providerid, role)
+                    if (myengineers) {
+
+                        myuser.projects.myproject[i].engineers.push(newteam)
+
+                    } else {
+                        let engineering = { myteam: [newteam] }
+                        myuser.projects.myproject[i].engineering = [engineering]
+                    }
+                    this.props.reduxUser(myuser);
+                    this.setState({ activeengineer: providerid })
+                }
+
+            }
+
+        }
     }
     addteam(providerid) {
 
@@ -100,6 +157,66 @@ class Team extends Component {
             }
 
         }
+    }
+    showdesignsearchid(myuser) {
+        const pm = new PM();
+        const styles = MyStylesheet();
+        const regularFont = pm.getRegularFont.call(this)
+
+        const SearchPhoto = () => {
+            if (myuser.profileurl) {
+                return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...styles.searchphoto }} />)
+            } else {
+                return;
+            }
+        }
+        const location = () => {
+            let address = "";
+            let city = "";
+            let contactstate = "";
+            let zipcode = "";
+            if (myuser.hasOwnProperty("company")) {
+                address = myuser.company.address;
+                city = myuser.company.city;
+                contactstate = myuser.company.contactstate;
+                zipcode = myuser.company.zipcode;
+                return (<div style={{ ...styles.generalContainer }}>
+                    {address} {city} {contactstate} {zipcode}
+                </div>)
+            }
+        }
+        if (this.state.width > 800) {
+            return (
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }} onClick={() => this.addDesignTeam(myuser.providerid)}>
+                    <div style={{ ...styles.flex1 }}>
+                        <div style={{ ...styles.generalContainer, ...styles.searchphoto, ...styles.showBorder }}>
+                            {SearchPhoto()}
+                        </div>
+                    </div>
+                    <div style={{ ...styles.flex5, ...styles.generalFont, ...regularFont }}>
+                        {myuser.firstname} {myuser.lastname}
+                        {location()}
+                    </div>
+                </div>
+            )
+        } else {
+
+            return (
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }} onClick={() => this.addteam(myuser.providerid)}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalContainer, ...styles.searchphoto, ...styles.showBorder }}>
+                            {SearchPhoto()}
+                        </div>
+
+                    </div>
+                    <div style={{ ...styles.flex3, ...styles.generalFont, ...regularFont }}>
+                        {myuser.firstname} {myuser.lastname}{location()}
+                    </div>
+                </div>
+            )
+        }
+
     }
     showsearchid(myuser) {
         const pm = new PM();
@@ -161,6 +278,25 @@ class Team extends Component {
         }
 
     }
+    showdesignteamids() {
+        const pm = new PM();
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+
+        let myproviders = [];
+        if (myproject.hasOwnProperty("engineering")) {
+            // eslint-disable-next-line
+            myproject.engineering.map(myteam => {
+
+                let myuser = pm.getproviderbyid.call(this, myteam.providerid)
+
+
+                myproviders.push(this.showengineer(myuser))
+
+
+            })
+        }
+        return myproviders;
+    }
     showteamids() {
         const pm = new PM();
         const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
@@ -218,6 +354,71 @@ class Team extends Component {
         return key;
 
     }
+    removeengineer(providerid) {
+        const pm = new PM();
+        const engineer = pm.getproviderbyid.call(this,providerid)
+        console.log(engineer)
+        if(window.confirm(`Are you sure you want to remove ${engineer.firstname} ${engineer.lastname} ?`)) {
+           const myuser = pm.getuser.call(this)
+            if(myuser) {
+                const project = pm.getproject.call(this)
+                if(project) {
+                    const projectid = project.projectid;
+                    const i = pm.getprojectkeybyid.call(this,projectid);
+                    const engineer = pm.getengineerbyid.call(this,providerid) 
+                    if(engineer) {
+                    const j = pm.getengineerkeybyid.call(this,[providerid]);
+                    myuser.projects.myproject[i].engineering.splice(j,1);
+                    this.props.reduxUser(myuser)
+                    this.setState({render:'render'})
+
+                    }
+
+                }
+            }
+        }
+    }
+    handleengineerrole(role) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        if(myuser) {
+            const project = pm.getproject.call(this)
+            if(project) {
+                const projectid = project.projectid;
+                const i = pm.getprojectkeybyid.call(this,projectid);
+                if(this.state.activeengineer) {
+                    const engineer = pm.getengineerbyid.call(this,this.state.activeengineer) 
+                    if(engineer) {
+                    const j = pm.getengineerkeybyid.call(this,this.state.activeengineer);
+                    myuser.projects.myproject[i].engineering[j].role = role;
+                    this.props.reduxUser(myuser);
+                    this.setState({render:'render'})
+                    }
+
+                }
+
+            }
+        }
+    }
+    getengineeringrole() {
+        const pm = new PM();
+        const myproject = pm.getproject.call(this)
+        if (myproject) {
+ 
+            if (this.state.activeengineer) {
+
+                const myengineer = pm.getengineerbyid.call(this, this.state.activeengineer)
+                return myengineer.role
+
+            } else {
+                return this.state.engineerrole;
+            }
+
+
+        }
+
+    }
+
     getrole() {
         const myprovider = this.getactiveprovider();
         if (myprovider) {
@@ -266,6 +467,72 @@ class Team extends Component {
             }
 
         }
+    }
+    showengineer(myuser) {
+
+        const styles = MyStylesheet();
+        const pm = new PM();
+        let regularFont = pm.getRegularFont.call(this);
+        const teamProfile = pm.getteamprofile.call(this);
+        const removeIcon = pm.getremoveicon.call(this);
+        const company = () => {
+            if (myuser.hasOwnProperty("company")) {
+                return myuser.company.company;
+            } else {
+                return;
+            }
+        }
+        const location = () => {
+            if (myuser.hasOwnProperty("company")) {
+                return (`${myuser.company.address} ${myuser.company.city} ${myuser.company.contactstate} ${myuser.company.zipcode}  `)
+            } else {
+                return;
+            }
+        }
+        const ProfileImage = () => {
+
+            if (myuser.profileurl) {
+
+                return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
+            } else {
+                return;
+            }
+        }
+        const Role = () => {
+            if (this.state.activeengineer === myuser.providerid) {
+                return (<div style={{ ...styles.generalContainer }}>
+                    <div style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>
+                        {myuser.firstname} {myuser.lastname}'s Role on the Project
+                    </div>
+                    <div style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>
+                        <textarea style={{ ...styles.generalField, ...regularFont, ...styles.generalFont }}
+                            value={this.getengineeringrole()}
+                            onChange={event => { this.handleengineerrole(event.target.value) }}></textarea>
+                    </div>
+                </div>)
+            }
+        }
+
+        return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }}>
+            <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
+                <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeengineer(myuser.providerid) }}>{removeIconSmall()}</button>
+            </div>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                {myuser.firstname} {myuser.lastname}
+            </div>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                {company()} {location()}
+            </div>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.setState({activeengineer:myuser.providerid}) }}>
+                    {ProfileImage()}
+                </div>
+            </div>
+
+            {Role()}
+
+
+        </div>)
     }
     showprovider(myuser) {
 
@@ -354,7 +621,7 @@ class Team extends Component {
         const headerFont = pm.getHeaderFont.call(this);
         const projectid = this.props.match.params.projectid;
         const regularFont = pm.getRegularFont.call(this);
-        const getColumns = pm.getcolumns.call(this)
+        const getColumns = pm.getcolumns.call(this);
 
         return (
             <div style={{ ...styles.generalFlex }}>
@@ -368,8 +635,14 @@ class Team extends Component {
                     </div>
 
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1 }}>
+                            <span style={{ ...headerFont, ...styles.generalFont }}>Construction Team</span>
+                        </div>
+                    </div>
+
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                         <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
-                            Search By Name <br />
+                            Construction Search  <br />
                             <input type="text"
                                 value={this.state.search}
                                 onChange={event => { this.setState({ search: event.target.value }) }}
@@ -378,10 +651,39 @@ class Team extends Component {
                     </div>
                     {this.showsearchresults()}
 
+
+
                     {this.projectteamtitle()}
+
+
                     <div style={{ ...styles.generalGrid, ...getColumns }}>
                         {this.showteamids()}
                     </div>
+
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1 }}>
+                            <span style={{ ...headerFont, ...styles.generalFont }}>Design Team</span>
+                        </div>
+                    </div>
+
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
+                            Design Search <br />
+                            <input type="text"
+                                value={this.state.design}
+                                onChange={event => { this.setState({ design: event.target.value }) }}
+                                style={{ ...styles.generalFont, ...regularFont, ...styles.generalField }} />
+                        </div>
+                    </div>
+                    {this.showdesignresults()}
+
+   
+
+                    <div style={{ ...styles.generalGrid, ...getColumns }}>
+                        {this.showdesignteamids()}
+                    </div>
+
+
 
                     {pm.showsaveproject.call(this)}
 
