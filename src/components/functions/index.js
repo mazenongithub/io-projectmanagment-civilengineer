@@ -979,7 +979,11 @@ export function inputUTCStringForLaborID(timein) {
     if (month < 10) {
         month = `0${month}`
     }
-    return (`${month}/${date}/${year} ${hours}:${minutes} ${ampm}`)
+    let seconds = datein.getSeconds();
+    if(seconds<10){
+        seconds = `0${seconds}`
+    }
+    return (`${month}/${date}/${year} ${hours}:${minutes}:${seconds} ${ampm}`)
 
 }
 export function inputUTCStringForMaterialID(timein) {

@@ -238,18 +238,48 @@ class PM {
         }
         return key;
     }
-    getchargesbyinvoiceid(invoiceid) {
+    getsettlmentbutton(){
+        if(this.state.width>1200) {
+            return({width:'301px',height:'71px',letterSpacing:'2.87px' })
+        } else if(this.state.width>800) {
+            return({width:'210px',height:'50px',letterSpacing:'2.16px' })
+
+        } else {
+            return({width:'120px',height:'28px',letterSpacing:'1.45px' })
+        }
+    }
+ 
+    getsettlementsbyinvoiceid(invoiceid) {
+        const pm = new PM();
+        const invoice = pm.getinvoicebyid.call(this,invoiceid);
+        let settlements = false;
+        if(invoice.hasOwnProperty("settlements")) {
+            settlements = invoice.settlements;
+        }
+        return settlements;
+    }
+    gettransfersbyinvoiceid(invoiceid) {
+        const pm = new PM();
+        const invoice = pm.getinvoicebyid.call(this,invoiceid);
+        let transfers = false;
+        if(invoice.hasOwnProperty("transfers")) {
+            transfers = invoice.transfers;
+        }
+        return transfers;
+    }
+    getchargesbyprojectid(projectid) {
         const pm = new PM()
-        const invoice = pm.getinvoicebyid.call(this, invoiceid)
+        const project = pm.getprojectbyid.call(this,projectid)
         let charges = false;
-        if (invoice) {
-            if (invoice.hasOwnProperty("charges")) {
-                charges = invoice.charges.charge;
+        if (project) {
+            if (project.hasOwnProperty("charges")) {
+               charges = project.charges;
 
             }
         }
         return charges;
     }
+
     showlinedetail() {
         const pm = new PM();
         const styles = MyStylesheet();
@@ -576,7 +606,136 @@ class PM {
             }
         }
         return mycsi;
+
     }
+    getactullaborkeybyid(projectid,laborid) {
+        const pm = new PM();
+        const labors = pm.getactuallaborbyproject.call(this,projectid);
+        let key = false;
+        if (labors) {
+            // eslint-disable-next-line
+            labors.map((labor,i)=> {
+                if(labor.laborid === laborid) {
+                   key = i;
+                }
+            })
+        }
+        return key;
+    }
+
+    getactullaborbyid(projectid,laborid) {
+        const pm = new PM();
+        const labors = pm.getactuallaborbyproject.call(this,projectid);
+        let mylabor = false;
+        if (labors) {
+            // eslint-disable-next-line
+            labors.map(labor=> {
+                if(labor.laborid=== laborid) {
+                    mylabor = labor;
+                }
+            })
+        }
+        return mylabor;
+    }
+
+    getactuallaborbyproject(projectid) {
+        const pm  = new PM();
+        const project = pm.getprojectbyid.call(this,projectid);
+        let actuallabor = false;
+        if(project) {
+            if(project.hasOwnProperty("actuallabor")) {
+                actuallabor = project.actuallabor.mylabor;
+            }
+        }
+        return actuallabor;  
+    }
+
+    getactualmaterialsbyproject(projectid) {
+        const pm  = new PM();
+        const project = pm.getprojectbyid.call(this,projectid);
+        let actualmaterial= false;
+        if(project) {
+            if(project.hasOwnProperty("actualmaterials")) {
+                actualmaterial = project.actualmaterials.mymaterial;
+            }
+        }
+        console.log(actualmaterial)
+        return actualmaterial;  
+    }
+
+    getactualmaterialskeybyid(projectid,materialid) {
+        const pm = new PM();
+        const materials = pm.getactualmaterialsbyproject.call(this,projectid);
+        let key = false;
+        if (materials) {
+            // eslint-disable-next-line
+            materials.map((material,i)=> {
+                if(material.materialid=== materialid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+    getactulmaterialsbyid(projectid,materialid) {
+        const pm = new PM();
+        const materials = pm.getactualmaterialsbyproject.call(this,projectid);
+        console.log(materials, materialid)
+        let mymaterial = false;
+        if (materials) {
+            // eslint-disable-next-line
+            materials.map(material=> {
+                console.log(material)
+                if(material.materialid=== materialid) {
+                    mymaterial = material;
+                }
+            })
+        }
+        console.log(mymaterial,projectid,materialid)
+        return mymaterial;
+    }
+
+    getactualequipmentbyproject(projectid) {
+        const pm  = new PM();
+        const project = pm.getprojectbyid.call(this,projectid);
+        let actualequipment= false;
+        if(project) {
+            if(project.hasOwnProperty("actualequipment")) {
+                actualequipment = project.actualequipment.myequipment;
+            }
+        }
+        return actualequipment;  
+    }
+
+    getactulequipmentkeybyid(projectid,equipmentid) {
+        const pm = new PM();
+        const equipments = pm.getactualequipmentbyproject.call(this,projectid);
+        let key = false;
+        if (equipments) {
+            // eslint-disable-next-line
+            equipments.map((equipment,i)=> {
+                if(equipment.equipmentid=== equipmentid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+    getactulequipmentbyid(projectid,equipmentid) {
+        const pm = new PM();
+        const equipments = pm.getactualequipmentbyproject.call(this,projectid);
+        let myequipment = false;
+        if (equipments) {
+            // eslint-disable-next-line
+            equipments.map(equipment=> {
+                if(equipment.equipmentid=== equipmentid) {
+                    myequipment = equipment;
+                }
+            })
+        }
+        return myequipment;
+    }
+
 
     getactualcsibyid(csiid) {
         let mycsi = false;
@@ -1019,6 +1178,7 @@ class PM {
         }
 
     }
+    
     async saveallprofilebyuser(myuser) {
 
         if (myuser) {

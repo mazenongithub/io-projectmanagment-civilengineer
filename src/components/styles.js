@@ -82,6 +82,17 @@ export function MyStylesheet() {
             width: '99%',
             maxWidth: '65px'
         },
+        underline:{
+            textDecoration:'underline'
+        },
+        settlementButton:{
+            fontFamily:'Roboto, sans-serif',
+            backgroundColor:'#3A4DA1',
+            color:'#F7F4FA',
+            borderRadius:'5px',
+            borderColor:'#01000D',
+            padding:'5px'    
+        },
         marginLeft30:{
             marginLeft:'30px'
         },
@@ -112,6 +123,9 @@ export function MyStylesheet() {
         },
         regularFont: {
             fontFamily: "'Nunito Sans', sans-serif"
+        },
+        boldFont:{
+            fontWeight:'700'
         },
         logoBorder: {
             borderRight: '5px solid',
