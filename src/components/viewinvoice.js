@@ -788,7 +788,7 @@ class ViewInvoice extends Component {
                 const projectid = myproject.projectid;
                 const i = pm.getprojectkeybyid.call(this, projectid);
                 const invoiceid = this.props.match.params.invoiceid;
-                const amount = Number(this.getamount())
+                const amount = Number(Math.round(this.getamountowed()*100))
                 const values = { invoiceid, amount }
                 try{
                 let response = await SettleInvoice(values)
