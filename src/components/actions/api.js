@@ -1,7 +1,7 @@
 /* global fetch */
 /* global Headers */
 export async function SettleInvoice(values) {
-  
+
     const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/settleinvoice`
     console.log(values, APIURL)
     return fetch(APIURL, {

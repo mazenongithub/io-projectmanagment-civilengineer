@@ -635,6 +635,60 @@ class ViewInvoice extends Component {
             Charge Captured on {created} for the Amount ${charge.amount} </div>)
 
     }
+
+    transfersbyproject() {
+        const pm = new PM();
+        const myproject = pm.getproject.call(this)
+        let mytransfers = [];
+        if(myproject) {
+            const projectid = myproject.projectid;
+            const invoices = pm.getinvoices.call(this,projectid)
+            if(invoices) {
+                // eslint-disable-next-line
+                invoices.map(invoice=> {
+                    if(invoice.hasOwnProperty("transfers")) {
+                        // eslint-disable-next-line
+                        invoice.transfers.map(transfer=> {
+                            mytransfers.push(transfer)
+                        })
+                    }
+                })
+                
+            }
+        }
+        return mytransfers;
+    }
+    
+
+    validateInvoicePayment() {
+        const chargetotal = this.getchargestotal();
+        const transfers = this.transfersbyproject();
+        let validate = {};
+        validate.validate = false;
+        const transfertotal = () => {
+            let total = 0;
+            if(transfers) {
+                // eslint-disable-next-line
+                transfers.map(transfer=> {
+                    total+=Number(transfer.amount)
+                })
+
+            }
+            return total;
+        }
+     
+        const amount = this.getamountowed();
+        console.log(chargetotal,transfertotal(),amount);
+        if(  chargetotal - transfertotal()  > amount  && amount > 0) {
+            validate.validate = true;
+
+        } else {
+            validate.message = `Invalid Transactions project balance is ${chargetotal - transfertotal()} and invoice amount is ${amount}`
+        }
+        return validate;
+
+
+    }
     showcharges() {
         const pm = new PM();
         const invoiceid = this.props.match.params.invoiceid;
@@ -725,7 +779,9 @@ class ViewInvoice extends Component {
     async invoicesettlement() {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
+        const validate = this.validateInvoicePayment()
         if (window.confirm(`Are you sure you want to settle this invoice ?`)) {
+            if(validate.validate) {
             const myproject = pm.getproject.call(this);
             if (myproject) {
 
@@ -734,6 +790,7 @@ class ViewInvoice extends Component {
                 const invoiceid = this.props.match.params.invoiceid;
                 const amount = Number(this.getamount())
                 const values = { invoiceid, amount }
+                try{
                 let response = await SettleInvoice(values)
                 console.log(response)
                 if (response.hasOwnProperty("settlements")) {
@@ -791,10 +848,21 @@ class ViewInvoice extends Component {
 
                 }
 
+            } catch(err) {
+                alert(err)
+            }
+
 
 
 
             }
+
+
+
+        } else {
+
+            this.setState({message:validate.message})
+        }
 
 
 
@@ -1009,8 +1077,6 @@ class ViewInvoice extends Component {
 
                     {this.showsummary()}
 
-
-
                     {this.transferSummary()}
 
                     {this.settlementSummary()}
@@ -1026,7 +1092,6 @@ class ViewInvoice extends Component {
                     </div>
 
                     {pm.showprojectid.call(this)}
-
 
                 </div>
             </div>)
