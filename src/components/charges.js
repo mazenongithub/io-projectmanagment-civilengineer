@@ -82,7 +82,7 @@ class Charges extends Component {
 
     handlechargeamount(chargeamount) {
         let amount = (chargeamount * (.942)) - .3
-        this.setState({ chargeamount, amount:Number(amount).toFixed(2) })
+        this.setState({ chargeamount, amount: Number(amount).toFixed(2) })
 
     }
 
@@ -92,8 +92,8 @@ class Charges extends Component {
     }
 
     handleamount(amount) {
-        let chargeamount = ((Number(amount) + .3) / .942) 
-        this.setState({ chargeamount:Number(chargeamount).toFixed(2), amount })
+        let chargeamount = (Number(amount) / .942) + .3 + .3 * (1 - .942) + .3 * Math.pow((1 - .942), 2)
+        this.setState({ chargeamount: Number(chargeamount).toFixed(2), amount })
     }
     getsumoftransfers() {
         const pm = new PM()
@@ -324,10 +324,10 @@ class Charges extends Component {
                             </div>
                             {this.showcharges()}
                             {this.showchargesummary()}
-                            
+
                         </div>
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
-                        {this.transferSummary()}
+                            {this.transferSummary()}
                         </div>
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
                             {this.balanacesummary()}
