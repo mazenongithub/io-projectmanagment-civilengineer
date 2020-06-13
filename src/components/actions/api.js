@@ -58,9 +58,9 @@ export async function NodeLogin(values) {
         })
 }
 
-export function payInvoice(providerid, invoiceid, token, amount) {
-    const values = { providerid, invoiceid, token, amount }
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/invoicepayment/${invoiceid}`
+export function AddCharge(values) {
+
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${values.providerid}/charges/${values.projectid}`
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',

@@ -33,7 +33,8 @@ import PM from './components/pm';
 import CostEstimate from './components/costestimate';
 import LineItem from './components/lineitem';
 import Specifications from './components/specifications';
-import Specification from './components/specification'
+import Specification from './components/specification';
+import Charges from './components/charges'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -109,6 +110,7 @@ class App extends Component {
                             <Route exact path="/:providerid/profile" component={Profile} />
                             <Route exact path="/:providerid/myprojects" component={MyProjects} />
                             <Route exact path="/:providerid/myprojects/:projectid" component={Project} />
+                            <Route exact path="/:providerid/myprojects/:projectid/charges" component={Charges} />
                             <Route exact path="/:providerid/myprojects/:projectid/team" component={Team} />
                             <Route exact path="/:providerid/myprojects/:projectid/milestones" component={Milestones} />
                             <Route exact path="/:providerid/myprojects/:projectid/proposals" component={Proposals} />

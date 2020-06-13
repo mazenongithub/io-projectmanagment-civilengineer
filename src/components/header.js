@@ -134,6 +134,12 @@ class Header extends Component {
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
                     myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>)
                     return (myjsx);
+                    case "charges":
+                        providerid = myuser.profile;
+                        myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                        myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
+                        myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/charges`} className="nav-link">  {`/charges`}  </Link>)
+                        return (myjsx);
                 case "team":
                     providerid = myuser.profile;
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)

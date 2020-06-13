@@ -626,15 +626,7 @@ class ViewInvoice extends Component {
 
         return lineids;
     }
-    showcharge(charge) {
-        const pm = new PM();
-        const styles = MyStylesheet();
-        const created = inputUTCStringForLaborID(charge.created);
-        const regularFont = pm.getRegularFont.call(this)
-        return (<div style={{ ...regularFont, ...styles.generalFont }} key={charge.chargeid}>
-            Charge Captured on {created} for the Amount ${charge.amount} </div>)
 
-    }
 
     transfersbyproject() {
         const pm = new PM();
@@ -677,9 +669,9 @@ class ViewInvoice extends Component {
             return total;
         }
      
-        const amount = this.getamountowed();
+        const amount = Number(this.getamountowed()).toFixed(2);
         console.log(chargetotal,transfertotal(),amount);
-        if(  chargetotal - transfertotal()  > amount  && amount > 0) {
+        if(  chargetotal - transfertotal()  >= amount  && amount > 0) {
             validate.validate = true;
 
         } else {
@@ -689,46 +681,7 @@ class ViewInvoice extends Component {
 
 
     }
-    showcharges() {
-        const pm = new PM();
-        const invoiceid = this.props.match.params.invoiceid;
-        const charges = pm.getchargesbyinvoiceid.call(this, invoiceid)
-        const styles = MyStylesheet();
-        const headerFont = pm.getHeaderFont.call(this)
-        let chargeids = [];
-        const jsx = (chargeids) => {
-            return (
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1 }}>
-
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
-                                <u>Summary of Payments</u>
-                            </div>
-                        </div>
-
-                        {chargeids}
-
-                    </div>
-                </div>
-            )
-
-
-        }
-        if (charges) {
-            // eslint-disable-next-line
-            charges.map(charge => {
-                chargeids.push(this.showcharge(charge))
-            })
-
-            return jsx(chargeids)
-
-        } else {
-            return;
-        }
-
-    }
-
+    
     getsettlementtotal() {
         const pm = new PM();
         const settlements = pm.getsettlementsbyinvoiceid.call(this, this.props.match.params.invoiceid)
@@ -765,10 +718,13 @@ class ViewInvoice extends Component {
         if (project) {
             const projectid = project.projectid;
             const charges = pm.getchargesbyprojectid.call(this, projectid);
+            if(charges) {
             // eslint-disable-next-line
             charges.map(charge => {
                 total += Number(charge.amount);
             })
+
+        }
 
 
 
@@ -977,9 +933,16 @@ class ViewInvoice extends Component {
     transferSummary() {
         const pm = new PM()
         const styles = MyStylesheet();
-        const transfers = pm.gettransfersbyinvoiceid.call(this, this.props.match.params.invoiceid)
+        
+       
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
+    
+
+        const myproject = pm.getproject.call(this);
+        if(myproject) {
+            const projectid = myproject.projectid;
+        const transfers = pm.gettransfersbyprojectid.call(this,projectid);
         const sumoftransfers = () => {
             let sum = 0;
 
@@ -1019,8 +982,6 @@ class ViewInvoice extends Component {
             </div>)
         }
 
-
-
         if (transfers) {
             // eslint-disable-next-line
             transfers.map(transfer => {
@@ -1029,6 +990,8 @@ class ViewInvoice extends Component {
             })
         }
         return (jsx(transferids))
+    }
+     
     }
    
 

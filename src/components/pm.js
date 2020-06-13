@@ -88,6 +88,13 @@ class PM {
 
                 },
                 {
+                    title: 'Invoice Settlement',
+                    id: 'settlement',
+                    url: 'http://civilengineer.io/projectmanagment/slides/settlement.png',
+                    caption: `Settling Invoice by Creating Transfers `
+
+                },
+                {
                     title: 'Labor, Equipment, Materials',
                     id: 'lem',
                     url: 'http://civilengineer.io/projectmanagment/slides/lem.png',
@@ -104,6 +111,12 @@ class PM {
                     id: 'specifications',
                     url: 'http://civilengineer.io/projectmanagment/slides/specifications.png',
                     caption: `Construction Specfications created by Engineering `
+                },
+                {
+                    title: 'Charges',
+                    id: 'charges',
+                    url: 'http://civilengineer.io/projectmanagment/slides/charges.png',
+                    caption: `Adding charges to the Project  `
                 }
             ])
         }
@@ -238,42 +251,42 @@ class PM {
         }
         return key;
     }
-    getsettlmentbutton(){
-        if(this.state.width>1200) {
-            return({width:'301px',height:'71px',letterSpacing:'2.87px' })
-        } else if(this.state.width>800) {
-            return({width:'210px',height:'50px',letterSpacing:'2.16px' })
+    getsettlmentbutton() {
+        if (this.state.width > 1200) {
+            return ({ width: '301px', height: '71px', letterSpacing: '2.87px' })
+        } else if (this.state.width > 800) {
+            return ({ width: '210px', height: '50px', letterSpacing: '2.16px' })
 
         } else {
-            return({width:'120px',height:'28px',letterSpacing:'1.45px' })
+            return ({ width: '120px', height: '28px', letterSpacing: '1.45px' })
         }
     }
- 
+
     getsettlementsbyinvoiceid(invoiceid) {
         const pm = new PM();
-        const invoice = pm.getinvoicebyid.call(this,invoiceid);
+        const invoice = pm.getinvoicebyid.call(this, invoiceid);
         let settlements = false;
-        if(invoice.hasOwnProperty("settlements")) {
+        if (invoice.hasOwnProperty("settlements")) {
             settlements = invoice.settlements;
         }
         return settlements;
     }
     gettransfersbyinvoiceid(invoiceid) {
         const pm = new PM();
-        const invoice = pm.getinvoicebyid.call(this,invoiceid);
+        const invoice = pm.getinvoicebyid.call(this, invoiceid);
         let transfers = false;
-        if(invoice.hasOwnProperty("transfers")) {
+        if (invoice.hasOwnProperty("transfers")) {
             transfers = invoice.transfers;
         }
         return transfers;
     }
     getchargesbyprojectid(projectid) {
         const pm = new PM()
-        const project = pm.getprojectbyid.call(this,projectid)
+        const project = pm.getprojectbyid.call(this, projectid)
         let charges = false;
         if (project) {
             if (project.hasOwnProperty("charges")) {
-               charges = project.charges;
+                charges = project.charges;
 
             }
         }
@@ -608,29 +621,29 @@ class PM {
         return mycsi;
 
     }
-    getactullaborkeybyid(projectid,laborid) {
+    getactullaborkeybyid(projectid, laborid) {
         const pm = new PM();
-        const labors = pm.getactuallaborbyproject.call(this,projectid);
+        const labors = pm.getactuallaborbyproject.call(this, projectid);
         let key = false;
         if (labors) {
             // eslint-disable-next-line
-            labors.map((labor,i)=> {
-                if(labor.laborid === laborid) {
-                   key = i;
+            labors.map((labor, i) => {
+                if (labor.laborid === laborid) {
+                    key = i;
                 }
             })
         }
         return key;
     }
 
-    getactullaborbyid(projectid,laborid) {
+    getactullaborbyid(projectid, laborid) {
         const pm = new PM();
-        const labors = pm.getactuallaborbyproject.call(this,projectid);
+        const labors = pm.getactuallaborbyproject.call(this, projectid);
         let mylabor = false;
         if (labors) {
             // eslint-disable-next-line
-            labors.map(labor=> {
-                if(labor.laborid=== laborid) {
+            labors.map(labor => {
+                if (labor.laborid === laborid) {
                     mylabor = labor;
                 }
             })
@@ -639,96 +652,96 @@ class PM {
     }
 
     getactuallaborbyproject(projectid) {
-        const pm  = new PM();
-        const project = pm.getprojectbyid.call(this,projectid);
+        const pm = new PM();
+        const project = pm.getprojectbyid.call(this, projectid);
         let actuallabor = false;
-        if(project) {
-            if(project.hasOwnProperty("actuallabor")) {
+        if (project) {
+            if (project.hasOwnProperty("actuallabor")) {
                 actuallabor = project.actuallabor.mylabor;
             }
         }
-        return actuallabor;  
+        return actuallabor;
     }
 
     getactualmaterialsbyproject(projectid) {
-        const pm  = new PM();
-        const project = pm.getprojectbyid.call(this,projectid);
-        let actualmaterial= false;
-        if(project) {
-            if(project.hasOwnProperty("actualmaterials")) {
+        const pm = new PM();
+        const project = pm.getprojectbyid.call(this, projectid);
+        let actualmaterial = false;
+        if (project) {
+            if (project.hasOwnProperty("actualmaterials")) {
                 actualmaterial = project.actualmaterials.mymaterial;
             }
         }
         console.log(actualmaterial)
-        return actualmaterial;  
+        return actualmaterial;
     }
 
-    getactualmaterialskeybyid(projectid,materialid) {
+    getactualmaterialskeybyid(projectid, materialid) {
         const pm = new PM();
-        const materials = pm.getactualmaterialsbyproject.call(this,projectid);
+        const materials = pm.getactualmaterialsbyproject.call(this, projectid);
         let key = false;
         if (materials) {
             // eslint-disable-next-line
-            materials.map((material,i)=> {
-                if(material.materialid=== materialid) {
+            materials.map((material, i) => {
+                if (material.materialid === materialid) {
                     key = i;
                 }
             })
         }
         return key;
     }
-    getactulmaterialsbyid(projectid,materialid) {
+    getactulmaterialsbyid(projectid, materialid) {
         const pm = new PM();
-        const materials = pm.getactualmaterialsbyproject.call(this,projectid);
+        const materials = pm.getactualmaterialsbyproject.call(this, projectid);
         console.log(materials, materialid)
         let mymaterial = false;
         if (materials) {
             // eslint-disable-next-line
-            materials.map(material=> {
+            materials.map(material => {
                 console.log(material)
-                if(material.materialid=== materialid) {
+                if (material.materialid === materialid) {
                     mymaterial = material;
                 }
             })
         }
-        console.log(mymaterial,projectid,materialid)
+        console.log(mymaterial, projectid, materialid)
         return mymaterial;
     }
 
     getactualequipmentbyproject(projectid) {
-        const pm  = new PM();
-        const project = pm.getprojectbyid.call(this,projectid);
-        let actualequipment= false;
-        if(project) {
-            if(project.hasOwnProperty("actualequipment")) {
+        const pm = new PM();
+        const project = pm.getprojectbyid.call(this, projectid);
+        let actualequipment = false;
+        if (project) {
+            if (project.hasOwnProperty("actualequipment")) {
                 actualequipment = project.actualequipment.myequipment;
             }
         }
-        return actualequipment;  
+        return actualequipment;
     }
 
-    getactulequipmentkeybyid(projectid,equipmentid) {
+    getactulequipmentkeybyid(projectid, equipmentid) {
         const pm = new PM();
-        const equipments = pm.getactualequipmentbyproject.call(this,projectid);
+        const equipments = pm.getactualequipmentbyproject.call(this, projectid);
         let key = false;
         if (equipments) {
             // eslint-disable-next-line
-            equipments.map((equipment,i)=> {
-                if(equipment.equipmentid=== equipmentid) {
+            equipments.map((equipment, i) => {
+                if (equipment.equipmentid === equipmentid) {
                     key = i;
                 }
             })
         }
         return key;
     }
-    getactulequipmentbyid(projectid,equipmentid) {
+    getactulequipmentbyid(projectid, equipmentid) {
         const pm = new PM();
-        const equipments = pm.getactualequipmentbyproject.call(this,projectid);
+        const equipments = pm.getactualequipmentbyproject.call(this, projectid);
         let myequipment = false;
         if (equipments) {
             // eslint-disable-next-line
-            equipments.map(equipment=> {
-                if(equipment.equipmentid=== equipmentid) {
+            equipments.map(equipment => {
+                if (equipment.equipmentid === equipmentid) {
                     myequipment = equipment;
                 }
             })
@@ -778,6 +791,11 @@ class PM {
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
                                 <Link to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
+                            </div>
+                        </div>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont }}>
+                                <Link to={`/${providerid}/myprojects/${myproject.title}/charges`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Add Charges</Link>
                             </div>
                         </div>
                         <div style={{ ...styles.generalFlex }}>
@@ -1178,12 +1196,12 @@ class PM {
         }
 
     }
-    
+
     async saveallprofilebyuser(myuser) {
 
         if (myuser) {
             try {
-            
+
                 let response = await SaveAllProfile({ myuser });
                 console.log(response)
                 if (response.hasOwnProperty("allusers")) {
@@ -1272,7 +1290,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-              
+
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
@@ -1513,6 +1531,28 @@ class PM {
 
         }
 
+    }
+    gettransfersbyprojectid(projectid) {
+        const pm = new PM();
+        const myproject = pm.getprojectbyid.call(this, projectid)
+        let mytransfers = [];
+        if (myproject) {
+            const projectid = myproject.projectid;
+            const invoices = pm.getinvoices.call(this, projectid)
+            if (invoices) {
+                // eslint-disable-next-line
+                invoices.map(invoice => {
+                    if (invoice.hasOwnProperty("transfers")) {
+                        // eslint-disable-next-line
+                        invoice.transfers.map(transfer => {
+                            mytransfers.push(transfer)
+                        })
+                    }
+                })
+
+            }
+        }
+        return mytransfers;
     }
 
 

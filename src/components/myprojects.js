@@ -141,6 +141,13 @@ class MyProjects extends Component {
           </div>
 
           <div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont}}>
+              <Link to={`/${providerid}/myprojects/${myproject.title}/charges`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Add Charges</Link>
+            </div>
+            
+          </div>
+
+          <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
               <Link to={`/${providerid}/myprojects/${myproject.title}/specifications`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</Link>
             </div>
