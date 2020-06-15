@@ -9,6 +9,15 @@ import { Link } from 'react-router-dom';
 
 
 class PM {
+    getcsis() {
+        let csis = false;
+        if(this.props.csis) {
+            if(this.props.csis.hasOwnProperty("length")) {
+                csis = this.props.csis;
+            }
+        }
+        return csis;
+    }
 
     getupdatepassword() {
         return ({ width: '266px', height: '64px' })
@@ -603,9 +612,29 @@ class PM {
         }
         return estimate;
     }
+
     getcsibyid(csiid) {
         const pm = new PM();
-        const estimate = pm.getcostestimate.call(this);
+        const csis= pm.getcsis.call(this)
+
+        let mycsi = false;
+        if (csis) {
+    
+                // eslint-disable-next-line
+                csis.map(csi => {
+                    if (csi.csiid === csiid) {
+                        mycsi = csi;
+
+                    }
+                })
+            }
+        
+        return mycsi;
+
+    }
+    getestimatecsibyid(csiid) {
+        const pm = new PM();
+        const estimate = pm.getcsis.call(this)
 
         let mycsi = false;
         if (estimate) {

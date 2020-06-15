@@ -4,6 +4,7 @@ import PM from './pm'
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Link } from 'react-router-dom'
+import {LoadCSIs} from './actions/api'
 
 class Specifications extends Component {
 
@@ -13,10 +14,27 @@ class Specifications extends Component {
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
     componentDidMount() {
+        const pm = new PM();
         window.addEventListener('resize', this.updateWindowDimensions);
         this.props.reduxProject({ activeprojectid: this.props.match.params.projectid })
         this.updateWindowDimensions();
+        const csis = pm.getcsis.call(this)
+        if(!csis) {
+            this.loadcsis();
+        }
 
+    }
+    async loadcsis() {
+        try {
+            let response = await LoadCSIs();
+            if(response.hasOwnProperty("csis")) {
+                this.props.reduxCSIs(response.csis);
+
+            }
+
+        } catch(err) {
+            alert(err)
+        }
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
@@ -88,7 +106,8 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys
+        allcompanys: state.allcompanys,
+        csis:state.csis
     }
 }
 

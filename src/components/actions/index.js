@@ -1,4 +1,4 @@
-import { MYUSERMODEL, NAVIGATION, PROJECT, ALLUSERS, ALLCOMPANYS } from './types';
+import { MYUSERMODEL, NAVIGATION, PROJECT, ALLUSERS, ALLCOMPANYS, CSIS} from './types';
 
 export const reduxUser = (myusermodel) => async dispatch => {
 
@@ -17,3 +17,8 @@ export const reduxProject = (project) => async dispatch => {
 export const reduxAllUsers = (allusers) => async dispatch => {
     dispatch({ type: ALLUSERS, payload: allusers })
 }
+
+export const reduxCSIs = (csis) => async dispatch => {
+    dispatch({ type: CSIS, payload:csis })
+}
+
