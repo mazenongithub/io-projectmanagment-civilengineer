@@ -200,10 +200,10 @@ class Milestones extends Component {
                 <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1 }}>
+                            <div style={{ ...styles.flex1,...styles.addMargin }}>
                                 {start.showstartdate.call(this)}
                             </div>
-                            <div style={{ ...styles.flex1 }}>
+                            <div style={{ ...styles.flex1,...styles.addMargin }}>
                                 {completion.showcompletiondate.call(this)}
                             </div>
                         </div>

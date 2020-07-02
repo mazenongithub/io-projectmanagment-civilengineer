@@ -161,7 +161,7 @@ class CompletionDate {
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1 }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>Material Date (MM-DD-YYYY) </span>
+                            <span style={{ ...styles.generalFont, ...regularFont }}>Completion Date (MM-DD-YYYY) </span>
                         </div>
                     </div>
 
