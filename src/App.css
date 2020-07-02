@@ -11,6 +11,7 @@
   grid-row-gap: 5px;
   margin:auto;
 }
+
 .active-milestone-calender{
   background-color: #B2EDAB;
 }
@@ -18,4 +19,5 @@
   -webkit-text-stroke-width: 1px;
 -webkit-text-stroke-color: black;
 }
+
 @media screen and (min-width:1081px) {}

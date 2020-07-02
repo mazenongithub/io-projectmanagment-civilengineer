@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import * as actions from './actions';
 import { connect } from 'react-redux';
-import Start from './start';
-import Completion from './completion'
+import StartDate from './start';
+import CompletionDate from './completion'
 import { MyStylesheet } from './styles';
-import { makeDatefromObj, MyMilestone, milestoneformatdatestring } from './functions';
+import { MyMilestone, milestoneformatdatestring } from './functions';
 import PM from './pm';
 import MakeID from './makeids'
 import { removeIconSmall } from './svg';
@@ -17,19 +17,26 @@ class Milestones extends Component {
             message: '',
             milestone: '',
             activemilestoneid: "",
-            datein: new Date(),
-            completion: new Date(),
-            showtimein: false,
             width: '',
             height: '',
-            startcalender: 'open',
-            completioncalender: 'open'
+            startcalender: true,
+            completioncalender: true,
+            startdateday: '',
+            startdatemonth: '',
+            startdateyear: '',
+            completiondateday: '',
+            completiondatemonth: '',
+            completiondateyear: ''
+
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
         this.updateWindowDimensions();
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+        this.props.reduxNavigation({ navigation: "milestones" })
         window.addEventListener('resize', this.updateWindowDimensions);
+        this.reset()
 
 
     }
@@ -41,6 +48,56 @@ class Milestones extends Component {
     updateWindowDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
 
+    }
+    reset() {
+        this.startdatedefault();
+        this.completiondatedefault();
+    }
+
+    completiondatedefault() {
+        const completiondatemonth = () => {
+            let month = new Date().getMonth() + 1;
+            if (month < 10) {
+                month = `0${month}`
+            }
+            return month;
+        }
+        const completiondateday = () => {
+            let day = new Date().getDate();
+            if (day < 10) {
+                day = `0${day}`
+            }
+            return day;
+        }
+        const completiondateyear = () => {
+            let year = new Date().getFullYear();
+
+            return year;
+        }
+        this.setState({ completiondateyear: completiondateyear(), completiondatemonth: completiondatemonth(), completiondateday: completiondateday() })
+    }
+
+    startdatedefault() {
+        const startdatemonth = () => {
+            let month = new Date().getMonth() + 1;
+            if (month < 10) {
+                month = `0${month}`
+            }
+            return month;
+        }
+        const startdateday = () => {
+            let day = new Date().getDate();
+            if (day < 10) {
+                day = `0${day}`
+            }
+            return day;
+        }
+        const startdateyear = () => {
+            let year = new Date().getFullYear();
+
+            return year;
+        }
+        this.setState({ startdateyear: startdateyear(), startdatemonth: startdatemonth(), startdateday: startdateday() })
     }
 
     getactivemilestonekey() {
@@ -97,8 +154,14 @@ class Milestones extends Component {
 
             } else {
                 let milestoneid = makeID.milestoneid.call(this)
-                let start = makeDatefromObj(this.state.datein);
-                let completion = makeDatefromObj(this.state.completion);
+                const startyear = this.state.startdateyear;
+                const startday = this.state.startdateday;
+                const startmonth = this.state.startdatemonth;
+                const start = `${startyear}-${startmonth}-${startday}`
+                const completionyear = this.state.completiondateyear;
+                const completionday = this.state.completiondateday;
+                const completionmonth = this.state.completiondatemonth;
+                const completion = `${completionyear}-${completionmonth}-${completionday}`
                 let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
 
                 if (myproject.hasOwnProperty("projectmilestones")) {
@@ -129,8 +192,8 @@ class Milestones extends Component {
     }
     handleTimes() {
         // const pm = new PM();
-        const start = new Start();
-        const completion = new Completion();
+        const start = new StartDate();
+        const completion = new CompletionDate();
         const styles = MyStylesheet();
         if (this.state.width > 1200) {
             return (
@@ -138,10 +201,10 @@ class Milestones extends Component {
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1 }}>
-                                {start.showdatein.call(this)}
+                                {start.showstartdate.call(this)}
                             </div>
                             <div style={{ ...styles.flex1 }}>
-                                {completion.showdatein.call(this)}
+                                {completion.showcompletiondate.call(this)}
                             </div>
                         </div>
                     </div>
@@ -152,12 +215,12 @@ class Milestones extends Component {
                 <div style={{ ...styles.flex1 }}>
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1 }}>
-                            {start.showdatein.call(this)}
+                            {start.showstartdate.call(this)}
                         </div>
                     </div>
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                         <div style={{ ...styles.flex1 }}>
-                            {completion.showdatein.call(this)}
+                            {completion.showcompletiondate.call(this)}
                         </div>
                     </div>
                 </div>
@@ -184,10 +247,27 @@ class Milestones extends Component {
         return ids;
     }
     makemilestoneactive(milestoneid) {
+        const pm = new PM();
         if (this.state.activemilestoneid === milestoneid) {
             this.setState({ activemilestoneid: false })
+            this.reset();
         } else {
-            this.setState({ activemilestoneid: milestoneid })
+            const milestone = pm.getmilestonebyid.call(this, milestoneid)
+            let startdateyear = "";
+            let startdatemonth = "";
+            let startdateday = "";
+            let completiondateyear = "";
+            let completiondatemonth = "";
+            let completiondateday = "";
+            if (milestone) {
+                startdateyear = milestone.start.substring(0, 4)
+                startdatemonth = milestone.start.substring(5, 7);
+                startdateday = milestone.start.substring(8, 10);
+                completiondateyear = milestone.completion.substring(0, 4)
+                completiondatemonth = milestone.completion.substring(5, 7);
+                completiondateday = milestone.completion.substring(8, 10);
+            }
+            this.setState({ activemilestoneid: milestoneid, startdateday, startdatemonth, startdateyear, completiondateday, completiondateyear, completiondatemonth })
         }
     }
     removemilestone(milestone) {
@@ -195,7 +275,7 @@ class Milestones extends Component {
         const myuser = pm.getuser.call(this);
         if (myuser) {
 
-            if (window.confirm(`Are you sure you want to delete milestone ${milestone.milestone}?`)) {
+            if (window.confirm(`Are you sure you want to delete milestone ${ milestone.milestone }?`)) {
                 const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
                 const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
                 myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
@@ -243,9 +323,9 @@ class Milestones extends Component {
                 <div style={{ ...styles.flex1 }}>
 
                     <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...styles.generalFont, ...headerFont }}>
-                            /{myproject.title} <br />
-                            Project Milestones
+                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                            <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>/{myproject.title} </span><br />
+                            <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>Project Milestones</span>
                         </div>
                     </div>
 

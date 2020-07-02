@@ -5,6 +5,21 @@ export function formatDate(timein) {
 
 }
 
+
+export function  validateYear(year) {
+    const reg_ex = /^[12][0-9]{3}$/;
+return(reg_ex.test(year));
+}
+export function validateDate(date) {
+    const reg_ex = /^(0?[1-9]|[12][0-9]|3[01])$/;
+return(reg_ex.test(date));
+
+}
+export function validateMonth(mon) {
+const reg_ex = /^0[1-9]|1[0-2]$/;
+return(reg_ex.test(mon))
+}
+
 export function getFirstIsOn(mydate) {
     let monthdisplay = mydate.getMonth() + 1;
     let fullyear = mydate.getFullYear();
@@ -2540,6 +2555,126 @@ export function getmonth(dateobj) {
             break;
     }
 }
+
+export function getFirstIsOnDate(datein) {
+
+    let monthdisplay = datein.getMonth() + 1;
+    let fullyear = datein.getFullYear();
+    let thefirstofthemonth = new Date(`${fullyear}/${monthdisplay}/1`);
+    let firstday = thefirstofthemonth.getDay();
+    switch (firstday) {
+        case 0:
+            return "Sun";
+        case 1:
+            return "Mon";
+        case 2:
+            return "Tues";
+        case 3:
+            return "Weds";
+        case 4:
+            return "Thurs";
+        case 5:
+            return "Fri";
+        case 6:
+            return "Sat";
+        default:
+            return;
+    }
+}
+
+
+export function check_31_date(dateobj) {
+
+    let month = dateobj.getMonth();
+    if (month === 0 || month === 2 || month === 4 || month === 6 || month === 7 || month === 9 || month === 11) {
+        return 31;
+    }
+}
+
+
+export function check_30_date(dateobj) {
+
+    let month = dateobj.getMonth();
+    if (month !== 1) {
+        return 30;
+    }
+}
+
+
+export function check_29_feb_leapyear_date(dateobj)  {
+
+    let month = dateobj.getMonth();
+
+    if (month === 1) {
+        let year = dateobj.getFullYear();
+        if (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) {
+            return 29;
+        }
+        else {
+            return;
+        }
+    }
+    else {
+        return 29;
+    }
+
+}
+
+export function getDayString(day) {
+
+    switch (day) {
+        case 0:
+            return "Sunday";
+        case 1:
+            return "Monday";
+        case 2:
+            return "Tuesday";
+        case 3:
+            return "Wednesday";
+        case 4:
+            return "Thursday";
+        case 5:
+            return "Friday";
+        case 6:
+            return "Saturday";
+        default:
+            return;
+    }
+}
+
+export function monthstring(month) {
+
+    
+    switch (month) {
+        case 0:
+            return ("January");
+        case 1:
+            return ("February");
+        case 2:
+            return ("March");
+        case 3:
+            return ("April");
+        case 4:
+            return ("May");
+        case 5:
+            return ("June");
+        case 6:
+            return ("July");
+        case 7:
+            return ("August");
+        case 8:
+            return ("September");
+        case 9:
+            return ("October");
+        case 10:
+            return ("November");
+        case 11:
+            return ("December");
+        default:
+            break;
+    }
+}
+
 export function getmonthstring(month) {
 
     month = month - 1;
@@ -3084,7 +3219,7 @@ export function LetterCounter(num) {
                 return 'S'
             case 20:
                 return 'T'
-            case 23:
+            case 21:
                 return 'U'
             case 22:
                 return 'V'
@@ -3097,7 +3232,6 @@ export function LetterCounter(num) {
             case 26:
                 return 'Z'
             default:
-                return ''
                 break;
 
         }

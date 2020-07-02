@@ -613,6 +613,75 @@ class PM {
         return estimate;
     }
 
+    getmilestonebyid(milestoneid) {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this);
+        let mymilestone = false;
+        if(milestones) {
+            // eslint-disable-next-line
+            milestones.map(milestone=> {
+                if(milestone.milestoneid === milestoneid) {
+                mymilestone = milestone;
+                }
+            })
+        }
+        return mymilestone;
+
+    }
+
+    getdropicon() {
+        if (this.state.width > 1200) {
+            return (
+                {
+                    width: '93x',
+                    height: '45px'
+                })
+
+        } else if (this.state.width > 800) {
+            return (
+                {
+                    width: '78px',
+                    height: '38px'
+                })
+
+        } else {
+            return (
+                {
+                    width: '62px',
+                    height: '30px'
+                })
+        }
+    }
+
+    getmilestonekeybyid(milestoneid) {
+        const pm = new PM();
+        let key = false;
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+        if (myproject.hasOwnProperty("projectmilestones")) {
+            // eslint-disable-next-line
+            myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
+                if (mymilestone.milestoneid === milestoneid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+
+    getmilestones() {
+      
+     const pm = new PM();
+     const myproject = pm.getprojectbytitle.call(this,this.props.match.params.projectid);
+     let milestones = false;
+     if(myproject) {
+         if(myproject.hasOwnProperty("projectmilestones")) {
+            milestones = myproject.projectmilestones.mymilestone;
+         }
+     }
+        return milestones;
+
+    }
+
     getcsibyid(csiid) {
         const pm = new PM();
         const csis= pm.getcsis.call(this)
@@ -1062,20 +1131,7 @@ class PM {
         }
         return key;
     }
-    getmilestonekeybyid(milestoneid) {
-        const pm = new PM();
-        let key = false;
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
-        if (myproject.hasOwnProperty("projectmilestones")) {
-            // eslint-disable-next-line
-            myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
-                if (mymilestone.milestoneid === milestoneid) {
-                    key = i;
-                }
-            })
-        }
-        return key;
-    }
+   
     getremoveicon() {
         if (this.state.width > 800) {
             return ({ width: '47px', height: '47px' })
