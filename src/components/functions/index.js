@@ -5,6 +5,10 @@ export function formatDate(timein) {
 
 }
 
+export function CreatePredessor(predessor,type) {
+    return({predessor,type})
+}
+
 
 export function  validateYear(year) {
     const reg_ex = /^[12][0-9]{3}$/;
@@ -3049,6 +3053,31 @@ export function returnCompanyList(allusers) {
     }
     return companys;
 }
+
+export function getOffsetDate(timein) {
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00 UTC`)
+    let offset = datein.getTimezoneOffset() / 60
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
+    }
+    if (Math.abs(offset) < 10) {
+        offset = `0${offset}`
+    }
+    return (`${sym}${offset}:00`)
+}
+
+export function getDateInterval(start,completion) {
+  
+    const offsetstart = getOffsetDate(start);
+    const datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+    //const offsetcompletion= getOffsetDate(completion);
+    const datecompletion = new Date(`${completion.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+    const starttime = datestart.getTime();
+    const endtime = datecompletion.getTime();
+    const interval = (endtime - starttime)/(3600000*24);
+    return (interval)
+   }
 export function inputDateStringOutputSeconds(timein) {
     let offset = getOffset()
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`);

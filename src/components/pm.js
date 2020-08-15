@@ -11,8 +11,8 @@ import { Link } from 'react-router-dom';
 class PM {
     getcsis() {
         let csis = false;
-        if(this.props.csis) {
-            if(this.props.csis.hasOwnProperty("length")) {
+        if (this.props.csis) {
+            if (this.props.csis.hasOwnProperty("length")) {
                 csis = this.props.csis;
             }
         }
@@ -216,6 +216,21 @@ class PM {
             }
         }
         return specs;
+    }
+
+    getprojectinterval() {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this)
+        if(milestones) {
+        milestones.sort((a, b) => {
+           return sorttimes(a.start, b.start)
+        }
+        )
+        const start = milestones[0].start;
+        const completion = milestones[milestones.length - 1].completion;
+        return({start,completion})
+    }
+
     }
 
     getslidebyid(id) {
@@ -617,11 +632,11 @@ class PM {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this);
         let mymilestone = false;
-        if(milestones) {
+        if (milestones) {
             // eslint-disable-next-line
-            milestones.map(milestone=> {
-                if(milestone.milestoneid === milestoneid) {
-                mymilestone = milestone;
+            milestones.map(milestone => {
+                if (milestone.milestoneid === milestoneid) {
+                    mymilestone = milestone;
                 }
             })
         }
@@ -669,35 +684,35 @@ class PM {
     }
 
     getmilestones() {
-      
-     const pm = new PM();
-     const myproject = pm.getprojectbytitle.call(this,this.props.match.params.projectid);
-     let milestones = false;
-     if(myproject) {
-         if(myproject.hasOwnProperty("projectmilestones")) {
-            milestones = myproject.projectmilestones.mymilestone;
-         }
-     }
+
+        const pm = new PM();
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+        let milestones = false;
+        if (myproject) {
+            if (myproject.hasOwnProperty("projectmilestones")) {
+                milestones = myproject.projectmilestones.mymilestone;
+            }
+        }
         return milestones;
 
     }
 
     getcsibyid(csiid) {
         const pm = new PM();
-        const csis= pm.getcsis.call(this)
+        const csis = pm.getcsis.call(this)
 
         let mycsi = false;
         if (csis) {
-    
-                // eslint-disable-next-line
-                csis.map(csi => {
-                    if (csi.csiid === csiid) {
-                        mycsi = csi;
 
-                    }
-                })
-            }
-        
+            // eslint-disable-next-line
+            csis.map(csi => {
+                if (csi.csiid === csiid) {
+                    mycsi = csi;
+
+                }
+            })
+        }
+
         return mycsi;
 
     }
@@ -1131,12 +1146,57 @@ class PM {
         }
         return key;
     }
-   
+
+    getpredessorsbymilestoneid(milestoneid) {
+        const pm = new PM();
+        const milestones = pm.getmilestonebyid.call(this, milestoneid);
+        let predessors = false;
+        if (milestones.hasOwnProperty("predessors")) {
+            predessors = milestones.predessors;
+
+        }
+        return predessors;
+
+    }
+    getpredessorkeybyid(milestone, milestoneid) {
+        const pm = new PM();
+        const predessors = pm.getpredessorsbymilestoneid.call(this, milestone.milestoneid);
+        let key = false;
+        if (predessors) {
+            // eslint-disable-next-line
+            predessors.map((predessor, i) => {
+                if (predessor.milestoneid === milestoneid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+    getpredessorbyid(milestone, milestoneid) {
+
+        const pm = new PM();
+        const predessors = pm.getpredessorsbymilestoneid.call(this, milestone.milestoneid);
+        console.log(predessors)
+        let mypredessor = false;
+        if (predessors) {
+
+            // eslint-disable-next-line
+            predessors.map(predessor => {
+                if (predessor.predessor === milestoneid) {
+                    mypredessor = predessor;
+                }
+            })
+        } else {
+            console.log(`Predessors by MilestoneID is false`)
+        }
+        return mypredessor;
+    }
+
     getremoveicon() {
         if (this.state.width > 800) {
-            return ({ width: '47px', height: '47px' })
-        } else {
             return ({ width: '36px', height: '36px' })
+        } else {
+            return ({ width: '24px', height: '24px' })
         }
     }
     getteamprofile() {

@@ -7,6 +7,7 @@ import { MyStylesheet } from './styles';
 import { MyMilestone, milestoneformatdatestring } from './functions';
 import PM from './pm';
 import MakeID from './makeids'
+import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
 
 class Milestones extends Component {
@@ -317,7 +318,8 @@ class Milestones extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const headerFont = pm.getHeaderFont.call(this);
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+        const criticalpath = new CriticalPath();
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -339,9 +341,12 @@ class Milestones extends Component {
                     </div>
 
                     {this.handleTimes()}
+                    
                     {pm.showsaveproject.call(this)}
 
                     {this.loadmilestoneids()}
+
+                    {criticalpath.showpath.call(this)}
 
                     {pm.showprojectid.call(this)}
 

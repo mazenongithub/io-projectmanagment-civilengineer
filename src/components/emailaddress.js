@@ -102,7 +102,7 @@ class EmailAddress {
                                 <input type="text" style={{ ...styles.generalFont, ...styles.generalField, ...regularFont }}
                                     onChange={event => { emailaddress.handleemailaddress.call(this, event.target.value) }}
                                     value={this.state.emailaddress}
-                                    onBlur={() => { emailaddress.verifyEmailAddress.call(this) }} F
+                                    onBlur={() => { emailaddress.verifyEmailAddress.call(this) }} 
                                 />
                             </div>
                             <div style={{ ...styles.flex1 }}>

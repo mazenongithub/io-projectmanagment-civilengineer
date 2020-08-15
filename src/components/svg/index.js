@@ -33,6 +33,7 @@ export function majorDownIcon() {
     </svg>
     )
 }
+
 export function updatePasswordIcon() {
     return(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256.42 63.44"><defs><style></style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="updatepassword-1" x="0.5" y="0.5" width="255.42" height="62.44" rx="6.46"/><path d="M249.46,1a6,6,0,0,1,6,6V56.49a6,6,0,0,1-6,5.95H7a6,6,0,0,1-6-5.95V7A6,6,0,0,1,7,1h242.5m0-1H7A7,7,0,0,0,0,7V56.49a7,7,0,0,0,7,6.95h242.5a7,7,0,0,0,7-6.95V7a7,7,0,0,0-7-7Z"/><text className="updatepassword-2" transform="translate(8.73 40.39) scale(0.82 1)">Update <tspan className="updatepassword-3" x="129.27" y="0">P</tspan><tspan x="152.31" y="0">as</tspan><tspan className="updatepassword-4" x="188.92" y="0">s</tspan><tspan className="updatepassword-5" x="205.99" y="0">w</tspan><tspan x="236.26" y="0">o</tspan><tspan className="updatepassword-6" x="256.57" y="0">r</tspan><tspan x="269.39" y="0">d</tspan></text></g></g></svg>)
 }
