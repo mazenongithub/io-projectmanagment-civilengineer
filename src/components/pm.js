@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
@@ -125,13 +125,21 @@ class PM {
 
                     // eslint-disable-next-line
                     Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
-                        const params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                       
                         const milestone_2 = getmilestonebyid(paths, prop)
+                        let params = {};
                         let params_2 = {};
                         if (milestone_2) {
 
                             if (scale === 'month') {
+                                params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
                                 params_2 = calculatemonth(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                            } else if (scale === 'year') {
+                                params = calculateyear(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                                params_2 = calculateyear(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                            } else if (scale === 'day') {
+                                params = calculateday(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                                params_2 = calculateday(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
                             }
                         }
                         const y1 = 80 + 100*(pm.getmilestonekeybyid.call(this,milestoneid));
