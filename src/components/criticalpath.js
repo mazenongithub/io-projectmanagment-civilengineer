@@ -2,7 +2,7 @@ import React from 'react'
 import { MyStylesheet } from './styles';
 import PM from './pm'
 import { removeIconSmall } from './svg';
-import { CreatePredessor, getDateInterval } from './functions'
+import { CreatePredessor, getDateInterval, trailingZeros, getOffsetDate, monthString, increaseCalendarDayOneMonth, calculatemonth, milestoneformatdatestring, getScale, calculateyear, increasedatebyoneday, calculateday} from './functions'
 
 class CriticalPath {
 
@@ -16,7 +16,7 @@ class CriticalPath {
         if (this.state.activemilestoneid) {
             const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid);
             if (milestone.hasOwnProperty("predessors")) {
-                console.log(milestone.predessors)
+               
                 // eslint-disable-next-line
                 milestone.predessors.map(predessor => {
                     let milestoneid = predessor.predessor;
@@ -25,7 +25,7 @@ class CriticalPath {
                         let mymilestone = pm.getmilestonebyid.call(this, milestoneid)
                         jsx.push(<div style={{ ...styles.generalContainer }}>
                             <span style={{ ...regularFont, ...styles.generalFont }}>{mymilestone.milestone}</span>
-                            <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight }} onClick={() => { criticalpath.removepredessor.call(this, predessor.predessor) }}>{removeIconSmall()}</button>
+                            <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight }} onClick={() => { criticalpath.removepredessor.call(this, milestone, predessor.predessor) }}>{removeIconSmall()}</button>
                         </div>)
                     }
                 })
@@ -51,16 +51,14 @@ class CriticalPath {
                     if (mymilestone) {
                         const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid)
                         const predessor = pm.getpredessorbyid.call(this, milestone, milestoneid);
-                        console.log(i, j, predessor, milestone, milestoneid)
+                      
                         if (predessor) {
                             const k = pm.getpredessorkeybyid.call(this, milestone, milestoneid);
-                            console.log(i, j, k)
+                      
                             myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.splice(k, 1)
                             this.props.reduxUser(myuser);
                             this.setState({ render: 'render' })
-                        } else {
-                            console.log(`Predessor is false`)
-                        }
+                        } 
 
                     }
 
@@ -85,7 +83,7 @@ class CriticalPath {
         if (this.state.activemilestoneid) {
             const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid);
             if (milestone.hasOwnProperty("predessors")) {
-                console.log(milestone.predessors)
+          
                 // eslint-disable-next-line
                 milestone.predessors.map(predessor => {
                     let milestoneid = predessor.predessor;
@@ -109,17 +107,17 @@ class CriticalPath {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this);
 
-        const validatemilestone =( milestoneid) => {
+        const validatemilestone = (milestoneid) => {
             let validate = true;
-            if(this.state.activemilestoneid === milestoneid) {
+            if (this.state.activemilestoneid === milestoneid) {
                 validate = false;
-            } else if(this.state.activemilestoneid) {
+            } else if (this.state.activemilestoneid) {
                 const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
-                if(milestone) {
-                    if(milestone.hasOwnProperty("predessors")) {
+                if (milestone) {
+                    if (milestone.hasOwnProperty("predessors")) {
                         // eslint-disable-next-line
-                        milestone.predessors.map(predessor=> {
-                            if(predessor.predessor === milestoneid) {
+                        milestone.predessors.map(predessor => {
+                            if (predessor.predessor === milestoneid) {
                                 validate = false;
                             }
                         })
@@ -134,7 +132,7 @@ class CriticalPath {
             // eslint-disable-next-line
             milestones.map(milestone => {
                 if (validatemilestone(milestone.milestoneid)) {
-                    jsx.push(<option value={milestone.milestoneid}>{milestone.milestone}</option>)
+                    jsx.push(<option key={`op${milestone.milestoneid}`}value={milestone.milestoneid}>{milestone.milestone}</option>)
 
                 }
             })
@@ -144,16 +142,16 @@ class CriticalPath {
         return jsx;
 
     }
-    showlineandarrow() {
-        const x1 = 0
-        const y1 = 0
+    showlineandarrow(x1,y1,x2,y2) {
+        // const x1 = 0
+        // const y1 = 0
 
-        const x2 = 200
-        const y2 = 80
+        // const x2 = 200
+        // const y2 = 80
 
 
         return (
-            <g id="lineandarrow" transform="translate(2.5 0)">
+            <g key={`${x1.toString()}${y1.toString()}${x2.toString()}${y2.toString()}`}id="lineandarrow">
                 <polyline className="showmilestones-1" points={`${x2 - 13} ${y2} ${x2 - 23} ${y2} ${x2 - 23} ${y1 + 3} ${x1} ${y1 + 3} ${x1} ${y1}`} />
                 <polygon points={`${x2 - 11.53} ${y2 + 4.12} ${x2 - 11.53} ${y2 + 1.79} ${x2 - 20.48} ${y2 + 1.79} ${x2 - 20.48} ${y2 - 1.1} ${x2 - 11.53} ${y2 - 1.1} ${x2 - 11.53} ${y2 - 3.4} ${x2} ${y2 + 0.34} ${x2 - 11.53} ${y2 + 4.12}`} />
             </g>)
@@ -161,68 +159,70 @@ class CriticalPath {
     createstartstart(value) {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-        if(value) {
-         
-        if (myuser) {
+        if (value) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
-            if (project) {
-                const i = pm.getprojectkeybyid.call(this, project.projectid)
+            if (myuser) {
 
-                if (this.state.activemilestoneid) {
-                    const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
-                    if (milestone) {
-                        const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
-                        const predessor = CreatePredessor(value, 'start-to-start')
-                        if (milestone.hasOwnProperty("predessors")) {
-                            myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
-                        } else {
-                            myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                if (project) {
+                    const i = pm.getprojectkeybyid.call(this, project.projectid)
+
+                    if (this.state.activemilestoneid) {
+                        const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
+                        if (milestone) {
+                            const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
+                            const predessor = CreatePredessor(value, 'start-to-start')
+                            if (milestone.hasOwnProperty("predessors")) {
+                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
+                            } else {
+                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                            }
+                            this.props.reduxUser(myuser);
+                            this.setState({ render: 'render' })
+
+
                         }
-                        this.props.reduxUser(myuser);
-                        this.setState({ render: 'render' })
 
 
                     }
-
 
                 }
 
             }
 
         }
-
-    }
 
     }
 
     createstartfinish(value) {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-        if(value) {
-         
-        if (myuser) {
+        if (value) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
-            if (project) {
-                const i = pm.getprojectkeybyid.call(this, project.projectid)
+            if (myuser) {
 
-                if (this.state.activemilestoneid) {
-                    const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
-                    if (milestone) {
-                        const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
-                        const predessor = CreatePredessor(value, 'start-to-finish')
-                        if (milestone.hasOwnProperty("predessors")) {
-                            myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
-                        } else {
-                            myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                if (project) {
+                    const i = pm.getprojectkeybyid.call(this, project.projectid)
+
+                    if (this.state.activemilestoneid) {
+                        const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
+                        if (milestone) {
+                            const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
+                            const predessor = CreatePredessor(value, 'start-to-finish')
+                            if (milestone.hasOwnProperty("predessors")) {
+                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
+                            } else {
+                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                            }
+                            this.props.reduxUser(myuser);
+                            this.setState({ render: 'render' })
+
+
                         }
-                        this.props.reduxUser(myuser);
-                        this.setState({ render: 'render' })
 
 
                     }
-
 
                 }
 
@@ -232,7 +232,97 @@ class CriticalPath {
 
     }
 
+    showmilestones() {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this);
+        const projectinterval = pm.getprojectinterval.call(this)
+        const styles = MyStylesheet();
+        const regularFont = pm.getRegularFont.call(this)
+        let mymilestones = [];
+        if (projectinterval) {
+            let ypos = 40;
+            let interval = getDateInterval(projectinterval.start, projectinterval.completion)
+            let scale = getScale(interval)
+            if (milestones) {
+                // eslint-disable-next-line
+                milestones.map(milestone => {
+                    let params = false;
+                    if (scale === 'month') {
+
+                        params = calculatemonth(
+                            projectinterval.start,
+                            projectinterval.completion,
+                            milestone.start,
+                            milestone.completion)
+                    } else if (scale === 'year') {
+                        params = calculateyear(
+                            projectinterval.start,
+                            projectinterval.completion,
+                            milestone.start,
+                            milestone.completion)
+                    } else if (scale === 'day') {
+                        params = calculateday( projectinterval.start,
+                            projectinterval.completion,
+                            milestone.start,
+                            milestone.completion)
+                    }
+
+                    mymilestones.push(
+                        <g key={`texdft${milestone.milestoneid}`}>
+                            <text style={{ ...regularFont, ...styles.generalFont }} x={params.xo} y={ypos - 10}> {milestone.milestone} {milestoneformatdatestring(milestone.start)} to {milestoneformatdatestring(milestone.completion)}</text>
+
+                        </g>)
+
+                    mymilestones.push(
+                        <g key={`rdfec${milestone.milestoneid}`}>
+
+                            <rect className="showmilestones-8" x={params.xo} y={ypos} width={params.width} height="40.03" />
+                        </g>)
+
+                    ypos += 100;
+
+
+                })
+
+
+
+            }
+
+        }
+
+        return mymilestones;
     }
+
+    showpaths() {
+        const pm = new PM();
+        const criticalpath = new CriticalPath();
+        const paths = pm.getpaths.call(this)
+        let getpaths = [];
+
+        for(let myprop in paths) {
+
+            for(let mypaths in paths[myprop]['paths']) {
+                let x1 = paths[myprop]['paths'][mypaths]['x1'];
+                let x2 =paths[myprop]['paths'][mypaths]['x2'];
+                let y1 = paths[myprop]['paths'][mypaths]['y1'];
+                let y2 =paths[myprop]['paths'][mypaths]['y2'];
+
+                getpaths.push(criticalpath.showlineandarrow.call(this,x1,y1,x2,y2)); 
+              
+            }
+            
+          
+          
+        }
+        
+
+        return getpaths;
+
+    }
+
+ 
+
+    
 
     showpath() {
         const criticalpath = new CriticalPath();
@@ -240,6 +330,49 @@ class CriticalPath {
         const styles = MyStylesheet();
 
         const regularFont = pm.getRegularFont.call(this)
+        const milestones = pm.getmilestones.call(this);
+        let yext = 200;
+        if (milestones) {
+            if (milestones.length) {
+                yext = (100 * milestones.length) + 100;
+            }
+
+        }
+
+        const projectinterval = pm.getprojectinterval.call(this);
+        let interval = '1202.88'
+        let grid = [];
+        let scale = "";
+        if (projectinterval) {
+            interval = getDateInterval(projectinterval.start, projectinterval.completion)
+            scale = getScale(interval)
+            let approxmonth = false;
+            let approxyear = false;
+            if (scale === 'month') {
+
+                approxmonth = Math.round(interval / 30.41)
+                interval = (approxmonth * 200) + 200;
+
+                for (let i = 0; i <= approxmonth; i++) {
+                    grid.push(<line key={`dfdgrid${i}`} className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
+                }
+
+            } else if (scale === 'year') {
+                approxyear = Math.round(interval / 365);
+                interval = (approxyear * 200) + 200;
+                for (let i = 0; i <= approxyear; i++) {
+                    grid.push(<line className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
+                }
+            } else if (scale === 'day') {
+                for (let i = 0; i <= interval; i++) {
+                    grid.push(<line className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
+                }
+                interval = interval * 200 + 200
+            }
+
+
+
+        }
 
         const activemilestone = () => {
             if (this.state.activemilestoneid) {
@@ -251,24 +384,101 @@ class CriticalPath {
                 )
             }
         }
-        const projectinterval = pm.getprojectinterval.call(this);
-        let scale = "";
-        if(projectinterval) {
-        const projectdays = getDateInterval(projectinterval.start,projectinterval.completion)
-     
-        if(projectdays < 24) {
-            scale = "day"
-        } else if (projectdays < 730) {
-            scale = "month"
-        } else {
-            scale = "year"
-        }
-    }
 
-    const getlabels = (start,scale) => {
-        
-    }
-        console.log(scale)
+
+
+        const getLabels = (start, completion, scale) => {
+
+           
+            let offsetstart = getOffsetDate(start);
+            let offsetcompletion = getOffsetDate(completion);
+            let datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+            let monthstart = trailingZeros(datestart.getMonth() + 1)
+            let yearstart = datestart.getFullYear();
+            let daystart = trailingZeros(datestart.getDate());
+            let datestartstring = `${yearstart}-${monthstart}-${daystart}`;
+            const datecompletion = new Date(`${completion.replace(/-/g, '/')} 00:00:00${offsetcompletion}`)
+            let yearcompletion = datecompletion.getFullYear();
+            let monthcompletion = trailingZeros(datecompletion.getMonth() + 1);
+            let daycompletion = trailingZeros(datecompletion.getDate());
+            let datecompletionstring = `${yearcompletion}-${monthcompletion}-${daycompletion}`
+            let datecompletionstringmonth = `${yearcompletion}-${monthcompletion}-01`
+
+
+            let x1 = 0;
+            const mylabels = [];
+
+            let intmonth = "";
+            let daystartday = "";
+            let int = datestartstring;
+            if (scale === 'month') {
+
+
+
+                while (intmonth !== datecompletionstringmonth) {
+
+                    int = increaseCalendarDayOneMonth(int);
+                    x1 += 200;
+                    offsetstart = getOffsetDate(int);
+                    let intstart = new Date(`${int.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+                    let month = trailingZeros(intstart.getMonth() + 1)
+                    let year = intstart.getFullYear();
+                    intmonth = `${year}-${month}-01`
+                    mylabels.push(<text key={`cdfdrit${intstart.getTime()}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{monthString(intstart.getMonth())} {intstart.getFullYear()}</text>);
+                }
+
+
+            } else if (scale === 'year') {
+
+                while (yearstart !== yearcompletion) {
+                    x1 += 200;
+                    yearstart += 1;
+                    let datestartyear = `${yearstart}-${monthstart}-${daystart}`
+                    offsetstart = getOffsetDate(datestartyear)
+                    datestartyear = new Date(`${datestartyear.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+
+                    mylabels.push(<text key={`crdfit${yearstart}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{datestartyear.getFullYear()}</text>);
+
+
+                }
+
+            } else if (scale === 'day') {
+
+                daystartday = datestartstring;
+
+                while (daystartday !== datecompletionstring) {
+                    x1 += 200;
+                    daystartday = increasedatebyoneday(daystartday)
+                    offsetstart = getOffsetDate(daystartday);
+                    let intstart = new Date(`${daystartday.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+                    let month = trailingZeros(intstart.getMonth() + 1)
+                    let year = intstart.getFullYear();
+                    let day = trailingZeros(intstart.getDate());
+                    daystartday = `${year}-${month}-${day}`
+
+                    mylabels.push(<text key={`crdfdfit${day}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{month}/{day}/{year}</text>);
+
+                }
+
+
+
+            }
+
+            return (mylabels)
+
+        }
+
+        const showlabels = () => {
+            if (projectinterval) {
+
+
+                return getLabels(projectinterval.start, projectinterval.completion, scale)
+
+            }
+        }
+
+
+
         return (
 
             <div style={{ ...styles.generalFlex }}>
@@ -295,63 +505,16 @@ class CriticalPath {
                         </div>
                     </div>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1202.88 1200.75">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${interval} ${yext+200}`}>
                         <g id="Layer_2" data-name="Layer 2">
                             <g id="lock">
-                                <polyline className="showmilestones-7" points="2.5 0.38 2.5 999.32 1202.5 999.32" />
-                                <rect className="showmilestones-1" x="2.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="0.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="2.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="200.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="2.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="400.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="2.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="600.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="2.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="800.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="2.5" y="1000.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="202.5" y="1000.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="402.5" y="1000.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="602.5" y="1000.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="802.5" y="1000.38" width="200" height="200" />
-                                <rect className="showmilestones-1" x="1002.5" y="1000.38" width="200" height="200" />
+                                {grid}
+                                {showlabels()}
+                                <polyline className="showmilestones-7" points={`2.5 0.38 2.5 ${yext} ${interval} ${yext}`} />
+                                {criticalpath.showmilestones.call(this)}
+                                {criticalpath.showpaths.call(this)}
+                               
                             </g>
-
-                            <g id="hide">
-                                <g id="Layer_1-2" data-name="Layer 1">
-
-                                    <text className="showmilestones-2" transform="translate(4.5 39.98)">Design 08/28/2020 to 09/05/2014</text><text />
-                                    <text className="showmilestones-2" transform="translate(394.01 133.95)"><tspan className="showmilestones-3">C</tspan> <tspan x="20.01" y="0">on</tspan><tspan className="showmilestones-4" x="53.7" y="0">s</tspan><tspan x="67.95" y="0">tru</tspan><tspan className="showmilestones-5" x="105.57" y="0">c</tspan><tspan x="119.97" y="0">tion 08/28/2020 to 09/05/2014</tspan></text><text className="showmilestones-2" transform="translate(135.74 1051.1)">O<tspan className="showmilestones-5" x="22.92" y="0">c</tspan><tspan x="37.32" y="0">t 2020</tspan></text><text className="showmilestones-2" transform="translate(340.55 1051.1)">N<tspan className="showmilestones-6" x="22.17" y="0">o</tspan><tspan x="38.64" y="0">v 2020</tspan></text><text className="showmilestones-2" transform="translate(551.97 1051.1)">Dec 2020</text><text className="showmilestones-2" transform="translate(765.55 1051.1)">Jan 2021</text> <text className="showmilestones-2" transform="translate(965.55 1051.1)"><tspan className="showmilestones-3">F</tspan><tspan x="16.41" y="0">eb 2021</tspan></text><text />
-
-                                </g>
-                            </g>
-
-                            {criticalpath.showlineandarrow.call(this)}
-
-                            <g id="image">
-
-                                <rect className="showmilestones-8" x="4.61" y="57.74" width="390.3" height="40.03" />
-                                <rect className="showmilestones-8" x="394.9" y="137.77" width="500" height="40.03" /></g>
                         </g>
                     </svg>
 

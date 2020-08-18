@@ -1,3 +1,4 @@
+const projectinterval = {start:'2020-04-30',completion:'2022-04-30'}
 const getOffsetDate = (timein) => {
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00 UTC`)
     let offset = datein.getTimezoneOffset() / 60
@@ -10,50 +11,8 @@ const getOffsetDate = (timein) => {
     }
     return (`${sym}${offset}:00`)
 }
-
-const monthString = (month) => {
-
-
-    switch (month) {
-        case 0:
-            return ("January");
-        case 1:
-            return ("February");
-        case 2:
-            return ("March");
-        case 3:
-            return ("April");
-        case 4:
-            return ("May");
-        case 5:
-            return ("June");
-        case 6:
-            return ("July");
-        case 7:
-            return ("August");
-        case 8:
-            return ("September");
-        case 9:
-            return ("October");
-        case 10:
-            return ("November");
-        case 11:
-            return ("December");
-        default:
-            break;
-    }
-}
-
-const trailingZeros = (num) => {
-    if (num < 10) {
-        return (`0${num}`);
-    } else {
-        return num;
-    }
-
-}
-
 const getDateInterval = (start, completion) => {
+
     const offsetstart = getOffsetDate(start);
     const datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
     //const offsetcompletion= getOffsetDate(completion);
@@ -64,72 +23,184 @@ const getDateInterval = (start, completion) => {
     return (interval)
 }
 
-const increaseCalendarDayOneMonth = (monthstring) => {
-    let offset = getOffsetDate(monthstring);
-    let datein = new Date(`${monthstring.replace(/-/g, '/')} 00:00:00${offset}`)
-    let currentMonth = datein.getMonth() + 1;
-    let year = datein.getFullYear();
-    let increaseMonth = currentMonth;
-    if (currentMonth === 12) {
-        increaseMonth = 1;
-        year += 1
+const getScale = (interval) => {
+
+    let scale = "";
+    if (interval < 30) {
+        scale = "day"
+    } else if (interval <= 730) {
+        scale = "month"
     } else {
-        increaseMonth += 1;
+        scale = "year"
     }
+    return scale;
 
-    let day = datein.getDate();
-    if (increaseMonth < 10) {
-        increaseMonth = `0${increaseMonth}`
-    }
-
-    if (day < 10) {
-        day = `0${day}`
-    }
-
-    let newDate = `${year}-${increaseMonth}-${day}`
-    return (newDate)
 }
 
-const getLabels = (start, completion, scale) => {
-    let offsetstart = getOffsetDate(start);
-    const datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-    let month = trailingZeros(datestart.getMonth() + 1)
-    let year = datestart.getFullYear();
-    let day = trailingZeros(datestart.getDate());
-    let datestring = `${year}-${month}-${day}`
+const calculatemonth = (int, compl, start, completion) => {
+    //int = '2020-04-18'
+    //compl = '2022-04-18'
 
-    const mylabels = [];
-    mylabels.push(`<text>${monthString(datestart.getMonth())} ${datestart.getFullYear()}</text>`);
-    let int = datestring;
-    while (int !== completion) {
-        int = increaseCalendarDayOneMonth(int);
 
-        offsetstart = getOffsetDate(int);
-        const intstart = new Date(`${int.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-        month = trailingZeros(intstart.getMonth() + 1)
-        year = datestart.getFullYear();
-        day = trailingZeros(datestart.getDate());
-        datestring = `${year}-${month}-${day}`
-        mylabels.push(`<text>${monthString(intstart.getMonth())} ${intstart.getFullYear()}</text>`);
 
-    }
+    let xo = int.split('-');
+    let x1 = xo[0]
+    let x2 = xo[1]
 
-    return (mylabels)
+    let initime = `${x1}-${x2}-01`
+    //start = '2020-04-18'
+    xo = (getDateInterval(initime, start) / 30.41) * 200;
+    //completion = '2020-09-18'
+    const days = getDateInterval(start, completion);
+    const width = (days / 30.41) * 200
+    return { width, xo }
 
 }
-const interval = getDateInterval('2020-04-18', '2022-04-18');
-const approxmonth = Math.round(interval/30.41)
-const viewboxes = approxmonth;
+const projectmilestones ={"projectmilestones": {
+"mymilestone": [
+{
+"milestoneid": "WA4EVMMV0YMWBTX2",
+"milestone": "Planning",
+"start": "2020-04-19",
+"completion": "2020-06-20"
+},
+{
+"milestoneid": "414OIWWM2UQ0WUWS",
+"milestone": "Design",
+"start": "2020-06-20",
+"completion": "2020-09-20",
+"predessors": [
+{
+"predessor": "WA4EVMMV0YMWBTX2",
+"type": "start-to-finish"
+}
+]
+},
+{
+"milestoneid": "LO9AIOG8LHT23HHQ",
+"milestone": "Construction",
+"start": "2020-09-20",
+"completion": "2021-04-21",
+"predessors": [
+{
+"predessor": "414OIWWM2UQ0WUWS",
+"type": "start-to-finish"
+}
+]
+}
+]
+}
+}
+const milestones = projectmilestones.projectmilestones.mymilestone;
+let paths = {}
 
-const drawgrid = (viewboxes) => {
-  let grid = [];
-  for(let i=0;i<viewboxes;i++) {
-    grid.push(`<line className=showmilestones-1 x1=${i*200} x2=${i*200} y1=${200} y2=${200}/>` )
+ 
+const getmilestonebyid =(paths,milestoneid) => {
+  let mymilestone = false;
+  if(paths.hasOwnProperty(milestoneid)) {
+    
+    mymilestone = paths[milestoneid]
+  }
+  
+ return mymilestone; 
+  
+}
+
+const getPathsbyMilestoneID = (milestones,milestoneid) => {
+ 
+  let path = {};
+  milestones.map(milestone=> {
+    if(milestone.hasOwnProperty("predessors")) {
+      // eslint-disable-next-line
+      milestone.predessors.map(predessor=> {
+        if(predessor.predessor === milestoneid) {
+          path[`${milestone.milestoneid}`] = {};
+          path[`${milestone.milestoneid}`]['type']=predessor.type
+         
+          
+                 
+        }
+        
+        
+      })
+      
+      
+      
+    }
+    
+    
+  })
+  
+ return path; 
+}
+
+milestones.map(milestone=> {
+  paths[`${milestone.milestoneid}`] = {};
+  paths[`${milestone.milestoneid}`]['milestone'] = milestone.milestone
+  paths[`${milestone.milestoneid}`]['start'] = milestone.start
+  paths[`${milestone.milestoneid}`]['completion'] = milestone.completion;
+  paths[`${milestone.milestoneid}`]['paths'] = getPathsbyMilestoneID(projectmilestones.projectmilestones.mymilestone,milestone.milestoneid)
+
+})
+
+
+
+
+let interval = getDateInterval(projectinterval.start,projectinterval.completion)
+let scale = getScale(interval)
+interval
+let mymilestones = [];
+let myobjs = []
+Object.getOwnPropertyNames(paths).map(path=> {
+mymilestones.push(path) 
+})
+
+mymilestones.map((milestoneid,i)=> {
+  
+  if((paths[milestoneid]).hasOwnProperty("paths")) {
+    
+    
+ 
+     if(Object.getOwnPropertyNames(paths[milestoneid].paths).length > 0) {
+       
+         Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop=> {
+           const params = calculatemonth(projectinterval.start,projectinterval.completion,paths[milestoneid]['start'],paths[milestoneid]['completion'])
+           const milestone_2 = getmilestonebyid(paths,prop)
+           let params_2 = {};
+           if(milestone_2) {
+             
+             if(scale === 'month') {
+            	params_2 = calculatemonth(projectinterval.start,projectinterval.completion,milestone_2['start'],milestone_2['completion'])
+             	}
+            }
+           paths[milestoneid].paths[prop]['x1']=params.xo + params.width;
+           paths[milestoneid].paths[prop]['y1']='y1'
+           paths[milestoneid].paths[prop]['y2']='y2'
+           paths[milestoneid].paths[prop]['x2']=params_2.xo + params_2.width;
+           paths[milestoneid].paths[prop]['float']='float';
+           paths[milestoneid].paths[prop]['totalfloat']='totalfloat'
+           
+         })
+        
+      }
     
     
   }
-  return grid;
+
+  
+})
+
+
+
+let mypathstring = '';
+for(let myprop in paths) {
+
+    for(let mypaths in paths[myprop]['paths']) {
+      mypathstring += paths[myprop]['paths'][mypaths]['x1']
+      
+    }
+    
   
   
 }
-drawgrid(viewboxes)
+paths

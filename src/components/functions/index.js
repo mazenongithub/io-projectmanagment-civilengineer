@@ -5,23 +5,23 @@ export function formatDate(timein) {
 
 }
 
-export function CreatePredessor(predessor,type) {
-    return({predessor,type})
+export function CreatePredessor(predessor, type) {
+    return ({ predessor, type })
 }
 
 
-export function  validateYear(year) {
+export function validateYear(year) {
     const reg_ex = /^[12][0-9]{3}$/;
-return(reg_ex.test(year));
+    return (reg_ex.test(year));
 }
 export function validateDate(date) {
     const reg_ex = /^(0?[1-9]|[12][0-9]|3[01])$/;
-return(reg_ex.test(date));
+    return (reg_ex.test(date));
 
 }
 export function validateMonth(mon) {
-const reg_ex = /^0[1-9]|1[0-2]$/;
-return(reg_ex.test(mon))
+    const reg_ex = /^0[1-9]|1[0-2]$/;
+    return (reg_ex.test(mon))
 }
 
 export function getFirstIsOn(mydate) {
@@ -383,9 +383,11 @@ export function addoneMonthDateObj(datein) {
 
     return (new Date(`${year}/${month}/${date} ${hours}:${minutes}:${seconds}`))
 }
-export function increaseCalendarDayOneMonth(timein) {
-    let offset = getOffset();
-    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
+
+
+export function increaseCalendarDayOneMonth(monthstring) {
+    let offset = getOffsetDate(monthstring);
+    let datein = new Date(`${monthstring.replace(/-/g, '/')} 00:00:00${offset}`)
     let currentMonth = datein.getMonth() + 1;
     let year = datein.getFullYear();
     let increaseMonth = currentMonth;
@@ -408,6 +410,7 @@ export function increaseCalendarDayOneMonth(timein) {
     let newDate = `${year}-${increaseMonth}-${day}`
     return (newDate)
 }
+
 export function increaseCalendarDaybyOneYear(timein) {
     let offset = getOffset();
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
@@ -569,7 +572,7 @@ export function increaseDateStringByOneMonth(timein) {
     if (seconds < 10) {
         seconds = `0${seconds}`;
     }
-    console.log("ONEMONTHINCREASE", `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`)
+ 
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
 export function increaseDateStringByOneYear(timein) {
@@ -625,7 +628,7 @@ export function milestoneformatdatestring(datein) {
 
 }
 export function inputDateTimeOutDateObj(timein) {
-    console.log("TIMESTRING", timein)
+   
     let newDate = new Date(`${timein.replace(/-/g, '/')} UTC`);
     return (newDate)
 }
@@ -676,19 +679,73 @@ export function inputTimeDateOutputUTCString(timein) {
     }
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
+
+export function increasedatebyoneday(timein) {
+
+    //let timein = '2020-12-31';
+    let offset = getOffsetDate(timein);
+    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`);
+    let newdate = new Date(datein.getTime())
+    let day = newdate.getDate();
+    let month = newdate.getMonth() + 1;
+    let year = newdate.getFullYear();
+    if (month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12) {
+        if (day === 31) {
+            day = 1;
+            if (month !== 12) {
+                month = month + 1;
+
+            } else {
+                month = 1;
+                year = year + 1;
+            }
+        } else {
+            day = day + 1;
+
+        }
+
+    }
+
+    if (month === 4 || month === 6 || month === 9 || month === 11) {
+
+        if (day === 30) {
+            day = 1;
+            month = month + 1;
+        } else {
+            day = day + 1;
+        }
+    }
+
+
+    if (month === 2) {
+        if (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) {
+            if (day === 29) {
+                day = 1;
+                month = month + 1;
+            }
+        } else {
+            if (day === 28) {
+                day = 1;
+                month = month + 1;
+            }
+        }
+
+    }
+
+    if (day < 10) {
+        day = `0${day}`
+    }
+
+    if (month < 10) {
+        month = `0${month}`
+    }
+    return (`${year}-${month}-${day}`)
+}
 export function increasedateStringbyInc(timein, inc) {
 
-    let offset = new Date().getTimezoneOffset() / 60;
-    let sym = "";
-    if (offset > 0) {
-        sym = "-";
-    }
-    else {
-        sym = "+";
-        offset = -offset;
-    }
-
-    let datein = new Date(`${timein.replace(/-/g, '/')}${sym}${offset}:00`);
+    let offset = getOffsetDate(timein)
+    
+    let datein = new Date(`${timein.replace(/-/g, '/')}${offset}`);
     let newdate = new Date(datein.getTime() + inc)
 
     let month = newdate.getMonth();
@@ -999,7 +1056,7 @@ export function inputUTCStringForLaborID(timein) {
         month = `0${month}`
     }
     let seconds = datein.getSeconds();
-    if(seconds<10){
+    if (seconds < 10) {
         seconds = `0${seconds}`
     }
     return (`${month}/${date}/${year} ${hours}:${minutes}:${seconds} ${ampm}`)
@@ -2605,7 +2662,7 @@ export function check_30_date(dateobj) {
 }
 
 
-export function check_29_feb_leapyear_date(dateobj)  {
+export function check_29_feb_leapyear_date(dateobj) {
 
     let month = dateobj.getMonth();
 
@@ -2648,7 +2705,7 @@ export function getDayString(day) {
 
 export function monthstring(month) {
 
-    
+
     switch (month) {
         case 0:
             return ("January");
@@ -2867,109 +2924,115 @@ export function validateProjectScope(title) {
     return message;
 }
 export function balanceAvailable() {
-    
-        return({
+
+    return ({
         "id": "evt_1FvYGsAaUD8nQT7tpCiQ97MG",
         "object": "event",
         "api_version": "2019-02-11",
         "created": 1577750858,
         "data": {
-          "object": {
-            "object": "balance",
-            "available": [
-              {
-                "amount": 28453,
-                "currency": "usd",
-                "source_types": {
-                  "card": 28453
-                }
-              }
-            ],
-            "connect_reserved": [
-              {
-                "amount": 0,
-                "currency": "usd"
-              }
-            ],
-            "livemode": false,
-            "pending": [
-              {
-                "amount": 0,
-                "currency": "usd",
-                "source_types": {
-                  "card": 0
-                }
-              }
-            ]
-          }
+            "object": {
+                "object": "balance",
+                "available": [
+                    {
+                        "amount": 28453,
+                        "currency": "usd",
+                        "source_types": {
+                            "card": 28453
+                        }
+                    }
+                ],
+                "connect_reserved": [
+                    {
+                        "amount": 0,
+                        "currency": "usd"
+                    }
+                ],
+                "livemode": false,
+                "pending": [
+                    {
+                        "amount": 0,
+                        "currency": "usd",
+                        "source_types": {
+                            "card": 0
+                        }
+                    }
+                ]
+            }
         },
         "livemode": false,
         "pending_webhooks": 0,
         "request": {
-          "id": null,
-          "idempotency_key": null
+            "id": null,
+            "idempotency_key": null
         },
         "type": "balance.available"
-      })
-     
+    })
+
 }
 export function StripeChargeObj() {
-    return(
-        { id: 'evt_1Gak5TAaUD8nQT7t2tn71GF6',
-    object: 'event',
-    api_version: '2019-02-11',
-    created: 1587567727,
-    data: 
-     { object: 
-        { id: 'ch_1Gak5TAaUD8nQT7tzOnEOU4G',
-          object: 'charge',
-          amount: 97113,
-          amount_refunded: 0,
-          application: null,
-          application_fee: null,
-          application_fee_amount: null,
-          balance_transaction: 'txn_1Gak5TAaUD8nQT7tiFUbIhsi',
-          billing_details: [Object],
-          calculated_statement_descriptor: 'CIVILENGINEER.IO',
-          captured: true,
-          created: 1587567727,
-          currency: 'usd',
-          customer: null,
-          description: 'Payment for Invoice 85XL',
-          destination: null,
-          dispute: null,
-          disputed: false,
-          failure_code: null,
-          failure_message: null,
-          fraud_details: {},
-          invoice: null,
-          livemode: false,
-          metadata: {},
-          on_behalf_of: null,
-          order: null,
-          outcome: [Object],
-          paid: true,
-          payment_intent: null,
-          payment_method: 'card_1Gak5PAaUD8nQT7tORX70TXr',
-          payment_method_details: [Object],
-          receipt_email: null,
-          receipt_number: null,
-          receipt_url: 'https://pay.stripe.com/receipts/acct_1E3uN4AaUD8nQT7t/ch_1Gak5TAaUD8nQT7tzOnEOU4G/rcpt_H929H1eIniA6WNbKGJdi4bf5AmbnW4I',
-          refunded: false,
-          refunds: [Object],
-          review: null,
-          shipping: null,
-          source: [Object],
-          source_transfer: null,
-          statement_descriptor: null,
-          statement_descriptor_suffix: null,
-          status: 'succeeded',
-          transfer_data: null,
-          transfer_group: null } },
-    livemode: false,
-    pending_webhooks: 1,
-    request: { id: 'req_t8AAjCOfjlZki0', idempotency_key: null },
-    type: 'charge.succeeded' })
+    return (
+        {
+            id: 'evt_1Gak5TAaUD8nQT7t2tn71GF6',
+            object: 'event',
+            api_version: '2019-02-11',
+            created: 1587567727,
+            data:
+            {
+                object:
+                {
+                    id: 'ch_1Gak5TAaUD8nQT7tzOnEOU4G',
+                    object: 'charge',
+                    amount: 97113,
+                    amount_refunded: 0,
+                    application: null,
+                    application_fee: null,
+                    application_fee_amount: null,
+                    balance_transaction: 'txn_1Gak5TAaUD8nQT7tiFUbIhsi',
+                    billing_details: [Object],
+                    calculated_statement_descriptor: 'CIVILENGINEER.IO',
+                    captured: true,
+                    created: 1587567727,
+                    currency: 'usd',
+                    customer: null,
+                    description: 'Payment for Invoice 85XL',
+                    destination: null,
+                    dispute: null,
+                    disputed: false,
+                    failure_code: null,
+                    failure_message: null,
+                    fraud_details: {},
+                    invoice: null,
+                    livemode: false,
+                    metadata: {},
+                    on_behalf_of: null,
+                    order: null,
+                    outcome: [Object],
+                    paid: true,
+                    payment_intent: null,
+                    payment_method: 'card_1Gak5PAaUD8nQT7tORX70TXr',
+                    payment_method_details: [Object],
+                    receipt_email: null,
+                    receipt_number: null,
+                    receipt_url: 'https://pay.stripe.com/receipts/acct_1E3uN4AaUD8nQT7t/ch_1Gak5TAaUD8nQT7tzOnEOU4G/rcpt_H929H1eIniA6WNbKGJdi4bf5AmbnW4I',
+                    refunded: false,
+                    refunds: [Object],
+                    review: null,
+                    shipping: null,
+                    source: [Object],
+                    source_transfer: null,
+                    statement_descriptor: null,
+                    statement_descriptor_suffix: null,
+                    status: 'succeeded',
+                    transfer_data: null,
+                    transfer_group: null
+                }
+            },
+            livemode: false,
+            pending_webhooks: 1,
+            request: { id: 'req_t8AAjCOfjlZki0', idempotency_key: null },
+            type: 'charge.succeeded'
+        })
 }
 export function validatePassword(val) {
     let validate = {};
@@ -2987,6 +3050,58 @@ export function validatePassword(val) {
 
     return validate;
 }
+export function getScale(interval) {
+
+    let scale = "";
+    if (interval < 30) {
+        scale = "day"
+    } else if (interval <= 730) {
+        scale = "month"
+    } else {
+        scale = "year"
+    }
+    return scale;
+
+}
+export function calculatemonth(int, compl, start, completion) {
+    //int = '2020-04-18'
+    //compl = '2022-04-18'
+
+
+
+    let xo = int.split('-');
+    let x1 = xo[0]
+    let x2 = xo[1]
+
+    let initime = `${x1}-${x2}-01`
+    //start = '2020-04-18'
+    xo = (getDateInterval(initime, start) / 30.41) * 200;
+    //completion = '2020-09-18'
+    const days = getDateInterval(start, completion);
+    const width = (days / 30.41) * 200
+    return { width, xo }
+
+}
+
+export function calculateyear(int, compl, start, completion) {
+    //int = '2020-04-18'
+    //compl = '2022-04-18'
+
+    let xo = int.split('-');
+    let x1 = xo[0]
+
+    let initime = `${x1}-01-01`
+
+
+    //start = '2020-04-18'
+    xo = (getDateInterval(initime, start) / 365) * 200;
+    //completion = '2020-09-18'
+    const days = getDateInterval(start, completion)
+    const width = (days / 365) * 200
+
+    return { width, xo }
+}
+
 export function validatePhoneNumber(val) {
     let errmsg = "";
 
@@ -3054,6 +3169,51 @@ export function returnCompanyList(allusers) {
     return companys;
 }
 
+
+
+
+export function monthString(month) {
+
+
+    switch (month) {
+        case 0:
+            return ("Jan");
+        case 1:
+            return ("Feb");
+        case 2:
+            return ("Mar");
+        case 3:
+            return ("Apr");
+        case 4:
+            return ("May");
+        case 5:
+            return ("Jun");
+        case 6:
+            return ("Jul");
+        case 7:
+            return ("Aug");
+        case 8:
+            return ("Sept");
+        case 9:
+            return ("Oct");
+        case 10:
+            return ("Nov");
+        case 11:
+            return ("Dec");
+        default:
+            break;
+    }
+}
+
+export function trailingZeros(num) {
+    if (num < 10) {
+        return (`0${num}`);
+    } else {
+        return num;
+    }
+
+}
+
 export function getOffsetDate(timein) {
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00 UTC`)
     let offset = datein.getTimezoneOffset() / 60
@@ -3067,17 +3227,38 @@ export function getOffsetDate(timein) {
     return (`${sym}${offset}:00`)
 }
 
-export function getDateInterval(start,completion) {
-  
+export function calculateday(int, compl, start, completion) {
+    //int = '2020-04-18'
+    //compl = '2022-04-24'
+
+    let xo = int.split('-');
+    let x1 = xo[0];
+    let x2 = xo[1];
+  	let x3 = xo[2]
+
+    let initime = `${x1}-${x2}-${x3}`
+
+
+    //start = '2020-04-18'
+    xo = (getDateInterval(initime, start)) * 200;
+    //completion = '2020-04-20'
+    const days = getDateInterval(start, completion)
+    const width = (days) * 200
+
+    return { width, xo, initime }
+}
+
+export function getDateInterval(start, completion) {
+
     const offsetstart = getOffsetDate(start);
     const datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
     //const offsetcompletion= getOffsetDate(completion);
     const datecompletion = new Date(`${completion.replace(/-/g, '/')} 00:00:00${offsetstart}`)
     const starttime = datestart.getTime();
     const endtime = datecompletion.getTime();
-    const interval = (endtime - starttime)/(3600000*24);
+    const interval = (endtime - starttime) / (3600000 * 24);
     return (interval)
-   }
+}
 export function inputDateStringOutputSeconds(timein) {
     let offset = getOffset()
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`);

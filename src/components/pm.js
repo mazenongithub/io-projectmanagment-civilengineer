@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
@@ -44,6 +44,123 @@ class PM {
         } else {
             return ({ width: '60px', height: '55px' })
         }
+    }
+    getpaths() {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this)
+        const projectinterval = pm.getprojectinterval.call(this);
+        let paths = {}
+
+
+        const getmilestonebyid = (paths, milestoneid) => {
+            let mymilestone = false;
+            if (paths.hasOwnProperty(milestoneid)) {
+
+                mymilestone = paths[milestoneid]
+            }
+
+            return mymilestone;
+
+        }
+
+        const getPathsbyMilestoneID = (milestones, milestoneid) => {
+
+            let path = {};
+            // eslint-disable-next-line
+            milestones.map(milestone => {
+                if (milestone.hasOwnProperty("predessors")) {
+                    // eslint-disable-next-line
+                    milestone.predessors.map(predessor => {
+                        if (predessor.predessor === milestoneid) {
+                            path[`${milestone.milestoneid}`] = {};
+                            path[`${milestone.milestoneid}`]['type'] = predessor.type
+
+
+
+                        }
+
+
+                    })
+
+
+
+                }
+
+
+            })
+
+            return path;
+        }
+        if(milestones) {
+// eslint-disable-next-line
+        milestones.map(milestone => {
+            paths[`${milestone.milestoneid}`] = {};
+            paths[`${milestone.milestoneid}`]['milestone'] = milestone.milestone
+            paths[`${milestone.milestoneid}`]['start'] = milestone.start
+            paths[`${milestone.milestoneid}`]['completion'] = milestone.completion;
+            paths[`${milestone.milestoneid}`]['paths'] = getPathsbyMilestoneID(milestones, milestone.milestoneid)
+
+        })
+
+
+
+
+        let interval = getDateInterval(projectinterval.start, projectinterval.completion)
+        let scale = getScale(interval)
+        let mymilestones = [];
+
+        // eslint-disable-next-line
+        Object.getOwnPropertyNames(paths).map(path => {
+            mymilestones.push(path)
+        })
+
+        // eslint-disable-next-line
+        mymilestones.map((milestoneid, i) => {
+
+            if ((paths[milestoneid]).hasOwnProperty("paths")) {
+
+
+
+                if (Object.getOwnPropertyNames(paths[milestoneid].paths).length > 0) {
+
+                    // eslint-disable-next-line
+                    Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
+                        const params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                        const milestone_2 = getmilestonebyid(paths, prop)
+                        let params_2 = {};
+                        if (milestone_2) {
+
+                            if (scale === 'month') {
+                                params_2 = calculatemonth(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                            }
+                        }
+                        const y1 = 80 + 100*(pm.getmilestonekeybyid.call(this,milestoneid));
+                        const y2 = 80 + 100*(pm.getmilestonekeybyid.call(this,prop));
+                        let x1 = "";
+                        if(paths[milestoneid].paths[prop].type === 'start-to-finish') {
+                            x1 = params.xo + params.width;
+                        } else if (paths[milestoneid].paths[prop].type === 'start-to-start') {
+                            x1 = params.xo;
+                        }
+                        paths[milestoneid].paths[prop]['x1'] = x1;
+                        paths[milestoneid].paths[prop]['y1'] = y1
+                        paths[milestoneid].paths[prop]['y2'] = y2
+                        paths[milestoneid].paths[prop]['x2'] = params_2.xo
+                        paths[milestoneid].paths[prop]['float'] = 'float';
+                        paths[milestoneid].paths[prop]['totalfloat'] = 'totalfloat'
+
+                    })
+
+                }
+
+
+            }
+
+
+        })
+    }
+
+        return paths;
     }
     getuser() {
         let user = false;
@@ -221,15 +338,17 @@ class PM {
     getprojectinterval() {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this)
-        if(milestones) {
-        milestones.sort((a, b) => {
-           return sorttimes(a.start, b.start)
+        let interval = false;
+        if (milestones) {
+            milestones.sort((a, b) => {
+                return sorttimes(a.start, b.start)
+            }
+            )
+            const start = milestones[0].start;
+            const completion = milestones[milestones.length - 1].completion;
+            interval = { start, completion }
         }
-        )
-        const start = milestones[0].start;
-        const completion = milestones[milestones.length - 1].completion;
-        return({start,completion})
-    }
+        return interval;
 
     }
 
