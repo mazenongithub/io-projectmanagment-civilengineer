@@ -1556,7 +1556,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-
+                    console.log(myuser)
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
