@@ -1529,6 +1529,10 @@ class PM {
         validate.validate = true;
         validate.message = "";
         if (myuser) {
+            if(!myuser.emailaddress) {
+                validate.validate = false;
+                validate.message += `Email address is required `
+            }
             if (myuser.hasOwnProperty("invalid")) {
                 validate.validate = false;
                 validate.message += this.state.message;

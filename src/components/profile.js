@@ -445,11 +445,11 @@ class Profile extends Component {
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this);
         const regularFont = pm.getRegularFont.call(this);
-        let myuser = pm.getuser.call(this)
         const profileDimensions = pm.getprofiledimensions.call(this);
         const folderSize = pm.getFolderSize.call(this);
         const arrowHeight = pm.getArrowHeight.call(this);
         const goIcon = pm.getGoIcon.call(this);
+        const myuser = pm.getuser.call(this)
 
 
         const showButton = () => {
@@ -460,7 +460,7 @@ class Profile extends Component {
                 return;
             }
         }
-
+        if(myuser) {
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
@@ -518,6 +518,13 @@ class Profile extends Component {
 
             </div>
         </div>)
+
+         } else {
+            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
+                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Milestones</span>
+            </div>)
+
+        }
     }
 }
 
