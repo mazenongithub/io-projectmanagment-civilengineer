@@ -215,10 +215,10 @@ export async function SaveAllProfile(myuser) {
 export async function CheckEmailAddress(emailaddress) {
 
 
-    var APIURL = `https://civilengineer.io/projectmanagement/api/checkemailaddress.php?emailaddress=${emailaddress}`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${emailaddress}/checkemail`
 
     return fetch(APIURL, {
-        credentials: 'same-origin'
+        credentials: 'include'
 
     })
         .then(resp => {
@@ -262,7 +262,7 @@ export async function CheckProjectID(title) {
 }
 export async function CheckProfile(profile) {
 
-    var APIURL = `https://civilengineer.io/projectmanagement/api/checkproviderid.php?profile=${profile}`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${profile}/checkprofile`
 
     return fetch(APIURL, { credentials: 'include' })
         .then(resp => {

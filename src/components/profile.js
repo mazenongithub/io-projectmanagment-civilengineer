@@ -6,8 +6,8 @@ import './profile.css';
 import { folderIcon, scrollImageDown, purpleCheck } from './svg'
 import * as actions from './actions';
 import { MyStylesheet } from './styles'
-import { UploadProfileImage } from './actions/api';
-import { returnCompanyList, inputUTCStringForLaborID, validateProviderID } from './functions';
+import { UploadProfileImage, CheckEmailAddress } from './actions/api';
+import { returnCompanyList, inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
 import { CheckProfile } from './actions/api'
 import PM from './pm'
 
@@ -180,9 +180,23 @@ class Profile extends Component {
     handleemailaddress(emailaddress) {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
+        const errmsg = validateEmail(emailaddress)
+        
         if (myuser) {
+            
             myuser.emailaddress = emailaddress;
-            this.props.reduxUser(myuser);
+            if(errmsg) {
+                myuser.invalidemail = emailaddress;
+                this.props.reduxUser(myuser);
+                this.setState({message:errmsg})
+            } else {
+                if(myuser.hasOwnProperty("invalidemail")) {
+                    delete myuser.invalidemail;
+                    this.props.reduxUser(myuser)
+                    this.setState({message:''})
+                }
+            }
+          
             this.setState({ render: 'render' })
         }
 
@@ -308,20 +322,62 @@ class Profile extends Component {
         let myuser = pm.getuser.call(this);
         return myuser.profile;
     }
+    async checkemailaddress() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this);
+        const errmsg = validateEmail(myuser.emailaddress);
+       
+        if (!errmsg) {
+            const response = await CheckEmailAddress(myuser.emailaddress)
+            if (response.hasOwnProperty("invalid")) {
+                myuser.invalidemail = `${response.message} ${response.invalid}`
+                this.props.reduxUser(myuser)
+                this.setState({ message: response.message })
+            } else {
+                delete myuser.invalidemail;
+                this.props.reduxUser(myuser)
+                this.setState({ render: 'render' })
+            }
+
+
+
+
+        } else {
+            myuser.invalidemail = myuser.emailaddress;
+            this.props.reduxUser(myuser)
+            this.setState({ render: 'render' })
+        }
+
+    }
     showlogininfo() {
+        const pm = new PM();
         const styles = MyStylesheet();
         const regularFontHeight = this.getRegularFont();
+        const myuser = pm.getuser.call(this);
+        const goIcon = pm.getGoIcon.call(this)
+        const emailicon = () => {
+            if (!myuser.hasOwnProperty("invalidemail")) {
+            return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
+            }
+        }
+
+
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
 
                 <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
-                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                    <div style={{ ...styles.flex5, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         Email <br />
                         <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
                             value={this.getemailaddress()}
                             onChange={event => { this.handleemailaddress(event.target.value) }}
+                            onBlur={() => { this.checkemailaddress() }}
                         />
+                    </div>
+
+                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
+                        {emailicon()}
                     </div>
                 </div>
 
@@ -451,7 +507,6 @@ class Profile extends Component {
         const goIcon = pm.getGoIcon.call(this);
         const myuser = pm.getuser.call(this)
 
-
         const showButton = () => {
 
             if (!myuser.hasOwnProperty("invalid") && myuser.profile) {
@@ -460,68 +515,68 @@ class Profile extends Component {
                 return;
             }
         }
-        if(myuser) {
-        return (<div style={{ ...styles.generalFlex }}>
-            <div style={{ ...styles.flex1 }}>
+        if (myuser) {
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
-                        /<input type="text" value={myuser.profile}
-                            onChange={event => { this.handleprofile(event.target.value) }}
-                            style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
-                            onBlur={event => { this.checkprofile(event.target.value) }}
-                        /> {showButton()}
-                    </div>
-                </div>
-
-
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex2 }}>
-                        <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.margin10, ...styles.alignRight }}>
-                            {this.showprofileimage()}
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
+                            /<input type="text" value={myuser.profile}
+                                onChange={event => { this.handleprofile(event.target.value) }}
+                                style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
+                                onBlur={event => { this.checkprofile(event.target.value) }}
+                            /> {showButton()}
                         </div>
                     </div>
-                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
-                        <input type="file" id="profile-image" />
-                        <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { this.uploadprofileimage() }}>
-                            {folderIcon()}
-                        </button>
+
+
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex2 }}>
+                            <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.margin10, ...styles.alignRight }}>
+                                {this.showprofileimage()}
+                            </div>
+                        </div>
+                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
+                            <input type="file" id="profile-image" />
+                            <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { this.uploadprofileimage() }}>
+                                {folderIcon()}
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                {this.showprofileurl()}
+                    {this.showprofileurl()}
 
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
-                        Login Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
-                            {scrollImageDown()}
-                        </button>
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
+                            Login Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
+                                {scrollImageDown()}
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                {this.showlogininfo()}
+                    {this.showlogininfo()}
 
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
-                        Additional Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
-                            {scrollImageDown()}
-                        </button>
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
+                            Additional Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
+                                {scrollImageDown()}
+                            </button>
+                        </div>
                     </div>
+
+                    {this.showadditional()}
+
+                    {pm.showsaveproject.call(this)}
+
+
+
+
                 </div>
+            </div>)
 
-                {this.showadditional()}
-
-                {pm.showsaveproject.call(this)}
-
-
-
-
-            </div>
-        </div>)
-
-         } else {
-            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
-                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Milestones</span>
+        } else {
+            return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View Milestones</span>
             </div>)
 
         }

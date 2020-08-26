@@ -906,7 +906,7 @@ class PM {
                 actualmaterial = project.actualmaterials.mymaterial;
             }
         }
-        console.log(actualmaterial)
+
         return actualmaterial;
     }
 
@@ -927,18 +927,17 @@ class PM {
     getactulmaterialsbyid(projectid, materialid) {
         const pm = new PM();
         const materials = pm.getactualmaterialsbyproject.call(this, projectid);
-        console.log(materials, materialid)
-        let mymaterial = false;
+         let mymaterial = false;
         if (materials) {
             // eslint-disable-next-line
             materials.map(material => {
-                console.log(material)
+        
                 if (material.materialid === materialid) {
                     mymaterial = material;
                 }
             })
         }
-        console.log(mymaterial, projectid, materialid)
+
         return mymaterial;
     }
 
@@ -1297,7 +1296,7 @@ class PM {
 
         const pm = new PM();
         const predessors = pm.getpredessorsbymilestoneid.call(this, milestone.milestoneid);
-        console.log(predessors)
+ 
         let mypredessor = false;
         if (predessors) {
 
@@ -1537,6 +1536,12 @@ class PM {
                 validate.validate = false;
                 validate.message += this.state.message;
             }
+
+            if(myuser.hasOwnProperty("invalidemail")) {
+                validate.validate = false;
+                validate.message += myuser.invalidemail;
+            }
+
             if (myuser.hasOwnProperty("projects")) {
                 // eslint-disable-next-line
                 myuser.projects.myproject.map(myproject => {
@@ -1560,7 +1565,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-                    console.log(myuser)
+              
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
