@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import StartDate from './start';
 import CompletionDate from './completion'
 import { MyStylesheet } from './styles';
-import { MyMilestone, milestoneformatdatestring } from './functions';
+import { MyMilestone, milestoneformatdatestring, returnCompanyList } from './functions';
 import PM from './pm';
 import MakeID from './makeids'
 import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
+import {LoadAllUsers} from './actions/api';
+
 
 class Milestones extends Component {
     constructor(props) {
@@ -38,6 +40,7 @@ class Milestones extends Component {
         this.props.reduxNavigation({ navigation: "milestones" })
         window.addEventListener('resize', this.updateWindowDimensions);
         this.reset()
+        
 
 
     }
@@ -53,6 +56,21 @@ class Milestones extends Component {
     reset() {
         this.startdatedefault();
         this.completiondatedefault();
+    }
+
+    async loadallusers() {
+        try {
+            let response = await LoadAllUsers();
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+            }
+        } catch (err) {
+            alert(err)
+        }
+
     }
 
     completiondatedefault() {
@@ -320,6 +338,8 @@ class Milestones extends Component {
         const headerFont = pm.getHeaderFont.call(this);
         const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         const criticalpath = new CriticalPath();
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -355,6 +375,13 @@ class Milestones extends Component {
             </div>
 
         )
+
+        } else {
+            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
+                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Milestones</span>
+            </div>)
+
+        }
     }
 }
 

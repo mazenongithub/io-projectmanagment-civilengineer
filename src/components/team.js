@@ -5,8 +5,10 @@ import { connect } from 'react-redux';
 import { MyStylesheet } from './styles';
 import PM from './pm';
 //import { Link } from 'react-router-dom';
-import { TeamMember } from './functions';
+import { TeamMember, returnCompanyList } from './functions';
 import { removeIconSmall } from './svg'
+import {LoadAllUsers} from './actions/api'
+
 
 class Team extends Component {
 
@@ -29,6 +31,11 @@ class Team extends Component {
         window.addEventListener('resize', this.updateWindowDimensions);
         this.props.reduxNavigation({ navigation: "team" })
         this.props.reduxProject({ projectid: this.props.match.params.projectid })
+        const pm  = new PM();
+        const allusers = pm.getallusers.call(this)
+        if(!allusers) {
+        this.loadallusers()
+        }
 
     }
 
@@ -40,6 +47,22 @@ class Team extends Component {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
 
     }
+
+    async loadallusers() {
+        try {
+            let response = await LoadAllUsers();
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+            }
+        } catch (err) {
+            alert(err)
+        }
+
+    }
+
     showsearchresults() {
         const pm = new PM();
         const allusers = pm.getallusers.call(this);
@@ -308,7 +331,7 @@ class Team extends Component {
 
                 let myuser = pm.getproviderbyid.call(this, myteam.providerid)
 
-
+                console.log(myuser)
                 myproviders.push(this.showprovider(myuser))
 
 
@@ -622,6 +645,9 @@ class Team extends Component {
         const projectid = this.props.match.params.projectid;
         const regularFont = pm.getRegularFont.call(this);
         const getColumns = pm.getcolumns.call(this);
+        const myuser = pm.getuser.call(this)
+
+        if(myuser) {
 
         return (
             <div style={{ ...styles.generalFlex }}>
@@ -692,6 +718,12 @@ class Team extends Component {
                 </div>
             </div>
         )
+
+        } else {
+            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
+                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Team</span>
+            </div>)
+        }
 
     }
 

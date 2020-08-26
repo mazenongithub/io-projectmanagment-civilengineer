@@ -10,8 +10,6 @@ import ClientID from './clientid';
 import EmailAddress from './emailaddress';
 
 
-
-
 class Login extends Component {
     constructor(props) {
         super(props);
