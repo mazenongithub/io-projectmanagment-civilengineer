@@ -175,8 +175,6 @@ export async function LogoutUser(providerid) {
 }
 
 
-
-
 export async function SaveAllProfile(myuser) {
     const providerid = myuser.myuser.providerid;
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${providerid}/saveallprofile`
@@ -210,10 +208,7 @@ export async function SaveAllProfile(myuser) {
 }
 
 
-
-
 export async function CheckEmailAddress(emailaddress) {
-
 
     var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${emailaddress}/checkemail`
 
