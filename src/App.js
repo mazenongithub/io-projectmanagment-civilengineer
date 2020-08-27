@@ -38,7 +38,7 @@ import Charges from './components/charges'
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '',activeslideid:'myprojects' }
+        this.state = { render: '', activeslideid: 'myprojects' }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
 
@@ -53,12 +53,10 @@ class App extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
-      }
-      updateWindowDimensions() {
+    }
+    updateWindowDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
-      }
-    
-    
+    }
 
     async checkuserlogin() {
         //let response = TestUser();
@@ -88,12 +86,12 @@ class App extends Component {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         const showlanding = () => {
-          if(myuser) {
-            return(<Profile/>)
-          } else {
-            return(landing.showlanding.call(this))
-          }
-    
+            if (myuser) {
+                return (<Profile />)
+            } else {
+                return (landing.showlanding.call(this))
+            }
+
         }
         return (
             <div className="appbody-container">
