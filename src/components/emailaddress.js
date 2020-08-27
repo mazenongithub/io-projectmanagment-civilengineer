@@ -30,11 +30,11 @@ class EmailAddress {
                     let response = await CheckEmailAddress(emailaddress)
                     console.log(response)
 
-                    if (response.hasOwnProperty("valid")) {
+                    if (!response.hasOwnProperty("invalid")) {
                         this.setState({ emailaddresscheck: true });
                     }
                     else {
-                        this.setState({ emailaddresscheck: false, message: response.message });
+                        this.setState({ emailaddresscheck: false, message: response.invalid });
                     }
 
                 } catch (err) {

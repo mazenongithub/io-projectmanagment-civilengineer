@@ -17,17 +17,17 @@ class ProviderID {
     }
 
     async verifyProfile() {
-        console.log("VERIFY PROFILE", this.state.profile)
+     
         if (this.state.profilecheck) {
             let profile = this.state.profile;
             try {
                 let response = await CheckProfile(profile)
                 console.log(response)
-                if (response.hasOwnProperty("valid")) {
+                if (!response.hasOwnProperty("invalid")) {
                     this.setState({ profilecheck: true });
                 }
                 else {
-                    this.setState({ profilecheck: false, message: response.message });
+                    this.setState({ profilecheck: false, message: response.invalid });
                 }
 
             } catch (err) {
