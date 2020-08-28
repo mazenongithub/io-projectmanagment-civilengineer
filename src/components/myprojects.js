@@ -485,6 +485,7 @@ class MyProjects extends Component {
   }
 
   async checkprojectid(newprojectid) {
+
     const pm = new PM();
     const myuser = pm.getuser.call(this)
     if (myuser) {
@@ -557,7 +558,7 @@ class MyProjects extends Component {
       if (myproject) {
 
         if(!myproject.hasOwnProperty("invalid")) {
-          return (<button style={{ ...styles.generalButton, ...goIcon }} onClick={() => { this.insertnewproject() }}>{purpleCheck()}</button>)
+          return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
         }
         
       } else {
