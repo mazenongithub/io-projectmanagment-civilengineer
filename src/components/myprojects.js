@@ -56,14 +56,16 @@ class MyProjects extends Component {
         myuser.projects.myproject[i].title = title;
         this.props.reduxUser(myuser)
         const validatetitle = validateTitle(title);
+
         console.log(i, validatetitle)
         if (validatetitle) {
-          myuser.projects.myproject[i].invalid = title;
+          myuser.projects.myproject[i].invalid = validatetitle;
           this.setState({ message: validatetitle })
         } else {
           if (myuser.projects.myproject[i].hasOwnProperty("invalid")) {
             delete myuser.projects.myproject[i].invalid;
           }
+          this.props.reduxUser(myuser)
           this.setState({ message: '' })
 
         }
@@ -141,10 +143,10 @@ class MyProjects extends Component {
           </div>
 
           <div style={{ ...styles.generalFlex }}>
-            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont}}>
+            <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont }}>
               <Link to={`/${providerid}/myprojects/${myproject.title}/charges`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Add Charges</Link>
             </div>
-            
+
           </div>
 
           <div style={{ ...styles.generalFlex }}>
@@ -482,50 +484,65 @@ class MyProjects extends Component {
 
   }
 
-  async checkprojectid(title) {
+  async checkprojectid(newprojectid) {
     const pm = new PM();
     const myuser = pm.getuser.call(this)
     if (myuser) {
-      let myproject = pm.getprojectbytitle.call(this, title);
 
-      if (!myproject.hasOwnProperty("invalid")) {
+
+
+      let oldprojectid = this.state.activeprojectid;
+     
+      let errmsg = "";
+
+      if (oldprojectid) {
+        const project = pm.getprojectbyid.call(this, this.state.activeprojectid)
+        if (project) {
+          if (project.hasOwnProperty("invalid")) {
+            errmsg += project.invalid;
+          }
+        }
+
+      } // initial check project id
+
+      if (!errmsg) {
+
         try {
 
-          let response = await CheckProjectID(title);
-          console.log(response)
 
+          let values = { oldprojectid, newprojectid }
+          let response = await CheckProjectID(values);
 
-          if (myproject) {
-            let i = pm.getprojectkeytitle.call(this, title)
-            if (response.hasOwnProperty("valid")) {
+          if (response.hasOwnProperty("invalid") && this.state.activeprojectid) {
+            let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid)
+            myuser.projects.myproject[i].invalid = response.invalid;
+            this.props.reduxUser(myuser)
+            this.setState({ message: response.invalid })
 
-              if (myuser.projects.myproject[i].hasOwnProperty("valid")) {
-                delete myuser.projects.myproject[i].invalid;
-                this.props.reduxUser(myuser)
-                this.setState({ message: '' })
-              }
-
-
-
-            } else if (response.hasOwnProperty("invalid") && myproject) {
-              myuser.projects.myproject[i].invalid = response.invalid;
+          } else if (response.hasOwnProperty("valid") && this.state.activeprojectid) {
+            const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid)
+            if (myproject.hasOwnProperty("invalid")) {
+              let i = pm.getprojectkeybyid.call(this, this.state.activeprojectid);
+              delete myuser.projects.myproject[i].invalid;
               this.props.reduxUser(myuser)
-              this.setState({ message: response.message })
-
+              this.setState({ message: '' })
             }
+
+
 
           }
 
 
-
         } catch (err) {
+
           alert(err)
+
         }
 
       }
 
 
-    }
+    } // if my user
 
   }
 
@@ -533,11 +550,24 @@ class MyProjects extends Component {
     const pm = new PM();
     const styles = MyStylesheet();
     const goIcon = pm.getGoIcon.call(this)
-    if (this.state.projectidcheck) {
-      return (<button style={{ ...styles.generalButton, ...goIcon }} onClick={() => { this.insertnewproject() }}>{purpleCheck()}</button>)
-    } else {
-      return;
+
+    if (this.state.activeprojectid) {
+      const myproject = pm.getprojectbyid.call(this,this.state.activeprojectid)
+
+      if (myproject) {
+
+        if(!myproject.hasOwnProperty("invalid")) {
+          return (<button style={{ ...styles.generalButton, ...goIcon }} onClick={() => { this.insertnewproject() }}>{purpleCheck()}</button>)
+        }
+        
+      } else {
+        return;
+      }
+
+
     }
+
+
   }
   showprojectmenu() {
     const pm = new PM();

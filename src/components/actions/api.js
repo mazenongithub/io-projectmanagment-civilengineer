@@ -234,22 +234,27 @@ export async function CheckEmailAddress(emailaddress) {
             return resp.json();
         })
 }
-export async function CheckProjectID(title) {
-    const APIURL = `https://civilengineer.io/projectmanagement/api/checknewprojectid.php?title=${title}`
-    return fetch(APIURL)
+export async function CheckProjectID(values) {
+    const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checknewprojectid`
+    return fetch(APIURL, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+        }),
+
+        body: JSON.stringify(values)
+    })
         .then(resp => {
 
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
+
+                        throw data.message;
                     })
                 }
-                else {
-                    let err = { errorMessage: 'Please try again later, server is not responding' };
-                    throw err;
-                }
+
             }
 
             return resp.json();
