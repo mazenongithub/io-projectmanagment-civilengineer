@@ -4,7 +4,7 @@ import PM from './pm';
 import { GoogleSigninIcon, AppleSigninIcon } from './svg';
 class ClientID {
 
-    showclientid() {
+    showclientid(type) {
         const styles = MyStylesheet();
         const pm = new PM();
         const loginButton = pm.getLoginButton.call(this);
@@ -16,30 +16,27 @@ class ClientID {
                 return `Secure your Sign in`
             }
         }
-        if (this.state.width > 800) {
 
-            return (
-                <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
-
-                    <div style={{...styles.flex1, ...regularFont, ...styles.generalFont}}>
-                        {signinmessage()}
-                    </div>
-
-                    <div style={{...styles.flex1}}>
-                        <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.googleSignIn.call(this) }}>
-                            {GoogleSigninIcon()}
-                        </button>
-                    </div>
-
-                    <div style={{...styles.flex1}}>
-                        <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.appleSignIn.call(this) }}>
-                            {AppleSigninIcon()}
-                        </button>
-                    </div>
-
-                </div>)
-
+        const apple = () => {
+            if(!this.state.client || !this.state.clientid) {
+                return( <div style={{...styles.flex1}}>
+                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.appleSignIn.call(this, type) }}>
+                        {AppleSigninIcon()}
+                    </button>
+                </div>
+)
+            }
         }
+        const google = () => {
+            if(!this.state.client || !this.state.clientid) {
+                return( <div style={{...styles.flex1}}>
+                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.googleSignIn.call(this, type) }}>
+                        {GoogleSigninIcon()}
+                    </button>
+                </div>)
+            }
+        }
+
         return (
             <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
                 <div style={{...styles.flex1}}>
@@ -53,14 +50,12 @@ class ClientID {
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1 }}>
 
-                            <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.googleSignIn.call(this) }}>
-                                {GoogleSigninIcon()}
-                            </button>
+                           {apple()}
                         </div>
                         <div style={{ ...styles.flex1 }}>
-                            <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.appleSignIn.call(this) }}>
-                                {AppleSigninIcon()}
-                            </button>
+                           
+                          {google()}
+                       
                         </div>
                     </div>
 

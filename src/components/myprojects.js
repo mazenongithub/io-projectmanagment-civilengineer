@@ -595,7 +595,8 @@ class MyProjects extends Component {
     const pm = new PM();
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
-
+    const myuser = pm.getuser.call(this)
+    if(myuser) {
     return (
       <div style={{ ...styles.generalFlex }}>
         <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
@@ -614,6 +615,10 @@ class MyProjects extends Component {
 
         </div>
       </div>)
+
+    } else {
+      return(<div><span style={{...styles.generalFont,...regularFont}}>Please Login to View MyProjects</span></div>)
+    }
   }
 }
 

@@ -234,6 +234,34 @@ export async function CheckEmailAddress(emailaddress) {
             return resp.json();
         })
 }
+export async function AppleLogin(values) {
+
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/applelogin`
+    return fetch(APIURL, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+        }),
+
+        body: JSON.stringify(values)
+    })
+        .then(resp => {
+
+            if (!resp.ok) {
+                if (resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+
+                        throw data.message;
+                    })
+                }
+
+            }
+
+            return resp.json();
+        })
+}
+
 export async function CheckProjectID(values) {
     const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/checknewprojectid`
     return fetch(APIURL, {

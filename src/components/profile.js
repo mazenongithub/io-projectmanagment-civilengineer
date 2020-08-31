@@ -356,7 +356,7 @@ class Profile extends Component {
         const myuser = pm.getuser.call(this);
         const goIcon = pm.getGoIcon.call(this)
         const emailicon = () => {
-            if (!myuser.hasOwnProperty("invalidemail")) {
+            if (!myuser.hasOwnProperty("invalidemail") && myuser.emailaddress) {
             return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
             }
         }

@@ -4,7 +4,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, NodeLogin } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
 import { Link } from 'react-router-dom';
 
 
@@ -1681,7 +1681,7 @@ class PM {
                 </div>
             </div>)
     }
-    async clientlogin() {
+    async clientlogin(type) {
         try {
 
             let client = this.state.client;
@@ -1692,17 +1692,10 @@ class PM {
             let profileurl = this.state.profileurl;
             let phonenumber = this.state.phonumber;
             let profile = this.state.profile
-            let password = this.state.password;
-            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, password }
-
-            const response = await NodeLogin(values);
+            let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, type }
+            const response = await AppleLogin(values);
             console.log(response)
-            if (response.hasOwnProperty("allusers")) {
-                let companys = returnCompanyList(response.allusers);
-                this.props.reduxAllCompanys(companys)
-                this.props.reduxAllUsers(response.allusers);
-
-            }
+      
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)
@@ -1715,7 +1708,8 @@ class PM {
             alert(err)
         }
     }
-    async appleSignIn() {
+    async appleSignIn(type) {
+        const pm = new PM();
         let provider = new firebase.auth.OAuthProvider('apple.com');
         provider.addScope('email');
         provider.addScope('name');
@@ -1735,34 +1729,9 @@ class PM {
             let client = 'apple';
             let clientid = user.providerData[0].uid;
             let emailaddress = user.providerData[0].email;
-            let emailaddresscheck = false;
-            if (emailaddress) {
-                emailaddresscheck = true;
-            }
-            let profile = this.state.profile;
-            this.setState({ client, clientid, firstname, lastname, profileurl, phonenumber, emailaddress, emailaddresscheck })
-            if (emailaddress && clientid && client && (this.state.login || this.state.profile)) {
-                try {
-
-                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
-                    const response = await NodeLogin(values);
-                    console.log(response)
-                    if (response.hasOwnProperty("allusers")) {
-                        let companys = returnCompanyList(response.allusers);
-                        this.props.reduxAllCompanys(companys)
-                        this.props.reduxAllUsers(response.allusers);
-                    }
-                    if (response.hasOwnProperty("myuser")) {
-                        this.props.reduxUser(response.myuser)
-                        this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
-                    } else if (response.hasOwnProperty("message")) {
-                        this.setState({ message: response.message })
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-
-            }
+            this.setState({ client, clientid, firstname, lastname, profileurl, phonenumber, emailaddress })
+         
+            pm.clientlogin.call(this, type)
 
 
             // ...
@@ -1831,12 +1800,9 @@ class PM {
     }
 
 
-    async googleSignIn() {
+    async googleSignIn(type) {
 
-
-        try {
-
-
+            const pm = new PM();
             let provider = new firebase.auth.GoogleAuthProvider();
             provider.addScope('email');
             provider.addScope('profile');
@@ -1862,43 +1828,7 @@ class PM {
             let phonenumber = user.phoneNumber;
             this.setState({ client, clientid, emailaddress, firstname, lastname, profileurl, phonenumber, emailaddresscheck })
 
-            if (emailaddress && clientid && client && (this.state.login || this.state.profile)) {
-                let profile = this.state.profile;
-                try {
-
-
-                    let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
-
-                    const response = await NodeLogin(values);
-                    console.log(response)
-                    if (response.hasOwnProperty("allusers")) {
-                        let companys = returnCompanyList(response.allusers);
-                        this.props.reduxAllCompanys(companys)
-                        this.props.reduxAllUsers(response.allusers);
-                    }
-                    if (response.hasOwnProperty("myuser")) {
-                        this.props.reduxUser(response.myuser)
-                        this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
-                    } else if (response.hasOwnProperty("message")) {
-                        this.setState({ message: response.message })
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-
-            } else {
-                this.setState({ client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber })
-            }
-
-
-
-
-
-        } catch (error) {
-            alert(error)
-        }
-
-
+            pm.clientlogin.call(this, type)
 
 
     }
