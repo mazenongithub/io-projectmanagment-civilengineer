@@ -340,7 +340,7 @@ class CriticalPath {
         }
 
         let auditmilestones = "";
-        auditmilestones += pm.auditmilestones.call(this)
+        auditmilestones += pm.auditmilestones.call(this,milestones)
 
 
         const projectinterval = pm.getprojectinterval.call(this);

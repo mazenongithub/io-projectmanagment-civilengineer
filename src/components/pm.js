@@ -190,7 +190,7 @@ class PM {
     getTotalFloatbymilestoneid(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
-        console.log(paths)
+
         let float = pm.getfloatbymilestoneid.call(this,milestoneid)
         let projectfloat = 0;
         let i =0;
@@ -283,9 +283,27 @@ class PM {
         
       }
 
-   auditmilestones()  {
+   auditmilestones(milestones)  {
        const pm = new PM();
-       const milestones = pm.getmilestones.call(this)
+
+       const getmilestonebyid = (milestones, milestoneid) => {
+
+        let mymilestone = false;
+        if(milestones) {
+        milestones.map(milestone => {
+      
+          if (milestone.milestoneid === milestoneid) {
+      
+            mymilestone = milestone;
+          }
+      
+        })
+
+    }
+      
+        return mymilestone;
+      }
+
         let message = "";
       // eslint-disable-next-line
         milestones.map(milestone => {
@@ -296,7 +314,7 @@ class PM {
           if (milestone.hasOwnProperty("predessors")) {
        // eslint-disable-next-line
             milestone.predessors.map(predessor => {
-              let mypredessor = pm.getmilestonebyid.call(this,predessor.predessor);
+              let mypredessor = getmilestonebyid(milestones,predessor.predessor);
               //let predessorstart = mypredessor.start;
               let predessorcompletion = mypredessor.completion;
               if (getDateTime(start) < getDateTime(predessorcompletion)) {
@@ -1681,6 +1699,16 @@ class PM {
                         validate.validate = false;
                         validate.message += this.state.message
                     }
+
+                    if(myproject.hasOwnProperty("projectmilestones")) {
+                        let auditmilestones = pm.auditmilestones.call(this,myproject.projectmilestones.mymilestone)
+                        if(auditmilestones) {
+                            validate.validate = false;
+                            validate.message += auditmilestones;
+                        }
+                    }
+
+                    
 
 
                 })
