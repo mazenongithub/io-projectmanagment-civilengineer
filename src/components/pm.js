@@ -257,35 +257,35 @@ class PM {
                 {
                     title: 'Project Management by civilengineer.io',
                     id: 'myprojects',
-                    url: 'http://civilengineer.io/projectmanagment/slides/myprojects.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/myprojects.png',
                     caption: `Project Management by Civilenginer.io. Project Management construction management administrative program for builders. Successfully administering construction contracts online inside the civilengineer.io network.  `
 
                 },
                 {
                     title: 'Project Team',
                     id: 'myteam',
-                    url: 'http://civilengineer.io/projectmanagment/slides/myteam.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/myteam.png',
                     caption: `After creating your project, create your project team for Design. Create your project team for Construction. Design furnishes Specs and Cost Estimates. Construction does the work.`
 
                 },
                 {
                     title: 'Milestones',
                     id: 'milestones',
-                    url: 'http://civilengineer.io/projectmanagment/slides/milestones.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/milestones.png',
                     caption: `Project Milestones with Relationships determines paths and critical paths for your project. This makes planning the project easier.`
 
                 },
                 {
                     title: 'Critical Path',
                     id: 'criticalpath',
-                    url: 'http://civilengineer.io/projectmanagment/slides/criticalpath.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/criticalpath.png',
                     caption: `Critical Path is calculated for the milestones. This program solves the classic critical path CPM method in calculating float and total project float `
 
                 },
                 {
                     title: 'Invoice',
                     id: 'invoice',
-                    url: 'http://civilengineer.io/projectmanagment/slides/invoice.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/invoice.png',
                     caption: `You may settle an invoice when funds are available with respect to the invoice balance. Ensure funds exceed invoice balance proir to making transfer  `
 
                 },
@@ -293,25 +293,25 @@ class PM {
                 {
                     title: 'Labor, Equipment, Materials',
                     id: 'lem',
-                    url: 'http://civilengineer.io/projectmanagment/slides/lem.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/lem.png',
                     caption: `Inside each invoice and inside project bid schedule there are labor, material, and equipment breakdowns for each pay item `
                 },
                 {
                     title: 'Engineering Cost Estimate',
                     id: 'costestimate',
-                    url: 'http://civilengineer.io/projectmanagment/slides/costestimate.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/costestimate.png',
                     caption: `The Engineers furnish the PM a cost estimate. They create this inside of Design. This is done to create the table for bid and we use it to negociate the amount. The Cost Estimate uses the Service Providers rates. The Engineers create the cost estimate the same way the Service Providers do.  `
                 },
                 {
                     title: 'Construction Specifications',
                     id: 'specifications',
-                    url: 'http://civilengineer.io/projectmanagment/slides/specifications.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/specifications.png',
                     caption: `Engineers create construction specifications. These are referenced during construction. The contain important paragraphs relating to the scope of the job. It is important these specs are referenced throughout the job to define the work and place quality standards.  `
                 },
                 {
                     title: 'Charges',
                     id: 'charges',
-                    url: 'http://civilengineer.io/projectmanagment/slides/charges.png',
+                    url: 'https://civilengineer.io/projectmanagment/slides/charges.png',
                     caption: `Adding charges to  your project is simple using the charge component. Having an available balance allows your to settle your invoices and pay your service providers.   `
                 }
             ])
