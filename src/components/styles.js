@@ -85,6 +85,9 @@ export function MyStylesheet() {
         underline:{
             textDecoration:'underline'
         },
+        redFont:{
+            color:'red'
+        },
         settlementButton:{
             fontFamily:'Roboto, sans-serif',
             backgroundColor:'#3A4DA1',

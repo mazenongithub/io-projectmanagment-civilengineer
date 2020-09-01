@@ -339,6 +339,10 @@ class CriticalPath {
 
         }
 
+        let auditmilestones = "";
+        auditmilestones += pm.auditmilestones.call(this)
+
+
         const projectinterval = pm.getprojectinterval.call(this);
         let interval = '1202.88'
         let grid = [];
@@ -405,8 +409,7 @@ class CriticalPath {
             let daycompletion = trailingZeros(datecompletion.getDate());
             let datecompletionstring = `${yearcompletion}-${monthcompletion}-${daycompletion}`
             let datecompletionstringmonth = `${yearcompletion}-${monthcompletion}-01`
-
-
+          
             let x1 = 0;
             const mylabels = [];
 
@@ -458,7 +461,7 @@ class CriticalPath {
                     let day = trailingZeros(intstart.getDate());
                     daystartday = `${year}-${month}-${day}`
 
-                    mylabels.push(<text key={`crdfdfit${day}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{month}/{day}/{year}</text>);
+                    mylabels.push(<text key={`crdfdfit${day}${x1}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{month}/{day}/{year}</text>);
 
                 }
 
@@ -479,12 +482,23 @@ class CriticalPath {
             }
         }
 
+        const auditmessage = (message) => {
+            if(message) {
+                return(<div style={{...styles.generalFont}}><span style={{...regularFont,...styles.redFont}}>{message}</span></div>)
+            }
+
+
+        }
+        
+
 
 
         return (
 
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
+
+                    {auditmessage(auditmilestones)}
 
                     {activemilestone()}
 

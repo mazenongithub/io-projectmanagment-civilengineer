@@ -3214,6 +3214,12 @@ export function trailingZeros(num) {
 
 }
 
+export function getDateTime (datestr)  {
+    let offset = getOffsetDate(datestr)
+    let datein = new Date(`${datestr.replace(/-/g, '/')} 00:00:00${offset}`)
+    return datein.getTime();
+  }
+
 export function getOffsetDate(timein) {
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00 UTC`)
     let offset = datein.getTimezoneOffset() / 60

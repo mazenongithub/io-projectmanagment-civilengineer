@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat,getDateTime  } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
@@ -250,6 +250,69 @@ class PM {
             return ({ width: '356px', height: '339px' })
         }
     }
+
+    auditpaths () {
+        const pm = new PM();
+        const paths = pm.getpaths.call(this)
+        let message = ""
+        
+        for(let myprop in paths) {
+          let mymilestone = pm.getmilestonebyid.call(this, myprop)
+          //let start = mymilestone.start;
+          let completion =mymilestone.completion;
+                  
+          for(let mypath in paths[myprop]['paths']) {
+            let mypredessor = pm.getmilestonebyid.call(this, mypath)
+               let predessorstart = mypredessor.start;
+            //let predessorcompletion = mypredessor.completion;
+                  if(getDateTime(completion)>getDateTime(predessorstart)) {
+                
+                message+=`${mymilestone.milestone} has a completion date after the start of ${mypredessor.milestone}`
+                
+                
+              }
+           
+            
+            
+            
+          }
+         
+        }
+        
+        return message;
+        
+      }
+
+   auditmilestones()  {
+       const pm = new PM();
+       const milestones = pm.getmilestones.call(this)
+        let message = "";
+      // eslint-disable-next-line
+        milestones.map(milestone => {
+          let start = milestone.start;
+         // let completion = milestone.completion;
+          // message += `${start} ${completion}`
+      
+          if (milestone.hasOwnProperty("predessors")) {
+       // eslint-disable-next-line
+            milestone.predessors.map(predessor => {
+              let mypredessor = pm.getmilestonebyid.call(this,predessor.predessor);
+              //let predessorstart = mypredessor.start;
+              let predessorcompletion = mypredessor.completion;
+              if (getDateTime(start) < getDateTime(predessorcompletion)) {
+                message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+              }
+      
+            })
+      
+          }
+      
+        })
+      
+      
+        return message;
+      }
+      
 
     getslides() {
         const slides = () => {
