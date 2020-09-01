@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
@@ -91,85 +91,146 @@ class PM {
 
             return path;
         }
-        if(milestones) {
-// eslint-disable-next-line
-        milestones.map(milestone => {
-            paths[`${milestone.milestoneid}`] = {};
-            paths[`${milestone.milestoneid}`]['milestone'] = milestone.milestone
-            paths[`${milestone.milestoneid}`]['start'] = milestone.start
-            paths[`${milestone.milestoneid}`]['completion'] = milestone.completion;
-            paths[`${milestone.milestoneid}`]['paths'] = getPathsbyMilestoneID(milestones, milestone.milestoneid)
+        if (milestones) {
+            // eslint-disable-next-line
+            milestones.map(milestone => {
+                paths[`${milestone.milestoneid}`] = {};
+                paths[`${milestone.milestoneid}`]['milestone'] = milestone.milestone
+                paths[`${milestone.milestoneid}`]['start'] = milestone.start
+                paths[`${milestone.milestoneid}`]['completion'] = milestone.completion;
+                paths[`${milestone.milestoneid}`]['paths'] = getPathsbyMilestoneID(milestones, milestone.milestoneid)
 
-        })
-
-
-
-
-        let interval = getDateInterval(projectinterval.start, projectinterval.completion)
-        let scale = getScale(interval)
-        let mymilestones = [];
-
-        // eslint-disable-next-line
-        Object.getOwnPropertyNames(paths).map(path => {
-            mymilestones.push(path)
-        })
-
-        // eslint-disable-next-line
-        mymilestones.map((milestoneid, i) => {
-
-            if ((paths[milestoneid]).hasOwnProperty("paths")) {
+            })
 
 
 
-                if (Object.getOwnPropertyNames(paths[milestoneid].paths).length > 0) {
 
-                    // eslint-disable-next-line
-                    Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
-                       
-                        const milestone_2 = getmilestonebyid(paths, prop)
-                        let params = {};
-                        let params_2 = {};
-                        if (milestone_2) {
+            let interval = getDateInterval(projectinterval.start, projectinterval.completion)
+            let scale = getScale(interval)
+            let mymilestones = [];
 
-                            if (scale === 'month') {
-                                params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                params_2 = calculatemonth(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
-                            } else if (scale === 'year') {
-                                params = calculateyear(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                params_2 = calculateyear(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
-                            } else if (scale === 'day') {
-                                params = calculateday(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                params_2 = calculateday(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+            // eslint-disable-next-line
+            Object.getOwnPropertyNames(paths).map(path => {
+                mymilestones.push(path)
+            })
+
+            // eslint-disable-next-line
+            mymilestones.map((milestoneid, i) => {
+
+                if ((paths[milestoneid]).hasOwnProperty("paths")) {
+
+
+
+                    if (Object.getOwnPropertyNames(paths[milestoneid].paths).length > 0) {
+
+                        // eslint-disable-next-line
+                        Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
+
+                            const milestone_2 = getmilestonebyid(paths, prop)
+                            let params = {};
+                            let params_2 = {};
+                            if (milestone_2) {
+
+                                if (scale === 'month') {
+                                    params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                                    params_2 = calculatemonth(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                                } else if (scale === 'year') {
+                                    params = calculateyear(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                                    params_2 = calculateyear(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                                } else if (scale === 'day') {
+                                    params = calculateday(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
+                                    params_2 = calculateday(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
+                                }
                             }
-                        }
-                        const y1 = 80 + 100*(pm.getmilestonekeybyid.call(this,milestoneid));
-                        const y2 = 80 + 100*(pm.getmilestonekeybyid.call(this,prop));
-                        let x1 = "";
-                        if(paths[milestoneid].paths[prop].type === 'start-to-finish') {
-                            x1 = params.xo + params.width;
-                        } else if (paths[milestoneid].paths[prop].type === 'start-to-start') {
-                            x1 = params.xo;
-                        }
-                        paths[milestoneid].paths[prop]['x1'] = x1;
-                        paths[milestoneid].paths[prop]['y1'] = y1
-                        paths[milestoneid].paths[prop]['y2'] = y2
-                        paths[milestoneid].paths[prop]['x2'] = params_2.xo
-                        paths[milestoneid].paths[prop]['float'] = 'float';
-                        paths[milestoneid].paths[prop]['totalfloat'] = 'totalfloat'
+                            const y1 = 80 + 100 * (pm.getmilestonekeybyid.call(this, milestoneid));
+                            const y2 = 80 + 100 * (pm.getmilestonekeybyid.call(this, prop));
+                            let x1 = "";
+                            if (paths[milestoneid].paths[prop].type === 'start-to-finish') {
+                                x1 = params.xo + params.width;
+                            } else if (paths[milestoneid].paths[prop].type === 'start-to-start') {
+                                x1 = params.xo;
+                            }
+                            paths[milestoneid].paths[prop]['x1'] = x1;
+                            paths[milestoneid].paths[prop]['y1'] = y1
+                            paths[milestoneid].paths[prop]['y2'] = y2
+                            paths[milestoneid].paths[prop]['x2'] = params_2.xo
+                            paths[milestoneid].paths[prop]['float'] = 'float';
 
-                    })
+
+                        })
+
+                    }
+
 
                 }
 
 
+            })
+        }
+
+
+        let milestone_1 = "";
+        let milestone_2 = "";
+        for (let myprop in paths) {
+            milestone_1 = getmilestonebyid(paths, myprop)
+
+
+
+            for (let mypath in paths[myprop]['paths']) {
+                milestone_2 = getmilestonebyid(paths, mypath)
+                let float = calculateFloat(milestone_1.completion, milestone_2.start)
+                paths[myprop]['paths'][mypath]['float'] = float
             }
 
-
-        })
-    }
+        }
 
         return paths;
     }
+
+    getTotalFloatbymilestoneid(milestoneid) {
+        const pm = new PM();
+        const paths = pm.getpaths.call(this)
+        console.log(paths)
+        let float = pm.getfloatbymilestoneid.call(this,milestoneid)
+        let projectfloat = 0;
+        let i =0;
+            for(let mypath in paths[milestoneid]['paths']) {
+            
+            let projectfloatcheck = pm.getfloatbymilestoneid.call(this,mypath)
+            if(projectfloatcheck < projectfloat || i ===0) {
+              
+              projectfloat = projectfloatcheck;
+            }
+            i+=1;
+            
+            
+            
+          }
+        
+        return float + projectfloat;
+        
+      }
+
+    getfloatbymilestoneid(milestoneid) {
+        const pm = new PM();
+        const paths = pm.getpaths.call(this)
+        let float = 0;
+        let i = 0;
+        for (let mypath in paths[milestoneid]['paths']) {
+
+            let floatcheck = paths[milestoneid]['paths'][mypath]['float']
+
+            if (floatcheck < float || i === 0) {
+                float = floatcheck
+
+            }
+
+            i += 1;
+        }
+        return float;
+
+    }
+
     getuser() {
         let user = false;
         if (this.props.myusermodel) {
@@ -221,7 +282,7 @@ class PM {
                     caption: `You may settle an invoice when funds are available with respect to the invoice balance. Ensure funds exceed invoice balance proir to making transfer  `
 
                 },
-          
+
                 {
                     title: 'Labor, Equipment, Materials',
                     id: 'lem',
@@ -927,11 +988,11 @@ class PM {
     getactulmaterialsbyid(projectid, materialid) {
         const pm = new PM();
         const materials = pm.getactualmaterialsbyproject.call(this, projectid);
-         let mymaterial = false;
+        let mymaterial = false;
         if (materials) {
             // eslint-disable-next-line
             materials.map(material => {
-        
+
                 if (material.materialid === materialid) {
                     mymaterial = material;
                 }
@@ -1296,7 +1357,7 @@ class PM {
 
         const pm = new PM();
         const predessors = pm.getpredessorsbymilestoneid.call(this, milestone.milestoneid);
- 
+
         let mypredessor = false;
         if (predessors) {
 
@@ -1528,7 +1589,7 @@ class PM {
         validate.validate = true;
         validate.message = "";
         if (myuser) {
-            if(!myuser.emailaddress) {
+            if (!myuser.emailaddress) {
                 validate.validate = false;
                 validate.message += `Email address is required `
             }
@@ -1537,7 +1598,7 @@ class PM {
                 validate.message += this.state.message;
             }
 
-            if(myuser.hasOwnProperty("invalidemail")) {
+            if (myuser.hasOwnProperty("invalidemail")) {
                 validate.validate = false;
                 validate.message += myuser.invalidemail;
             }
@@ -1565,7 +1626,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-              
+
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
@@ -1695,7 +1756,7 @@ class PM {
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, type }
             const response = await AppleLogin(values);
             console.log(response)
-      
+
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)
@@ -1730,7 +1791,7 @@ class PM {
             let clientid = user.providerData[0].uid;
             let emailaddress = user.providerData[0].email;
             this.setState({ client, clientid, firstname, lastname, profileurl, phonenumber, emailaddress })
-         
+
             pm.clientlogin.call(this, type)
 
 
@@ -1802,33 +1863,33 @@ class PM {
 
     async googleSignIn(type) {
 
-            const pm = new PM();
-            let provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('email');
-            provider.addScope('profile');
-            let result = await firebase.auth().signInWithPopup(provider)
-            var user = result.user;
-            let client = 'google';
-            let clientid = user.providerData[0].uid;
-            let firstname = '';
-            if (user.providerData[0].displayName) {
-                firstname = user.providerData[0].displayName.split(' ')[0]
-            }
+        const pm = new PM();
+        let provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        let result = await firebase.auth().signInWithPopup(provider)
+        var user = result.user;
+        let client = 'google';
+        let clientid = user.providerData[0].uid;
+        let firstname = '';
+        if (user.providerData[0].displayName) {
+            firstname = user.providerData[0].displayName.split(' ')[0]
+        }
 
-            let lastname = '';
-            if (user.providerData[0].displayName) {
-                lastname = user.providerData[0].displayName.split(' ')[1]
-            }
-            let emailaddress = user.providerData[0].email;
-            let emailaddresscheck = false;
-            if (emailaddress) {
-                emailaddresscheck = true;
-            }
-            let profileurl = user.providerData[0].photoURL;
-            let phonenumber = user.phoneNumber;
-            this.setState({ client, clientid, emailaddress, firstname, lastname, profileurl, phonenumber, emailaddresscheck })
+        let lastname = '';
+        if (user.providerData[0].displayName) {
+            lastname = user.providerData[0].displayName.split(' ')[1]
+        }
+        let emailaddress = user.providerData[0].email;
+        let emailaddresscheck = false;
+        if (emailaddress) {
+            emailaddresscheck = true;
+        }
+        let profileurl = user.providerData[0].photoURL;
+        let phonenumber = user.phoneNumber;
+        this.setState({ client, clientid, emailaddress, firstname, lastname, profileurl, phonenumber, emailaddresscheck })
 
-            pm.clientlogin.call(this, type)
+        pm.clientlogin.call(this, type)
 
 
     }

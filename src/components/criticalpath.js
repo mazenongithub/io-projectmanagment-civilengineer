@@ -377,9 +377,11 @@ class CriticalPath {
         const activemilestone = () => {
             if (this.state.activemilestoneid) {
                 const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid);
+                const float = pm.getfloatbymilestoneid.call(this,this.state.activemilestoneid) 
+                const projectfloat = pm.getTotalFloatbymilestoneid.call(this,this.state.activemilestoneid)
                 return (
-                    <div style={{ ...styles.generalFlex }}>
-                        <span style={{ ...styles.generalFont, ...regularFont }}>Active Milestone Is: {milestone.milestone}</span>
+                    <div style={{ ...styles.generalContainer }}>
+                       <div style={{ ...styles.generalContainer }}><span style={{ ...styles.generalFont, ...regularFont }}>Active Milestone Is: {milestone.milestone}  Float is {float} days Project Float is {projectfloat} days</span></div> 
                     </div>
                 )
             }
@@ -487,14 +489,7 @@ class CriticalPath {
                     {activemilestone()}
 
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1 }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>Can't Start until which milestones start? </span> <br />
-                            <select style={{ ...regularFont, ...styles.generalFont, ...styles.generalField }} onChange={event => { criticalpath.createstartstart.call(this, event.target.value) }}>
-                                <option value=""> Select A Milestone </option>
-                                {criticalpath.showoptionvalues.call(this)}
-                            </select>
-                            {criticalpath.showstartdates.call(this)}
-                        </div>
+
                         <div style={{ ...styles.flex1 }}>
                             <span style={{ ...styles.generalFont, ...regularFont }}>Can't Start until which milestones finish? </span>
                             <select style={{ ...regularFont, ...styles.generalFont, ...styles.generalField }} onChange={event => { criticalpath.createstartfinish.call(this, event.target.value) }}>

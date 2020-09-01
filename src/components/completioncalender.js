@@ -960,13 +960,13 @@ class MaterialCalender {
                     return (check29)
 
                 case "Thurs":
-                    return (27)
+                    return (28)
 
                 case "Fri":
-                    return (26)
+                    return (27)
 
                 case "Sat":
-                    return (25)
+                    return (26)
 
                 default:
                     break;

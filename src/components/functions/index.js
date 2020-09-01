@@ -3053,7 +3053,7 @@ export function validatePassword(val) {
 export function getScale(interval) {
 
     let scale = "";
-    if (interval < 30) {
+    if (interval < 60) {
         scale = "day"
     } else if (interval <= 730) {
         scale = "month"
@@ -3247,6 +3247,14 @@ export function calculateday(int, compl, start, completion) {
 
     return { width, xo, initime }
 }
+
+export function calculateFloat (day_1, day_2) {
+    const date_1 =new Date(`${day_1.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_1)}`)
+    const date_2 =new Date(`${day_2.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_2)}`)
+    const time = date_2.getTime() - date_1.getTime();
+    return Math.round(time/(1000*60*60*24))
+    
+  }
 
 export function getDateInterval(start, completion) {
 
