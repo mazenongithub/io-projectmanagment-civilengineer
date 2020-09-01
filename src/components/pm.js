@@ -276,6 +276,13 @@ class PM {
 
                 },
                 {
+                    title: 'Critical Path',
+                    id: 'criticalpath',
+                    url: 'http://civilengineer.io/projectmanagment/slides/criticalpath.png',
+                    caption: `Critical Path is calculated for the milestones. This program solves the classic critical path CPM method in calculating float and total project float `
+
+                },
+                {
                     title: 'Invoice',
                     id: 'invoice',
                     url: 'http://civilengineer.io/projectmanagment/slides/invoice.png',

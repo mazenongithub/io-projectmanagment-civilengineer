@@ -503,7 +503,7 @@ class CriticalPath {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${interval} ${yext+200}`}>
                         <g id="Layer_2" data-name="Layer 2">
                             <g id="lock">
-                                {grid}
+                               
                                 {showlabels()}
                                 <polyline className="showmilestones-7" points={`2.5 0.38 2.5 ${yext} ${interval} ${yext}`} />
                                 {criticalpath.showmilestones.call(this)}
