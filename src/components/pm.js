@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat,getDateTime  } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
@@ -191,25 +191,60 @@ class PM {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
 
-        let float = pm.getfloatbymilestoneid.call(this,milestoneid)
-        let projectfloat = 0;
-        let i =0;
-            for(let mypath in paths[milestoneid]['paths']) {
-            
-            let projectfloatcheck = pm.getfloatbymilestoneid.call(this,mypath)
-            if(projectfloatcheck < projectfloat || i ===0) {
-              
-              projectfloat = projectfloatcheck;
+        let float = 0;
+        float += pm.getfloatbymilestoneid.call(this, milestoneid)
+        let i = 0;
+        let checkfloat = 0;
+        let checkfloat_1 = 0;
+        let checkfloat_2 = 0;
+        let checkfloat_3 = 0;
+        for (let mypath in paths[milestoneid]['paths']) {
+            if (i === 0 || checkfloat > pm.getfloatbymilestoneid.call(this, mypath)) {
+                checkfloat = pm.getfloatbymilestoneid.call(this, mypath)
             }
-            i+=1;
-            
-            
-            
-          }
-        
-        return float + projectfloat;
-        
-      }
+
+            let j = 0;
+
+            for (let mypath_1 in paths[mypath]['paths']) {
+                if (j === 0 || checkfloat_1 > pm.getfloatbymilestoneid(paths, mypath_1)) {
+                    checkfloat_1 = pm.getfloatbymilestoneid.call(this, mypath_1)
+                }
+
+
+                let k = 0;
+
+                for (let mypath_2 in paths[mypath_1]['paths']) {
+                    if (k === 0 || checkfloat_2 > pm.getfloatbymilestoneid.call(this, mypath_2)) {
+                        checkfloat_2 = pm.getfloatbymilestoneid.call(this, mypath_2)
+                    }
+
+                    let l = 0;
+
+                    for (let mypath_3 in paths[mypath_2]['paths']) {
+                        if (l === 0 || checkfloat_3 > pm.getfloatbymilestoneid.call(this, mypath_3)) {
+                            checkfloat_3 = pm.getfloatbymilestoneid.call(this, mypath_3)
+                        }
+                        l += 1;
+                    }
+
+
+                    k += 1;
+                }
+
+
+
+                j += 1;
+            }
+
+
+            i += 1;
+        }
+        float = float + checkfloat + checkfloat_1 + checkfloat_2 + checkfloat_3;
+
+
+        return float;
+
+    }
 
     getfloatbymilestoneid(milestoneid) {
         const pm = new PM();
@@ -251,86 +286,87 @@ class PM {
         }
     }
 
-    auditpaths () {
+    auditpaths() {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
         let message = ""
-        
-        for(let myprop in paths) {
-          let mymilestone = pm.getmilestonebyid.call(this, myprop)
-          //let start = mymilestone.start;
-          let completion =mymilestone.completion;
-                  
-          for(let mypath in paths[myprop]['paths']) {
-            let mypredessor = pm.getmilestonebyid.call(this, mypath)
-               let predessorstart = mypredessor.start;
-            //let predessorcompletion = mypredessor.completion;
-                  if(getDateTime(completion)>getDateTime(predessorstart)) {
-                
-                message+=`${mymilestone.milestone} has a completion date after the start of ${mypredessor.milestone}`
-                
-                
-              }
-           
-            
-            
-            
-          }
-         
+
+        for (let myprop in paths) {
+            let mymilestone = pm.getmilestonebyid.call(this, myprop)
+            //let start = mymilestone.start;
+            let completion = mymilestone.completion;
+
+            for (let mypath in paths[myprop]['paths']) {
+                let mypredessor = pm.getmilestonebyid.call(this, mypath)
+                let predessorstart = mypredessor.start;
+                //let predessorcompletion = mypredessor.completion;
+                if (getDateTime(completion) > getDateTime(predessorstart)) {
+
+                    message += `${mymilestone.milestone} has a completion date after the start of ${mypredessor.milestone}`
+
+
+                }
+
+
+
+
+            }
+
         }
-        
+
         return message;
-        
-      }
-
-   auditmilestones(milestones)  {
-       const pm = new PM();
-
-       const getmilestonebyid = (milestones, milestoneid) => {
-
-        let mymilestone = false;
-        if(milestones) {
-        milestones.map(milestone => {
-      
-          if (milestone.milestoneid === milestoneid) {
-      
-            mymilestone = milestone;
-          }
-      
-        })
 
     }
-      
-        return mymilestone;
-      }
+
+    auditmilestones(milestones) {
+
+
+        const getmilestonebyid = (milestones, milestoneid) => {
+
+            let mymilestone = false;
+            if (milestones) {
+                // eslint-disable-next-line
+                milestones.map(milestone => {
+
+                    if (milestone.milestoneid === milestoneid) {
+
+                        mymilestone = milestone;
+                    }
+
+                })
+
+            }
+
+            return mymilestone;
+        }
 
         let message = "";
-      // eslint-disable-next-line
+        // eslint-disable-next-line
         milestones.map(milestone => {
-          let start = milestone.start;
-         // let completion = milestone.completion;
-          // message += `${start} ${completion}`
-      
-          if (milestone.hasOwnProperty("predessors")) {
-       // eslint-disable-next-line
-            milestone.predessors.map(predessor => {
-              let mypredessor = getmilestonebyid(milestones,predessor.predessor);
-              //let predessorstart = mypredessor.start;
-              let predessorcompletion = mypredessor.completion;
-              if (getDateTime(start) < getDateTime(predessorcompletion)) {
-                message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
-              }
-      
-            })
-      
-          }
-      
+            let start = milestone.start;
+            // let completion = milestone.completion;
+            // message += `${start} ${completion}`
+
+            if (milestone.hasOwnProperty("predessors")) {
+                // eslint-disable-next-line
+                milestone.predessors.map(predessor => {
+                    let mypredessor = getmilestonebyid(milestones, predessor.predessor);
+                    //let predessorstart = mypredessor.start;
+                    let predessorcompletion = mypredessor.completion;
+                    if (getDateTime(start) < getDateTime(predessorcompletion)) {
+                        message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+                    }
+
+                })
+
+            }
+
         })
-      
-      
+
+
         return message;
-      }
-      
+    }
+
 
     getslides() {
         const slides = () => {
@@ -1700,15 +1736,15 @@ class PM {
                         validate.message += this.state.message
                     }
 
-                    if(myproject.hasOwnProperty("projectmilestones")) {
-                        let auditmilestones = pm.auditmilestones.call(this,myproject.projectmilestones.mymilestone)
-                        if(auditmilestones) {
+                    if (myproject.hasOwnProperty("projectmilestones")) {
+                        let auditmilestones = pm.auditmilestones.call(this, myproject.projectmilestones.mymilestone)
+                        if (auditmilestones) {
                             validate.validate = false;
                             validate.message += auditmilestones;
                         }
                     }
 
-                    
+
 
 
                 })
