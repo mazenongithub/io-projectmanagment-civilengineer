@@ -202,8 +202,6 @@ class PM {
     calcTotalProjectFloat(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
-
-        
         let checkcalc = true
         let i =0;
         let activemilestoneid = milestoneid;
