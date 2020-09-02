@@ -3053,7 +3053,7 @@ export function validatePassword(val) {
 export function getScale(interval) {
 
     let scale = "";
-    if (interval < 60) {
+    if (interval < 180) {
         scale = "day"
     } else if (interval <= 730) {
         scale = "month"

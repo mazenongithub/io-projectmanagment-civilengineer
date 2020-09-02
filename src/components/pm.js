@@ -198,6 +198,8 @@ class PM {
         let checkfloat_1 = 0;
         let checkfloat_2 = 0;
         let checkfloat_3 = 0;
+        let checkfloat_4 = 0;
+        let checkfloat_5 = 0;
         for (let mypath in paths[milestoneid]['paths']) {
             if (i === 0 || checkfloat > pm.getfloatbymilestoneid.call(this, mypath)) {
                 checkfloat = pm.getfloatbymilestoneid.call(this, mypath)
@@ -206,7 +208,7 @@ class PM {
             let j = 0;
 
             for (let mypath_1 in paths[mypath]['paths']) {
-                if (j === 0 || checkfloat_1 > pm.getfloatbymilestoneid(paths, mypath_1)) {
+                if (j === 0 || checkfloat_1 > pm.getfloatbymilestoneid.call(this, mypath_1)) {
                     checkfloat_1 = pm.getfloatbymilestoneid.call(this, mypath_1)
                 }
 
@@ -224,6 +226,24 @@ class PM {
                         if (l === 0 || checkfloat_3 > pm.getfloatbymilestoneid.call(this, mypath_3)) {
                             checkfloat_3 = pm.getfloatbymilestoneid.call(this, mypath_3)
                         }
+
+                        let m = 0;
+                        for (let mypath_4 in paths[mypath_3]['paths']) {
+                            if (m === 0 || checkfloat_4 > pm.getfloatbymilestoneid.call(this, mypath_4)) {
+                                checkfloat_4 = pm.getfloatbymilestoneid.call(this, mypath_4)
+                            }
+                            
+                            let n = 0;
+
+                            for(let mypath_5 in paths[mypath_4]['paths']) {
+                                if (n === 0 || checkfloat_5 > pm.getfloatbymilestoneid.call(this, mypath_5)) {
+                                    checkfloat_5 = pm.getfloatbymilestoneid.call(this, mypath_5)
+                                }
+                                n+=1;
+                            }
+                            m+=1;
+                        }
+
                         l += 1;
                     }
 
@@ -239,7 +259,7 @@ class PM {
 
             i += 1;
         }
-        float = float + checkfloat + checkfloat_1 + checkfloat_2 + checkfloat_3;
+        float = float + checkfloat + checkfloat_1 + checkfloat_2 + checkfloat_3 + checkfloat_4 + checkfloat_5;
 
 
         return float;
