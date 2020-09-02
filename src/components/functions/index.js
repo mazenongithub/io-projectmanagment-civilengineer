@@ -3050,6 +3050,17 @@ export function validatePassword(val) {
 
     return validate;
 }
+export function checkemptyobject(obj) {
+    let empty = true;
+    // eslint-disable-next-line
+    for(let x in obj) {
+      empty = false;
+      
+    }
+    
+   return empty; 
+  }
+  
 export function getScale(interval) {
 
     let scale = "";

@@ -382,7 +382,7 @@ class CriticalPath {
             if (this.state.activemilestoneid) {
                 const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid);
                 const float = pm.getfloatbymilestoneid.call(this,this.state.activemilestoneid) 
-                const projectfloat = pm.getTotalFloatbymilestoneid.call(this,this.state.activemilestoneid)
+                const projectfloat = pm.calcTotalProjectFloat.call(this,this.state.activemilestoneid)
                 return (
                     <div style={{ ...styles.generalContainer }}>
                        <div style={{ ...styles.generalContainer }}><span style={{ ...styles.generalFont, ...regularFont }}>Active Milestone Is: {milestone.milestone}  Float is {float} days Project Float is {projectfloat} days</span></div> 

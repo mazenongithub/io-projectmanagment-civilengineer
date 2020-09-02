@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime,checkemptyobject } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
@@ -187,6 +187,59 @@ class PM {
         return paths;
     }
 
+    checkemptypathsbymilestoneid(milestoneid) {
+        const pm = new PM();
+        const paths = pm.getpaths.call(this)
+        const path = paths[milestoneid];
+        let empty = false;
+        if(checkemptyobject(path.paths)) {
+           empty  = true;
+        }
+        return empty; 
+        }
+        
+
+    calcTotalProjectFloat(milestoneid) {
+        const pm = new PM();
+        const paths = pm.getpaths.call(this)
+
+        
+        let checkcalc = true
+        let i =0;
+        let activemilestoneid = milestoneid;
+        while(checkcalc) {
+       
+       
+          window[`checkfloat_${i.toString()}`] = 0;
+              
+              
+              let j = 0;
+               checkcalc = false;
+               for (window[`mypath_${i.toString()}`] in paths[activemilestoneid]['paths']) {
+                   
+                if(!pm.checkemptypathsbymilestoneid.call(this,window[`mypath_${i.toString()}`])) {
+                  checkcalc = true 
+                 }
+                    
+                
+                    if (j === 0 || window[`checkfloat_${i.toString()}`] > pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])) {
+                       window[`checkfloat_${i.toString()}`] = pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])
+                       activemilestoneid = window[`mypath_${i.toString()}`]
+                   }
+                j+=1
+              }
+          
+               i+=1;
+        
+        }
+       let float = pm.getfloatbymilestoneid.call(this, milestoneid)
+       let projectfloat = 0;
+       for(let k=0;k<i;k++) {
+         projectfloat+= Number(window[`checkfloat_${k.toString()}`])
+       }
+       return float + projectfloat
+       }
+
     getTotalFloatbymilestoneid(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
@@ -243,7 +296,7 @@ class PM {
 
                                 let o = 0;
                                 for(let mypath_6 in paths[mypath_5]['paths']) {
-                                    if (n === 0 || checkfloat_6 > pm.getfloatbymilestoneid.call(this, mypath_6)) {
+                                    if (o === 0 || checkfloat_6 > pm.getfloatbymilestoneid.call(this, mypath_6)) {
                                         checkfloat_6 = pm.getfloatbymilestoneid.call(this, mypath_6)
                                       }
 
