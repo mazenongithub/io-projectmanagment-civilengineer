@@ -200,6 +200,7 @@ class PM {
         let checkfloat_3 = 0;
         let checkfloat_4 = 0;
         let checkfloat_5 = 0;
+        let checkfloat_6 = 0;
         for (let mypath in paths[milestoneid]['paths']) {
             if (i === 0 || checkfloat > pm.getfloatbymilestoneid.call(this, mypath)) {
                 checkfloat = pm.getfloatbymilestoneid.call(this, mypath)
@@ -239,6 +240,15 @@ class PM {
                                 if (n === 0 || checkfloat_5 > pm.getfloatbymilestoneid.call(this, mypath_5)) {
                                     checkfloat_5 = pm.getfloatbymilestoneid.call(this, mypath_5)
                                 }
+
+                                let o = 0;
+                                for(let mypath_6 in paths[mypath_5]['paths']) {
+                                    if (n === 0 || checkfloat_6 > pm.getfloatbymilestoneid.call(this, mypath_6)) {
+                                        checkfloat_6 = pm.getfloatbymilestoneid.call(this, mypath_6)
+                                      }
+
+                                      o+=1;
+                                }
                                 n+=1;
                             }
                             m+=1;
@@ -259,7 +269,7 @@ class PM {
 
             i += 1;
         }
-        float = float + checkfloat + checkfloat_1 + checkfloat_2 + checkfloat_3 + checkfloat_4 + checkfloat_5;
+        float = float + checkfloat + checkfloat_1 + checkfloat_2 + checkfloat_3 + checkfloat_4 + checkfloat_5 + checkfloat_6;
 
 
         return float;
