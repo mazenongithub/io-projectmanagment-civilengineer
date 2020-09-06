@@ -54,7 +54,7 @@ class CriticalPath {
                       
                         if (predessor) {
                             const k = pm.getpredessorkeybyid.call(this, milestone, milestoneid);
-                      
+                           
                             myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.splice(k, 1)
                             this.props.reduxUser(myuser);
                             this.setState({ render: 'render' })

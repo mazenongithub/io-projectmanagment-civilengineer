@@ -1599,7 +1599,7 @@ class PM {
         if (predessors) {
             // eslint-disable-next-line
             predessors.map((predessor, i) => {
-                if (predessor.milestoneid === milestoneid) {
+                if (predessor.predessor === milestoneid) {
                     key = i;
                 }
             })
