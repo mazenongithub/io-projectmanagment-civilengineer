@@ -327,6 +327,52 @@ class PM {
 
     }
 
+    getlagbymilestoneid(milestoneid) {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this);
+        let lag = 0;
+
+        const checklag = (startdate, enddate, lag) => {
+            let replacelag = false;
+
+            const check = (startdate-enddate)*(1/(1000*60*60*24))
+            if(lag === 0 && check >= 0) {
+                replacelag = true;
+            } else if(lag > check && check > 0) {
+
+                replacelag = true;
+            }
+
+            return replacelag;
+        }
+        
+        if(milestones) {
+            const mymilestone = pm.getmilestonebyid.call(this,milestoneid);
+            if(mymilestone) {
+
+            const startdate = getDateTime(mymilestone.start);
+
+            if(mymilestone.hasOwnProperty("predessors")) {
+                // eslint-disable-next-line
+                mymilestone.predessors.map(predessor=> {
+
+                    const enddate = getDateTime(pm.getmilestonebyid.call(this,predessor.predessor).completion)
+                 
+                    if(startdate > enddate && checklag(startdate,enddate,lag)) {
+
+                        lag = Math.round((startdate-enddate)*(1/(1000*60*60*24)))
+                    } else if (startdate === enddate) {
+                        lag = 0
+                    }
+
+                })
+            }
+
+            }
+        }
+        return lag;
+    }
+
     getfloatbymilestoneid(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
