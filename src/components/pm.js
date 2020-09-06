@@ -332,16 +332,20 @@ class PM {
         const milestones = pm.getmilestones.call(this);
         let lag = 0;
 
-        const checklag = (startdate, enddate, lag) => {
+        const checklag = (startdate, enddate, i, lag) => {
             let replacelag = false;
 
-            const check = (startdate-enddate)*(1/(1000*60*60*24))
-            if(lag === 0 || check >= 0) {
-                replacelag = true;
-            } else if(lag > check && check > 0) {
 
+            const check = Math.round((startdate-enddate)*(1/(1000*60*60*24)))
+            
+            
+            if(i===0 && check>0) {
+                replacelag = true;
+            } else if(check < lag) {
                 replacelag = true;
             }
+
+        
 
             return replacelag;
         }
@@ -354,15 +358,12 @@ class PM {
 
             if(mymilestone.hasOwnProperty("predessors")) {
                 // eslint-disable-next-line
-                mymilestone.predessors.map(predessor=> {
+                mymilestone.predessors.map((predessor,i)=> {
 
                     const enddate = getDateTime(pm.getmilestonebyid.call(this,predessor.predessor).completion)
                  
-                    if(startdate > enddate && checklag(startdate,enddate,lag)) {
-
+                    if(startdate >= enddate && checklag(startdate,enddate,i,lag)) {
                         lag = Math.round((startdate-enddate)*(1/(1000*60*60*24)))
-                    } else if (startdate === enddate) {
-                        lag = 0
                     }
 
                 })
