@@ -26,7 +26,6 @@ import Team from './components/team';
 import { connect } from 'react-redux';
 import { CheckUserLogin } from './components/actions/api'
 import Landing from './components/landing'
-import { returnCompanyList } from './components/functions'
 import firebase from 'firebase'
 import { firebaseconfig } from './components/firebase'
 import PM from './components/pm';
@@ -65,12 +64,7 @@ class App extends Component {
 
             let response = await CheckUserLogin();
             console.log(response)
-            if (response.hasOwnProperty("allusers")) {
-                let companys = returnCompanyList(response.allusers);
-                this.props.reduxAllCompanys(companys)
-                this.props.reduxAllUsers(response.allusers);
-
-            }
+     
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)

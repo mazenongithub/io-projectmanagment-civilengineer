@@ -434,9 +434,11 @@ class PM {
                     let mypredessor = getmilestonebyid(milestones, predessor.predessor);
                     //let predessorstart = mypredessor.start;
                     let predessorcompletion = mypredessor.completion;
+                    if(mypredessor) {
                     if (getDateTime(start) < getDateTime(predessorcompletion)) {
                         message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
                     }
+                }
 
                 })
 

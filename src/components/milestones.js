@@ -9,7 +9,7 @@ import PM from './pm';
 import MakeID from './makeids'
 import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
-import {LoadAllUsers} from './actions/api';
+import { LoadAllUsers } from './actions/api';
 
 
 class Milestones extends Component {
@@ -40,7 +40,7 @@ class Milestones extends Component {
         this.props.reduxNavigation({ navigation: "milestones" })
         window.addEventListener('resize', this.updateWindowDimensions);
         this.reset()
-        
+
 
 
     }
@@ -219,10 +219,10 @@ class Milestones extends Component {
                 <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1,...styles.addMargin }}>
+                            <div style={{ ...styles.flex1, ...styles.addMargin }}>
                                 {start.showstartdate.call(this)}
                             </div>
-                            <div style={{ ...styles.flex1,...styles.addMargin }}>
+                            <div style={{ ...styles.flex1, ...styles.addMargin }}>
                                 {completion.showcompletiondate.call(this)}
                             </div>
                         </div>
@@ -294,12 +294,37 @@ class Milestones extends Component {
         const myuser = pm.getuser.call(this);
         if (myuser) {
 
-            if (window.confirm(`Are you sure you want to delete milestone ${ milestone.milestone }?`)) {
-                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
-                const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
-                myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
-                this.props.reduxUser(myuser)
-                this.setState({ activemilestoneid: false })
+            if (window.confirm(`Are you sure you want to delete milestone ${milestone.milestone}?`)) {
+                const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                if (project) {
+                    const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
+                    const checkmilestone = pm.getmilestonebyid.call(this, milestone.milestoneid)
+                    if (checkmilestone) {
+
+                        const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
+                        myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
+                        // eslint-disable-next-line
+                        myuser.projects.myproject[i].projectmilestones.mymilestone.map(mymilestone=> {
+                           
+                            if(mymilestone.hasOwnProperty("predessors")) {
+                                
+                                // eslint-disable-next-line
+                                mymilestone.predessors.map(predessor=> {
+                                    if(predessor.predessor === milestone.milestoneid) {
+                                        const k = pm.getmilestonekeybyid.call(this, mymilestone.milestoneid);
+                                        const l = pm.getpredessorkeybyid.call(this, mymilestone, predessor.predessor);
+                                        myuser.projects.myproject[i].projectmilestones.mymilestone[k].predessors.splice(l,1)
+                                    }
+                                })
+                            }
+                        })
+                        
+                        this.props.reduxUser(myuser)
+                        this.setState({ activemilestoneid: false })
+
+                    }
+
+                }
 
             }
         }
@@ -339,46 +364,46 @@ class Milestones extends Component {
         const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
         const criticalpath = new CriticalPath();
         const myuser = pm.getuser.call(this)
-        if(myuser) {
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
+        if (myuser) {
+            return (
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>/{myproject.title} </span><br />
-                            <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>Project Milestones</span>
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>/{myproject.title} </span><br />
+                                <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>Project Milestones</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                            Milestone
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                                Milestone
                             <input type="text" style={{ ...regularFont, ...styles.generalFont, ...styles.generalField }}
-                                value={this.getmilestone()}
-                                onChange={event => { this.handlemilestone(event.target.value) }} />
+                                    value={this.getmilestone()}
+                                    onChange={event => { this.handlemilestone(event.target.value) }} />
+                            </div>
                         </div>
+
+                        {this.handleTimes()}
+
+                        {pm.showsaveproject.call(this)}
+
+                        {this.loadmilestoneids()}
+
+                        {criticalpath.showpath.call(this)}
+
+                        {pm.showprojectid.call(this)}
+
+
                     </div>
-
-                    {this.handleTimes()}
-                    
-                    {pm.showsaveproject.call(this)}
-
-                    {this.loadmilestoneids()}
-
-                    {criticalpath.showpath.call(this)}
-
-                    {pm.showprojectid.call(this)}
-
-
                 </div>
-            </div>
 
-        )
+            )
 
         } else {
-            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
-                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Milestones</span>
+            return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View Milestones</span>
             </div>)
 
         }
