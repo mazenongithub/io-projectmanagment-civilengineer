@@ -90,7 +90,7 @@ class CriticalPath {
                     let type = predessor.type;
                     if (type === 'start-to-finish') {
                         let mymilestone = pm.getmilestonebyid.call(this, milestoneid)
-                        jsx.push(<div style={{ ...styles.generalContainer }}>
+                        jsx.push(<div style={{ ...styles.generalContainer }} key={`predessor${mymilestone.milestone}${this.state.activemilestoneid}`}>
                             <span style={{ ...regularFont, ...styles.generalFont }}>{mymilestone.milestone}</span>
                             <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight }} onClick={() => { criticalpath.removepredessor.call(this, milestone, predessor.predessor) }}>{removeIconSmall()}</button>
                         </div>)

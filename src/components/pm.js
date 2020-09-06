@@ -336,7 +336,7 @@ class PM {
             let replacelag = false;
 
             const check = (startdate-enddate)*(1/(1000*60*60*24))
-            if(lag === 0 && check >= 0) {
+            if(lag === 0 || check >= 0) {
                 replacelag = true;
             } else if(lag > check && check > 0) {
 
