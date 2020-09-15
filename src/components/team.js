@@ -6,7 +6,7 @@ import { MyStylesheet } from './styles';
 import PM from './pm';
 //import { Link } from 'react-router-dom';
 import { TeamMember, returnCompanyList } from './functions';
-import { removeIconSmall } from './svg'
+import { removeIconSmall, defaultProfilePhoto } from './svg'
 import {LoadAllUsers} from './actions/api'
 
 
@@ -202,7 +202,7 @@ class Team extends Component {
             if (myuser.profileurl) {
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...styles.searchphoto }} />)
             } else {
-                return;
+                return (defaultProfilePhoto())
             }
         }
         const location = () => {
@@ -262,7 +262,8 @@ class Team extends Component {
             if (myuser.profileurl) {
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...styles.searchphoto }} />)
             } else {
-                return;
+                return (defaultProfilePhoto())
+             
             }
         }
         const location = () => {
@@ -538,7 +539,7 @@ class Team extends Component {
 
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
             } else {
-                return;
+               return(defaultProfilePhoto())
             }
         }
         const Role = () => {
@@ -560,17 +561,18 @@ class Team extends Component {
             <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
                 <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeengineer(myuser.providerid) }}>{removeIconSmall()}</button>
             </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}
-            >
-                {myuser.firstname} {myuser.lastname}
-            </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
-                 {company()} {location()}
-            </div>
+        
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                 <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
                     {ProfileImage()}
                 </div>
+            </div>
+
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
+                {myuser.firstname} {myuser.lastname}
+            </div>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
+                 {company()} {location()}
             </div>
 
             {Role()}
@@ -605,7 +607,7 @@ class Team extends Component {
 
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
             } else {
-                return;
+                return(defaultProfilePhoto())
             }
         }
         const Role = () => {
@@ -624,19 +626,22 @@ class Team extends Component {
         }
 
         return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }}>
+            
             <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
                 <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeprovider(myuser) }}>{removeIconSmall()}</button>
             </div>
+           
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto, ...styles.bottomMargin15 }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
+                    {ProfileImage()}
+                </div>
+            </div>
+
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
                 {myuser.firstname} {myuser.lastname}
             </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
                 {company()} {location()}
-            </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
-                    {ProfileImage()}
-                </div>
             </div>
 
             {Role()}
