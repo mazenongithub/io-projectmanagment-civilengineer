@@ -16,7 +16,8 @@ class Specifications extends Component {
     componentDidMount() {
         const pm = new PM();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxProject({ activeprojectid: this.props.match.params.projectid })
+        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+        this.props.reduxNavigation({ navigation: "specifications" })
         this.updateWindowDimensions();
         const csis = pm.getcsis.call(this)
         if(!csis) {
