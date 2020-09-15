@@ -110,6 +110,20 @@ class Team extends Component {
         return results;
 
     }
+    validateengineer(providerid) {
+        let validate = true;
+        const pm = new PM();
+        const myteam = pm.getengineering.call(this);
+        if (myteam) {
+            // eslint-disable-next-line
+            myteam.map(myteam => {
+                if (myteam.providerid === providerid) {
+                    validate = false;
+                }
+            })
+        }
+        return validate;
+    }
     validateprovider(providerid) {
         let validate = true;
         const pm = new PM();
@@ -128,25 +142,23 @@ class Team extends Component {
 
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-        const validate = (providerid) => {
-            return true;
-        }
+       
         if (myuser) {
 
             const myproject = pm.getproject.call(this);
             if (myproject) {
                 const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
-                if (validate(providerid)) {
+                if (this.validateengineer(providerid)) {
                     const myengineers = pm.getengineering.call(this);
                     const role = this.state.role;
                     let newteam = TeamMember(providerid, role)
                     if (myengineers) {
 
-                        myuser.projects.myproject[i].engineers.push(newteam)
+                        myuser.projects.myproject[i].engineering.push(newteam)
 
                     } else {
-                        let engineering = { myteam: [newteam] }
-                        myuser.projects.myproject[i].engineering = [engineering]
+                        let engineering = [newteam]
+                        myuser.projects.myproject[i].engineering = engineering;
                     }
                     this.props.reduxUser(myuser);
                     this.setState({ activeengineer: providerid })
@@ -390,7 +402,7 @@ class Team extends Component {
                     const i = pm.getprojectkeybyid.call(this,projectid);
                     const engineer = pm.getengineerbyid.call(this,providerid) 
                     if(engineer) {
-                    const j = pm.getengineerkeybyid.call(this,[providerid]);
+                    const j = pm.getengineerkeybyid.call(this,providerid);
                     myuser.projects.myproject[i].engineering.splice(j,1);
                     this.props.reduxUser(myuser)
                     this.setState({render:'render'})
@@ -491,6 +503,14 @@ class Team extends Component {
 
         }
     }
+
+    makeengineeractive(engineerid) {
+        if(this.state.activeengineer === engineerid) {
+            this.setState({activeengineer:false})
+        } else {
+            this.setState({activeengineer:engineerid})
+        }
+    }
     showengineer(myuser) {
 
         const styles = MyStylesheet();
@@ -540,14 +560,15 @@ class Team extends Component {
             <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
                 <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeengineer(myuser.providerid) }}>{removeIconSmall()}</button>
             </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}
+            >
                 {myuser.firstname} {myuser.lastname}
             </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                {company()} {location()}
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
+                 {company()} {location()}
             </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.setState({activeengineer:myuser.providerid}) }}>
+                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
                     {ProfileImage()}
                 </div>
             </div>
@@ -606,10 +627,10 @@ class Team extends Component {
             <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
                 <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeprovider(myuser) }}>{removeIconSmall()}</button>
             </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
                 {myuser.firstname} {myuser.lastname}
             </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
                 {company()} {location()}
             </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
