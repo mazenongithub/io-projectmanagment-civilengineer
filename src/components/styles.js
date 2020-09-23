@@ -255,6 +255,11 @@ export function MyStylesheet() {
             backgroundColor: '#D8A80F',
             color: '#000000',
             minHeight: '69px'
+        },
+        minWidth90:{
+            minWidth:'90px',
+            maxWidth:'120px',
+            width:'95%'
         }
 
 

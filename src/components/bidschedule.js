@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric } from './functions'
 import PM from './pm';
 
 
@@ -21,7 +21,7 @@ class ViewBidSchedule extends Component {
 
     }
     componentDidMount() {
-
+        window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
         this.props.reduxNavigation({ navigation: "bidschedule" })
         this.props.reduxProject({ projectid: this.props.match.params.projectid })
@@ -110,7 +110,7 @@ class ViewBidSchedule extends Component {
         } else {
             profit = 1 + (profit / 100)
         }
-        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        let overhead = (directcost * profit) * .029 + .029 * ((directcost * profit) * .029) + .029 * (.029 * ((directcost * profit) * .029)) + .029 * (+ .029 * (.029 * ((directcost * profit) * .029))) + .029 * (.029 * (+ .029 * (.029 * ((directcost * profit) * .029))))
         return overhead;
     }
     getdirectcost(csiid) {
@@ -183,27 +183,96 @@ class ViewBidSchedule extends Component {
 
 
     }
-    getunit(csiid) {
-        let unit = ""
+    handlequantity(csiid, quantity) {
         const pm = new PM();
-        let myproposal = pm.getproposals.call(this)
-        if (myproposal) {
-            // eslint-disable-next-line
-            myproposal.map(proposals => {
+        if(isNumeric(quantity)) {
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const myproject = pm.getproject.call(this);
+            if (myproject) {
+                const i = pm.getprojectkeybyid.call(this, myproject.projectid);
+                const scheduleitems = pm.getbidschedule.call(this)
+                if(scheduleitems) {
 
-                if (proposals.hasOwnProperty("bidschedule")) {
-                    // eslint-disable-next-line
-                    proposals.bidschedule.biditem.map(item => {
-                        if (item.csiid === csiid) {
-                            unit = item.unit
-                        }
-                    })
+                const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
+                if (scheduleitem) {
+                    const j = pm.getbidschedulekeybyid.call(this, csiid)
+                    myuser.projects.myproject[i].bidschedule[j].quantity = quantity;
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                   
+                } else {
+                    let newItem = {csiid, quantity, unit:''}
+                    myuser.projects.myproject[i].bidschedule.push(newItem)
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
                 }
 
+            } else {
+                let newItem = {csiid, quantity, unit:''}
+                myuser.projects.myproject[i].bidschedule = [newItem]
+                this.props.reduxUser(myuser);
+                this.setState({ render: 'render' })
+            }
 
-            })
+           
 
+
+            }
         }
+
+    } else {
+        alert(`${quantity} should be numeric `)
+    }
+
+    }
+
+    handleunit(csiid, unit) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const myproject = pm.getproject.call(this);
+            if (myproject) {
+                const i = pm.getprojectkeybyid.call(this, myproject.projectid);
+                const scheduleitems = pm.getbidschedule.call(this)
+                if(scheduleitems) {
+
+                const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
+                if (scheduleitem) {
+                    const j = pm.getbidschedulekeybyid.call(this, csiid)
+                    myuser.projects.myproject[i].bidschedule[j].unit=unit
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                } else {
+
+                    let newItem = {csiid, quantity:'', unit}
+                    myuser.projects.myproject[i].bidschedule.push(newItem)
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+
+                }
+
+            } else {
+                let newItem = {csiid, quantity:'', unit}
+                myuser.projects.myproject[i].bidschedule = [newItem]
+                this.props.reduxUser(myuser);
+                this.setState({ render: 'render' })
+
+            }
+
+            }
+        }
+
+
+    }
+    getunit(csiid) {
+        let unit = "";
+        const pm = new PM();
+        const item = pm.getbidschedulebyid.call(this, csiid);
+        if (item) {
+            unit = item.unit
+        }
+
         return unit;
 
     }
@@ -229,20 +298,25 @@ class ViewBidSchedule extends Component {
             return (
                 <div style={{ ...styles.generalContainer }}>
                     Unit <br />
-                    {this.getunit(csi.csiid)}
+                    <input type="text"
+                        style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
+                        value={this.getunit(item.csiid)}
+                        onChange={event => { this.handleunit(item.csiid,event.target.value) }} />
                 </div>)
         }
         const quantity = () => {
             return (<div style={{ ...styles.generalContainer }}>
                 Quantity <br />
-                {this.getquantity()}
+                <input type="text"
+                    style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
+                    value={this.getquantity(item.csiid)} onChange={event => { this.handlequantity(item.csiid,event.target.value) }} />
 
             </div>)
         }
 
         if (this.state.width > 1200) {
             return (
-                <tr>                                                                                             /:providerid/myprojects/:projectid/bidschedule/csi/:csiid
+                <tr key={`item${item.csiid}`}>
                     <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
                     <td style={{ ...styles.alignCenter }}>
                         {quantity()}
@@ -257,7 +331,7 @@ class ViewBidSchedule extends Component {
 
         } else {
             return (
-                <div style={{ ...styles.generalFlex }} key={csi.csiid}>
+                <div style={{ ...styles.generalFlex }} key={`item${item.csiid}`}>
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
@@ -265,14 +339,11 @@ class ViewBidSchedule extends Component {
                                     {csi.csi}-{csi.title} </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Quantity <br />
-                                {this.getquantity(csi.csiid)}
+                                {quantity()}
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Unit <br />
-                                {this.getunit(csi.csiid)}
-
+                               {unit()}
                             </div>
                         </div>
 
@@ -348,15 +419,14 @@ class ViewBidSchedule extends Component {
         return scheduleitem;
     }
     getquantity(csiid) {
+        let quantity = "";
 
-        let scheduleitem = this.getscheduleitem(csiid);
-
-        if (scheduleitem) {
-            return Number(scheduleitem.quantity);
-        } else {
-            return;
+        const pm = new PM();
+        const item = pm.getbidschedulebyid.call(this, csiid);
+        if (item) {
+            quantity = item.quantity;
         }
-
+        return quantity;
     }
     getitems() {
         const pm = new PM();
@@ -430,7 +500,7 @@ class ViewBidSchedule extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         return (
-            <div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.flex1 }}>
 
                     <div style={{ ...styles.generalFlex }}>
@@ -440,6 +510,7 @@ class ViewBidSchedule extends Component {
                         </div>
                     </div>
                     {pm.showbidtable.call(this)}
+                    {pm.showsaveproject.call(this)}
                     {pm.showprojectid.call(this)}
                 </div>
             </div>)

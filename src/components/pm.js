@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime,checkemptyobject } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime, checkemptyobject } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
@@ -192,51 +192,51 @@ class PM {
         const paths = pm.getpaths.call(this)
         const path = paths[milestoneid];
         let empty = false;
-        if(checkemptyobject(path.paths)) {
-           empty  = true;
+        if (checkemptyobject(path.paths)) {
+            empty = true;
         }
-        return empty; 
-        }
-        
+        return empty;
+    }
+
 
     calcTotalProjectFloat(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
         let checkcalc = true
-        let i =0;
+        let i = 0;
         let activemilestoneid = milestoneid;
-        while(checkcalc) {
-       
-       
-          window[`checkfloat_${i.toString()}`] = 0;
-              
-              
-              let j = 0;
-               checkcalc = false;
-               for (window[`mypath_${i.toString()}`] in paths[activemilestoneid]['paths']) {
-                   
-                if(!pm.checkemptypathsbymilestoneid.call(this,window[`mypath_${i.toString()}`])) {
-                  checkcalc = true 
-                 }
-                    
-                
-                    if (j === 0 || window[`checkfloat_${i.toString()}`] > pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])) {
-                       window[`checkfloat_${i.toString()}`] = pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])
-                       activemilestoneid = window[`mypath_${i.toString()}`]
-                   }
-                j+=1
-              }
-          
-               i+=1;
-        
+        while (checkcalc) {
+
+
+            window[`checkfloat_${i.toString()}`] = 0;
+
+
+            let j = 0;
+            checkcalc = false;
+            for (window[`mypath_${i.toString()}`] in paths[activemilestoneid]['paths']) {
+
+                if (!pm.checkemptypathsbymilestoneid.call(this, window[`mypath_${i.toString()}`])) {
+                    checkcalc = true
+                }
+
+
+                if (j === 0 || window[`checkfloat_${i.toString()}`] > pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])) {
+                    window[`checkfloat_${i.toString()}`] = pm.getfloatbymilestoneid.call(this, window[`mypath_${i.toString()}`])
+                    activemilestoneid = window[`mypath_${i.toString()}`]
+                }
+                j += 1
+            }
+
+            i += 1;
+
         }
-       let float = pm.getfloatbymilestoneid.call(this, milestoneid)
-       let projectfloat = 0;
-       for(let k=0;k<i;k++) {
-         projectfloat+= Number(window[`checkfloat_${k.toString()}`])
-       }
-       return float + projectfloat
-       }
+        let float = pm.getfloatbymilestoneid.call(this, milestoneid)
+        let projectfloat = 0;
+        for (let k = 0; k < i; k++) {
+            projectfloat += Number(window[`checkfloat_${k.toString()}`])
+        }
+        return float + projectfloat
+    }
 
     getTotalFloatbymilestoneid(milestoneid) {
         const pm = new PM();
@@ -284,25 +284,25 @@ class PM {
                             if (m === 0 || checkfloat_4 > pm.getfloatbymilestoneid.call(this, mypath_4)) {
                                 checkfloat_4 = pm.getfloatbymilestoneid.call(this, mypath_4)
                             }
-                            
+
                             let n = 0;
 
-                            for(let mypath_5 in paths[mypath_4]['paths']) {
+                            for (let mypath_5 in paths[mypath_4]['paths']) {
                                 if (n === 0 || checkfloat_5 > pm.getfloatbymilestoneid.call(this, mypath_5)) {
                                     checkfloat_5 = pm.getfloatbymilestoneid.call(this, mypath_5)
                                 }
 
                                 let o = 0;
-                                for(let mypath_6 in paths[mypath_5]['paths']) {
+                                for (let mypath_6 in paths[mypath_5]['paths']) {
                                     if (o === 0 || checkfloat_6 > pm.getfloatbymilestoneid.call(this, mypath_6)) {
                                         checkfloat_6 = pm.getfloatbymilestoneid.call(this, mypath_6)
-                                      }
+                                    }
 
-                                      o+=1;
+                                    o += 1;
                                 }
-                                n+=1;
+                                n += 1;
                             }
-                            m+=1;
+                            m += 1;
                         }
 
                         l += 1;
@@ -336,38 +336,38 @@ class PM {
             let replacelag = false;
 
 
-            const check = Math.round((startdate-enddate)*(1/(1000*60*60*24)))
-            
-            
-            if(i===0 && check>0) {
+            const check = Math.round((startdate - enddate) * (1 / (1000 * 60 * 60 * 24)))
+
+
+            if (i === 0 && check > 0) {
                 replacelag = true;
-            } else if(check < lag) {
+            } else if (check < lag) {
                 replacelag = true;
             }
 
-        
+
 
             return replacelag;
         }
-        
-        if(milestones) {
-            const mymilestone = pm.getmilestonebyid.call(this,milestoneid);
-            if(mymilestone) {
 
-            const startdate = getDateTime(mymilestone.start);
+        if (milestones) {
+            const mymilestone = pm.getmilestonebyid.call(this, milestoneid);
+            if (mymilestone) {
 
-            if(mymilestone.hasOwnProperty("predessors")) {
-                // eslint-disable-next-line
-                mymilestone.predessors.map((predessor,i)=> {
+                const startdate = getDateTime(mymilestone.start);
 
-                    const enddate = getDateTime(pm.getmilestonebyid.call(this,predessor.predessor).completion)
-                 
-                    if(startdate >= enddate && checklag(startdate,enddate,i,lag)) {
-                        lag = Math.round((startdate-enddate)*(1/(1000*60*60*24)))
-                    }
+                if (mymilestone.hasOwnProperty("predessors")) {
+                    // eslint-disable-next-line
+                    mymilestone.predessors.map((predessor, i) => {
 
-                })
-            }
+                        const enddate = getDateTime(pm.getmilestonebyid.call(this, predessor.predessor).completion)
+
+                        if (startdate >= enddate && checklag(startdate, enddate, i, lag)) {
+                            lag = Math.round((startdate - enddate) * (1 / (1000 * 60 * 60 * 24)))
+                        }
+
+                    })
+                }
 
             }
         }
@@ -481,11 +481,11 @@ class PM {
                     let mypredessor = getmilestonebyid(milestones, predessor.predessor);
                     //let predessorstart = mypredessor.start;
                     let predessorcompletion = mypredessor.completion;
-                    if(mypredessor) {
-                    if (getDateTime(start) < getDateTime(predessorcompletion)) {
-                        message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+                    if (mypredessor) {
+                        if (getDateTime(start) < getDateTime(predessorcompletion)) {
+                            message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+                        }
                     }
-                }
 
                 })
 
@@ -1451,17 +1451,19 @@ class PM {
 
         if (this.state.width > 1200) {
             return (
-                <table width="100%" border="1" style={{ ...regularFont, ...styles.generalFont }}>
-                    <tr>
-                        <td width="24%" style={{ ...styles.alignCenter }}>Line ID</td>
-                        <td width="12%" style={{ ...styles.alignCenter }}>Quantity</td>
-                        <td width="13%" style={{ ...styles.alignCenter }}>Unit</td>
-                        <td width="13%" style={{ ...styles.alignCenter }}>Direct Cost</td>
-                        <td width="13%" style={{ ...styles.alignCenter }}> Overhead and Profit %</td>
-                        <td width="13%" style={{ ...styles.alignCenter }}>Bid Price</td>
-                        <td width="12%" style={{ ...styles.alignCenter }}>Unit Price</td>
-                    </tr>
-                    {this.showbiditems()}
+                <table width="100%" border="1" style={{ ...regularFont, ...styles.generalFont, ...styles.bottomMargin15 }}>
+                    <tbody>
+                        <tr>
+                            <td width="24%" style={{ ...styles.alignCenter }}>Line ID</td>
+                            <td width="12%" style={{ ...styles.alignCenter }}>Quantity</td>
+                            <td width="13%" style={{ ...styles.alignCenter }}>Unit</td>
+                            <td width="13%" style={{ ...styles.alignCenter }}>Direct Cost</td>
+                            <td width="13%" style={{ ...styles.alignCenter }}> Overhead and Profit %</td>
+                            <td width="13%" style={{ ...styles.alignCenter }}>Bid Price</td>
+                            <td width="12%" style={{ ...styles.alignCenter }}>Unit Price</td>
+                        </tr>
+                        {this.showbiditems()}
+                    </tbody>
                 </table>
 
             )
@@ -1543,6 +1545,110 @@ class PM {
         return myproject;
     }
 
+    getbidschedulekeybyid(csiid) {
+        const pm = new PM();
+        let key = false;
+        const bidschedule = pm.getbidschedule.call(this)
+        if (bidschedule) {
+            // eslint-disable-next-line
+            bidschedule.map((item, i) => {
+                if (item.csiid === csiid) {
+                    key = i;
+                }
+            })
+        }
+
+        return key;
+    }
+
+    getbidkeybyid(csiid) {
+        const pm = new PM();
+        let key = false;
+        const bid = pm.getprojectbid.call(this)
+        if (bid) {
+            // eslint-disable-next-line
+            bid.map((item, i) => {
+                if (item.csiid === csiid) {
+                    key = i;
+                }
+            })
+        }
+
+        return key;
+    }
+
+    getbidbyid(csiid) {
+        const pm = new PM();
+        let myitem = false;
+        const bid = pm.getprojectbid.call(this)
+        if (bid) {
+            // eslint-disable-next-line
+            bid.map(item => {
+                if (item.csiid === csiid) {
+                    myitem = item;
+                }
+            })
+        }
+
+        return myitem;
+    }
+
+    getbidschedulebyid(csiid) {
+        const pm = new PM();
+        let myitem = false;
+        const bidschedule = pm.getbidschedule.call(this)
+        if (bidschedule) {
+            // eslint-disable-next-line
+            bidschedule.map(item => {
+                if (item.csiid === csiid) {
+                    myitem = item;
+                }
+            })
+        }
+
+        return myitem;
+    }
+
+    getprojectbid() {
+        const pm = new PM();
+        let bid = false;
+        const project = pm.getproject.call(this)
+        if (project) {
+            if (project.hasOwnProperty("bid")) {
+                bid = project.bid;
+            }
+
+        }
+        return bid;
+    }
+
+
+    getbidschedule() {
+        const pm = new PM();
+        let bidschedule = false;
+        const project = pm.getproject.call(this)
+        if (project) {
+            if (project.hasOwnProperty("bidschedule")) {
+                bidschedule = project.bidschedule;
+            }
+
+        }
+        return bidschedule;
+    }
+
+    getbid() {
+        const pm = new PM();
+        let bid = false;
+
+        const project = pm.getproject.call(this)
+        if (project) {
+            if (project.hasOwnProperty("bid")) {
+                bid = project.bid;
+            }
+
+        }
+        return bid;
+    }
 
     getactiveprojectid() {
         let projectid = "";

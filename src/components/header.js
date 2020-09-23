@@ -97,6 +97,7 @@ class Header extends Component {
         let pm = new PM();
         let navigation = pm.getnavigation.call(this);
         const myuser = pm.getuser.call(this)
+        const styles = MyStylesheet();
         let providerid = "";
         if (myuser) {
             providerid = myuser.profile;
@@ -111,40 +112,57 @@ class Header extends Component {
             let csiid = this.props.navigation.csiid;
             switch (navigation) {
                 case "register":
-                    myjsx.push(<Link to={`/providers/register`} className="nav-link">  /register </Link>)
-                    break;
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <Link to={`/providers/register`} className="nav-link">  /register </Link>
+                        </div>)
                 case "login":
-                    myjsx.push(<Link to={`/providers/login`} className="nav-link">  /login </Link>)
-                    break;
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <Link to={`/providers/login`} className="nav-link">  /login </Link>
+                        </div>)
                 case "myprojects":
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
                     return (myjsx);
                 case "viewprofile":
                     providerid = this.props.navigation.providerid;
-                    myjsx.push(<Link to={`/${providerid}`} className="nav-link">  /{providerid} </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <Link to={`/${providerid}`} className="nav-link">  /{providerid} </Link>
+                        </div>)
                 case "profile":
-                    return (<Link to={`/${providerid}/profile`} className="nav-link">  /profile </Link>)
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <Link to={`/${providerid}/profile`} className="nav-link">  /profile </Link>\
+                        </div>)
                 case "project":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                        </div>
+                    )
+
                 case "milestones":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
+                            <Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>
+                        </div>)
+
                 case "specifications":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
+                            <Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>
+                        </div>)
+
                 case "specification":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/specifications/${csiid}`} className="nav-link">  {`/${csiid}`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/specifications/${csiid}`} className="nav-link">  {`/${csiid}`}  </Link>
+                        </div>)
                 case "charges":
                     providerid = myuser.profile;
                     myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
@@ -153,54 +171,68 @@ class Header extends Component {
                     return (myjsx);
                 case "team":
                     providerid = myuser.profile;
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/team`} className="nav-link">  {`/team`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/team`} className="nav-link">  {`/team`}  </Link>
+                        </div>)
                 case "proposals":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>
+                        </div>)
                 case "invoices":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>
+                        </div>)
                 case "bid":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>
+                        </div>)
                 case "biditem":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bid/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bid/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>
+                        </div>)
+
                 case "bidschedule":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>
+                        </div>)
+
                 case "bidscheduleitem":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>
+                        </div>)
+
                 case "viewinvoice":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} className="nav-link">  {`/${invoiceid}`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} className="nav-link">  {`/${invoiceid}`}  </Link>
+                        </div>)
                 case "viewproposal":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} className="nav-link">  {`/${proposalid}`}  </Link>)
-                    return (myjsx);
+                    return (
+                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>
+                            <Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} className="nav-link">  {`/${proposalid}`}  </Link>
+                        </div>)
+
                 default:
 
                     myjsx.push(<div>It's project management online </div>)

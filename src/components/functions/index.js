@@ -3050,6 +3050,18 @@ export function validatePassword(val) {
 
     return validate;
 }
+
+export function isNumeric(val) {
+
+    if (val) {
+        return (!isNaN(val))
+    } else {
+        return (true);
+    }
+
+
+}
+
 export function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';

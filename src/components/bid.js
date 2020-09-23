@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric } from './functions'
 import PM from './pm';
 
 
@@ -21,7 +21,7 @@ class Bid extends Component {
 
     }
     componentDidMount() {
-
+        window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
         this.props.reduxNavigation({ navigation: "bid" })
         this.props.reduxProject({ projectid: this.props.match.params.projectid })
@@ -152,7 +152,7 @@ class Bid extends Component {
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice =(directcost * profit) + overhead;
+        let bidprice = (directcost * profit) + overhead;
         return bidprice;
     }
     getunitprice(csiid) {
@@ -169,30 +169,103 @@ class Bid extends Component {
 
 
     }
+
     getunit(csiid) {
-        let unit = ""
+        let unit = "";
         const pm = new PM();
-        let myinvoice = pm.getinvoices.call(this)
-        if (myinvoice) {
-            // eslint-disable-next-line
-            myinvoice.map(invoices => {
-
-                if (invoices.hasOwnProperty("bid")) {
-                    // eslint-disable-next-line
-                    invoices.bid.biditem.map(item => {
-                        if (item.csiid === csiid) {
-                            unit = item.unit
-                        }
-                    })
-                }
-
-
-            })
-
+        const item = pm.getbidbyid.call(this, csiid);
+        if (item) {
+            unit = item.unit
         }
+
         return unit;
 
     }
+    handlequantity(csiid, quantity) {
+        const pm = new PM();
+        if(isNumeric(quantity)) {
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const myproject = pm.getproject.call(this);
+            if (myproject) {
+                const i = pm.getprojectkeybyid.call(this, myproject.projectid);
+                const actualitems = pm.getprojectbid.call(this)
+                if(actualitems) {
+    
+                const actualitem = pm.getbidbyid.call(this, csiid)
+                if (actualitem) {
+                    const j = pm.getbidkeybyid.call(this, csiid)
+                    myuser.projects.myproject[i].bid[j].quantity = quantity;
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                   
+                } else {
+                    let newItem = {csiid, quantity, unit:''}
+                    myuser.projects.myproject[i].bid.push(newItem)
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                }
+    
+            } else {
+                let newItem = {csiid, quantity, unit:''}
+                myuser.projects.myproject[i].bid = [newItem]
+                this.props.reduxUser(myuser);
+                this.setState({ render: 'render' })
+            }
+    
+           
+    
+    
+            }
+        }
+    
+    } else {
+        alert(`${quantity} should be numeric `)
+    }
+    
+    }
+    handleunit(csiid, unit) {
+        const pm = new PM();
+    
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const myproject = pm.getproject.call(this);
+            if (myproject) {
+                const i = pm.getprojectkeybyid.call(this, myproject.projectid);
+                const actualitems = pm.getprojectbid.call(this)
+                if(actualitems) {
+    
+                const actualitem = pm.getbidbyid.call(this, csiid)
+                if (actualitem) {
+                    const j = pm.getbidkeybyid.call(this, csiid)
+                    myuser.projects.myproject[i].bid[j].unit= unit;
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                   
+                } else {
+                    let newItem = {csiid, quantity:'', unit}
+                    myuser.projects.myproject[i].bid.push(newItem)
+                    this.props.reduxUser(myuser);
+                    this.setState({ render: 'render' })
+                }
+    
+            } else {
+                let newItem = {csiid, quantity:'', unit}
+                myuser.projects.myproject[i].bid = [newItem]
+                this.props.reduxUser(myuser);
+                this.setState({ render: 'render' })
+            }
+    
+           
+    
+    
+            }
+        }
+    
+    
+    
+    }
+
     getoverhead(csiid) {
         let directcost = Number(this.getdirectcost(csiid));
         let profit = Number(this.getprofit(csiid));
@@ -202,7 +275,7 @@ class Bid extends Component {
         } else {
             profit = 1 + (profit / 100)
         }
-        let overhead = (directcost * profit)*.029  + .029*((directcost * profit)*.029) + .029*(.029*((directcost * profit)*.029)) + .029*(+ .029*(.029*((directcost * profit)*.029))) +.029*(.029*(+ .029*(.029*((directcost * profit)*.029))))
+        let overhead = (directcost * profit) * .029 + .029 * ((directcost * profit) * .029) + .029 * (.029 * ((directcost * profit) * .029)) + .029 * (+ .029 * (.029 * ((directcost * profit) * .029))) + .029 * (.029 * (+ .029 * (.029 * ((directcost * profit) * .029))))
         return overhead;
     }
     showbiditem(item) {
@@ -224,21 +297,24 @@ class Bid extends Component {
                 Number(this.getprofit(item.csiid)).toFixed(4)
             )
         }
-        const quantity = () => {
-            return (<div style={{ ...styles.generalContainer }}>
-                Quantity <br />
-
-                {this.getquantity(csi.csiid)}
-
-            </div>)
-        }
         const unit = () => {
             return (
                 <div style={{ ...styles.generalContainer }}>
                     Unit <br />
-                    {this.getunit(csi.csiid)}
-
+                    <input type="text"
+                        style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
+                        value={this.getunit(item.csiid)}
+                        onChange={event => { this.handleunit(item.csiid, event.target.value) }} />
                 </div>)
+        }
+        const quantity = () => {
+            return (<div style={{ ...styles.generalContainer }}>
+                Quantity <br />
+                <input type="text"
+                    style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
+                    value={this.getquantity(item.csiid)} onChange={event => { this.handlequantity(item.csiid, event.target.value) }} />
+
+            </div>)
         }
         if (this.state.width > 1200) {
             return (
@@ -267,13 +343,12 @@ class Bid extends Component {
                                     {csi.csi}-{csi.title} </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Quantity <br />
-                                {this.getquantity(csi.csiid)}
+                                {quantity()}
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                Unit <br />
-                                {this.getunit(csi.csiid)}
+                        
+                                {unit()}
 
                             </div>
                         </div>
@@ -352,15 +427,14 @@ class Bid extends Component {
         return actualitem;
     }
     getquantity(csiid) {
+        let quantity = "";
 
-        let actualitem = this.getactualitem(csiid);
-
-        if (actualitem) {
-            return Number(actualitem.quantity);
-        } else {
-            return;
+        const pm = new PM();
+        const item = pm.getbidbyid.call(this, csiid);
+        if (item) {
+            quantity = item.quantity;
         }
-
+        return quantity;
     }
     getitems() {
         const pm = new PM();
@@ -445,6 +519,7 @@ class Bid extends Component {
                         </div>
                     </div>
                     {pm.showbidtable.call(this)}
+                    {pm.showsaveproject.call(this)}
                     {pm.showprojectid.call(this)}
                 </div>
             </div>)
