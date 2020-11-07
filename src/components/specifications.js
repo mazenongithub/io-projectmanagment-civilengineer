@@ -81,15 +81,34 @@ class Specifications extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
+        const myuser = pm.getuser.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+        const csis =pm.getcsis.call(this)
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+
+        if(myuser) {
+            const project = pm.getproject.call(this)
+
+            if(project) {
+
+                if(!project.hasOwnProperty("specifications")) {
+                    pm.loadprojectspecs.call(this,project.projectid) 
+                }
+
 
         return (
             <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.flex1 }}>
                     
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...headerFont,...styles.generalFont, ...styles.alignCenter }}>
-                            /{this.props.match.params.projectid} <br />
-                            Specifications
+                        <div style={{ ...styles.flex1,  ...styles.alignCenter }}>
+
+                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>/{myuser.profile}</span> <br />
+                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>/{project.title}</span> <br />
+                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>specifications </span>
+
                         </div>
                     </div>
 
@@ -97,6 +116,21 @@ class Specifications extends Component {
                
                 </div>
             </div>)
+
+        } else {
+            return(<div style={{...styles.generalContainer}}>
+                <span style={{...styles.generalFont,...regularFont}}> Project Not Found </span>
+            </div>)
+
+        }
+
+        } else {
+            return(<div style={{...styles.generalContainer}}>
+                <span style={{...styles.generalFont,...regularFont}}> Please Login to View Specifications</span>
+            </div>)
+        }
+
+
     }
 
 }

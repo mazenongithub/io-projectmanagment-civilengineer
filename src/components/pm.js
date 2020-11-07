@@ -4,11 +4,75 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime, checkemptyobject } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs } from './actions/api';
 import { Link } from 'react-router-dom';
 
 
 class PM {
+
+    async loadcsis() {
+        try {
+          let response = await LoadCSIs();
+          if (response.hasOwnProperty("csis")) {
+            this.props.reduxCSIs(response.csis);
+    
+          }
+    
+        } catch (err) {
+          alert(err)
+        }
+      }
+
+    async loadprojectspecs(projectid) {
+        
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+
+        if (myuser) {
+
+            const project = pm.getproject.call(this)
+
+            if (project) {
+
+                const i = pm.getprojectkeybyid.call(this,project.projectid)
+
+                try {
+
+                    let specifications = [];
+                    let specs = await LoadSpecifications(project.projectid);
+                    console.log(specs)
+                    if(specs.hasOwnProperty("length")) {
+                        
+                        specs.map(spec => {
+                            
+                            if(spec.hasOwnProperty("specifications")) {
+                                
+                                spec.specifications.map(myspec=> {
+                                    
+                                    specifications.push(myspec)
+                                })
+                            }
+
+                        })
+
+                    }
+                    
+                    myuser.projects.myproject[i].specifications = specifications;
+                    this.props.reduxUser(myuser)
+                    this.setState({render:'render'})
+                    
+
+
+                } catch (err) {
+                    alert(err)
+                }
+
+            }
+
+        }
+
+    }
+
     getcsis() {
         let csis = false;
         if (this.props.csis) {

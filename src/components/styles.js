@@ -102,6 +102,12 @@ export function MyStylesheet() {
         marginLeft60:{
             marginLeft:'60px'
         },
+        marginLeft90:{
+            marginLeft:'90px'
+        },
+        marginLeft120:{
+            marginLeft:'120px'
+        },
         timecellContainer: {
             minHeight: '180px',
             maxWidth: '77px'

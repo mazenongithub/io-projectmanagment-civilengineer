@@ -1,6 +1,29 @@
 /* global fetch */
 /* global Headers */
 
+export async function LoadSpecifications(projectid) {
+
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${projectid}/specifications`
+
+    return fetch(APIURL, { credentials: 'include' }).then(resp => {
+
+        if (!resp.ok) {
+            if (resp.status >= 400 && resp.status < 500) {
+                return resp.json().then(data => {
+                    throw data.message
+                })
+            }
+            else {
+                let err =  'No network connection or the Server is not responding';
+                throw err;
+            }
+        }
+
+        return resp.json();
+    })
+}
+
+
 export async function LoadAllUsers() {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/construction/loadallusers`

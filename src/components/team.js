@@ -675,6 +675,8 @@ class Team extends Component {
 
         if(myuser) {
 
+            
+
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -727,15 +729,13 @@ class Team extends Component {
                                 style={{ ...styles.generalFont, ...regularFont, ...styles.generalField }} />
                         </div>
                     </div>
+
                     {this.showdesignresults()}
 
    
-
                     <div style={{ ...styles.generalGrid, ...getColumns }}>
                         {this.showdesignteamids()}
                     </div>
-
-
 
                     {pm.showsaveproject.call(this)}
 
