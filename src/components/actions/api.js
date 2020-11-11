@@ -217,7 +217,7 @@ export async function SaveAllProfile(myuser) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
                         let err = { errorMessage: data.message };
-                        throw err;
+                        throw data.message
                     })
                 }
                 else {
@@ -245,7 +245,7 @@ export async function CheckEmailAddress(emailaddress) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
                         let err = { errorMessage: data.message };
-                        throw err;
+                        throw data.message
                     })
                 }
                 else {
@@ -321,8 +321,7 @@ export async function CheckProfile(profile) {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
+                        throw data.message
                     })
                 }
                 else {
@@ -348,8 +347,7 @@ export async function UploadProfileImage(formdata, providerid) {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
+                        throw data.message
                     })
                 }
                 else {
@@ -382,8 +380,7 @@ export async function handleStripePayment(values) {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
-                        throw err;
+                        throw data.message
                     })
                 }
                 else {
