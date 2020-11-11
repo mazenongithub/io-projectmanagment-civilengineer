@@ -3,8 +3,8 @@ import { MyStylesheet } from './styles'
 import PM from './pm'
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, ProfitForEquipment, ProfitForMaterial, ProfitForLabor} from './functions'
-import {Link} from 'react-router-dom'
+import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, ProfitForEquipment, ProfitForMaterial, ProfitForLabor } from './functions'
+import { Link } from 'react-router-dom'
 
 class CostEstimate extends Component {
 
@@ -32,7 +32,7 @@ class CostEstimate extends Component {
         let directcost = 0;
         let profit = 0;
         if (project) {
-            
+
             if (project.hasOwnProperty("costestimate")) {
 
                 if (project.costestimate.hasOwnProperty("labor")) {
@@ -41,7 +41,7 @@ class CostEstimate extends Component {
                         if (labor.csiid === csiid) {
                             directcost += DirectCostForLabor(labor);
                             profit += ProfitForLabor(labor)
-                           
+
                         }
 
                     })
@@ -80,9 +80,9 @@ class CostEstimate extends Component {
             }
 
         }
- 
+
         if (profit && directcost > 0) {
-       
+
             return +Number((profit / directcost) * 100).toFixed(4)
         } else {
             return 0;
@@ -151,7 +151,7 @@ class CostEstimate extends Component {
         let csis = [];
         if (myuser) {
             const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
-     
+
             if (project) {
                 if (project.hasOwnProperty("costestimate")) {
                     if (project.costestimate.hasOwnProperty("labor")) {
@@ -218,7 +218,7 @@ class CostEstimate extends Component {
         let profit = Number(this.getprofit(csiid));
         let overhead = this.getoverhead(csiid)
         let myoverhead = this.getmyoverhead(csiid)
-   
+
         if (!profit) {
             profit = 1
         } else {
@@ -228,10 +228,10 @@ class CostEstimate extends Component {
         return bidprice;
     }
 
- 
+
 
     showbiditem(biditem) {
-      
+
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
@@ -240,103 +240,103 @@ class CostEstimate extends Component {
         const directcost = Number(this.getdirectcost(biditem.csiid)).toFixed(2)
         const profit = +Number(this.getprofit(biditem.csiid)).toFixed(4);
         const bidprice = Number(this.getbidprice(biditem.csiid)).toFixed(2);
-      
+
         const myuser = pm.getuser.call(this)
-        if(myuser) {
-        if (project) {
-            const bidschedule = pm.getcsibyid.call(this, biditem.csiid);
-         
-            const quantity = bidschedule.quantity;
-            const unit = bidschedule.unit;
-            const unitprice = () => {
-                if(biditem.csiid && quantity) {
-                    return( Number(this.getbidprice(biditem.csiid) / quantity).toFixed(2))
+        if (myuser) {
+            if (project) {
+                const bidschedule = pm.getcsibyid.call(this, biditem.csiid);
+
+                const quantity = bidschedule.quantity;
+                const unit = bidschedule.unit;
+                const unitprice = () => {
+                    if (biditem.csiid && quantity) {
+                        return (Number(this.getbidprice(biditem.csiid) / quantity).toFixed(2))
+                    } else {
+                        return (0)
+                    }
+
+                }
+
+                if (this.state.width > 800) {
+                    return (
+                        <div style={{ ...styles.generalFlex }} key={biditem.csiid}>
+                            <div style={{ ...styles.flex2, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}><Link style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }} to={`/${myuser.profile}/myprojects/${project.title}/costestimate/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{quantity}</span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{unit} </span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont }}>${directcost}</span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{profit}</span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont }}>${bidprice}</span>
+                            </div>
+                            <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                <span style={{ ...styles.generalFont, ...regularFont }}>${unitprice()}</span>
+                            </div>
+                        </div>)
+
                 } else {
-                    return(0)
+
+                    return (
+                        <div style={{ ...styles.generalFlex }} key={biditem.csiid}>
+                            <div style={{ ...styles.flex1 }}>
+
+                                <div style={{ ...styles.generalFlex }}>
+                                    <div style={{ ...styles.flex2, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont }}><Link style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }} to={`/${myuser.profile}/myprojects/${project.title}/costestimate/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></span>
+                                    </div>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{quantity}</span>
+
+                                    </div>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{unit} </span>
+                                    </div>
+
+                                </div>
+
+
+                                <div style={{ ...styles.generalFlex }}>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont }}>${directcost}</span>
+                                    </div>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+
+                                        <span style={{ ...styles.generalFont, ...regularFont, ...styles.alignCenter }}>{profit}</span>
+                                    </div>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont }}>${bidprice}</span>
+                                    </div>
+                                    <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
+                                        <span style={{ ...styles.generalFont, ...regularFont }}>${unitprice()}</span>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    )
+
                 }
 
             }
-
-            if (this.state.width > 800) {
-                return (
-                    <div style={{ ...styles.generalFlex }} key={biditem.csiid}>
-                        <div style={{ ...styles.flex2, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}><Link style={{...styles.generalFont,...regularFont,...styles.generalLink}} to={`/${myuser.profile}/myprojects/${project.title}/costestimate/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{quantity}</span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{unit} </span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>${directcost}</span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{profit}</span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>${bidprice}</span>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>${unitprice()}</span>
-                        </div>
-                    </div>)
-
-            } else {
-
-                return (
-                    <div style={{ ...styles.generalFlex }} key={biditem.csiid}>
-                        <div style={{ ...styles.flex1 }}>
-
-                            <div style={{ ...styles.generalFlex }}>
-                                <div style={{ ...styles.flex2, ...styles.showBorder, ...styles.alignCenter }}>
-                                    <span style={{ ...styles.generalFont, ...regularFont }}><Link style={{...styles.generalFont,...regularFont,...styles.generalLink}} to={`/${myuser.profile}/myprojects/${project.title}/costestimate/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></span>
-                                </div>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                                <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{quantity}</span>
-
-                                </div>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                                <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{unit} </span>
-                                </div>
-
-                            </div>
-
-
-                            <div style={{ ...styles.generalFlex }}>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                                    <span style={{ ...styles.generalFont, ...regularFont }}>${directcost}</span>
-                                </div>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-
-                                <span style={{ ...styles.generalFont, ...regularFont,  ...styles.alignCenter }}>{profit}</span>
-                                </div>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                                    <span style={{ ...styles.generalFont, ...regularFont }}>${bidprice}</span>
-                                </div>
-                                <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter }}>
-                                    <span style={{ ...styles.generalFont, ...regularFont }}>${unitprice()}</span>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-
-                    </div>
-                )
-
-            }
-
         }
-    }
     }
 
     showbiditems() {
 
         const biditems = this.getbiditems();
-     
+
         let items = [];
         if (biditems) {
             // eslint-disable-next-line
@@ -354,6 +354,10 @@ class CostEstimate extends Component {
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
+        const csis = pm.getcsis.call(this)
+        if (!csis) {
+            pm.loadcsis.call(this)
+        }
 
         const titlerow = () => {
             if (this.state.width > 800) {
@@ -419,7 +423,7 @@ class CostEstimate extends Component {
 
                             </div>
 
-                
+
 
 
                         </div>
@@ -429,26 +433,44 @@ class CostEstimate extends Component {
 
             }
         }
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            const project = pm.getproject.call(this)
+            if (project) {
+                return (
+                    <div style={{ ...styles.generalFont }}>
+                        <div style={{ ...styles.flex1 }}>
 
-        return (
-            <div style={{ ...styles.generalFont }}>
-                <div style={{ ...styles.flex1 }}>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
 
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                            <div style={{...styles.generalContainer }}> <span style={{...headerFont, ...styles.boldFont, ...styles.headerFamily}}> Engineer Estimate </span> </div>
-                            <div style={{...styles.generalContainer }}> <span style={{...headerFont, ...styles.boldFont, ...styles.headerFamily}}> {this.props.match.params.projectid} </span> </div>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/costestimate`}>  /costestimate  </Link>
+                            </div>
+
+                            {titlerow()}
+
+                            {this.showbiditems()}
+
+
+
                         </div>
-                    </div>
-
-                    {titlerow()}
-
-                    {this.showbiditems()}
-
-
-
-                </div>
-            </div>)
+                    </div>)
+            } else {
+                return (<div>Project Not Found</div>)
+            }
+        } else {
+            return (<div>Please Login to View Cost Estimate</div>)
+        }
     }
 
 }
@@ -457,7 +479,8 @@ function mapStateToProps(state) {
         myusermodel: state.myusermodel,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        project: state.project
+        project: state.project,
+        csis: state.csis
     }
 }
 

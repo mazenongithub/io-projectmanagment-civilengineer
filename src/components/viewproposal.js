@@ -481,16 +481,38 @@ class ViewProposal extends Component {
         const proposalid = this.props.match.params.proposalid;
         const projectIcon = pm.getsaveprojecticon.call(this);
         const regularFont = pm.getRegularFont.call(this)
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            const project = pm.getproject.call(this)
+            if(project) {
+
+                const proposal = pm.getproposalbyid.call(this,proposalid);
+                if(proposal) {
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                            /{projectid} <br />
-                            View Proposal {proposalid}
-                        </div>
-                    </div>
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/proposals`}>  /proposals </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/proposals/${proposal.proposalid}`}> /{proposal.proposalid} </Link>
+                            </div>
+                            
+
                     {pm.showbidtable.call(this)}
 
                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>
@@ -512,6 +534,18 @@ class ViewProposal extends Component {
 
                 </div>
             </div>)
+
+        } else {
+            return(<div>Proposal Not Found</div>)
+        }
+
+        } else {
+            return(<div>Project Not Found</div>)
+        }
+
+        } else {
+            return(<div>Please Login to View Proposal</div>)
+        }
 
 
 

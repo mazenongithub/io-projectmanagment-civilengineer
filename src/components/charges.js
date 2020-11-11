@@ -5,6 +5,7 @@ import { MyStylesheet } from './styles';
 import StripeCheckout from 'react-stripe-checkout';
 import { AddCharge } from './actions/api'
 import { inputUTCStringForLaborID } from './functions'
+import {Link} from 'react-router-dom';
 import PM from './pm';
 
 class Charges extends Component {
@@ -282,19 +283,34 @@ class Charges extends Component {
         const project = pm.getproject.call(this);
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
+        const myuser =pm.getuser.call(this)
+        if(myuser) {
+
         if (project) {
+
             const title = project.title;
             const projectid = project.projectid;
             return (
                 <div style={{ ...styles.generalFont }}>
                     <div style={{ ...styles.flex1 }}>
 
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                                /{title} <br />
-                            Charges
-                        </div>
-                        </div>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/charges`}>  /charges  </Link>
+                            </div>
+
+               
 
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
                             <span style={{ ...styles.generalFont, ...regularFont, ...styles.addRightMargin }}>Payment Amount</span><input type="text"
@@ -340,7 +356,11 @@ class Charges extends Component {
             )
 
         } else {
-            return (<div>&nbsp;</div>)
+            return(<div>Project Not Found</div>)
+        }
+
+        } else {
+            return (<div>Please Login To View Charges</div>)
         }
     }
 

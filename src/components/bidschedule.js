@@ -499,21 +499,42 @@ class ViewBidSchedule extends Component {
         const projectid = this.props.match.params.projectid;
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            const project = pm.getproject.call(this)
+            if(project) {
         return (
             <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                            /{projectid} <br />
-                            View Bid Schedule
-                        </div>
-                    </div>
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/bidschedule`}>  /bidschedule </Link>
+                            </div>
                     {pm.showbidtable.call(this)}
                     {pm.showsaveproject.call(this)}
                     {pm.showprojectid.call(this)}
                 </div>
             </div>)
+
+        } else {
+            return(<div>Project Not Found</div>)
+        }
+
+        } else {
+            return(<div>Please Login to View Bid Schedule</div>)
+        }
 
 
 

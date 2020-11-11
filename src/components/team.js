@@ -8,6 +8,7 @@ import PM from './pm';
 import { TeamMember, returnCompanyList } from './functions';
 import { removeIconSmall, defaultProfilePhoto } from './svg'
 import {LoadAllUsers} from './actions/api'
+import {Link} from 'react-router-dom'
 
 
 class Team extends Component {
@@ -675,18 +676,31 @@ class Team extends Component {
 
         if(myuser) {
 
+
+            const project = pm.getproject.call(this)
+
+            if(project) {
             
 
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont, ...styles.alignCenter }}>
-                            /{projectid} <br />
-                            Project Team
-                        </div>
-                    </div>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/team`}>  /team  </Link>
+                            </div>
 
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                         <div style={{ ...styles.flex1 }}>
@@ -744,6 +758,13 @@ class Team extends Component {
                 </div>
             </div>
         )
+
+            } else {
+                return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
+                    <span style={{...styles.generalFont,...regularFont}}>Project Not Found</span>
+                </div>)
+
+            }
 
         } else {
             return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>

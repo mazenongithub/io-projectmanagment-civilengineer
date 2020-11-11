@@ -8,7 +8,8 @@ import * as actions from './actions';
 import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
 import { returnCompanyList, inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
-import { CheckProfile } from './actions/api'
+import { CheckProfile } from './actions/api';
+import {Link} from 'react-router-dom';
 import PM from './pm'
 
 class Profile extends Component {
@@ -518,6 +519,11 @@ class Profile extends Component {
         if (myuser) {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalContainer,  ...styles.bottomMargin15,  ...styles.alignCenter }}>
+                    <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }}>  /{myuser.profile} </Link>
+                </div>
+
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>

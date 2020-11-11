@@ -37,7 +37,7 @@ import Charges from './components/charges'
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', activeslideid: 'myprojects' }
+        this.state = { render: '', activeslideid: 'myprojects', menu:'closed' }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
 
@@ -46,6 +46,7 @@ class App extends Component {
         const configs = firebaseconfig()
         firebase.initializeApp(configs);
         this.checkuserlogin();
+        window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions();
 
     }
@@ -79,6 +80,7 @@ class App extends Component {
         const landing = new Landing();
         const pm = new PM();
         const myuser = pm.getuser.call(this)
+        const header = new Header();
         const showlanding = () => {
             if (myuser) {
                 return (<Profile />)
@@ -91,7 +93,7 @@ class App extends Component {
             <div className="appbody-container">
                 <BrowserRouter>
                     <div>
-                        <Header />
+                        {header.showheader.call(this)}
 
                         <Switch>
                             <Route exact path="/" component={showlanding} />

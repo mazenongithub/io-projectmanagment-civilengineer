@@ -4,7 +4,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime, checkemptyobject } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs,LogoutUser } from './actions/api';
 import { Link } from 'react-router-dom';
 
 
@@ -260,6 +260,23 @@ class PM {
             empty = true;
         }
         return empty;
+    }
+
+    async logoutuser() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+
+            const providerid = myuser.providerid;
+            try {
+                let response = await LogoutUser(providerid);
+                if (response.hasOwnProperty("message")) {
+                    this.props.reduxUser(response)
+                }
+            } catch (err) {
+                alert(err)
+            }
+        }
     }
 
 
@@ -973,9 +990,8 @@ class PM {
     getnavigation() {
         let navigation = false;
         if (this.props.navigation) {
-            if (this.props.navigation.hasOwnProperty("navigation")) {
-                navigation = this.props.navigation.navigation;
-            }
+            
+                navigation = this.props.navigation
 
         }
         return navigation;

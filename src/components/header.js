@@ -1,277 +1,163 @@
 import React, { Component } from 'react';
-import './header.css'
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Logo } from './svg';
+import { appLogo, launchIcon, closeIcon } from './svg';
 import PM from './pm';
-import { LogoutUser } from './actions/api';
 import { MyStylesheet } from './styles';
-import * as actions from './actions';
 
-class Header extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            widthofwindow: 0
-        }
-        this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
-    }
-    componentDidMount() {
-        this.updateWindowDimensions();
-        window.addEventListener('resize', this.updateWindowDimensions);
-    }
-    updateWindowDimensions() {
-        this.setState({ widthofwindow: window.innerWidth });
-    }
-    async logoutuser() {
+
+class Header {
+
+
+
+    showmenu() {
+        const styles = MyStylesheet();
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-        if (myuser) {
-
-            const providerid = myuser.providerid;
-            try {
-                let response = await LogoutUser(providerid);
-                if (response.hasOwnProperty("message")) {
-                    this.props.reduxUser(response)
-                }
-            } catch (err) {
-                alert(err)
-            }
-        }
-    }
-    showlogout() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
         const headerFont = pm.getHeaderFont.call(this)
-        const styles = MyStylesheet();
-        if (myuser) {
-            return (<div className="linkhover" style={{ ...headerFont, ...styles.generalFont }} onClick={() => { this.logoutuser() }}> Logout </div>);
-        }
-        else {
 
-            return (<Link className="nav-link" to="/providers/login"><span className="nav-link"> Login  </span></Link>);
-
-        }
-
-
-    }
-
-    handleregister() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
-            const providerid = myuser.profile;
-            return (<Link to={`/${providerid}/profile`} className="nav-link"> Profile </Link>);
-        }
-        else {
-
-            return (<Link to="/providers/register" className="nav-link"> Register </Link>);
+        const link_1 = (myuser) => {
+            if (myuser) {
+                return (<Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}>  /{myuser.profile} </Link>);
+            } else {
+                return (<Link to="/" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> / </Link>);
+            }
 
         }
 
-
-    }
-
-    showdashboard() {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
-            let providerid = myuser.profile;
-            return (<Link className="nav-link" to={`/${providerid}/myprojects`}>  Projects  </Link>);
-        }
-        else {
-            return (<Link className="nav-link" to="/"> Home </Link>)
+        const launchwidth = () => {
+            return ({ width: '65px' })
         }
 
 
 
-    }
-    getextradiv() {
-        let widthofwindow = this.state.widthofwindow;
-        if (widthofwindow < 721) {
-            return (<div className="navigation-blank">&nbsp;</div>)
+        const link_2 = (myuser) => {
+            if (myuser) {
+                return (<Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} to={`/${myuser.providerid}/myprojects`}>  /myprojects  </Link>);
+            } else {
+                return (<Link to="/providers/register" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> /register </Link>);
+            }
+
         }
-    }
-    navigationmenu() {
-        let myjsx = [];
-        let pm = new PM();
-        let navigation = pm.getnavigation.call(this);
-        const myuser = pm.getuser.call(this)
-        const styles = MyStylesheet();
-        let providerid = "";
-        if (myuser) {
-            providerid = myuser.profile;
+
+
+
+        const link_3 = (myuser) => {
+            if (myuser) {
+                return (<div className="linkhover" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} onClick={() => { pm.logoutuser.call(this) }}> logout </div>);
+            } else {
+                return (<Link to={`/providers/login`} style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> /login </Link>);
+            }
+
         }
-        if (navigation) {
 
-            let navigation = this.props.navigation.navigation;
-            let projectid = pm.getactiveprojectid.call(this)
-            let proposalid = this.props.navigation.proposalid;
-            let invoiceid = this.props.navigation.invoiceid;
-            let csi = this.props.navigation.csi;
-            let csiid = this.props.navigation.csiid;
-            switch (navigation) {
-                case "register":
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <Link to={`/providers/register`} className="nav-link">  /register </Link>
-                        </div>)
-                case "login":
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <Link to={`/providers/login`} className="nav-link">  /login </Link>
-                        </div>)
-                case "myprojects":
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    return (myjsx);
-                case "viewprofile":
-                    providerid = this.props.navigation.providerid;
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <Link to={`/${providerid}`} className="nav-link">  /{providerid} </Link>
-                        </div>)
-                case "profile":
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <Link to={`/${providerid}/profile`} className="nav-link">  /profile </Link>\
-                        </div>)
-                case "project":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                        </div>
-                    )
+        const getbutton = () => {
+            if (this.state.menu === 'closed') {
+                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { this.setState({ menu: 'open' }) }}>{launchIcon()}</button>)
+            }
 
-                case "milestones":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
-                            <Link to={`/${providerid}/myprojects/${projectid}/milestones`} className="nav-link">  {`/milestones`}  </Link>
-                        </div>)
+        }
 
-                case "specifications":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>)
-                            <Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>
-                        </div>)
+        const getcloseIcon = () => {
+            if (this.state.menu === 'open') {
+                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { this.setState({ menu: 'closed' }) }}>{closeIcon()}</button>)
 
-                case "specification":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link"> {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/specifications`} className="nav-link">  {`/specifications`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/specifications/${csiid}`} className="nav-link">  {`/${csiid}`}  </Link>
-                        </div>)
-                case "charges":
-                    providerid = myuser.profile;
-                    myjsx.push(<Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>)
-                    myjsx.push(<Link to={`/${providerid}/myprojects/${projectid}/charges`} className="nav-link">  {`/charges`}  </Link>)
-                    return (myjsx);
-                case "team":
-                    providerid = myuser.profile;
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/team`} className="nav-link">  {`/team`}  </Link>
-                        </div>)
-                case "proposals":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>
-                        </div>)
-                case "invoices":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>
-                        </div>)
-                case "bid":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>
-                        </div>)
-                case "biditem":
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bid`} className="nav-link">  {`/bid`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bid/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>
-                        </div>)
-
-                case "bidschedule":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>
-                        </div>)
-
-                case "bidscheduleitem":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule`} className="nav-link">  {`/bidschedule`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csiid}`} className="nav-link">  {`/${csi}`} </Link>
-                        </div>)
-
-                case "viewinvoice":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/invoices`} className="nav-link">  {`/invoices`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} className="nav-link">  {`/${invoiceid}`}  </Link>
-                        </div>)
-                case "viewproposal":
-                    return (
-                        <div style={{ ...styles.generalContainer }}><Link to={`/${providerid}/myprojects`} className="nav-link">  /myprojects </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}`} className="nav-link">  {`/${projectid}`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/proposals`} className="nav-link">  {`/proposals`}  </Link>
-                            <Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} className="nav-link">  {`/${proposalid}`}  </Link>
-                        </div>)
-
-                default:
-
-                    myjsx.push(<div>It's project management online </div>)
-                    break
             }
         }
 
-        return myjsx;
+        const smalllinks = (myuser) => {
+            if (this.state.menu === 'open') {
+                return (
+                    <div style={{ ...styles.generalContainer }}>
+                        <div style={{ ...styles.generalContainer, ...styles.topHeader, ...styles.bottomMargin15, ...styles.showBorder }}>{link_1(myuser)}</div>
+                        <div style={{ ...styles.generalContainer, ...styles.topHeader, ...styles.bottomMargin15, ...styles.showBorder }}>{link_2(myuser)}</div>
+                        <div style={{ ...styles.generalContainer, ...styles.topHeader, ...styles.bottomMargin15, ...styles.showBorder }}>{link_3(myuser)}</div>
+                    </div>)
 
-    }
+            }
+        }
 
-    render() {
+        if (this.state.width > 600) {
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1, ...styles.topHeader, ...styles.showBorder, ...styles.addMargin, ...styles.alignCenter }}>
+                    {link_1(myuser)}
+                </div>
+                <div style={{ ...styles.flex1, ...styles.topHeader, ...styles.showBorder, ...styles.addMargin, ...styles.alignCenter }}>
+                    {link_2(myuser)}
+                </div>
+                <div style={{ ...styles.flex1, ...styles.topHeader, ...styles.showBorder, ...styles.addMargin, ...styles.alignCenter }}>
+                    {link_3(myuser)}
+                </div>
 
-        return (<div className="navigation-container">
-            <div className="navigation-element-1">
-                <div className="navigation-logo-container">{Logo()}</div>
-            </div>
-            {this.getextradiv()}
-            <div className="navigation-element-2">
-                <ul className="navigation-liststyle">
-                    <li> {this.handleregister()} </li>
-                    <li>{this.showdashboard()}</li>
-                    <li>{this.showlogout()}</li>
-                </ul>
-            </div>
-            <div className="navigation-element-3">{this.navigationmenu()}
+            </div>)
+
+        } else {
+
+            return (<div style={{ ...styles.generalFlex }}>
+                <div style={{ ...styles.flex1, ...styles.addMargin, ...styles.alignCenter }}>
+                    {getbutton()}
+                </div>
+
+                <div style={{ ...styles.flex5, ...styles.addMargin, ...styles.alignCenter }}>
+                    {smalllinks(myuser)}
+                </div>
+                <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                    {getcloseIcon()}
+                </div>
+
+
+            </div>)
+
+
+        }
+
+
+
+
+    } // end show menu
+
+
+
+    showheader() {
+        const styles = MyStylesheet();
+        const header = new Header();
+        const logowidth = () => {
+            if (this.state.width > 1200) {
+                return ({ width: '232px' })
+
+            } else if (this.state.width > 600) {
+                return ({ width: '226px' })
+
+            } else {
+                return ({ width: '154px' })
+
+            }
+        }
+
+        const alignCenter = () => {
+            if (this.state.width < 600) {
+                return ({ margin: 'auto' })
+            }
+        }
+
+        return (<div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1 }}>
+
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1 }}>
+                        <div style={{ ...styles.generalContainer, ...logowidth(), ...alignCenter() }}>
+                            {appLogo()}
+                        </div>
+                    </div>
+                </div>
+
+                {header.showmenu.call(this)}
+
+     
+
+
             </div>
         </div>)
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        myusermodel: state.myusermodel,
-        navigation: state.navigation,
-        project: state.project,
-        allusers: state.allusers,
-        allcompanys: state.allcompanys
-    }
-}
-
-export default connect(mapStateToProps, actions)(Header)
+export default Header;

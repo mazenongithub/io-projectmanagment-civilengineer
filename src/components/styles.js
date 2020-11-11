@@ -169,6 +169,7 @@ export function MyStylesheet() {
         flex5: {
             flex: 5
         },
+        
         alignCenter: {
             textAlign: 'center'
         },
@@ -241,6 +242,9 @@ export function MyStylesheet() {
         generalButton: {
             border: '0px',
             backgroundColor: '#FFFFFF'
+        },
+        topHeader:{
+            backgroundColor: '#8C1837'
         },
         headerBackground: {
             backgroundColor: '#808080'

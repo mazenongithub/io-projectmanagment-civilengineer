@@ -108,6 +108,7 @@ class MyProjects extends Component {
     const regularFont = pm.getRegularFont.call(this);
     const myuser = pm.getuser.call(this);
     const touchIcon = pm.gettouchicon.call(this);
+    const navigation = pm.getnavigation.call(this)
     const activebackground = () => {
       if (this.state.activeprojectid === myproject.projectid) {
         return (styles.activebackground)
@@ -138,7 +139,10 @@ class MyProjects extends Component {
 
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignCenter, ...headerFont }}>
-              <Link to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
+              <Link
+
+
+                to={`/${providerid}/myprojects/${myproject.title}`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink }}> /{myproject.title}</Link>
             </div>
           </div>
 
@@ -151,7 +155,9 @@ class MyProjects extends Component {
 
           <div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
-              <Link to={`/${providerid}/myprojects/${myproject.title}/specifications`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</Link>
+              <Link
+
+                to={`/${providerid}/myprojects/${myproject.title}/specifications`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</Link>
             </div>
             <div style={{ ...styles.flex1, ...styles.showBorder, ...regularFont, ...styles.alignCenter }}>
               <Link to={`/${providerid}/myprojects/${myproject.title}/costestimate`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> Cost Estimate</Link>
@@ -493,7 +499,7 @@ class MyProjects extends Component {
 
 
       let oldprojectid = this.state.activeprojectid;
-     
+
       let errmsg = "";
 
       if (oldprojectid) {
@@ -553,14 +559,14 @@ class MyProjects extends Component {
     const goIcon = pm.getGoIcon.call(this)
 
     if (this.state.activeprojectid) {
-      const myproject = pm.getprojectbyid.call(this,this.state.activeprojectid)
+      const myproject = pm.getprojectbyid.call(this, this.state.activeprojectid)
 
       if (myproject) {
 
-        if(!myproject.hasOwnProperty("invalid")) {
+        if (!myproject.hasOwnProperty("invalid")) {
           return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
         }
-        
+
       } else {
         return;
       }
@@ -596,28 +602,38 @@ class MyProjects extends Component {
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
     const myuser = pm.getuser.call(this)
-    if(myuser) {
-    return (
-      <div style={{ ...styles.generalFlex }}>
-        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+    const headerFont = pm.getHeaderFont.call(this)
+    if (myuser) {
+      return (
+        <div style={{ ...styles.generalFlex }}>
+          <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
 
-          {this.showprojectmenu()}
-
-
-
-          {this.showprojectform()}
-
-          {pm.showsaveproject.call(this)}
-
-          {this.showprojectids()}
+            <div style={{ ...styles.generalContainer,  ...styles.alignCenter }}>
+              <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+            </div>
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+            </div>
 
 
 
-        </div>
-      </div>)
+            {this.showprojectmenu()}
+
+
+
+            {this.showprojectform()}
+
+            {pm.showsaveproject.call(this)}
+
+            {this.showprojectids()}
+
+
+
+          </div>
+        </div>)
 
     } else {
-      return(<div><span style={{...styles.generalFont,...regularFont}}>Please Login to View MyProjects</span></div>)
+      return (<div><span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View MyProjects</span></div>)
     }
   }
 }

@@ -4,6 +4,7 @@ import * as actions from './actions';
 import { MyStylesheet } from './styles';
 import PM from './pm';
 import { TouchIcon } from './svg';
+import {Link} from 'react-router-dom';
 
 class Project extends Component {
   constructor(props) {
@@ -18,8 +19,16 @@ class Project extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.updateWindowDimensions);
     this.updateWindowDimensions();
-    this.props.reduxNavigation({ navigation: "project" })
-    this.props.reduxProject({ projectid: this.props.match.params.projectid })
+    const pm = new PM();
+    const navigation = pm.getnavigation.call(this)
+    if(navigation) {
+      navigation.projectid = this.props.match.params.projectid;
+      navigation.navigation = 'project'
+      this.props.reduxNavigation(navigation)
+      this.setState({render:'render'})
+    }
+  
+ 
 
   }
   componentWillUnmount() {
@@ -239,27 +248,55 @@ class Project extends Component {
     const pm = new PM();
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
-
+    const myuser = pm.getuser.call(this)
+    const headerFont = pm.getHeaderFont.call(this)
+    if(myuser) {
+      const project = pm.getproject.call(this)
+      if(project) {
     return (
+
       <div style={{ ...styles.generalFlex }}>
         <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
 
+            <div style={{ ...styles.generalContainer,  ...styles.alignCenter }}>
+              <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+            </div>
 
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+            </div>
+
+            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+            </div>
 
 
           {this.showprojectform()}
-
 
           {pm.showsaveproject.call(this)}
 
           {pm.showprojectid.call(this)}
 
-
-
-
         </div>
       </div>)
+
+      } else {
+
+        return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+          <span style={{ ...styles.generalFont, ...regularFont }}>Project Not Found </span>
+      </div>)
+
+      }
+
+    } else {
+
+     return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+        <span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View Project</span>
+    </div>)
+    }
+
   }
+  
 }
 
 function mapStateToProps(state) {

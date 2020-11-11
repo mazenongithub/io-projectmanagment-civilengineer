@@ -4,7 +4,7 @@ import PM from './pm'
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Link } from 'react-router-dom'
-import {LoadCSIs} from './actions/api'
+import { LoadCSIs } from './actions/api'
 
 class Specifications extends Component {
 
@@ -16,24 +16,18 @@ class Specifications extends Component {
     componentDidMount() {
         const pm = new PM();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
-        this.props.reduxNavigation({ navigation: "specifications" })
-        this.updateWindowDimensions();
-        const csis = pm.getcsis.call(this)
-        if(!csis) {
-            this.loadcsis();
-        }
+
 
     }
     async loadcsis() {
         try {
             let response = await LoadCSIs();
-            if(response.hasOwnProperty("csis")) {
+            if (response.hasOwnProperty("csis")) {
                 this.props.reduxCSIs(response.csis);
 
             }
 
-        } catch(err) {
+        } catch (err) {
             alert(err)
         }
     }
@@ -53,27 +47,27 @@ class Specifications extends Component {
         const profile = this.props.match.params.providerid;
         const projectid = this.props.match.params.projectid;
         return (
-        <div style={{ ...styles.generalContainer }}>
-        <Link style={{...styles.generalFont, ...regularFont,...styles.generalLink}} to={`/${profile}/myprojects/${projectid}/specifications/${csi.csiid}`}>{csi.csi} - {csi.title}</Link>
-        </div>
+            <div style={{ ...styles.generalContainer }}>
+                <Link style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }} to={`/${profile}/myprojects/${projectid}/specifications/${csi.csiid}`}>{csi.csi} - {csi.title}</Link>
+            </div>
         )
 
     }
 
     showspecifications() {
         const pm = new PM();
-        const myproject = pm.getprojectbytitle.call(this,this.props.match.params.projectid)
+        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
         let specids = [];
-        if(myproject) {
-        const specs = pm.getspecficationsbyprojectid.call(this, myproject.projectid)
-        console.log(specs)
-        if (specs) {
-            // eslint-disable-next-line
-            specs.map(spec => {
-                specids.push(this.showspecification(spec))
-            })
+        if (myproject) {
+            const specs = pm.getspecficationsbyprojectid.call(this, myproject.projectid)
+            console.log(specs)
+            if (specs) {
+                // eslint-disable-next-line
+                specs.map(spec => {
+                    specids.push(this.showspecification(spec))
+                })
+            }
         }
-    }
         return specids;
     }
 
@@ -83,50 +77,57 @@ class Specifications extends Component {
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
         const regularFont = pm.getRegularFont.call(this)
-        const csis =pm.getcsis.call(this)
-        if(!csis) {
+        const csis = pm.getcsis.call(this)
+        if (!csis) {
             pm.loadcsis.call(this)
         }
 
-        if(myuser) {
+        if (myuser) {
             const project = pm.getproject.call(this)
 
-            if(project) {
+            if (project) {
 
-                if(!project.hasOwnProperty("specifications")) {
-                    pm.loadprojectspecs.call(this,project.projectid) 
+                if (!project.hasOwnProperty("specifications")) {
+                    pm.loadprojectspecs.call(this, project.projectid)
                 }
 
 
-        return (
-            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                <div style={{ ...styles.flex1 }}>
-                    
+                return (
                     <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1,  ...styles.alignCenter }}>
+                        <div style={{ ...styles.flex1 }}>
 
-                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>/{myuser.profile}</span> <br />
-                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>/{project.title}</span> <br />
-                            <span style={{...styles.generalFont,...headerFont,...styles.boldFont}}>specifications </span>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/specifications`}>  /specifications  </Link>
+                            </div>
+
+
+                            {this.showspecifications()}
 
                         </div>
-                    </div>
+                    </div>)
 
-                    {this.showspecifications()}
-               
-                </div>
-            </div>)
+            } else {
+                return (<div style={{ ...styles.generalContainer }}>
+                    <span style={{ ...styles.generalFont, ...regularFont }}> Project Not Found </span>
+                </div>)
 
-        } else {
-            return(<div style={{...styles.generalContainer}}>
-                <span style={{...styles.generalFont,...regularFont}}> Project Not Found </span>
-            </div>)
-
-        }
+            }
 
         } else {
-            return(<div style={{...styles.generalContainer}}>
-                <span style={{...styles.generalFont,...regularFont}}> Please Login to View Specifications</span>
+            return (<div style={{ ...styles.generalContainer }}>
+                <span style={{ ...styles.generalFont, ...regularFont }}> Please Login to View Specifications</span>
             </div>)
         }
 
@@ -142,7 +143,7 @@ function mapStateToProps(state) {
         project: state.project,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        csis:state.csis
+        csis: state.csis
     }
 }
 

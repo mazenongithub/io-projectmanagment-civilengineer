@@ -10,6 +10,7 @@ import MakeID from './makeids'
 import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
 import { LoadAllUsers } from './actions/api';
+import {Link} from 'react-router-dom';
 
 
 class Milestones extends Component {
@@ -365,16 +366,27 @@ class Milestones extends Component {
         const criticalpath = new CriticalPath();
         const myuser = pm.getuser.call(this)
         if (myuser) {
+            const project = pm.getproject.call(this)
+            if(project) {
             return (
                 <div style={{ ...styles.generalFlex }}>
                     <div style={{ ...styles.flex1 }}>
 
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                                <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>/{myproject.title} </span><br />
-                                <span style={{ ...styles.generalFont, ...headerFont, ...styles.boldFont }}>Project Milestones</span>
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
                             </div>
-                        </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/milestones`}>  /milestones </Link>
+                            </div>
 
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
@@ -400,6 +412,13 @@ class Milestones extends Component {
                 </div>
 
             )
+
+            } else {
+                return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                    <span style={{ ...styles.generalFont, ...regularFont }}>Project Not Found </span>
+                </div>)
+
+            }
 
         } else {
             return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>

@@ -19,5 +19,7 @@
   -webkit-text-stroke-width: 1px;
 -webkit-text-stroke-color: black;
 }
-
+.applogo-1,.applogo-3{fill:#8c1837;}.applogo-1,.applogo-2{stroke:#000;stroke-miterlimit:10;}.applogo-1{stroke-width:2px;}.applogo-2{fill:none;}.applogo-4{font-size:21.44px;font-family:NunitoSans-Regular, Nunito Sans;}.applogo-5{letter-spacing:-0.01em;}.applogo-6{letter-spacing:0em;}.applogo-7{letter-spacing:0em;}.applogo-8{letter-spacing:0.06em;}.applogo-9{letter-spacing:-0.04em;}.applogo-10{letter-spacing:-0.06em;}.applogo-11{letter-spacing:-0.02em;}.applogo-12{letter-spacing:-0.02em;}
+.menuicon-1{fill:#8c1837;}.menuicon-1,.menuicon-2{stroke:#000;stroke-miterlimit:10;}
+.menuicon-2{stroke-width:2px;}
 @media screen and (min-width:1081px) {}

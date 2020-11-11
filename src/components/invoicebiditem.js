@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { MyStylesheet } from './styles';
 import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, inputUTCStringForLaborID, calculatetotalhours, formatDateStringDisplay } from './functions'
 import PM from './pm';
+import {Link} from 'react-router-dom';
 
 
 class InvoiceBidItem extends Component {
@@ -249,23 +250,70 @@ class InvoiceBidItem extends Component {
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
         const csiid = this.props.match.params.csiid;
-        const csi = pm.getactualcsibyid.call(this, csiid)
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont }}>
-                            {csi.csi} - {csi.title}
-                        </div>
-                    </div>
+        const myuser = pm.getuser.call(this)
+        const csis = pm.getcsis.call(this)
+        if (!csis) {
+            pm.loadcsis.call(this)
+        }
 
-                    {pm.showlinedetail.call(this)}
-                    {pm.showprojectid.call(this)}
+        if (myuser) {
+
+            const project = pm.getproject.call(this)
+            if (project) {
+                const invoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid)
+                if (invoice) {
+                    const csi = pm.getcsibyid.call(this, this.props.match.params.csiid)
+                    if (csi) {
+                        return (
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1 }}>
+
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                                    </div>
+
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                    </div>
+
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                                    </div>
+
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices`}>  /invoices </Link>
+                                    </div>
+
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices/${invoice.invoiceid}`}> /{invoice.invoiceid} </Link>
+                                    </div>
+                                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                        <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices/${invoice.invoiceid}/csi/${csi.csi}`}> /{csi.csi} - {csi.title} </Link>
+                                    </div>
+
+                                    {pm.showlinedetail.call(this)}
+                                    {pm.showprojectid.call(this)}
 
 
-                </div>
-            </div>)
+                                </div>
+                            </div>)
+
+                    } else {
+                        return (<div>Spec Not Found</div>)
+                    }
+
+                } else {
+                    return (<div>Invoice Not Found </div>)
+                }
+
+            } else {
+                return (<div>Project Not Found</div>)
+            }
+
+        } else {
+            return (<div>Please Login to View Invoice Line Item</div>)
+        }
 
     }
 
@@ -278,7 +326,7 @@ function mapStateToProps(state) {
         project: state.project,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        csi: state.csi
+        csis: state.csis
     }
 }
 export default connect(mapStateToProps, actions)(InvoiceBidItem)

@@ -1020,16 +1020,40 @@ class ViewInvoice extends Component {
             }
         }
 
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            const project = pm.getproject.call(this)
+            if(project) {
+
+                const invoice = pm.getinvoicebyid.call(this,invoiceid)
+                if(invoice) {
+
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                            /{projectid} <br />
-                            View Invoice {invoiceid}
-                        </div>
-                    </div>
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices`}>  /invoices </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices/${invoice.invoiceid}`}> /{invoice.invoiceid} </Link>
+                            </div>
+
+                        
+
                     {pm.showbidtable.call(this)}
 
                     <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
@@ -1058,6 +1082,18 @@ class ViewInvoice extends Component {
 
                 </div>
             </div>)
+
+        } else {
+            return(<div>Invoice Not found</div>)
+        }
+
+        } else {
+            return(<div>Project Not Found</div>)
+        }
+
+        } else {
+            return(<div>Please Login to View Invoice</div>)
+        }
 
 
 
