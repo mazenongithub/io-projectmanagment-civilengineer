@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { appLogo, launchIcon, closeIcon } from './svg';
 import PM from './pm';
 import { MyStylesheet } from './styles';
+import './header.css'
 
 
 class Header {

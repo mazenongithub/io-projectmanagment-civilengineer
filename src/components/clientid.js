@@ -7,57 +7,106 @@ class ClientID {
     showclientid(type) {
         const styles = MyStylesheet();
         const pm = new PM();
-        const loginButton = pm.getLoginButton.call(this);
+
         const regularFont = pm.getRegularFont.call(this)
+        const applewidth = () => {
+            if (this.state.width > 1200) {
+                return ({ width: '436px' })
+
+            } else if (this.state.width > 600) {
+
+                return ({ width: '351px' })
+
+            } else {
+                return ({ width: '296px' })
+
+            }
+        }
+        const googlewidth = () => {
+            if (this.state.width > 1200) {
+                return ({ width: '469px' })
+
+            } else if (this.state.width > 600) {
+
+                return ({ width: '351px' })
+
+            } else {
+                return ({ width: '296px' })
+
+            }
+        }
         const signinmessage = () => {
             if (this.state.client && this.state.clientid) {
-                return `Your Signin is secure with ${this.state.client}`
+                return `Your Client is ${this.state.client}`
             } else {
-                return `Secure your Sign in`
+                return `Choose Your Client`
             }
         }
 
         const apple = () => {
-            if(!this.state.client || !this.state.clientid) {
-                return( <div style={{...styles.flex1}}>
-                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.appleSignIn.call(this, type) }}>
+            if (!this.state.client || !this.state.clientid) {
+                return (
+                    <button style={{ ...styles.generalButton, ...applewidth() }} onClick={() => { pm.appleSignIn.call(this, type) }}>
                         {AppleSigninIcon()}
                     </button>
-                </div>
-)
+                )
             }
         }
         const google = () => {
-            if(!this.state.client || !this.state.clientid) {
-                return( <div style={{...styles.flex1}}>
-                    <button style={{ ...styles.generalButton, ...loginButton }} onClick={() => { pm.googleSignIn.call(this, type) }}>
+            if (!this.state.client || !this.state.clientid) {
+                return (
+                    <button style={{ ...styles.generalButton, ...googlewidth() }} onClick={() => { pm.googleSignIn.call(this, type) }}>
                         {GoogleSigninIcon()}
                     </button>
+                )
+            }
+        }
+
+        const layout = () => {
+            if (this.state.width > 1200) {
+                return (<div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+
+                        {apple()}
+                    </div>
+                    <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+
+                        {google()}
+
+                    </div>
                 </div>)
+            } else {
+                return (
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1 }}>
+                            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                                <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                    {apple()}
+                                </div>
+                            </div>
+                            <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
+                                <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                    {google()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                )
             }
         }
 
         return (
-            <div style={{ ...styles.generalFlex,...styles.bottomMargin15 }}>
-                <div style={{...styles.flex1}}>
+            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                <div style={{ ...styles.flex1 }}>
 
                     <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1,...styles.generalFont,...regularFont }}>
+                        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
                             {signinmessage()}
                         </div>
                     </div>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1 }}>
-
-                           {apple()}
-                        </div>
-                        <div style={{ ...styles.flex1 }}>
-                           
-                          {google()}
-                       
-                        </div>
-                    </div>
+                    {layout()}
 
                 </div>
 

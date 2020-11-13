@@ -234,7 +234,7 @@ class LineItem extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
-        const csiid = this.props.match.params.csiid;
+
         const csis = pm.getcsis.call(this)
         if (!csis) {
             pm.loadcsis.call(this)

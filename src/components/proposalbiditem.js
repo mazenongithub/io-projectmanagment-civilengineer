@@ -248,12 +248,12 @@ class ProposalBidItem extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
-        const csiid = this.props.match.params.csiid;
+
         const csis = pm.getcsis.call(this)
         if (!csis) {
             pm.loadcsis.call(this)
         }
-        const csi = pm.getschedulecsibyid.call(this, csiid)
+
         const myuser = pm.getuser.call(this)
         if(myuser) {
             const project = pm.getproject.call(this)

@@ -108,7 +108,6 @@ class MyProjects extends Component {
     const regularFont = pm.getRegularFont.call(this);
     const myuser = pm.getuser.call(this);
     const touchIcon = pm.gettouchicon.call(this);
-    const navigation = pm.getnavigation.call(this)
     const activebackground = () => {
       if (this.state.activeprojectid === myproject.projectid) {
         return (styles.activebackground)

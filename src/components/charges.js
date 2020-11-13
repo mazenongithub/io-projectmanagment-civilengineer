@@ -288,7 +288,7 @@ class Charges extends Component {
 
         if (project) {
 
-            const title = project.title;
+       
             const projectid = project.projectid;
             return (
                 <div style={{ ...styles.generalFont }}>

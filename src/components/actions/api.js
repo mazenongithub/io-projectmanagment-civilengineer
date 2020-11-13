@@ -216,7 +216,7 @@ export async function SaveAllProfile(myuser) {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
+              
                         throw data.message
                     })
                 }
@@ -244,7 +244,7 @@ export async function CheckEmailAddress(emailaddress) {
             if (!resp.ok) {
                 if (resp.status >= 400 && resp.status < 500) {
                     return resp.json().then(data => {
-                        let err = { errorMessage: data.message };
+                   
                         throw data.message
                     })
                 }

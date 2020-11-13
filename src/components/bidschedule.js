@@ -496,7 +496,6 @@ class ViewBidSchedule extends Component {
 
     render() {
         const styles = MyStylesheet();
-        const projectid = this.props.match.params.projectid;
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)

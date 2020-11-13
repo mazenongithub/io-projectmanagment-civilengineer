@@ -249,7 +249,7 @@ class InvoiceBidItem extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
-        const csiid = this.props.match.params.csiid;
+
 
         const myuser = pm.getuser.call(this)
         const csis = pm.getcsis.call(this)

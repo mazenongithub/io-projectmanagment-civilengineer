@@ -669,7 +669,6 @@ class Team extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this);
-        const projectid = this.props.match.params.projectid;
         const regularFont = pm.getRegularFont.call(this);
         const getColumns = pm.getcolumns.call(this);
         const myuser = pm.getuser.call(this)

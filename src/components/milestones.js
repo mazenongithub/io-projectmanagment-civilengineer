@@ -362,7 +362,7 @@ class Milestones extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const headerFont = pm.getHeaderFont.call(this);
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+      
         const criticalpath = new CriticalPath();
         const myuser = pm.getuser.call(this)
         if (myuser) {

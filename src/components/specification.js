@@ -95,7 +95,7 @@ class Specification extends Component {
         if (spec.hasOwnProperty("paragraph")) {
 
             if (spec.paragraph.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                 spec.paragraph.list.map((list, i) => {
                     if (list.contentid === contentid) {
                         key = [i]
@@ -104,7 +104,7 @@ class Specification extends Component {
 
                     if (list.hasOwnProperty("sublist")) {
                         if (list.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                             list.sublist.list.map((sublist, j) => {
 
                                 if (sublist.contentid === contentid) {
@@ -115,7 +115,7 @@ class Specification extends Component {
 
                                 if (sublist.hasOwnProperty("sublist")) {
                                     if (sublist.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                         sublist.sublist.list.map((sublist_1, k) => {
 
                                             if (sublist_1.contentid === contentid) {
@@ -128,7 +128,7 @@ class Specification extends Component {
 
                                             if (sublist_1.hasOwnProperty("sublist")) {
                                                 if (sublist_1.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                                     sublist_1.sublist.list.map((sublist_2, l) => {
 
                                                         if (sublist_2.contentid === contentid) {
@@ -137,7 +137,7 @@ class Specification extends Component {
 
                                                         if (sublist_2.hasOwnProperty("sublist")) {
                                                             if (sublist_2.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                                                 sublist_2.sublist.list.map((sublist_3, m) => {
 
                                                                     if (sublist_3.contentid === contentid) {
@@ -198,7 +198,7 @@ class Specification extends Component {
 
 
             if (spec.paragraph.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                 spec.paragraph.list.map(list => {
 
                     if (list.contentid === contentid) {
@@ -211,7 +211,7 @@ class Specification extends Component {
 
 
                         if (list.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                             list.sublist.list.map(sublist => {
 
                                 if (sublist.contentid === contentid) {
@@ -222,7 +222,7 @@ class Specification extends Component {
                                 if (sublist.hasOwnProperty("sublist")) {
 
                                     if (sublist.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                         sublist.sublist.list.map(sublist_1 => {
 
                                             if (sublist_1.contentid === contentid) {
@@ -235,7 +235,7 @@ class Specification extends Component {
                                             if (sublist_1.hasOwnProperty("sublist")) {
 
                                                 if (sublist_1.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                                     sublist_1.sublist.list.map(sublist_2 => {
 
                                                         if (sublist_2.contentid === contentid) {
@@ -245,7 +245,7 @@ class Specification extends Component {
                                                         if (sublist_2.hasOwnProperty("sublist")) {
 
                                                             if (sublist_2.sublist.hasOwnProperty("list")) {
-
+ // eslint-disable-next-line
                                                                 sublist_2.sublist.list.map(sublist_3 => {
                                                                     if (sublist_3.contentid === contentid) {
                                                                         listtype = sublist_2.sublist.listType
@@ -506,7 +506,6 @@ class Specification extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this);
-        const csi = pm.getcsibyid.call(this, this.props.match.params.csiid)
         const myuser = pm.getuser.call(this)
         const regularFont = pm.getRegularFont.call(this)
 

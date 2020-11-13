@@ -42,11 +42,11 @@ class PM {
                     let specs = await LoadSpecifications(project.projectid);
                     console.log(specs)
                     if(specs.hasOwnProperty("length")) {
-                        
+                        // eslint-disable-next-line
                         specs.map(spec => {
                             
                             if(spec.hasOwnProperty("specifications")) {
-                                
+                                 // eslint-disable-next-line
                                 spec.specifications.map(myspec=> {
                                     
                                     specifications.push(myspec)

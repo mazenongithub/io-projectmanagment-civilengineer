@@ -14,7 +14,7 @@ class Specifications extends Component {
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
     componentDidMount() {
-        const pm = new PM();
+   
         window.addEventListener('resize', this.updateWindowDimensions);
 
 
