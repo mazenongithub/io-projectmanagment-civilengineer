@@ -244,8 +244,8 @@ class CostEstimate extends Component {
         const myuser = pm.getuser.call(this)
         if (myuser) {
             if (project) {
-                const bidschedule = pm.getcsibyid.call(this, biditem.csiid);
-
+                const bidschedule = pm.getestimatecsibyid.call(this,biditem.csiid)
+                console.log(bidschedule)
                 const quantity = bidschedule.quantity;
                 const unit = bidschedule.unit;
                 const unitprice = () => {

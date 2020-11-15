@@ -4,7 +4,7 @@ import 'firebase/auth';
 import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime, checkemptyobject } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs,LogoutUser } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser } from './actions/api';
 import { Link } from 'react-router-dom';
 
 
@@ -12,19 +12,19 @@ class PM {
 
     async loadcsis() {
         try {
-          let response = await LoadCSIs();
-          if (response.hasOwnProperty("csis")) {
-            this.props.reduxCSIs(response.csis);
-    
-          }
-    
+            let response = await LoadCSIs();
+            if (response.hasOwnProperty("csis")) {
+                this.props.reduxCSIs(response.csis);
+
+            }
+
         } catch (err) {
-          alert(err)
+            alert(err)
         }
-      }
+    }
 
     async loadprojectspecs(projectid) {
-        
+
         const pm = new PM();
         const myuser = pm.getuser.call(this)
 
@@ -34,21 +34,21 @@ class PM {
 
             if (project) {
 
-                const i = pm.getprojectkeybyid.call(this,project.projectid)
+                const i = pm.getprojectkeybyid.call(this, project.projectid)
 
                 try {
 
                     let specifications = [];
                     let specs = await LoadSpecifications(project.projectid);
                     console.log(specs)
-                    if(specs.hasOwnProperty("length")) {
+                    if (specs.hasOwnProperty("length")) {
                         // eslint-disable-next-line
                         specs.map(spec => {
-                            
-                            if(spec.hasOwnProperty("specifications")) {
-                                 // eslint-disable-next-line
-                                spec.specifications.map(myspec=> {
-                                    
+
+                            if (spec.hasOwnProperty("specifications")) {
+                                // eslint-disable-next-line
+                                spec.specifications.map(myspec => {
+
                                     specifications.push(myspec)
                                 })
                             }
@@ -56,11 +56,11 @@ class PM {
                         })
 
                     }
-                    
+
                     myuser.projects.myproject[i].specifications = specifications;
                     this.props.reduxUser(myuser)
-                    this.setState({render:'render'})
-                    
+                    this.setState({ render: 'render' })
+
 
 
                 } catch (err) {
@@ -487,11 +487,11 @@ class PM {
 
     getmainslide() {
         if (this.state.width > 1200) {
-            return ({ width: '1087px', height: '1035px' })
+            return ({ width: '1087px' })
         } else if (this.state.width > 800) {
-            return ({ width: '762px', height: '725px' })
+            return ({ width: '762px' })
         } else {
-            return ({ width: '356px', height: '339px' })
+            return ({ width: '356px' })
         }
     }
 
@@ -590,6 +590,13 @@ class PM {
 
                 },
                 {
+                    title: 'Profile',
+                    id: 'profile',
+                    url: 'https://civilengineer.io/projectmanagment/slides/profile.png',
+                    caption: `Update your Basic Profile to begin. Add profile photo.   `
+
+                },
+                {
                     title: 'Project Team',
                     id: 'myteam',
                     url: 'https://civilengineer.io/projectmanagment/slides/myteam.png',
@@ -608,6 +615,13 @@ class PM {
                     id: 'criticalpath',
                     url: 'https://civilengineer.io/projectmanagment/slides/criticalpath.png',
                     caption: `Critical Path is calculated for the milestones. This program solves the classic critical path CPM method in calculating float and total project float `
+
+                },
+                {
+                    title: 'Proposals',
+                    id: 'proposals',
+                    url: 'https://civilengineer.io/projectmanagment/slides/proposals.png',
+                    caption: `Proposals summarizes the schedule in construction format. PM authorizes the proposals  `
 
                 },
                 {
@@ -767,11 +781,11 @@ class PM {
 
     getsmallslide() {
         if (this.state.width > 1200) {
-            return ({ width: '362px', height: '345px' })
+            return ({ width: '362px' })
         } else if (this.state.width > 800) {
-            return ({ width: '254px', height: '241px' })
+            return ({ width: '254px' })
         } else {
-            return ({ width: '178px', height: '169px' })
+            return ({ width: '178px' })
         }
 
     }
@@ -990,8 +1004,8 @@ class PM {
     getnavigation() {
         let navigation = false;
         if (this.props.navigation) {
-            
-                navigation = this.props.navigation
+
+            navigation = this.props.navigation
 
         }
         return navigation;
@@ -1234,18 +1248,27 @@ class PM {
     }
     getestimatecsibyid(csiid) {
         const pm = new PM();
-        const estimate = pm.getcsis.call(this)
-
+        const myproject = pm.getproject.call(this)
         let mycsi = false;
-        if (estimate) {
-            if (estimate.hasOwnProperty("bidschedule")) {
-                // eslint-disable-next-line
-                estimate.bidschedule.map(bid => {
-                    if (bid.csiid === csiid) {
-                        mycsi = { csi: bid.csi, title: bid.title, csiid, quantity: bid.quantity, unit: bid.unit }
-                    }
-                })
+        if (myproject) {
+
+            if (myproject.hasOwnProperty("costestimate")) {
+
+                if (myproject.costestimate.hasOwnProperty("bidschedule")) {
+
+
+                    // eslint-disable-next-line
+                    myproject.costestimate.bidschedule.map(bid => {
+                        if (bid.csiid === csiid) {
+                            mycsi = { csi: bid.csi, title: bid.title, csiid, quantity: bid.quantity, unit: bid.unit }
+                        }
+                    })
+                }
             }
+
+
+
+
         }
         return mycsi;
 

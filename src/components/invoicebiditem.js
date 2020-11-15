@@ -210,6 +210,7 @@ class InvoiceBidItem extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
+    
 
 
         let hourlyrate = mylabor.laborrate;
