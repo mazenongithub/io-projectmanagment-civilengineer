@@ -550,6 +550,7 @@ class PM {
         }
 
         let message = "";
+        if(milestones) {
         // eslint-disable-next-line
         milestones.map(milestone => {
             let start = milestone.start;
@@ -573,6 +574,8 @@ class PM {
             }
 
         })
+
+    }
 
 
         return message;
