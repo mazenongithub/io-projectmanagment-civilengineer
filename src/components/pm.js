@@ -550,33 +550,33 @@ class PM {
         }
 
 
-        let message = " ";
-        if(milestones) {
-        // eslint-disable-next-line
-        milestones.map(milestone => {
-            let start = milestone.start;
-            // let completion = milestone.completion;
-            // message += `${start} ${completion}`
+        let message = "";
+        if (milestones) {
+            // eslint-disable-next-line
+            milestones.map(milestone => {
+                let start = milestone.start;
+                // let completion = milestone.completion;
+                // message += `${start} ${completion}`
 
-            if (milestone.hasOwnProperty("predessors")) {
-                // eslint-disable-next-line
-                milestone.predessors.map(predessor => {
-                    let mypredessor = getmilestonebyid(milestones, predessor.predessor);
-                    //let predessorstart = mypredessor.start;
-                    let predessorcompletion = mypredessor.completion;
-                    if (mypredessor) {
-                        if (getDateTime(start) < getDateTime(predessorcompletion)) {
-                            message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+                if (milestone.hasOwnProperty("predessors")) {
+                    // eslint-disable-next-line
+                    milestone.predessors.map(predessor => {
+                        let mypredessor = getmilestonebyid(milestones, predessor.predessor);
+                        //let predessorstart = mypredessor.start;
+                        let predessorcompletion = mypredessor.completion;
+                        if (mypredessor) {
+                            if (getDateTime(start) < getDateTime(predessorcompletion)) {
+                                message += `${milestone.milestone} cannot start before ${mypredessor.milestone} completion `
+                            }
                         }
-                    }
 
-                })
+                    })
 
-            }
+                }
 
-        })
+            })
 
-    }
+        }
 
 
         return message;
