@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "engine": "12.18.2",
+  "engine": "14.x",
   "dependencies": {
     "firebase": "^8.1.1",
     "react": "^16.10.2",
