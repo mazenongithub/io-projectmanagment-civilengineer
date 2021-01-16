@@ -549,7 +549,8 @@ class PM {
             return mymilestone;
         }
 
-        let message = "";
+
+        let message = " ";
         if(milestones) {
         // eslint-disable-next-line
         milestones.map(milestone => {
