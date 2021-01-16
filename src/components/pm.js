@@ -6,6 +6,7 @@ import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser } from './actions/api';
 import { Link } from 'react-router-dom';
+import Spinner from './spinner'
 
 
 class PM {
@@ -13,6 +14,7 @@ class PM {
     async loadcsis() {
         try {
             let response = await LoadCSIs();
+            console.log(response)
             if (response.hasOwnProperty("csis")) {
                 this.props.reduxCSIs(response.csis);
 
@@ -1994,25 +1996,22 @@ class PM {
 
         if (myuser) {
             try {
-
+                this.setState({spinner:true})
                 let response = await SaveAllProfile({ myuser });
                 console.log(response)
-                if (response.hasOwnProperty("allusers")) {
-                    let companys = returnCompanyList(response.allusers);
-                    this.props.reduxAllCompanys(companys)
-                    this.props.reduxAllUsers(response.allusers);
-                    delete response.allusers;
-
-                }
+             
                 if (response.hasOwnProperty("providerid")) {
 
                     this.props.reduxUser(response)
                 }
                 if (response.hasOwnProperty("message")) {
                     let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                    this.setState({ message: `${response.message} Last updated ${lastupdated}` })
+                    this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner:false })
+                } else {
+                    this.setState({spinner:false})
                 }
             } catch (err) {
+                this.setState({spinner:false})
                 alert(err)
             }
         }
@@ -2103,6 +2102,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
+                    this.setState({spinner:true})
 
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
@@ -2126,14 +2126,15 @@ class PM {
 
                     if (response.hasOwnProperty("message")) {
                         let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                        this.setState({ message: `${response.message} Last updated ${lastupdated}` })
+                        this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner:false })
                     }
 
                 } else {
-                    this.setState({ message: validate.message })
+                    this.setState({ message: validate.message, spinner:false })
                 }
 
             } catch (err) {
+                this.setState({spinner:false})
                 alert(err)
             }
         }
@@ -2208,6 +2209,7 @@ class PM {
         const saveprojecticon = pm.getsaveprojecticon.call(this);
 
         const styles = MyStylesheet();
+        if(!this.state.spinner) {
         return (
             <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.generalFont, ...regularFont, ...styles.topMargin15, ...styles.bottomMargin15 }}>
@@ -2218,6 +2220,10 @@ class PM {
                     <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.saveallprofile.call(this) }}>{projectSaveAll()}</button>
                 </div>
             </div>)
+
+        } else {
+            return(<Spinner/>)
+        }
     }
     async clientlogin(type) {
         try {
@@ -2231,18 +2237,22 @@ class PM {
             let phonenumber = this.state.phonumber;
             let profile = this.state.profile
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, type }
+            this.setState({spinner:true})
             const response = await AppleLogin(values);
             console.log(response)
 
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)
-                this.setState({ client: '', clientid: '', emailaddress: '', message: '' })
+                this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner:false })
             } else if (response.hasOwnProperty("message")) {
-                this.setState({ message: response.message })
+                this.setState({ message: response.message, spinner:false, client: '', clientid: '',emailaddress: '' })
+            } else {
+                this.setState({spinner:false, client: '', clientid: '',emailaddress: ''})
             }
 
         } catch (err) {
+            this.setState({spinner:false, client: '', clientid: '',emailaddress: ''})
             alert(err)
         }
     }

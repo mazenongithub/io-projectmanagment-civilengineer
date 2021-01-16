@@ -30,7 +30,8 @@ class Milestones extends Component {
             startdateyear: '',
             completiondateday: '',
             completiondatemonth: '',
-            completiondateyear: ''
+            completiondateyear: '',
+            spinner:false
 
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);

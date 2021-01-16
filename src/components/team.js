@@ -23,7 +23,8 @@ class Team extends Component {
             activeengineer: '',
             search: '',
             message: '',
-            role: ''
+            role: '',
+            spinner:false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }

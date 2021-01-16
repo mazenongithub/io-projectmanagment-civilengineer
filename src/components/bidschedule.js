@@ -284,7 +284,7 @@ class ViewBidSchedule extends Component {
 
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
-        const csi = pm.getschedulecsibyid.call(this, item.csiid);
+        const csi = pm.getcsibyid.call(this, item.csiid);
         let profit = () => {
             return (
                 Number(this.getprofit(item.csiid)).toFixed(4)
@@ -499,6 +499,12 @@ class ViewBidSchedule extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
+
+        const csis = pm.getcsis.call(this);
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+
         if(myuser) {
             const project = pm.getproject.call(this)
             if(project) {
@@ -546,7 +552,8 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys
+        allcompanys: state.allcompanys,
+        csis:state.csis
     }
 }
 export default connect(mapStateToProps, actions)(ViewBidSchedule)

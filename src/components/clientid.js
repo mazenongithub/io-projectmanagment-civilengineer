@@ -2,6 +2,7 @@ import React from 'react';
 import { MyStylesheet } from './styles';
 import PM from './pm';
 import { GoogleSigninIcon, AppleSigninIcon } from './svg';
+import Spinner from './spinner'
 class ClientID {
 
     showclientid(type) {
@@ -96,6 +97,8 @@ class ClientID {
             }
         }
 
+        if(!this.state.spinner) {
+
         return (
             <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                 <div style={{ ...styles.flex1 }}>
@@ -113,6 +116,10 @@ class ClientID {
 
 
             </div>)
+
+        } else {
+            return <Spinner/>
+        }
     }
 
 }

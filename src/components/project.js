@@ -10,7 +10,7 @@ class Project extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false
+      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false, spinner:false
     }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
 

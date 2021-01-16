@@ -14,7 +14,8 @@ class Bid extends Component {
             render: '',
             width: 0,
             height: 0,
-            message: ""
+            message: "",
+            spinner:false
         }
 
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -283,7 +284,7 @@ class Bid extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
-        const csi = pm.getactualcsibyid.call(this, item.csiid);
+        const csi = pm.getcsibyid.call(this, item.csiid);
 
 
         let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
@@ -503,12 +504,20 @@ class Bid extends Component {
         return lineids;
     }
 
+    
+
     render() {
         const styles = MyStylesheet();
         const projectid = this.props.match.params.projectid;
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
+
+        const csis = pm.getcsis.call(this);
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+
         if(myuser) {
             const project = pm.getproject.call(this)
             if(project) {
@@ -564,7 +573,8 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys
+        allcompanys: state.allcompanys,
+        csis:state.csis
     }
 }
 export default connect(mapStateToProps, actions)(Bid)

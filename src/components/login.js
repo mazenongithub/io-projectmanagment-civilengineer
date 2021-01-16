@@ -25,7 +25,8 @@ class Login extends Component {
             width: '',
             height: '',
             login: true,
-            register: false
+            register: false,
+            spinner:false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }

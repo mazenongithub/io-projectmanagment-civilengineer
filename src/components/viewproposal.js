@@ -13,6 +13,7 @@ import {
     CreateBidScheduleItem
 } from './functions'
 import PM from './pm';
+import Spinner from './spinner'
 
 
 class ViewProposal extends Component {
@@ -210,7 +211,7 @@ class ViewProposal extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const bidField = pm.getbidfield.call(this)
-        const csi = pm.getschedulecsibyid.call(this, item.csiid);
+        const csi = pm.getcsibyid.call(this, item.csiid);
         let profit = () => {
             return (
                 <input type="text"
@@ -481,6 +482,21 @@ class ViewProposal extends Component {
         const projectIcon = pm.getsaveprojecticon.call(this);
         const regularFont = pm.getRegularFont.call(this)
         const myuser = pm.getuser.call(this)
+
+        const csis = pm.getcsis.call(this);
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+
+        const authorize = () => {
+            if(!this.state.spinner) {
+                return(<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                    <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { this.authorizeproposal() }}>{AuthorizeProposal()}</button>
+                </div>)
+            } else {
+                return(<Spinner/>)
+            }
+        }
         if(myuser) {
             const project = pm.getproject.call(this)
             if(project) {
@@ -518,9 +534,7 @@ class ViewProposal extends Component {
                         {this.state.message}
                     </div>
 
-                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                        <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { this.authorizeproposal() }}>{AuthorizeProposal()}</button>
-                    </div>
+                    {authorize()}
 
                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>
                         {this.getupdated()}
@@ -557,7 +571,8 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys
+        allcompanys: state.allcompanys,
+        csis:state.csis
     }
 }
 export default connect(mapStateToProps, actions)(ViewProposal)

@@ -6,6 +6,7 @@ import { MyStylesheet } from './styles';
 import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal, inputUTCStringForLaborID } from './functions'
 import PM from './pm'
 import { SettleInvoice } from './actions/api';
+import Spinner from './spinner'
 
 
 
@@ -384,7 +385,7 @@ class ViewInvoice extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
-        const csi = pm.getactualcsibyid.call(this, item.csiid);
+        const csi = pm.getcsibyid.call(this, item.csiid);
 
         let bidprice = this.getbidprice(item.csiid).toFixed(2);
         let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
@@ -632,25 +633,25 @@ class ViewInvoice extends Component {
         const pm = new PM();
         const myproject = pm.getproject.call(this)
         let mytransfers = [];
-        if(myproject) {
+        if (myproject) {
             const projectid = myproject.projectid;
-            const invoices = pm.getinvoices.call(this,projectid)
-            if(invoices) {
+            const invoices = pm.getinvoices.call(this, projectid)
+            if (invoices) {
                 // eslint-disable-next-line
-                invoices.map(invoice=> {
-                    if(invoice.hasOwnProperty("transfers")) {
+                invoices.map(invoice => {
+                    if (invoice.hasOwnProperty("transfers")) {
                         // eslint-disable-next-line
-                        invoice.transfers.map(transfer=> {
+                        invoice.transfers.map(transfer => {
                             mytransfers.push(transfer)
                         })
                     }
                 })
-                
+
             }
         }
         return mytransfers;
     }
-    
+
 
     validateInvoicePayment() {
         const chargetotal = this.getchargestotal();
@@ -659,19 +660,19 @@ class ViewInvoice extends Component {
         validate.validate = false;
         const transfertotal = () => {
             let total = 0;
-            if(transfers) {
+            if (transfers) {
                 // eslint-disable-next-line
-                transfers.map(transfer=> {
-                    total+=Number(transfer.amount)
+                transfers.map(transfer => {
+                    total += Number(transfer.amount)
                 })
 
             }
             return total;
         }
-     
+
         const amount = Number(this.getamountowed()).toFixed(2);
-        console.log(chargetotal,transfertotal(),amount);
-        if(  chargetotal - transfertotal()  >= amount  && amount > 0) {
+        console.log(chargetotal, transfertotal(), amount);
+        if (chargetotal - transfertotal() >= amount && amount > 0) {
             validate.validate = true;
 
         } else {
@@ -681,7 +682,7 @@ class ViewInvoice extends Component {
 
 
     }
-    
+
     getsettlementtotal() {
         const pm = new PM();
         const settlements = pm.getsettlementsbyinvoiceid.call(this, this.props.match.params.invoiceid)
@@ -718,18 +719,18 @@ class ViewInvoice extends Component {
         if (project) {
             const projectid = project.projectid;
             const charges = pm.getchargesbyprojectid.call(this, projectid);
-            if(charges) {
-            // eslint-disable-next-line
-            charges.map(charge => {
-                total += Number(charge.amount);
-            })
+            if (charges) {
+                // eslint-disable-next-line
+                charges.map(charge => {
+                    total += Number(charge.amount);
+                })
+
+            }
+
+
 
         }
 
-
-
-        }
-      
         return total;
     }
     async invoicesettlement() {
@@ -737,88 +738,90 @@ class ViewInvoice extends Component {
         const myuser = pm.getuser.call(this)
         const validate = this.validateInvoicePayment()
         if (window.confirm(`Are you sure you want to settle this invoice ?`)) {
-            if(validate.validate) {
-            const myproject = pm.getproject.call(this);
-            if (myproject) {
+            if (validate.validate) {
+                const myproject = pm.getproject.call(this);
+                if (myproject) {
 
-                const projectid = myproject.projectid;
-                const i = pm.getprojectkeybyid.call(this, projectid);
-                const invoiceid = this.props.match.params.invoiceid;
-                const amount = Number(Math.round(this.getamountowed()*100))
-                const values = { invoiceid, amount }
-                try{
-                let response = await SettleInvoice(values)
-                console.log(response)
-                if (response.hasOwnProperty("settlements")) {
+                    const projectid = myproject.projectid;
+                    const i = pm.getprojectkeybyid.call(this, projectid);
+                    const invoiceid = this.props.match.params.invoiceid;
+                    const amount = Number(Math.round(this.getamountowed() * 100))
+                    const values = { invoiceid, amount }
+                    try {
+                        this.setState({ spinner: true })
+                        let response = await SettleInvoice(values)
+                        console.log(response)
+                        if (response.hasOwnProperty("settlements")) {
 
-                    const myinvoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid);
-                    if (myinvoice) {
-                        const j = pm.getinvoicekeybyid.call(this, this.props.match.params.invoiceid);
-                        myuser.projects.myproject[i].invoices.myinvoice[j].settlements = response.settlements;
-                        this.props.reduxUser(myuser)
-                    }
-
-
-                    if (response.hasOwnProperty("labor")) {
-                        // eslint-disable-next-line
-                        response.labor.map(labor => {
-                            const laborid = labor.laborid;
-                            const mylabor = pm.getactullaborbyid.call(this, projectid, laborid);
-                            if (mylabor) {
-                                const k = pm.getactullaborkeybyid.call(this, projectid, laborid);
-                                myuser.projects.myproject[i].actuallabor.mylabor[k].settlementid = labor.settlementid;
+                            const myinvoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid);
+                            if (myinvoice) {
+                                const j = pm.getinvoicekeybyid.call(this, this.props.match.params.invoiceid);
+                                myuser.projects.myproject[i].invoices.myinvoice[j].settlements = response.settlements;
+                                this.props.reduxUser(myuser)
                             }
-                        })
-                    }
 
-                    if (response.hasOwnProperty("materials")) {
-                        // eslint-disable-next-line
-                        response.materials.map(material => {
-                            const materialid = material.materialid;
-                            const mymaterial = pm.getactulmaterialsbyid.call(this, projectid, materialid);
-                            console.log(mymaterial)
-                            if (mymaterial) {
-                                const l = pm.getactualmaterialskeybyid.call(this, projectid, materialid);
-                                console.log(l,mymaterial)
-                                myuser.projects.myproject[i].actualmaterials.mymaterial[l].settlementid = material.settlementid;
+
+                            if (response.hasOwnProperty("labor")) {
+                                // eslint-disable-next-line
+                                response.labor.map(labor => {
+                                    const laborid = labor.laborid;
+                                    const mylabor = pm.getactullaborbyid.call(this, projectid, laborid);
+                                    if (mylabor) {
+                                        const k = pm.getactullaborkeybyid.call(this, projectid, laborid);
+                                        myuser.projects.myproject[i].actuallabor.mylabor[k].settlementid = labor.settlementid;
+                                    }
+                                })
                             }
-                        })
-                    }
 
-                    if (response.hasOwnProperty("equipment")) {
-                        // eslint-disable-next-line
-                        response.equipment.map(equipment => {
-                            const equipmentid = equipment.equipmentid;
-                            const myequipment = pm.getactulequipmentbyid.call(this, projectid, equipmentid);
-                            if (myequipment) {
-                                const m = pm.getactulequipmentkeybyid.call(this, projectid, equipmentid);
-                                myuser.projects.myproject[i].actualequipment.myequipment[m].settlementid = equipment.settlementid;
+                            if (response.hasOwnProperty("materials")) {
+                                // eslint-disable-next-line
+                                response.materials.map(material => {
+                                    const materialid = material.materialid;
+                                    const mymaterial = pm.getactulmaterialsbyid.call(this, projectid, materialid);
+                                    console.log(mymaterial)
+                                    if (mymaterial) {
+                                        const l = pm.getactualmaterialskeybyid.call(this, projectid, materialid);
+                                        console.log(l, mymaterial)
+                                        myuser.projects.myproject[i].actualmaterials.mymaterial[l].settlementid = material.settlementid;
+                                    }
+                                })
                             }
-                        })
+
+                            if (response.hasOwnProperty("equipment")) {
+                                // eslint-disable-next-line
+                                response.equipment.map(equipment => {
+                                    const equipmentid = equipment.equipmentid;
+                                    const myequipment = pm.getactulequipmentbyid.call(this, projectid, equipmentid);
+                                    if (myequipment) {
+                                        const m = pm.getactulequipmentkeybyid.call(this, projectid, equipmentid);
+                                        myuser.projects.myproject[i].actualequipment.myequipment[m].settlementid = equipment.settlementid;
+                                    }
+                                })
+                            }
+
+                            this.props.reduxUser(myuser)
+                            this.setState({ spinner: false })
+
+
+
+                        }
+
+                    } catch (err) {
+                        this.setState({ spinner: false })
+                        alert(err)
                     }
 
-                    this.props.reduxUser(myuser)
-                    this.setState({render:'render'})
 
 
 
                 }
 
-            } catch(err) {
-                alert(err)
+
+
+            } else {
+
+                this.setState({ message: validate.message })
             }
-
-
-
-
-            }
-
-
-
-        } else {
-
-            this.setState({message:validate.message})
-        }
 
 
 
@@ -933,67 +936,67 @@ class ViewInvoice extends Component {
     transferSummary() {
         const pm = new PM()
         const styles = MyStylesheet();
-        
-       
+
+
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
-    
+
 
         const myproject = pm.getproject.call(this);
-        if(myproject) {
+        if (myproject) {
             const projectid = myproject.projectid;
-        const transfers = pm.gettransfersbyprojectid.call(this,projectid);
-        const sumoftransfers = () => {
-            let sum = 0;
+            const transfers = pm.gettransfersbyprojectid.call(this, projectid);
+            const sumoftransfers = () => {
+                let sum = 0;
+
+                if (transfers) {
+                    // eslint-disable-next-line
+                    transfers.map(transfer => {
+                        sum += Number(transfer.amount)
+                    })
+                }
+                return sum;
+            }
+            let transferids = [];
+            const jsx = (transferids) => {
+                return (<div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
+
+                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                            <div style={{ ...styles.flex1, ...headerFont, ...styles.underline }}>
+                                Transfer Summary
+                </div>
+                        </div>
+
+                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                            <div style={{ ...styles.flex1 }}>
+                                {transferids}
+                            </div>
+                        </div>
+
+                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                            <div style={{ ...styles.flex1, ...regularFont }}>
+                                Sum of Transfers  ${Number(sumoftransfers()).toFixed(2)}
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>)
+            }
 
             if (transfers) {
                 // eslint-disable-next-line
                 transfers.map(transfer => {
-                    sum += Number(transfer.amount)
+                    transferids.push(this.showtransfer(transfer))
+
                 })
             }
-            return sum;
-        }
-        let transferids = [];
-        const jsx = (transferids) => {
-            return (<div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...headerFont, ...styles.underline }}>
-                            Transfer Summary
-                </div>
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1 }}>
-                            {transferids}
-                        </div>
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...regularFont }}>
-                            Sum of Transfers  ${Number(sumoftransfers()).toFixed(2)}
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>)
+            return (jsx(transferids))
         }
 
-        if (transfers) {
-            // eslint-disable-next-line
-            transfers.map(transfer => {
-                transferids.push(this.showtransfer(transfer))
-
-            })
-        }
-        return (jsx(transferids))
     }
-     
-    }
-   
+
 
     render() {
         const styles = MyStylesheet();
@@ -1006,92 +1009,101 @@ class ViewInvoice extends Component {
         // const transfers = this.gettransfertotal();
         // const settlementtotal = this.getsettlementtotal()
         // const amount = Number(this.getamount() / 100).toFixed(2);
-   
+
 
 
         const settlement = () => {
-        
+
             if (amountowed) {
-                return (
-                    <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.bottomMargin15 }}>
-                        <button className="addStroke" style={{ ...styles.boldFont, ...styles.settlementButton, ...headerFont, ...styles.marginAuto }} onClick={() => { this.invoicesettlement() }}>Settle Invoice</button>
-                    </div>)
+                if (!this.state.spinner) {
+                    return (
+                        <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.bottomMargin15 }}>
+                            <button className="addStroke" style={{ ...styles.boldFont, ...styles.settlementButton, ...headerFont, ...styles.marginAuto }} onClick={() => { this.invoicesettlement() }}>Settle Invoice</button>
+                        </div>)
+
+                } else {
+                    return (<Spinner />)
+                }
             }
         }
 
         const myuser = pm.getuser.call(this)
-        if(myuser) {
+        const csis = pm.getcsis.call(this);
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+        if (myuser) {
             const project = pm.getproject.call(this)
-            if(project) {
+            if (project) {
 
-                const invoice = pm.getinvoicebyid.call(this,invoiceid)
-                if(invoice) {
+                const invoice = pm.getinvoicebyid.call(this, invoiceid)
+                if (invoice) {
 
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
+                    return (
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                                </div>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                </div>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+                                </div>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices`}>  /invoices </Link>
+                                </div>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices/${invoice.invoiceid}`}> /{invoice.invoiceid} </Link>
+                                </div>
+
+
+
+                                {pm.showbidtable.call(this)}
+
+                                <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                                    <div style={{ ...styles.flex1, ...styles.alignCenter, ...regularFont, ...styles.generalFont }}>
+                                        {this.getapproved()}
+                                    </div>
+                                </div>
+
+                                {this.showsummary()}
+
+                                {this.transferSummary()}
+
+                                {this.settlementSummary()}
+
+                                {this.balanaceSummary()}
+
+                                {settlement()}
+
+                                <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                                    <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                        <span style={{ ...regularFont, ...styles.generalFont }}>{this.state.message}</span>
+                                    </div>
+                                </div>
+
+                                {pm.showprojectid.call(this)}
+
                             </div>
+                        </div>)
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
-                            </div>
+                } else {
+                    return (<div>Invoice Not found</div>)
+                }
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices`}>  /invoices </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices/${invoice.invoiceid}`}> /{invoice.invoiceid} </Link>
-                            </div>
-
-                        
-
-                    {pm.showbidtable.call(this)}
-
-                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...regularFont, ...styles.generalFont }}>
-                            {this.getapproved()}
-                        </div>
-                    </div>
-
-                    {this.showsummary()}
-
-                    {this.transferSummary()}
-
-                    {this.settlementSummary()}
-
-                    {this.balanaceSummary()}
-
-                    {settlement()}
-
-                    <div style={{ ...styles.generalFlex, ...styles.topMargin15, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                            <span style={{ ...regularFont, ...styles.generalFont }}>{this.state.message}</span>
-                        </div>
-                    </div>
-
-                    {pm.showprojectid.call(this)}
-
-                </div>
-            </div>)
+            } else {
+                return (<div>Project Not Found</div>)
+            }
 
         } else {
-            return(<div>Invoice Not found</div>)
-        }
-
-        } else {
-            return(<div>Project Not Found</div>)
-        }
-
-        } else {
-            return(<div>Please Login to View Invoice</div>)
+            return (<div>Please Login to View Invoice</div>)
         }
 
 
@@ -1105,7 +1117,8 @@ function mapStateToProps(state) {
         navigation: state.navigation,
         project: state.project,
         allusers: state.allusers,
-        allcompanys: state.allcompanys
+        allcompanys: state.allcompanys,
+        csis:state.csis
     }
 }
 export default connect(mapStateToProps, actions)(ViewInvoice)

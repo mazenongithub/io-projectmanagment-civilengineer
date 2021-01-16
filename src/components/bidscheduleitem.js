@@ -23,7 +23,7 @@ class BidScheduleItem extends Component {
     componentDidMount() {
         const pm = new PM();
         const csiid = this.props.match.params.csiid;
-        const csi = pm.getschedulecsibyid.call(this, csiid)
+        const csi = pm.getcsibyid.call(this, csiid)
 
         this.props.reduxNavigation({ navigation: "bidscheduleitem", csiid, csi: csi.csi })
         this.props.reduxProject({ projectid: this.props.match.params.projectid })
@@ -250,7 +250,12 @@ class BidScheduleItem extends Component {
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
         const csiid = this.props.match.params.csiid;
-        const csi = pm.getschedulecsibyid.call(this, csiid)
+        const csis = pm.getcsis.call(this);
+        if(!csis) {
+            pm.loadcsis.call(this)
+        }
+
+        const csi = pm.getcsibyid.call(this, csiid)
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -278,7 +283,7 @@ function mapStateToProps(state) {
         project: state.project,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        csi: state.csi
+        csis: state.csis
     }
 }
 export default connect(mapStateToProps, actions)(BidScheduleItem)
