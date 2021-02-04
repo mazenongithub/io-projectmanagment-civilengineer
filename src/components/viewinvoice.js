@@ -681,7 +681,8 @@ class ViewInvoice extends Component {
                         items.map(item => {
 
                             if (item.hasOwnProperty("laborid")) {
-                                let amount = calculatetotalhours(item.timeout, item.timein) * item.laborrate * (1 + (Number(item.profit) / 100))
+                                let amount = (calculatetotalhours(item.timeout, item.timein) * item.laborrate * (1 + (Number(item.profit) / 100))) - pm.sumOfTransfersByLaborID.call(this,item.laborid)
+                                if(amount > 0) {
                                 const transfers = this.createLaborTransfers(item.providerid, amount);
                                 const mylabor = pm.getactullaborbyid.call(this, myproject.projectid, item.laborid)
                                 if (mylabor) {
@@ -689,28 +690,37 @@ class ViewInvoice extends Component {
                                     myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers = [...myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers, ...transfers]
 
                                 }
+
+                            }
                             }
 
                             if (item.hasOwnProperty("materialid")) {
-                                let amount = Number(item.quantity) * Number(item.unitcost) * (1 + (Number(item.profit) / 100))
+                                let amount = (Number(item.quantity) * Number(item.unitcost) * (1 + (Number(item.profit) / 100)))  - pm.sumOfTransfersByMaterialID.call(this,item.materialid)
                                 let created = getMyCurrentTime()
+                                if(amount > 0) {
                                 let transfer = createTransfer(makeID(16), created, amount, item.accountid)
                                 const mymaterial = pm.getactulmaterialsbyid.call(this, myproject.projectid, item.materialid)
                                 if (mymaterial) {
                                     const l = pm.getactualmaterialskeybyid.call(this, myproject.projectid, item.materialid)
                                     myuser.projects.myproject[i].actualmaterials.mymaterial[l].scheduletransfers.push(transfer)
                                 }
+
+                            }
+
                             }
 
                             if (item.hasOwnProperty("equipmentid")) {
-                                let amount = calculatetotalhours(item.timeout, item.timein) * item.equipmentrate * (1 + (Number(item.profit) / 100))
+                                let amount = (calculatetotalhours(item.timeout, item.timein) * item.equipmentrate * (1 + (Number(item.profit) / 100))) - pm.sumOfTransfersByEquipmentID.call(this,item.equipmentid)
                                 let created = getMyCurrentTime()
+                                if(amount > 0) {
                                 let transfer = createTransfer(makeID(16), created, amount, item.accountid)
                                 const myequiupment = pm.getactulequipmentbyid.call(this, myproject.projectid, item.equipmentid)
                                 if (myequiupment) {
                                     const m = pm.getactulequipmentkeybyid.call(this, myproject.projectid, item.equipmentid)
                                     myuser.projects.myproject[i].actualequipment.myequipment[m].scheduletransfers.push(transfer)
                                 }
+
+                            }
                             }
 
 
@@ -801,10 +811,37 @@ class ViewInvoice extends Component {
 
     }
 
+    validateBalanceAvailable() {
+        const pm = new PM();
+        let validate = false;
+        const project = pm.getproject.call(this)
+        if(project) {
+            const projectid = project.projectid;
+            const sumofcharges = pm.sumOfChargesByProjectID.call(this,projectid)
+            const sumofpayments = pm.sumOfPaymentsByProjectID.call(this,projectid)
+            const balanceavail = sumofcharges - sumofpayments;
+            const transfers = this.gettransfertotal();
+            // const settlementtotal = this.getsettlementtotal()
+            const amount = Number(this.getamount())
+            const amountowed = amount - transfers;
+            
+            
+            
+            if(balanceavail>amountowed && amountowed > 0) {
+                validate = true;
+            }
+
+        }
+        return validate;
+    }
+
     async invoicesettlement() {
         const pm = new PM();
         const myproject = pm.getproject.call(this);
         const viewinvoice = new ViewInvoice();
+        const validate = this.validateBalanceAvailable();
+        if(validate) {
+
         if (myproject) {
 
             try {
@@ -827,7 +864,22 @@ class ViewInvoice extends Component {
 
         }
 
+    } else {
+        const sumofcharges = pm.sumOfChargesByProjectID.call(this,myproject.projectid)
+        const sumofpayments = pm.sumOfPaymentsByProjectID.call(this,myproject.projectid)
+        const balanceavail = sumofcharges - sumofpayments;
+        const transfers = this.gettransfertotal();
+        // const settlementtotal = this.getsettlementtotal()
+        const amount = this.getamount()
+        const amountowed = amount - transfers;
+
+       let message = `You currently do not have balance to settle invoice You have $${Number(balanceavail).toFixed(2)} and you owe $${Number(amountowed).toFixed(2)}`;
+       this.setState({message})
     }
+
+    }
+
+
 
 
 

@@ -961,6 +961,66 @@ class PM {
         }
         return transfers;
     }
+    sumOfPaymentsByProjectID(projectid) {
+        const pm = new PM();
+        const project = pm.getprojectbyid.call(this,projectid);
+        let amount = 0;
+        if(project) {
+            if(project.hasOwnProperty("actuallabor")) {
+                // eslint-disable-next-line
+                project.actuallabor.mylabor.map(mylabor=> {
+                    if(mylabor.hasOwnProperty("scheduletransfers")) {
+                        // eslint-disable-next-line
+                        mylabor.scheduletransfers.map(transfer=> {
+                            amount += Number(transfer.amount)
+                        })
+                    }
+                })
+            }
+
+            if(project.hasOwnProperty("actualmaterials")) {
+                // eslint-disable-next-line
+                project.actualmaterials.mymaterial.map(mymaterial=> {
+                    if(mymaterial.hasOwnProperty("scheduletransfers")) {
+                        // eslint-disable-next-line
+                        mymaterial.scheduletransfers.map(transfer=> {
+                            amount += Number(transfer.amount)
+                        })
+                    }
+                })
+            }
+
+            if(project.hasOwnProperty("actualequipment")) {
+                // eslint-disable-next-line
+                project.actualequipment.myequipment.map(myequipment=> {
+                    if(myequipment.hasOwnProperty("scheduletransfers")) {
+                        // eslint-disable-next-line
+                        myequipment.scheduletransfers.map(transfer=> {
+                            amount += Number(transfer.amount)
+                        })
+                    }
+                })
+            }
+        }
+        return amount;
+
+    }
+    sumOfChargesByProjectID(projectid) {
+        const pm = new PM();
+        const charges = pm.getchargesbyprojectid.call(this,projectid)
+        let amount = 0;
+        if(charges) {
+            // eslint-disable-next-line
+            charges.map(charge=>{
+                amount +=Number(charge.amount)
+
+            })
+        }
+        return amount;
+
+    }
+    
+
     getchargesbyprojectid(projectid) {
         const pm = new PM()
         const project = pm.getprojectbyid.call(this, projectid)
