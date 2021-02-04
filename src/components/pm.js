@@ -11,6 +11,126 @@ import Spinner from './spinner'
 
 class PM {
 
+    sumOfTransfersByLaborID(laborid) {
+        const pm = new PM();
+        const transfers = pm.getTransfersByLaborID.call(this, laborid)
+     
+        let amount = 0;
+        if (transfers) {
+            // eslint-disable-next-line
+            transfers.map(transfer => {
+
+                amount += Number(transfer.amount)
+
+            })
+
+        }
+        return amount;
+
+    }
+
+    getTransfersByLaborID(laborid) {
+        const pm = new PM();
+        const project = pm.getproject.call(this)
+
+
+        let transfers = false;
+        if (project) {
+            const mylabor = pm.getactullaborbyid.call(this, project.projectid, laborid)
+
+            if (mylabor) {
+                if (mylabor.hasOwnProperty("scheduletransfers")) {
+                    transfers = mylabor.scheduletransfers;
+                }
+            }
+        }
+        return transfers;
+
+    }
+
+    sumOfTransfersByMaterialID(materialid) {
+        const pm = new PM();
+        let amount = 0;
+        const transfers = pm.getTransfersByMaterialID.call(this, materialid)
+        if (transfers) {
+            // eslint-disable-next-line
+
+            if (transfers) {
+                // eslint-disable-next-line
+                transfers.map(transfer => {
+
+                    amount += Number(transfer.amount)
+
+                })
+
+            }
+
+
+        }
+        return amount;
+
+    }
+
+    getTransfersByMaterialID(materialid) {
+        const pm = new PM();
+        const project = pm.getproject.call(this)
+        let transfers = false;
+        if (project) {
+
+            const mymaterial = pm.getactulmaterialsbyid.call(this, project.projectid, materialid)
+
+            if (mymaterial) {
+                if (mymaterial.hasOwnProperty("scheduletransfers")) {
+                    transfers = mymaterial.scheduletransfers;
+                }
+            }
+        }
+        return transfers;
+
+    }
+
+    sumOfTransfersByEquipmentID(equipmentid) {
+        const pm = new PM();
+        const transfers = pm.getTransfersByEquipmentID.call(this, equipmentid)
+        let amount = 0;
+        if (transfers) {
+            // eslint-disable-next-line
+
+            if (transfers) {
+                // eslint-disable-next-line
+                transfers.map(transfer => {
+
+                    amount += Number(transfer.amount)
+
+                })
+
+            }
+
+
+        }
+        return amount;
+
+    }
+
+    getTransfersByEquipmentID(equipmentid) {
+        const pm = new PM();
+        let transfers = false;
+        const project = pm.getproject.call(this)
+        if (project) {
+            const myequipment = pm.getactulequipmentbyid.call(this, equipmentid)
+
+            if (myequipment) {
+                if (myequipment.hasOwnProperty("scheduletransfers")) {
+                    transfers = myequipment.scheduletransfers;
+                }
+            }
+
+        }
+        return transfers;
+
+    }
+
+
     async loadcsis() {
         try {
             let response = await LoadCSIs();
@@ -1537,6 +1657,42 @@ class PM {
         }
         return invoice;
     }
+    getemployeebenefitsbyid(providerid) {
+        const pm = new PM();
+        const employee = pm.getemployeebyid.call(this, providerid)
+
+        if (employee) {
+            return employee.benefits;
+
+        } else {
+            return employee;
+        }
+
+    }
+    getemployeebyid(providerid) {
+        const pm = new PM();
+        const employees = pm.getemployees.call(this)
+        let myemployee = false;
+        if (employees) {
+            // eslint-disable-next-line
+            employees.map(employee => {
+                if (employee.providerid === providerid) {
+                    myemployee = employee;
+
+                }
+            })
+        }
+        return myemployee;
+    }
+    getemployees() {
+        const pm = new PM();
+        const myproject = pm.getproject.call(this)
+        let employees = false;
+        if (myproject.hasOwnProperty("employees")) {
+            employees = myproject.employees;
+        }
+        return employees;
+    }
     getproposalbyid(proposalid) {
         let proposal = false;
         const pm = new PM();
@@ -1996,22 +2152,22 @@ class PM {
 
         if (myuser) {
             try {
-                this.setState({spinner:true})
+                this.setState({ spinner: true })
                 let response = await SaveAllProfile({ myuser });
                 console.log(response)
-             
+
                 if (response.hasOwnProperty("providerid")) {
 
                     this.props.reduxUser(response)
                 }
                 if (response.hasOwnProperty("message")) {
                     let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                    this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner:false })
+                    this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner: false })
                 } else {
-                    this.setState({spinner:false})
+                    this.setState({ spinner: false })
                 }
             } catch (err) {
-                this.setState({spinner:false})
+                this.setState({ spinner: false })
                 alert(err)
             }
         }
@@ -2102,7 +2258,7 @@ class PM {
             try {
                 const validate = pm.validateprofilesave.call(this);
                 if (validate.validate) {
-                    this.setState({spinner:true})
+                    this.setState({ spinner: true })
 
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
@@ -2126,15 +2282,15 @@ class PM {
 
                     if (response.hasOwnProperty("message")) {
                         let lastupdated = inputUTCStringForLaborID(response.lastupdated)
-                        this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner:false })
+                        this.setState({ message: `${response.message} Last updated ${lastupdated}`, spinner: false })
                     }
 
                 } else {
-                    this.setState({ message: validate.message, spinner:false })
+                    this.setState({ message: validate.message, spinner: false })
                 }
 
             } catch (err) {
-                this.setState({spinner:false})
+                this.setState({ spinner: false })
                 alert(err)
             }
         }
@@ -2209,20 +2365,20 @@ class PM {
         const saveprojecticon = pm.getsaveprojecticon.call(this);
 
         const styles = MyStylesheet();
-        if(!this.state.spinner) {
-        return (
-            <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.generalFont, ...regularFont, ...styles.topMargin15, ...styles.bottomMargin15 }}>
-                    {this.state.message}
-                </div>
+        if (!this.state.spinner) {
+            return (
+                <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
+                    <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.generalFont, ...regularFont, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                        {this.state.message}
+                    </div>
 
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                    <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.saveallprofile.call(this) }}>{projectSaveAll()}</button>
-                </div>
-            </div>)
+                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                        <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.saveallprofile.call(this) }}>{projectSaveAll()}</button>
+                    </div>
+                </div>)
 
         } else {
-            return(<Spinner/>)
+            return (<Spinner />)
         }
     }
     async clientlogin(type) {
@@ -2237,22 +2393,22 @@ class PM {
             let phonenumber = this.state.phonumber;
             let profile = this.state.profile
             let values = { client, clientid, firstname, lastname, emailaddress, profileurl, phonenumber, profile, type }
-            this.setState({spinner:true})
+            this.setState({ spinner: true })
             const response = await AppleLogin(values);
             console.log(response)
 
             if (response.hasOwnProperty("myuser")) {
 
                 this.props.reduxUser(response.myuser)
-                this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner:false })
+                this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner: false })
             } else if (response.hasOwnProperty("message")) {
-                this.setState({ message: response.message, spinner:false, client: '', clientid: '',emailaddress: '' })
+                this.setState({ message: response.message, spinner: false, client: '', clientid: '', emailaddress: '' })
             } else {
-                this.setState({spinner:false, client: '', clientid: '',emailaddress: ''})
+                this.setState({ spinner: false, client: '', clientid: '', emailaddress: '' })
             }
 
         } catch (err) {
-            this.setState({spinner:false, client: '', clientid: '',emailaddress: ''})
+            this.setState({ spinner: false, client: '', clientid: '', emailaddress: '' })
             alert(err)
         }
     }

@@ -3,9 +3,9 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal, inputUTCStringForLaborID } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, UTCStringFormatDateforProposal, returnCompanyList, calculatetotalhours, createTransfer, getMyCurrentTime, makeID, sortcode } from './functions'
 import PM from './pm'
-import { SettleInvoice } from './actions/api';
+import { SettleInvoice, LoadAllUsers } from './actions/api';
 import Spinner from './spinner'
 
 
@@ -24,11 +24,29 @@ class ViewInvoice extends Component {
 
     }
     componentDidMount() {
+        const pm = new PM();
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
         this.props.reduxNavigation({ navigation: "viewinvoice", invoiceid: this.props.match.params.invoiceid })
         this.props.reduxProject({ projectid: this.props.match.params.projectid })
+        const allusers = pm.getallusers.call(this)
+        if (!allusers) {
+            this.loadallusers()
+        }
 
+    }
+    async loadallusers() {
+        try {
+            let response = await LoadAllUsers();
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                let companys = returnCompanyList(response.allusers);
+                this.props.reduxAllCompanys(companys)
+                this.props.reduxAllUsers(response.allusers);
+            }
+        } catch (err) {
+            alert(err)
+        }
 
     }
     componentWillUnmount() {
@@ -38,7 +56,7 @@ class ViewInvoice extends Component {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
 
     }
-    getinvoiceitemsbyid(csiid) {
+    getinvoiceitems() {
         const invoiceid = this.props.match.params.invoiceid;
         const pm = new PM();
         let myproject = pm.getproject.call(this);
@@ -230,139 +248,7 @@ class ViewInvoice extends Component {
 
 
     }
-    invoicesummary() {
-        const pm = new PM();
-        const styles = MyStylesheet();
-        const headerFont = pm.getHeaderFont.call(this)
-        const regularFont = pm.getRegularFont.call(this)
-        let amount = Number(this.getamount() / 100)
-        amount = amount.toFixed(2)
 
-        const summary = () => {
-
-            return (
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1 }}>
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                                Please Pay the Amount of ${amount}
-                            </div>
-
-                        </div>
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            )
-
-        }
-
-
-
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
-                            <u>Invoice Summary </u>
-                        </div>
-                    </div>
-                    {summary()}
-                </div>
-            </div>)
-
-    }
-
-    showsummary() {
-        const pm = new PM();
-        const regularFont = pm.getRegularFont.call(this)
-        const headerFont = pm.getHeaderFont.call(this)
-        const styles = MyStylesheet();
-        const biditems = this.getitems();
-        let amount = 0;
-        if (biditems.length > 0) {
-            // eslint-disable-next-line
-            biditems.map(item => {
-                amount += this.getbidprice(item.csiid)
-            })
-        }
-        if (amount > 0) {
-
-            return (
-                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                    <div style={{ ...styles.flex1 }}>
-
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...headerFont, ...styles.generalFont }}>
-                                <u>Invoice {this.props.match.params.invoiceid} Total</u>
-                            </div>
-                        </div>
-
-
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
-                                Please Pay the Amount of ${Number(amount).toFixed(2)}
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            )
-        }
-    }
-
-    getamountowed() {
-        const invoiceitems = this.getinvoiceitemsbyid();
-        let owed = 0;
-        if (invoiceitems) {
-            // eslint-disable-next-line
-            invoiceitems.map(item => {
-
-
-                if (item.hasOwnProperty("laborid")) {
-
-                    if (!item.settlementid) {
-
-                        owed += DirectCostForLabor(item)
-                        owed += ProfitForLabor(item)
-
-
-                    }
-
-
-                } else if (item.hasOwnProperty("materialid")) {
-
-
-                    if (!item.settlementid) {
-
-
-                        owed += DirectCostForMaterial(item);
-                        owed += ProfitForMaterial(item)
-                    }
-
-
-                } else if (item.hasOwnProperty("equipmentid")) {
-                    if (!item.settlementid) {
-
-
-                        owed += DirectCostForEquipment(item)
-                        owed += ProfitForEquipment(item)
-                    }
-
-                }
-
-            })
-
-
-
-        }
-        return owed;
-
-    }
 
     getamount() {
 
@@ -376,7 +262,7 @@ class ViewInvoice extends Component {
         }
 
 
-        return Math.round((amount * 100))
+        return amount;
 
 
     }
@@ -387,9 +273,9 @@ class ViewInvoice extends Component {
         const regularFont = pm.getRegularFont.call(this);
         const csi = pm.getcsibyid.call(this, item.csiid);
 
-        let bidprice = this.getbidprice(item.csiid).toFixed(2);
-        let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
-        let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
+        let bidprice = this.getbidprice(item.csiid)
+        let unitprice = this.getunitprice(item.csiid) > 0 ? (this.getunitprice(item.csiid)):0
+        let directcost = Number(this.getdirectcost(item.csiid))
         let providerid = this.props.match.params.providerid;
 
         let projectid = this.props.match.params.projectid;
@@ -422,10 +308,10 @@ class ViewInvoice extends Component {
                         {quantity()}
                     </td>
                     <td style={{ ...styles.alignCenter }}>{unit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(directcost).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>{+Number(profit()).toFixed(4)}</td>
+                    <td style={{ ...styles.alignCenter }}>{Number(bidprice).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}> {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
@@ -454,19 +340,19 @@ class ViewInvoice extends Component {
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Direct Cost <br />
-                                ${directcost}
+                                ${Number(directcost).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Profit % <br />
-                                {profit()}
+                                {Number(profit().toFixed(4))}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
-                                ${bidprice}
+                                ${Number(bidprice).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
+                                {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -489,8 +375,6 @@ class ViewInvoice extends Component {
         return approved;
 
     }
-
-
 
 
 
@@ -590,12 +474,17 @@ class ViewInvoice extends Component {
             // eslint-disable-next-line
             items.map(lineitem => {
                 if (validateNewItem(csis, lineitem)) {
-
+                    const csi = pm.getcsibyid.call(this, lineitem.csiid)
                     let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    newItem.csi = csi.csi
                     csis.push(newItem)
                 }
             })
         }
+
+        csis.sort((codea, codeb) => {
+            return (sortcode(codea, codeb))
+        })
 
         return csis;
     }
@@ -671,7 +560,7 @@ class ViewInvoice extends Component {
         }
 
         const amount = Number(this.getamountowed()).toFixed(2);
-        console.log(chargetotal, transfertotal(), amount);
+
         if (chargetotal - transfertotal() >= amount && amount > 0) {
             validate.validate = true;
 
@@ -683,33 +572,36 @@ class ViewInvoice extends Component {
 
     }
 
-    getsettlementtotal() {
-        const pm = new PM();
-        const settlements = pm.getsettlementsbyinvoiceid.call(this, this.props.match.params.invoiceid)
-        let total = 0;
-        if (settlements) {
-            // eslint-disable-next-line
-            settlements.map(settlement => {
-                total += Number(settlement.amount)
-            })
-        }
-        return total;
 
-
-    }
 
     gettransfertotal() {
         const pm = new PM();
-        const transfers = pm.gettransfersbyinvoiceid.call(this, this.props.match.params.invoiceid)
-        let total = 0;
-        if (transfers) {
-            // eslint-disable-next-line
-            transfers.map(transfer => {
-                total += Number(transfer.amount)
-            })
-        }
-        return total;
+        const items = this.getinvoiceitems();
 
+        let amount = 0;
+        if (items) {
+            // eslint-disable-next-line
+            items.map(item => {
+
+                if (item.hasOwnProperty("laborid")) {
+
+                    amount += pm.sumOfTransfersByLaborID.call(this, item.laborid)
+
+                } else if (item.hasOwnProperty("equipmentid")) {
+                    amount += pm.sumOfTransfersByEquipmentID.call(this, item.equipmentid)
+
+                } else if (item.hasOwnProperty("materialid")) {
+                    amount += pm.sumOfTransfersByMaterialID.call(this, item.materialid)
+
+                }
+
+
+            })
+
+        }
+
+
+        return amount;
 
     }
     getchargestotal() {
@@ -733,186 +625,224 @@ class ViewInvoice extends Component {
 
         return total;
     }
-    async invoicesettlement() {
+
+
+
+
+    createLaborTransfers(providerid, amount) {
+        const pm = new PM();
+        const benefits = pm.getemployeebenefitsbyid.call(this, providerid);
+        let totalbenefits = 0;
+        let scheduletransfers = [];
+        const amountratio = (benefit, totalbenefit) => {
+            return (benefit / totalbenefit)
+        }
+        if (benefits) {
+            // eslint-disable-next-line
+            benefits.map(benefit => {
+                totalbenefits += Number(benefit.amount)
+            })
+            // eslint-disable-next-line
+            benefits.map(benefit => {
+
+                amount = amount * amountratio(Number(benefit.amount), totalbenefits)
+                let destination = benefit.accountid;
+                let created = getMyCurrentTime()
+                let transferid = makeID(16)
+                let transfer = createTransfer(transferid, created, amount, destination);
+                scheduletransfers.push(transfer)
+
+
+
+            })
+
+        }
+
+        return scheduletransfers;
+
+    }
+
+
+    settleInvoice() {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-        const validate = this.validateInvoicePayment()
-        if (window.confirm(`Are you sure you want to settle this invoice ?`)) {
-            if (validate.validate) {
-                const myproject = pm.getproject.call(this);
-                if (myproject) {
 
-                    const projectid = myproject.projectid;
-                    const i = pm.getprojectkeybyid.call(this, projectid);
-                    const invoiceid = this.props.match.params.invoiceid;
-                    const amount = Number(Math.round(this.getamountowed() * 100))
-                    const values = { invoiceid, amount }
-                    try {
-                        this.setState({ spinner: true })
-                        let response = await SettleInvoice(values)
-                        console.log(response)
-                        if (response.hasOwnProperty("settlements")) {
+        if (myuser) {
 
-                            const myinvoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid);
-                            if (myinvoice) {
-                                const j = pm.getinvoicekeybyid.call(this, this.props.match.params.invoiceid);
-                                myuser.projects.myproject[i].invoices.myinvoice[j].settlements = response.settlements;
-                                this.props.reduxUser(myuser)
+            const myproject = pm.getproject.call(this)
+            if (myproject) {
+                const i = pm.getprojectkeybyid.call(this, myproject.projectid)
+                const invoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid)
+                if (invoice) {
+
+                    const items = this.getinvoiceitems();
+                    if (items) {
+                        // eslint-disable-next-line
+                        items.map(item => {
+
+                            if (item.hasOwnProperty("laborid")) {
+                                let amount = calculatetotalhours(item.timeout, item.timein) * item.laborrate * (1 + (Number(item.profit) / 100))
+                                const transfers = this.createLaborTransfers(item.providerid, amount);
+                                const mylabor = pm.getactullaborbyid.call(this, myproject.projectid, item.laborid)
+                                if (mylabor) {
+                                    const j = pm.getactullaborkeybyid.call(this, myproject.projectid, item.laborid)
+                                    myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers = [...myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers, ...transfers]
+
+                                }
+                            }
+
+                            if (item.hasOwnProperty("materialid")) {
+                                let amount = Number(item.quantity) * Number(item.unitcost) * (1 + (Number(item.profit) / 100))
+                                let created = getMyCurrentTime()
+                                let transfer = createTransfer(makeID(16), created, amount, item.accountid)
+                                const mymaterial = pm.getactulmaterialsbyid.call(this, myproject.projectid, item.materialid)
+                                if (mymaterial) {
+                                    const l = pm.getactualmaterialskeybyid.call(this, myproject.projectid, item.materialid)
+                                    myuser.projects.myproject[i].actualmaterials.mymaterial[l].scheduletransfers.push(transfer)
+                                }
+                            }
+
+                            if (item.hasOwnProperty("equipmentid")) {
+                                let amount = calculatetotalhours(item.timeout, item.timein) * item.equipmentrate * (1 + (Number(item.profit) / 100))
+                                let created = getMyCurrentTime()
+                                let transfer = createTransfer(makeID(16), created, amount, item.accountid)
+                                const myequiupment = pm.getactulequipmentbyid.call(this, myproject.projectid, item.equipmentid)
+                                if (myequiupment) {
+                                    const m = pm.getactulequipmentkeybyid.call(this, myproject.projectid, item.equipmentid)
+                                    myuser.projects.myproject[i].actualequipment.myequipment[m].scheduletransfers.push(transfer)
+                                }
                             }
 
 
-                            if (response.hasOwnProperty("labor")) {
-                                // eslint-disable-next-line
-                                response.labor.map(labor => {
-                                    const laborid = labor.laborid;
-                                    const mylabor = pm.getactullaborbyid.call(this, projectid, laborid);
-                                    if (mylabor) {
-                                        const k = pm.getactullaborkeybyid.call(this, projectid, laborid);
-                                        myuser.projects.myproject[i].actuallabor.mylabor[k].settlementid = labor.settlementid;
-                                    }
-                                })
-                            }
+                        })
 
-                            if (response.hasOwnProperty("materials")) {
-                                // eslint-disable-next-line
-                                response.materials.map(material => {
-                                    const materialid = material.materialid;
-                                    const mymaterial = pm.getactulmaterialsbyid.call(this, projectid, materialid);
-                                    console.log(mymaterial)
-                                    if (mymaterial) {
-                                        const l = pm.getactualmaterialskeybyid.call(this, projectid, materialid);
-                                        console.log(l, mymaterial)
-                                        myuser.projects.myproject[i].actualmaterials.mymaterial[l].settlementid = material.settlementid;
-                                    }
-                                })
-                            }
-
-                            if (response.hasOwnProperty("equipment")) {
-                                // eslint-disable-next-line
-                                response.equipment.map(equipment => {
-                                    const equipmentid = equipment.equipmentid;
-                                    const myequipment = pm.getactulequipmentbyid.call(this, projectid, equipmentid);
-                                    if (myequipment) {
-                                        const m = pm.getactulequipmentkeybyid.call(this, projectid, equipmentid);
-                                        myuser.projects.myproject[i].actualequipment.myequipment[m].settlementid = equipment.settlementid;
-                                    }
-                                })
-                            }
-
-                            this.props.reduxUser(myuser)
-                            this.setState({ spinner: false })
+                        this.props.reduxUser(myuser)
+                        this.setState({ render: 'render' })
 
 
-
-                        }
-
-                    } catch (err) {
-                        this.setState({ spinner: false })
-                        alert(err)
                     }
-
 
 
 
                 }
 
-
-
-            } else {
-
-                this.setState({ message: validate.message })
             }
 
-
-
-        }
-    }
-
-    showsettlement(settlement) {
-        const pm = new PM();
-        const styles = MyStylesheet();
-        const regularFont = pm.getRegularFont.call(this)
-        const settled = inputUTCStringForLaborID(settlement.settled);
-        //const account = pm.getaccountbydestination.call(this, transfer.destination)
-        return (<div style={{ ...regularFont, ...styles.generalFont }}>
-            Invoice Settled on {settled} for the Amount ${settlement.amount}
-        </div>)
-    }
-
-    showtransfer(transfer) {
-        const pm = new PM();
-        const styles = MyStylesheet();
-        const regularFont = pm.getRegularFont.call(this)
-        const created = inputUTCStringForLaborID(transfer.created);
-        //const account = pm.getaccountbydestination.call(this, transfer.destination)
-        return (<div style={{ ...regularFont, ...styles.generalFont }}>
-            Transfer Created {created} for the Amount ${transfer.amount}
-        </div>)
-    }
-
-    settlementSummary() {
-        const pm = new PM()
-        const styles = MyStylesheet();
-        const settlements = pm.getsettlementsbyinvoiceid.call(this, this.props.match.params.invoiceid)
-        const headerFont = pm.getHeaderFont.call(this)
-        const regularFont = pm.getRegularFont.call(this)
-        const sumofsettlement = () => {
-            let sum = 0;
-
-            if (settlements) {
-                // eslint-disable-next-line
-                settlements.map(settlement => {
-                    sum += Number(settlement.amount)
-                })
-            }
-            return sum;
-        }
-        let settlementids = [];
-        const jsx = (settlementids) => {
-            return (<div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...headerFont, ...styles.underline }}>
-                            Settlement Summary
-                </div>
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1 }}>
-                            {settlementids}
-                        </div>
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...regularFont }}>
-                            Sum of Settlements  ${Number(sumofsettlement()).toFixed(2)}
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>)
         }
 
 
 
-        if (settlements) {
+
+
+    }
+
+    getlaboritems() {
+        const items = this.getinvoiceitems();
+        let myitems = [];
+        if (items) {
             // eslint-disable-next-line
-            settlements.map(settlement => {
-                settlementids.push(this.showsettlement(settlement))
+            items.map(item => {
+
+                if (item.hasOwnProperty("laborid")) {
+                    myitems.push(item)
+                }
+            })
+        }
+        return myitems;
+
+    }
+
+    getmaterialitems() {
+        const items = this.getinvoiceitems();
+        let myitems = [];
+        if (items) {
+            // eslint-disable-next-line
+            items.map(item => {
+                if (item.hasOwnProperty("materialid")) {
+                    myitems.push(item)
+                }
 
             })
         }
-        return (jsx(settlementids))
+        return myitems;
+
     }
+    getequipmentitems() {
+        const items = this.getinvoiceitems();
+        let myitems = [];
+
+        if (items) {
+            // eslint-disable-next-line
+            items.map(item => {
+                if (item.hasOwnProperty("equipmentid")) {
+                    myitems.push(item)
+                }
+
+            })
+        }
+        return myitems;
+
+    }
+
+    getSettledInvoice() {
+        let getinvoice = {};
+        const pm = new PM();
+        const invoice = pm.getinvoicebyid.call(this, this.props.match.params.invoiceid)
+        getinvoice.invoiceid = invoice.invoiceid;
+        getinvoice.approved = invoice.approved;
+        const labor = this.getlaboritems();
+        const materials = this.getmaterialitems();
+        const equipment = this.getequipmentitems();
+
+        getinvoice.labor = labor;
+        getinvoice.materials = materials;
+        getinvoice.equipment = equipment;
+        return getinvoice;
+
+    }
+
+    async invoicesettlement() {
+        const pm = new PM();
+        const myproject = pm.getproject.call(this);
+        const viewinvoice = new ViewInvoice();
+        if (myproject) {
+
+            try {
+
+                viewinvoice.settleInvoice.call(this)
+                this.setState({ spinner: true })
+                const invoice = this.getSettledInvoice()
+                let values = { invoice }
+                let response = await SettleInvoice(values)
+                console.log(response)
+                this.setState({ spinner: false })
+                if (response.hasOwnProperty("message")) {
+                    this.setState({ message: response.message })
+                }
+            } catch (err) {
+                this.setState({ spinner: false })
+                alert(err)
+            }
+
+
+        }
+
+    }
+
+
+
+
+
 
     balanaceSummary() {
         const pm = new PM();
         const styles = MyStylesheet();
-        const debt = `$${Number(this.getamountowed()).toFixed(2)}`;
         const headerFont = pm.getHeaderFont.call(this);
         const regularFont = pm.getRegularFont.call(this)
+        const amount = this.getamount();
+        const sumoftransfers = this.gettransfertotal();
+        // const settlementtotal = this.getsettlementtotal()
+        const amountowed = amount - sumoftransfers;
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
@@ -924,7 +854,7 @@ class ViewInvoice extends Component {
 
                 <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
-                        <span style={{ ...styles.generalFont, ...regularFont }}> Payment Due {debt} </span>
+                        <span style={{ ...styles.generalFont, ...regularFont }}> Calculated Invoice Amount is ${Number(amount).toFixed(2)} Total amount of Transfers received for items on this invoice is ${Number(sumoftransfers).toFixed(2)}. The amount owed is ${Number(amountowed).toFixed(2)} </span>
                     </div>
                 </div>
 
@@ -933,69 +863,7 @@ class ViewInvoice extends Component {
 
     }
 
-    transferSummary() {
-        const pm = new PM()
-        const styles = MyStylesheet();
 
-
-        const headerFont = pm.getHeaderFont.call(this)
-        const regularFont = pm.getRegularFont.call(this)
-
-
-        const myproject = pm.getproject.call(this);
-        if (myproject) {
-            const projectid = myproject.projectid;
-            const transfers = pm.gettransfersbyprojectid.call(this, projectid);
-            const sumoftransfers = () => {
-                let sum = 0;
-
-                if (transfers) {
-                    // eslint-disable-next-line
-                    transfers.map(transfer => {
-                        sum += Number(transfer.amount)
-                    })
-                }
-                return sum;
-            }
-            let transferids = [];
-            const jsx = (transferids) => {
-                return (<div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1 }}>
-
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1, ...headerFont, ...styles.underline }}>
-                                Transfer Summary
-                </div>
-                        </div>
-
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1 }}>
-                                {transferids}
-                            </div>
-                        </div>
-
-                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                            <div style={{ ...styles.flex1, ...regularFont }}>
-                                Sum of Transfers  ${Number(sumoftransfers()).toFixed(2)}
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>)
-            }
-
-            if (transfers) {
-                // eslint-disable-next-line
-                transfers.map(transfer => {
-                    transferids.push(this.showtransfer(transfer))
-
-                })
-            }
-            return (jsx(transferids))
-        }
-
-    }
 
 
     render() {
@@ -1004,12 +872,12 @@ class ViewInvoice extends Component {
         const headerFont = pm.getHeaderFont.call(this)
         const invoiceid = this.props.match.params.invoiceid;
         const regularFont = pm.getRegularFont.call(this)
-        const amountowed = this.getamountowed();
-        // const charges = this.getchargestotal();
-        // const transfers = this.gettransfertotal();
-        // const settlementtotal = this.getsettlementtotal()
-        // const amount = Number(this.getamount() / 100).toFixed(2);
 
+        // const charges = this.getchargestotal();
+        const transfers = this.gettransfertotal();
+        // const settlementtotal = this.getsettlementtotal()
+        const amount = Number(this.getamount() / 100)
+        const amountowed = amount - transfers;
 
 
         const settlement = () => {
@@ -1029,7 +897,7 @@ class ViewInvoice extends Component {
 
         const myuser = pm.getuser.call(this)
         const csis = pm.getcsis.call(this);
-        if(!csis) {
+        if (!csis) {
             pm.loadcsis.call(this)
         }
         if (myuser) {
@@ -1073,11 +941,7 @@ class ViewInvoice extends Component {
                                     </div>
                                 </div>
 
-                                {this.showsummary()}
 
-                                {this.transferSummary()}
-
-                                {this.settlementSummary()}
 
                                 {this.balanaceSummary()}
 
@@ -1118,7 +982,7 @@ function mapStateToProps(state) {
         project: state.project,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        csis:state.csis
+        csis: state.csis
     }
 }
 export default connect(mapStateToProps, actions)(ViewInvoice)

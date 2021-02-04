@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric, sortcode } from './functions'
 import PM from './pm';
 
 
@@ -288,7 +288,7 @@ class Bid extends Component {
 
 
         let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
-        let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
+        let unitprice = this.getunitprice(item.csiid) > 0 ? +Number(this.getunitprice(item.csiid)):0
         let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
         let providerid = this.props.match.params.providerid;
         let projectid = this.props.match.params.projectid;
@@ -326,10 +326,10 @@ class Bid extends Component {
                         {quantity()}
                     </td>
                     <td style={{ ...styles.alignCenter }}>{unit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}> {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(directcost).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>{+Number(profit()).toFixed(4)}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(bidprice).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}> {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
@@ -480,12 +480,17 @@ class Bid extends Component {
             // eslint-disable-next-line
             items.map(lineitem => {
                 if (validateNewItem(csis, lineitem)) {
-
+                    const csi = pm.getcsibyid.call(this, lineitem.csiid)
                     let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    newItem.csi = csi.csi
                     csis.push(newItem)
                 }
             })
         }
+
+        csis.sort((codea, codeb) => {
+            return (sortcode(codea, codeb))
+        })
 
         return csis;
     }
@@ -508,7 +513,6 @@ class Bid extends Component {
 
     render() {
         const styles = MyStylesheet();
-        const projectid = this.props.match.params.projectid;
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
@@ -542,12 +546,7 @@ class Bid extends Component {
                                 <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/bid`}>  /bid </Link>
                             </div>
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.alignCenter, ...headerFont, ...styles.generalFont }}>
-                            /{projectid} <br />
-                            View Bid
-                        </div>
-                    </div>
+                  
                     {pm.showbidtable.call(this)}
                     {pm.showsaveproject.call(this)}
                     {pm.showprojectid.call(this)}

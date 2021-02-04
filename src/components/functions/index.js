@@ -1292,7 +1292,7 @@ export function calculatetotalhours(timeout, timein) {
 
     let datein = new Date(`${timein.replace(/-/g, '/')}`)
     let dateout = new Date(`${timeout.replace(/-/g, '/')}`)
-    let totalhours = ((dateout.getTime() - datein.getTime()) / (1000 * 60 * 60)).toFixed(2)
+    let totalhours = (dateout.getTime() - datein.getTime()) / (1000 * 60 * 60)
     return totalhours;
 }
 export function inputDateObjStripTimeOutputObj(dateobj) {
@@ -2532,6 +2532,27 @@ export function formatMinutes(minutes) {
     }
 }
 
+
+
+export function getMyCurrentTime () {
+    const newDate = new Date();
+    const year = newDate.getFullYear();
+    const month = trailingZeros(newDate.getMonth()+1);
+    const day = trailingZeros(newDate.getDate())
+    const hours = trailingZeros(newDate.getHours())
+    const minutes = trailingZeros(newDate.getMinutes())
+    const seconds = trailingZeros(newDate.getSeconds())
+    let offset =newDate.getTimezoneOffset()/60
+    let sym = "+";
+    if(offset>0) {
+    sym = '-';
+    }
+    offset =trailingZeros(Math.abs(offset))
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}${sym}${offset}:00`
+    
+    
+  }
+
 export function trailingzero(num) {
     let reg_ex = /^0\d$/;
     var test = reg_ex.test(num.toString());
@@ -3203,6 +3224,22 @@ export function returnCompanyList(allusers) {
 }
 
 
+export function sortcode(codeb, codea) {
+
+    if (Number(codea.csi) < Number(codeb.csi)) {
+
+        return 1;
+    }
+    else if (Number(codeb.csi) < Number(codea.csi)) {
+
+        return -1;
+    }
+    else {
+        return 0;
+    }
+}
+
+
 
 
 export function monthString(month) {
@@ -3239,13 +3276,23 @@ export function monthString(month) {
 }
 
 export function trailingZeros(num) {
-    if (num < 10) {
-        return (`0${num}`);
+
+    if (num.toString().length === 1) {
+
+
+        if (Number(num) < 10) {
+
+            return (`0${num}`);
+        } else {
+            return num;
+        }
+
     } else {
         return num;
     }
 
 }
+
 
 export function getDateTime (datestr)  {
     let offset = getOffsetDate(datestr)
@@ -3647,6 +3694,9 @@ export function LetterCounter(num) {
 
     return `${Z}${numericAlpha(newnum)}`
 
+}
+export function createTransfer(transferid,created,amount,destination) {
+    return({transferid,created,amount,destination})
 }
 export function ProfitForMaterial(item) {
     return (Number(item.quantity) * Number(item.unitcost)) * (Number(item.profit) / 100)

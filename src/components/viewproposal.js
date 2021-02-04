@@ -220,9 +220,9 @@ class ViewProposal extends Component {
                     style={{ ...styles.generalFont, ...regularFont, ...styles.generalFont, ...bidField }}
                 />)
         }
-        let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
-        let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
-        let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
+        let bidprice = Number(this.getbidprice(item.csiid))
+        let unitprice = this.getunitprice(item.csiid) > 0 ? +Number(this.getunitprice(item.csiid)):0
+        let directcost = Number(this.getdirectcost(item.csiid))
 
         const unit = () => {
             return (
@@ -248,10 +248,10 @@ class ViewProposal extends Component {
                         {quantity()}
                     </td>
                     <td style={{ ...styles.alignCenter }}>{unit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}>  {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(directcost).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>{+Number(profit()).toFixed(4)}</td>
+                    <td style={{ ...styles.alignCenter }}>{Number(bidprice).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>  {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
@@ -278,7 +278,7 @@ class ViewProposal extends Component {
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Direct Cost <br />
-                                ${directcost}
+                                ${Number(directcost).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Profit % <br />
@@ -286,11 +286,11 @@ class ViewProposal extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
-                                ${bidprice}
+                                ${Number(bidprice).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
+                                {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -474,6 +474,20 @@ class ViewProposal extends Component {
         return approved;
 
     }
+    getamount() {
+        const biditems = this.getitems();
+       let amount = 0;
+       if (biditems.length > 0) {
+           // eslint-disable-next-line
+           biditems.map(item => {
+               amount += this.getbidprice(item.csiid)
+           })
+       }
+
+       // 
+       return amount
+   }
+
     render() {
         const styles = MyStylesheet();
         const pm = new PM();
@@ -482,6 +496,7 @@ class ViewProposal extends Component {
         const projectIcon = pm.getsaveprojecticon.call(this);
         const regularFont = pm.getRegularFont.call(this)
         const myuser = pm.getuser.call(this)
+        
 
         const csis = pm.getcsis.call(this);
         if(!csis) {
@@ -503,6 +518,7 @@ class ViewProposal extends Component {
 
                 const proposal = pm.getproposalbyid.call(this,proposalid);
                 if(proposal) {
+                    const amount = Number(this.getamount()).toFixed(2)
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -530,6 +546,10 @@ class ViewProposal extends Component {
 
                     {pm.showbidtable.call(this)}
 
+                    <div style={{...styles.generalContainer}}>
+                        <span style={{...regularFont,...styles.generalFont}}>The estimated amount is ${amount}</span>
+                    </div>
+
                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>
                         {this.state.message}
                     </div>
@@ -542,6 +562,8 @@ class ViewProposal extends Component {
                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>
                         {this.getapproved()}
                     </div>
+
+
 
                     {pm.showprojectid.call(this)}
 

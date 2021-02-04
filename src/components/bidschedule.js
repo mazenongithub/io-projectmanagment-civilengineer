@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric } from './functions'
+import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric, sortcode } from './functions'
 import PM from './pm';
 
 
@@ -287,12 +287,12 @@ class ViewBidSchedule extends Component {
         const csi = pm.getcsibyid.call(this, item.csiid);
         let profit = () => {
             return (
-                Number(this.getprofit(item.csiid)).toFixed(4)
+                Number(this.getprofit(item.csiid))
             )
         }
-        let bidprice = Number(this.getbidprice(item.csiid)).toFixed(2);
-        let unitprice = +Number(this.getunitprice(item.csiid)).toFixed(4);
-        let directcost = Number(this.getdirectcost(item.csiid)).toFixed(2);
+        let bidprice = Number(this.getbidprice(item.csiid))
+        let unitprice = this.getunitprice(item.csiid) > 0 ? +Number(this.getunitprice(item.csiid)):0
+        let directcost = Number(this.getdirectcost(item.csiid))
 
         const unit = () => {
             return (
@@ -322,10 +322,10 @@ class ViewBidSchedule extends Component {
                         {quantity()}
                     </td>
                     <td style={{ ...styles.alignCenter }}>{unit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{directcost}</td>
-                    <td style={{ ...styles.alignCenter }}>{profit()}</td>
-                    <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                    <td style={{ ...styles.alignCenter }}>  {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(directcost).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>{+Number(profit()).toFixed(4)}</td>
+                    <td style={{ ...styles.alignCenter }}>${Number(bidprice).toFixed(2)}</td>
+                    <td style={{ ...styles.alignCenter }}>  {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
@@ -350,7 +350,7 @@ class ViewBidSchedule extends Component {
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Direct Cost <br />
-                                ${directcost}
+                                ${Number(directcost).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Overhead And Profit % <br />
@@ -358,11 +358,11 @@ class ViewBidSchedule extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Bid Price <br />
-                                ${bidprice}
+                                ${Number(bidprice).toFixed(2)}
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${unitprice}/${this.getunit(csi.csiid)}`}
+                                {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}
                             </div>
                         </div>
                     </div>
@@ -471,12 +471,17 @@ class ViewBidSchedule extends Component {
             // eslint-disable-next-line
             items.map(lineitem => {
                 if (validateNewItem(csis, lineitem)) {
-
+                    const csi = pm.getcsibyid.call(this, lineitem.csiid)
                     let newItem = CreateBidScheduleItem(lineitem.csiid, "", 0)
+                    newItem.csi = csi.csi
                     csis.push(newItem)
                 }
             })
         }
+
+        csis.sort((codea, codeb) => {
+            return (sortcode(codea, codeb))
+        })
 
         return csis;
     }
