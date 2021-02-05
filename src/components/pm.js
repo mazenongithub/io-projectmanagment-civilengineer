@@ -36,7 +36,7 @@ class PM {
 
         let transfers = false;
         if (project) {
-            const mylabor = pm.getactullaborbyid.call(this, project.projectid, laborid)
+            const mylabor = pm.getactuallaborbyid.call(this, project.projectid, laborid)
 
             if (mylabor) {
                 if (mylabor.hasOwnProperty("scheduletransfers")) {
@@ -77,7 +77,7 @@ class PM {
         let transfers = false;
         if (project) {
 
-            const mymaterial = pm.getactulmaterialsbyid.call(this, project.projectid, materialid)
+            const mymaterial = pm.getactualmaterialbyid.call(this, project.projectid, materialid)
 
             if (mymaterial) {
                 if (mymaterial.hasOwnProperty("scheduletransfers")) {
@@ -117,7 +117,7 @@ class PM {
         let transfers = false;
         const project = pm.getproject.call(this)
         if (project) {
-            const myequipment = pm.getactulequipmentbyid.call(this, equipmentid)
+            const myequipment = pm.getactualequipmentbyid.call(this, equipmentid)
 
             if (myequipment) {
                 if (myequipment.hasOwnProperty("scheduletransfers")) {
@@ -1459,7 +1459,7 @@ class PM {
         return mycsi;
 
     }
-    getactullaborkeybyid(projectid, laborid) {
+    getactuallaborkeybyid(projectid, laborid) {
         const pm = new PM();
         const labors = pm.getactuallaborbyproject.call(this, projectid);
         let key = false;
@@ -1474,7 +1474,7 @@ class PM {
         return key;
     }
 
-    getactullaborbyid(projectid, laborid) {
+    getactuallaborbyid(projectid, laborid) {
         const pm = new PM();
         const labors = pm.getactuallaborbyproject.call(this, projectid);
         let mylabor = false;
@@ -1528,7 +1528,7 @@ class PM {
         }
         return key;
     }
-    getactulmaterialsbyid(projectid, materialid) {
+    getactualmaterialbyid(projectid, materialid) {
         const pm = new PM();
         const materials = pm.getactualmaterialsbyproject.call(this, projectid);
         let mymaterial = false;
@@ -1557,7 +1557,7 @@ class PM {
         return actualequipment;
     }
 
-    getactulequipmentkeybyid(projectid, equipmentid) {
+    getactualequipmentkeybyid(projectid, equipmentid) {
         const pm = new PM();
         const equipments = pm.getactualequipmentbyproject.call(this, projectid);
         let key = false;
@@ -1571,7 +1571,7 @@ class PM {
         }
         return key;
     }
-    getactulequipmentbyid(projectid, equipmentid) {
+    getactualequipmentbyid(projectid, equipmentid) {
         const pm = new PM();
         const equipments = pm.getactualequipmentbyproject.call(this, projectid);
         let myequipment = false;

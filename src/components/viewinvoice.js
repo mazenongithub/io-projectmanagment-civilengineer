@@ -684,9 +684,9 @@ class ViewInvoice extends Component {
                                 let amount = (calculatetotalhours(item.timeout, item.timein) * item.laborrate * (1 + (Number(item.profit) / 100))) - pm.sumOfTransfersByLaborID.call(this,item.laborid)
                                 if(amount > 0) {
                                 const transfers = this.createLaborTransfers(item.providerid, amount);
-                                const mylabor = pm.getactullaborbyid.call(this, myproject.projectid, item.laborid)
+                                const mylabor = pm.getactuallaborbyid.call(this, myproject.projectid, item.laborid)
                                 if (mylabor) {
-                                    const j = pm.getactullaborkeybyid.call(this, myproject.projectid, item.laborid)
+                                    const j = pm.getactuallaborkeybyid.call(this, myproject.projectid, item.laborid)
                                     myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers = [...myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers, ...transfers]
 
                                 }
@@ -699,7 +699,7 @@ class ViewInvoice extends Component {
                                 let created = getMyCurrentTime()
                                 if(amount > 0) {
                                 let transfer = createTransfer(makeID(16), created, amount, item.accountid)
-                                const mymaterial = pm.getactulmaterialsbyid.call(this, myproject.projectid, item.materialid)
+                                const mymaterial = pm.getactualmaterialbyid.call(this, myproject.projectid, item.materialid)
                                 if (mymaterial) {
                                     const l = pm.getactualmaterialskeybyid.call(this, myproject.projectid, item.materialid)
                                     myuser.projects.myproject[i].actualmaterials.mymaterial[l].scheduletransfers.push(transfer)
@@ -714,9 +714,9 @@ class ViewInvoice extends Component {
                                 let created = getMyCurrentTime()
                                 if(amount > 0) {
                                 let transfer = createTransfer(makeID(16), created, amount, item.accountid)
-                                const myequiupment = pm.getactulequipmentbyid.call(this, myproject.projectid, item.equipmentid)
+                                const myequiupment = pm.getactualequipmentbyid.call(this, myproject.projectid, item.equipmentid)
                                 if (myequiupment) {
-                                    const m = pm.getactulequipmentkeybyid.call(this, myproject.projectid, item.equipmentid)
+                                    const m = pm.getactualequipmentkeybyid.call(this, myproject.projectid, item.equipmentid)
                                     myuser.projects.myproject[i].actualequipment.myequipment[m].scheduletransfers.push(transfer)
                                 }
 
@@ -727,7 +727,7 @@ class ViewInvoice extends Component {
                         })
 
                         this.props.reduxUser(myuser)
-                        this.setState({ render: 'render' })
+                   
 
 
                     }
@@ -840,9 +840,13 @@ class ViewInvoice extends Component {
         const myproject = pm.getproject.call(this);
         const viewinvoice = new ViewInvoice();
         const validate = this.validateBalanceAvailable();
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+
         if(validate) {
 
         if (myproject) {
+            const i = pm.getprojectkeybyid.call(this,myproject.projectid)
 
             try {
 
@@ -850,12 +854,66 @@ class ViewInvoice extends Component {
                 this.setState({ spinner: true })
                 const invoice = this.getSettledInvoice()
                 let values = { invoice }
+                console.log(values)
                 let response = await SettleInvoice(values)
                 console.log(response)
                 this.setState({ spinner: false })
-                if (response.hasOwnProperty("message")) {
-                    this.setState({ message: response.message })
+                if(response.hasOwnProperty("invoice")) {
+
+                    if(response.invoice.hasOwnProperty("labor")) {
+                        // eslint-disable-next-line
+                        response.invoice.labor.map(mylabor=> {
+
+                            const getlabor = pm.getactuallaborbyid.call(this, myproject.projectid, mylabor.laborid)
+                            if(getlabor) {
+                                console.log(getlabor)
+                            const j = pm.getactuallaborkeybyid.call(this, myproject.projectid, mylabor.laborid)
+                          
+                             myuser.projects.myproject[i].actuallabor.mylabor[j].scheduletransfers = mylabor.scheduletransfers
+
+
+                            }
+
+
+                        })
+
+
+                    }
+
+
+                    if(response.invoice.hasOwnProperty("materials")) {
+                        // eslint-disable-next-line
+                        response.invoice.materials.map(mymaterial=> {
+
+                            const getmaterial = pm.getactualmaterialbyid.call(this,myproject.projectid, mymaterial.materialid)
+                            if(getmaterial) {
+                                const k = pm.getactualmaterialskeybyid.call(this,myproject.projectid, mymaterial.materialid)
+                                myuser.projects.myproject[i].actualmaterials.mymaterial[k].scheduletranfers = mymaterial.scheduletransfers
+                            }
+
+                        })
+                    }
+
+                    if(response.invoice.hasOwnProperty("equipment")) {
+                        // eslint-disable-next-line
+                        response.invoice.equipment.map(equipment=> {
+                            const getequipment = pm.getactualequipmentbyid.call(this,myproject.projectid,equipment.equipmentid)
+                            if(getequipment) {
+                                const l = pm.getactualequipmentkeybyid.call(this,myproject.projectid,equipment.equipmentid)
+                                myuser.projects.myproject[i].actualequipment.myequipment[l].scheduletransfers = equipment.scheduletransfers
+                            }
+                        })
+                       
+                    }
+
+                    this.props.reduxUser(myuser)
                 }
+                let message = "";
+                if (response.hasOwnProperty("message")) {
+                   message = response.message
+                }
+                this.setState({message})
+            
             } catch (err) {
                 this.setState({ spinner: false })
                 alert(err)
@@ -876,6 +934,9 @@ class ViewInvoice extends Component {
        let message = `You currently do not have balance to settle invoice You have $${Number(balanceavail).toFixed(2)} and you owe $${Number(amountowed).toFixed(2)}`;
        this.setState({message})
     }
+
+}
+
 
     }
 
