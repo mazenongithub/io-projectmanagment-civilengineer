@@ -7,14 +7,49 @@ import './header.css'
 
 
 class Header {
+    handleProjects() {
+        const pm = new PM();
+        const navigation = pm.getnavigation.call(this)
+        if (navigation) {
+            navigation.show = "projects"
+        }
+        this.props.reduxNavigation(navigation)
+        this.setState({ render: 'render' })
 
+    }
 
+    handlemenu() {
+        const pm = new PM();
+        const navigation = pm.getnavigation.call(this)
+        let position = 'open'
+        if (navigation.hasOwnProperty("position")) {
+            position = navigation.position;
+        }
+        if (position === 'open') {
+
+            navigation.position = 'closed'
+
+        } else if (position === 'closed') {
+
+            navigation.position = 'open'
+
+        }
+
+        this.props.reduxNavigation(navigation);
+        this.setState({ render: 'render' })
+    }
 
     showmenu() {
         const styles = MyStylesheet();
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         const headerFont = pm.getHeaderFont.call(this)
+        const navigation = pm.getnavigation.call(this)
+        const header = new Header();
+        let position = 'open'
+        if (navigation.hasOwnProperty("position")) {
+            position = navigation.position;
+        }
 
         const link_1 = (myuser) => {
             if (myuser) {
@@ -33,7 +68,8 @@ class Header {
 
         const link_2 = (myuser) => {
             if (myuser) {
-                return (<Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} to={`/${myuser.providerid}/myprojects`}>  /myprojects  </Link>);
+                return (<Link onClick={() => { header.handleProjects.call(this) }}
+                    style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} to={`/${myuser.providerid}/projects`}>  /projects  </Link>);
             } else {
                 return (<Link to="/providers/register" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> /register </Link>);
             }
@@ -52,21 +88,21 @@ class Header {
         }
 
         const getbutton = () => {
-            if (this.state.menu === 'closed') {
-                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { this.setState({ menu: 'open' }) }}>{launchIcon()}</button>)
+            if (position === 'closed') {
+                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { header.handlemenu.call(this) }}>{launchIcon()}</button>)
             }
 
         }
 
         const getcloseIcon = () => {
-            if (this.state.menu === 'open') {
-                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { this.setState({ menu: 'closed' }) }}>{closeIcon()}</button>)
+            if (position === 'open') {
+                return (<button style={{ ...styles.generalButton, ...launchwidth() }} onClick={() => { header.handlemenu.call(this) }}>{closeIcon()}</button>)
 
             }
         }
 
         const smalllinks = (myuser) => {
-            if (this.state.menu === 'open') {
+            if (position === 'open') {
                 return (
                     <div style={{ ...styles.generalContainer }}>
                         <div style={{ ...styles.generalContainer, ...styles.topHeader, ...styles.bottomMargin15, ...styles.showBorder }}>{link_1(myuser)}</div>
@@ -116,6 +152,49 @@ class Header {
 
     } // end show menu
 
+    subHeader() {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        const headerFont = pm.getHeaderFont.call(this)
+        const styles = MyStylesheet();
+        if (myuser) {
+            return (
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter}}>
+                    <Link
+                        to={`/${myuser.profile}/profile`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /{myuser.profile}</Link>
+                </div>)
+        }
+
+    }
+
+    projectsHeader() {
+        const pm = new PM();
+        const navigation = pm.getnavigation.call(this)
+        const styles = MyStylesheet();
+        const myuser = pm.getuser.call(this)
+        const headerFont = pm.getHeaderFont.call(this)
+        if(myuser) {
+        if(navigation.hasOwnProperty("show")) {
+            const show = navigation.show;
+            switch (show) {
+                case "projects":
+                    return( 
+                        <div style={{ ...styles.generalContainer, ...styles.alignCenter}}>
+                            <Link
+                                to={`/${myuser.profile}/projects`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /projects </Link>
+                        </div>)
+          
+                 
+
+
+                default:
+                    break;
+            }
+        }
+
+    }
+    }
+
 
 
     showheader() {
@@ -153,7 +232,11 @@ class Header {
 
                 {header.showmenu.call(this)}
 
-     
+                {header.subHeader.call(this)}
+
+                {header.projectsHeader.call(this)}
+
+
 
 
             </div>

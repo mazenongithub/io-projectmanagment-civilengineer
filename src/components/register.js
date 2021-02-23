@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './register.css';
 import './svg/svg.css';
-import * as actions from './actions';
-import { connect } from 'react-redux';
 import 'firebase/auth';
 import Profile from './profile';
 import ProviderID from './providerid';
@@ -10,49 +8,17 @@ import ClientID from './clientid';
 import PM from './pm';
 //import Profile from './profile';
 import { MyStylesheet } from './styles'
-class Register extends Component {
+class Register {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            profilecheck: false,
-            client: '',
-            clientid: '',
-            firstname: '',
-            lastname: '',
-            emailaddress: '',
-            profileurl: '',
-            phonenumber: '',
-            emailaddresscheck: false,
-            profile: '',
-            password: '',
-            passwordcheck: false,
-            register:true,
-            login:false
-        }
-        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-    }
-    componentDidMount() {
-        this.updateWindowDimensions();
-        window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxNavigation({ navigation: "register" })
-    }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.updateWindowDimensions);
-    }
-
-    updateWindowDimensions() {
-        this.setState({ width: window.innerWidth, height: window.innerHeight });
-    }
-
-    render() {
+    showRegister() {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this);
         const regularFont = pm.getRegularFont.call(this);
         const clientid = new ClientID();
         const providerid = new ProviderID();
+        const profile = new Profile();
 
         const showclientid = () => {
 
@@ -82,13 +48,12 @@ class Register extends Component {
                         {this.state.message}
                     </div>
 
-
                 </div>
             </div>)
         }
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            return (<Profile />)
+            return (profile.showProfile.call(this))
         } else {
             return (Register())
         }
@@ -96,14 +61,6 @@ class Register extends Component {
 
     }
 }
-function mapStateToProps(state) {
-    return {
-        myusermodel: state.myusermodel,
-        navigation: state.navigation,
-        project: state.project,
-        allusers: state.allusers,
-        allcompanys: state.allcompanys
-    }
-}
 
-export default connect(mapStateToProps, actions)(Register);
+
+export default Register;

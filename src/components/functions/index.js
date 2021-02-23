@@ -2872,16 +2872,15 @@ export function CreateBidScheduleItem(csiid, unit, quantity) {
 }
 
 export function validateTitle(value) {
-    const reg_ex = /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,58}(?:[A-Za-z0-9_]))?)$/
-    const test = reg_ex.test(value);
     value = value.trim();
-    let errmsg = false;
+    const reg_ex =  /^[ a-zA-Z0-9_-]*$/
+    const test = reg_ex.test(value);
+    let errmsg = "";
     if (!value) {
         errmsg = " Project Title is missing ";
-
     }
-    else if (value.length > 60) {
-        errmsg = " Title should be less than 60 chars ";
+    else if (value.length > 45) {
+        errmsg = " Title Limit is 45 chars ";
     }
     else if (!test) {
         errmsg = ` Invalid URL / format check your value: ${value} `;

@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import './profile.css';
 //import { getstatelist } from './functions'
 //import { UploadProfileImage } from './actions/api';
 import { folderIcon, scrollImageDown, purpleCheck } from './svg'
-import * as actions from './actions';
 import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
 import { returnCompanyList, inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
@@ -12,22 +10,8 @@ import { CheckProfile } from './actions/api';
 import {Link} from 'react-router-dom';
 import PM from './pm'
 
-class Profile extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { render: '', width: 0, height: 0, message: '', showpassword: false, password: '', passwordcheck: false, spinner:false }
-        this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
-    }
-    componentDidMount() {
-        window.addEventListener('resize', this.updateWindowDimensions);
-        this.updateWindowDimensions();
-    }
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.updateWindowDimensions);
-    }
-    updateWindowDimensions() {
-        this.setState({ width: window.innerWidth, height: window.innerHeight });
-    }
+class Profile {
+  
     getHeaderFont() {
         const styles = MyStylesheet();
         if (this.state.width > 800) {
@@ -125,12 +109,14 @@ class Profile extends Component {
     }
     showprofileurl() {
         const styles = MyStylesheet();
-        const regularFontHeight = this.getRegularFont();
+        const pm = new PM();
+        const regularFontHeight = pm.getRegularFont.call(this)
+        const profile = new Profile()
         if (this.state.width > 800) {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
                     Profile URL <input type="text" style={{ ...styles.addLeftMargin, ...styles.regularFont, ...regularFontHeight, ...styles.generalField }}
-                        value={this.getprofileurl()}
+                        value={profile.getprofileurl.call(this)}
 
                     />
 
@@ -142,7 +128,7 @@ class Profile extends Component {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight }}>
                     Profile URL <br /> <input type="text" style={{ ...styles.regularFont, ...regularFontHeight, ...styles.generalField }}
-                        value={this.getprofileurl()}
+                        value={profile.getprofileurl.call(this)}
                     />
                 </div>
 
@@ -150,15 +136,8 @@ class Profile extends Component {
 
         }
     }
-    getclientmessage() {
-        let user = this.getuser();
-        if (user) {
-            return `Your Profile is connected with ${user.client}`
-        } else {
-            return;
-        }
-    }
-    getfirstname() {
+    
+  getfirstname() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
         return myuser.firstname;
@@ -353,9 +332,10 @@ class Profile extends Component {
     showlogininfo() {
         const pm = new PM();
         const styles = MyStylesheet();
-        const regularFontHeight = this.getRegularFont();
+        const regularFontHeight = pm.getRegularFont.call(this)
         const myuser = pm.getuser.call(this);
         const goIcon = pm.getGoIcon.call(this)
+        const profile = new Profile();
         const emailicon = () => {
             if (!myuser.hasOwnProperty("invalidemail") && myuser.emailaddress) {
             return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
@@ -368,12 +348,12 @@ class Profile extends Component {
 
 
                 <div style={{ ...styles.generalFlex, ...styles.addPadding }}>
-                    <div style={{ ...styles.flex5, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
-                        Email <br />
+                    <div style={{ ...styles.flex5, ...styles.addMargin }}>
+                       <span style={{...styles.regularFont, ...regularFontHeight}}> Email</span> <br />
                         <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
-                            value={this.getemailaddress()}
-                            onChange={event => { this.handleemailaddress(event.target.value) }}
-                            onBlur={() => { this.checkemailaddress() }}
+                            value={profile.getemailaddress.call(this)}
+                            onChange={event => { profile.handleemailaddress.call(this,event.target.value) }}
+                            onBlur={() => { profile.checkemailaddress.call(this) }}
                         />
                     </div>
 
@@ -388,7 +368,9 @@ class Profile extends Component {
     }
     showadditional() {
         const styles = MyStylesheet();
-        const regularFontHeight = this.getRegularFont();
+        const pm = new PM();
+        const regularFontHeight = pm.getRegularFont.call(this)
+        const profile = new Profile();
         return (<div style={{ ...styles.generalFlex }}>
             <div style={{ ...styles.flex1 }}>
 
@@ -396,15 +378,15 @@ class Profile extends Component {
                     <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         First Name <br />
                         <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
-                            value={this.getfirstname()}
-                            onChange={event => { this.handlefirstname(event.target.value) }}
+                            value={profile.getfirstname.call(this)}
+                            onChange={event => { profile.handlefirstname.call(this,event.target.value) }}
                         />
                     </div>
                     <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         Last Name <br />
                         <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
-                            value={this.getlastname()}
-                            onChange={event => { this.handlelastname(event.target.value) }}
+                            value={profile.getlastname.call(this)}
+                            onChange={event => { profile.handlelastname.call(this,event.target.value) }}
                         />
                     </div>
                 </div>
@@ -415,8 +397,8 @@ class Profile extends Component {
                     <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFontHeight, ...styles.addMargin }}>
                         Phone Number <br />
                         <input type="text" style={{ ...styles.generalField, ...styles.regularFont, ...regularFontHeight }}
-                            value={this.getphonenumber()}
-                            onChange={event => { this.handlephonenumber(event.target.value) }}
+                            value={profile.getphonenumber.call(this)}
+                            onChange={event => { profile.handlephonenumber.call(this,event.target.value) }}
                         />
                     </div>
                 </div>
@@ -497,7 +479,7 @@ class Profile extends Component {
 
         }
     }
-    render() {
+    showProfile() {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this);
@@ -507,6 +489,7 @@ class Profile extends Component {
         const arrowHeight = pm.getArrowHeight.call(this);
         const goIcon = pm.getGoIcon.call(this);
         const myuser = pm.getuser.call(this)
+        const profile = new Profile();
 
         const showButton = () => {
 
@@ -528,9 +511,9 @@ class Profile extends Component {
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
                             /<input type="text" value={myuser.profile}
-                                onChange={event => { this.handleprofile(event.target.value) }}
+                                onChange={event => { profile.handleprofile.call(this,event.target.value) }}
                                 style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
-                                onBlur={event => { this.checkprofile(event.target.value) }}
+                                onBlur={event => { profile.checkprofile.call(this,event.target.value) }}
                             /> {showButton()}
                         </div>
                     </div>
@@ -539,28 +522,28 @@ class Profile extends Component {
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex2 }}>
                             <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.margin10, ...styles.alignRight }}>
-                                {this.showprofileimage()}
+                                {profile.showprofileimage.call(this)}
                             </div>
                         </div>
                         <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
                             <input type="file" id="profile-image" />
-                            <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { this.uploadprofileimage() }}>
+                            <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { profile.uploadprofileimage.call(this) }}>
                                 {folderIcon()}
                             </button>
                         </div>
                     </div>
 
-                    {this.showprofileurl()}
+                    {profile.showprofileurl.call(this)}
 
                     <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
-                            Login Info <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
+                        <div style={{ ...styles.flex1}}>
+                           <span style={{...regularFont, ...styles.generalFont }}> Login Info</span> <button style={{ ...styles.generalButton, ...styles.addLeftMargin, ...arrowHeight }}>
                                 {scrollImageDown()}
                             </button>
                         </div>
                     </div>
 
-                    {this.showlogininfo()}
+                    {profile.showlogininfo.call(this)}
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.regularFont, ...regularFont }}>
@@ -570,7 +553,7 @@ class Profile extends Component {
                         </div>
                     </div>
 
-                    {this.showadditional()}
+                    {profile.showadditional.call(this)}
 
                     {pm.showsaveproject.call(this)}
 
@@ -589,14 +572,6 @@ class Profile extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        myusermodel: state.myusermodel,
-        projects: state.projects,
-        projectsprovider: state.projectsprovider,
-        projectid: state.projectid,
-        searchproviders: state.searchproviders
-    }
-}
 
-export default connect(mapStateToProps, actions)(Profile)
+
+export default Profile

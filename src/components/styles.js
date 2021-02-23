@@ -41,6 +41,9 @@ export function MyStylesheet() {
         bottomMargin15: {
             marginBottom: '15px',
         },
+        bottomMargin10: {
+            marginBottom: '10px',
+        },
         generalContainer: {
             fontFamily: "'Nunito Sans', sans-serif"
         },
@@ -95,6 +98,12 @@ export function MyStylesheet() {
             borderRadius:'5px',
             borderColor:'#01000D',
             padding:'5px'    
+        },
+        generalTable:{
+            borderCollapse: 'collapse'
+        },
+        marginRight30:{
+            marginRight:'30px'
         },
         marginLeft30:{
             marginLeft:'30px'
@@ -152,6 +161,9 @@ export function MyStylesheet() {
         },
         flex1: {
             flex: 1,
+        },
+        noBorder:{
+            border:'none'
         },
         generalLink: {
             textDecoration: 'none',

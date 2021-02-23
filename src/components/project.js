@@ -5,6 +5,7 @@ import { MyStylesheet } from './styles';
 import PM from './pm';
 import { TouchIcon } from './svg';
 import {Link} from 'react-router-dom';
+import ProjectID from './projectid'
 
 class Project extends Component {
   constructor(props) {
@@ -43,7 +44,7 @@ class Project extends Component {
     const pm = new PM();
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     const touchIcon = pm.gettouchicon.call(this)
     let activebackground = pm.getactiveprojectbackground.call(this, projectid)
     if (myproject.projectid === projectid) {
@@ -62,10 +63,10 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+      const myproject = pm.getproject.call(this)
       if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
-        myuser.projects.myproject[i].scope = scope;
+        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
+        myuser.projects[i].scope = scope;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
@@ -76,7 +77,7 @@ class Project extends Component {
   }
   getscope() {
     let pm = new PM();
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     if (myproject) {
       return (myproject.scope)
     } else {
@@ -87,10 +88,10 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+      const myproject = pm.getproject.call(this)
       if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
-        myuser.projects.myproject[i].address = address;
+        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
+        myuser.projects[i].address = address;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
@@ -101,7 +102,7 @@ class Project extends Component {
   }
   getaddress() {
     let pm = new PM();
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     if (myproject) {
       return (myproject.address)
     } else {
@@ -113,10 +114,10 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+      const myproject = pm.getproject.call(this)
       if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
-        myuser.projects.myproject[i].city = city;
+        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
+        myuser.projects[i].city = city;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
@@ -127,7 +128,7 @@ class Project extends Component {
   }
   getcity() {
     let pm = new PM();
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     if (myproject) {
       return (myproject.city)
     } else {
@@ -138,10 +139,10 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+      const myproject = pm.getproject.call(this)
       if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
-        myuser.projects.myproject[i].projectstate = projectstate;
+        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
+        myuser.projects[i].projectstate = projectstate;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
@@ -152,7 +153,7 @@ class Project extends Component {
   }
   getprojectstate() {
     let pm = new PM();
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     if (myproject) {
       return (myproject.projectstate)
     } else {
@@ -163,10 +164,10 @@ class Project extends Component {
     const pm = new PM();
     const myuser = pm.getuser.call(this);
     if (myuser) {
-      const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+      const myproject = pm.getproject.call(this)
       if (myproject) {
-        let i = pm.getactiveprojectkey.call(this);
-        myuser.projects.myproject[i].zipcode = zipcode;
+        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
+        myuser.projects[i].zipcode = zipcode;
         this.props.reduxUser(myuser)
         this.setState({ render: 'render' })
 
@@ -177,7 +178,7 @@ class Project extends Component {
   }
   getzipcode() {
     let pm = new PM();
-    let myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+    let myproject = pm.getproject.call(this)
     if (myproject) {
       return (myproject.zipcode)
     } else {
@@ -186,7 +187,7 @@ class Project extends Component {
   }
   showprojectform() {
     const pm = new PM();
-    const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+    const myproject = pm.getproject.call(this);
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
     if (myproject) {
@@ -250,6 +251,7 @@ class Project extends Component {
     const regularFont = pm.getRegularFont.call(this)
     const myuser = pm.getuser.call(this)
     const headerFont = pm.getHeaderFont.call(this)
+    const projectid = new ProjectID();
     if(myuser) {
       const project = pm.getproject.call(this)
       if(project) {
@@ -258,14 +260,7 @@ class Project extends Component {
       <div style={{ ...styles.generalFlex }}>
         <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
 
-            <div style={{ ...styles.generalContainer,  ...styles.alignCenter }}>
-              <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
-            </div>
-
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
-            </div>
-
+      
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
               <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
             </div>
@@ -275,7 +270,7 @@ class Project extends Component {
 
           {pm.showsaveproject.call(this)}
 
-          {pm.showprojectid.call(this)}
+          {projectid.showprojectid.call(this)}
 
         </div>
       </div>)
@@ -303,8 +298,8 @@ function mapStateToProps(state) {
   return {
     myusermodel: state.myusermodel,
     navigation: state.navigation,
-    project: state.project,
-    allusers: state.allusers,
+    csis: state.csis,
+    allusers:state.allusers
   }
 }
 

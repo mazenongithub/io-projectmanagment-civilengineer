@@ -1033,6 +1033,22 @@ class PM {
         }
         return charges;
     }
+    getcompanybyid(companyid) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        let getcompany = false;
+        if(myuser) {
+            if(myuser.hasOwnProperty("companys")) {
+                myuser.companys.map(company=> {
+                    if(company.companyid === companyid) {
+                        getcompany = company;
+                    }
+                })
+                
+            }
+        }
+        return getcompany;
+    }
 
     showlinedetail() {
         const pm = new PM();
@@ -1169,12 +1185,15 @@ class PM {
         return responsiveLayouts();
 
     }
+ 
+
+
     getproposals() {
         const pm = new PM();
         let proposals = false;
         const myproject = pm.getproject.call(this);
         if (myproject.hasOwnProperty("proposals")) {
-            proposals = myproject.proposals.myproposal;
+            proposals = myproject.proposals;
         }
         return proposals;
     }
@@ -1187,6 +1206,31 @@ class PM {
         }
         return invoices;
     }
+
+    touchtoedit() {
+
+        if (this.state.width > 1200) {
+            return ({ width: '80px' })
+        } else {
+            return ({ width: '60px' })
+        }
+    }
+
+
+    getButtonSize() {
+        if (this.state.width > 1200) {
+            return ({ width: '60px' })
+
+        } else if (this.state.width > 600) {
+            return ({ width: '50px' })
+
+        } else {
+            return ({ width: '40px' })
+
+        }
+    }
+
+
     getnavigation() {
         let navigation = false;
         if (this.props.navigation) {
@@ -1753,19 +1797,45 @@ class PM {
         }
         return employees;
     }
-    getproposalbyid(proposalid) {
+
+    getcompany() {
+        const pm = new PM();
+        let getcompany = false;
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            if(myuser.hasOwnProperty("companys")) 
+                myuser.companys.map(company=> {
+                    if(company.url === this.props.match.params.url) {
+                        getcompany = company;
+                    }
+                })
+
+            }
+        
+        return getcompany;
+
+    }
+
+    getproposalbyid(url) {
         let proposal = false;
         const pm = new PM();
-        const myproject = pm.getproject.call(this);
-        if (myproject.hasOwnProperty("proposals")) {
+        const proposals = pm.getproposals.call(this)
+        const company = pm.getcompany.call(this)
+        if(company) {
+        if (proposals) {
             // eslint-disable-next-line
-            myproject.proposals.myproposal.map(myproposal => {
-                if (myproposal.proposalid === proposalid) {
+           proposals.map(myproposal => {
+    
+                if (myproposal.companyid === company.companyid) {
                     proposal = myproposal;
                 }
             })
         }
+
+    }
+  
         return proposal;
+
     }
     showbidtable() {
 
@@ -1776,7 +1846,7 @@ class PM {
 
         if (this.state.width > 1200) {
             return (
-                <table width="100%" border="1" style={{ ...regularFont, ...styles.generalFont, ...styles.bottomMargin15 }}>
+                <table width="100%" border="1" style={{ ...regularFont, ...styles.generalFont, ...styles.bottomMargin15, ...styles.generalTable, ...styles.topMargin15 }}>
                     <tbody>
                         <tr>
                             <td width="24%" style={{ ...styles.alignCenter }}>Line ID</td>
@@ -1794,7 +1864,7 @@ class PM {
             )
         } else {
             return (
-                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15,...styles.topMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
 
                         {this.showbiditems()}
@@ -1991,7 +2061,7 @@ class PM {
         let myuser = pm.getuser.call(this);
         if (myuser) {
             if (myuser.hasOwnProperty("projects")) {
-                projects = myuser.projects.myproject;
+                projects = myuser.projects;
             }
         }
         return projects;
@@ -2059,10 +2129,12 @@ class PM {
     }
 
     getremoveicon() {
-        if (this.state.width > 800) {
-            return ({ width: '36px', height: '36px' })
+        if (this.state.width > 1200) {
+            return ({ width: '46px', height: 'auto' })
+        } else if (this.state.width>600) {
+            return ({ width: '36px', height: 'auto' })
         } else {
-            return ({ width: '24px', height: '24px' })
+            return ({ width: '26px', height: 'auto' })
         }
     }
     getteamprofile() {
@@ -2418,6 +2490,30 @@ class PM {
                     height: '145px'
                 })
         }
+    }
+    getproposal() {
+        let proposal = false;
+        const pm = new PM();
+        const company = pm.getcompany.call(this)
+        if (company) {
+            const companyid = company.companyid;
+            const project = pm.getproject.call(this);
+            if (project) {
+
+                if (project.hasOwnProperty("proposals")) {
+                    // eslint-disable-next-line
+                    project.proposals.map((myproposal, i) => {
+                        if (myproposal.companyid === companyid) {
+                            proposal = myproposal;
+                        }
+                    })
+                }
+
+            }
+
+        }
+        return proposal;
+
     }
     showsaveproject() {
         const pm = new PM();

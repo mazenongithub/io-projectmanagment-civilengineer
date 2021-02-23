@@ -1,6 +1,7 @@
 import React from 'react';
 import { MyStylesheet } from './styles'
 import PM from './pm'
+import Profile from './profile'
 
 class Landing  {
     showslide(slide) {
@@ -62,7 +63,12 @@ class Landing  {
         const landing = new Landing();
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
+        const profile = new Profile();
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            return(profile.showProfile.call(this))
 
+        } else {
         const myslide = () => {
             if(this.state.activeslideid) {
             return(pm.getslidebyid.call(this,this.state.activeslideid))
@@ -128,6 +134,8 @@ class Landing  {
                 </div>
             </div>
         )
+
+        }
     }
 }
 

@@ -12,7 +12,7 @@ class MakeID {
                 projectid = makeID(16);
                 if (myuser.hasOwnProperty("projects")) {
                     // eslint-disable-next-line
-                    myuser.projects.myproject.map(myproject => {
+                    myuser.projects.map(myproject => {
                         if (myproject.projectid === projectid) {
                             projectid = false;
                         }
@@ -32,7 +32,7 @@ class MakeID {
             if (myuser) {
                 if (myuser.hasOwnProperty("projects")) {
                     // eslint-disable-next-line
-                    myuser.projects.myproject.map(myproject => {
+                    myuser.projects.map(myproject => {
                         if (myproject.hasOwnProperty("projectmilestones")) {
                             // eslint-disable-next-line
                             myproject.projectmilestones.mymilestone.map(mymilestone => {

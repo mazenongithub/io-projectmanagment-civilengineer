@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import { inputUTCStringForLaborID } from './functions'
 import PM from './pm';
+import ProjectID from './projectid';
 
 class Proposals extends Component {
     constructor(props) {
@@ -35,26 +36,12 @@ class Proposals extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
-        const myprovider = pm.getproviderbyid.call(this, myproposal.providerid)
-        const providerid = this.props.match.params.providerid;
-        const projectid = this.props.match.params.projectid;
+        const company = pm.getcompanybyid.call(this,myproposal.companyid)
+       
         const proposalid = myproposal.proposalid;
 
+        const lastupdated = myproposal.updated ? <span>Last Updated {inputUTCStringForLaborID(myproposal.updated)}</span> : <span>&nbsp;</span>
        
-        const handlemyprovider = () => {
-            if (myprovider) {
-                return (`by ${myprovider.firstname} ${myprovider.lastname}`)
-            } else {
-                return;
-            }
-        }
-        const lastupdated = () => {
-            if(myproposal.updated) {
-                return(<span>Last Updated {inputUTCStringForLaborID(myproposal.updated)}</span>)
-            } else {
-                return (<span>&nbsp;</span>)
-            }
-        }
         const lastapproved= () => {
             if(myproposal.approved) {
                 return(<span>Last Approved ${inputUTCStringForLaborID(myproposal.approved)}`</span>)
@@ -63,9 +50,15 @@ class Proposals extends Component {
             }
         }
 
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            const project = pm.getproject.call(this)
+
         return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
-            <Link to={`/${providerid}/myprojects/${projectid}/proposals/${proposalid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> ProposalID {proposalid} {lastupdated()} {lastapproved()} {handlemyprovider()} </Link>
+           <span style={{...regularFont, ...styles.generalFont}}> </span><Link to={`/${myuser.profile}/projects/${project.title}/proposals/${company.url}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> Proposal By:{company.company} {lastupdated} {lastapproved()} </Link>
         </div>)
+
+        }
     }
     showproposals() {
         let pm = new PM();
@@ -74,7 +67,9 @@ class Proposals extends Component {
         if (myproposals) {
             // eslint-disable-next-line
             myproposals.map(myproposal => {
+
                 proposals.push(this.showproposal(myproposal))
+            
             })
 
         }
@@ -86,6 +81,7 @@ class Proposals extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
         if(myuser) {
             const project = pm.getproject.call(this)
             if(project) {
@@ -98,20 +94,16 @@ class Proposals extends Component {
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/proposals`}>  /proposals </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/proposals`}>  /proposals </Link>
                             </div>
 
                     {this.showproposals()}
 
-                    {pm.showprojectid.call(this)}
+                    {projectid.showprojectid.call(this)}
 
                 </div>
             </div>)
@@ -131,9 +123,8 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
-        project: state.project,
-        allusers: state.allusers,
-        allcompanys: state.allcompanys
+        csis: state.csis,
+        allusers: state.allusers
     }
 }
 export default connect(mapStateToProps, actions)(Proposals)
