@@ -27,4 +27,11 @@
 .cls-1{fill:#fff;}.cls-1,.cls-2{stroke:#231f20;stroke-miterlimit:10;}.cls-2{fill:#949494;}
 .touchtoedit-1{fill:#e3e3e3;}.touchtoedit-1,.touchtoedit-6,.touchtoedit-7,.touchtoedit-9{stroke:#000;stroke-miterlimit:10;}.touchtoedit-2{font-size:8px;font-family:NunitoSans-Regular, Nunito Sans;}.touchtoedit-3{letter-spacing:-0.07em;}.touchtoedit-4{letter-spacing:-0.01em;}.touchtoedit-5{letter-spacing:0em;}.touchtoedit-6{fill:#ffe0b5;}.touchtoedit-6,.touchtoedit-7{stroke-width:0.75px;}.touchtoedit-7,.touchtoedit-9{fill:none;}.touchtoedit-8{fill:#f9efd8;}
 .gotoicon-1{fill:#8C1837;stroke:#000;stroke-miterlimit:10;stroke-width:0.5px;}
+.milestonediagram-1{font-size:36px;font-family:NunitoSans-Regular, Nunito Sans;}
+.milestonediagram-2{letter-spacing:0em;}.milestonediagram-3,.milestonediagram-6{fill:none;}
+.milestonediagram-3{stroke:blue;stroke-width:10px;}
+.milestonediagram-3,.milestonediagram-4,.milestonediagram-5,.milestonediagram-6{stroke-miterlimit:10;}
+.milestonediagram-4{fill:lime;}
+.milestonediagram-4,.milestonediagram-5,.milestonediagram-6{stroke:#000;}
+.milestonediagram-5{fill:#f0f;}
 @media screen and (min-width:1081px) {}

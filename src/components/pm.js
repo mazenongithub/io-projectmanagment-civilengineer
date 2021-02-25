@@ -313,34 +313,7 @@ class PM {
                         // eslint-disable-next-line
                         Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
 
-                            const milestone_2 = getmilestonebyid(paths, prop)
-                            let params = {};
-                            let params_2 = {};
-                            if (milestone_2) {
-
-                                if (scale === 'month') {
-                                    params = calculatemonth(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                    params_2 = calculatemonth(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
-                                } else if (scale === 'year') {
-                                    params = calculateyear(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                    params_2 = calculateyear(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
-                                } else if (scale === 'day') {
-                                    params = calculateday(projectinterval.start, projectinterval.completion, paths[milestoneid]['start'], paths[milestoneid]['completion'])
-                                    params_2 = calculateday(projectinterval.start, projectinterval.completion, milestone_2['start'], milestone_2['completion'])
-                                }
-                            }
-                            const y1 = 80 + 100 * (pm.getmilestonekeybyid.call(this, milestoneid));
-                            const y2 = 80 + 100 * (pm.getmilestonekeybyid.call(this, prop));
-                            let x1 = "";
-                            if (paths[milestoneid].paths[prop].type === 'start-to-finish') {
-                                x1 = params.xo + params.width;
-                            } else if (paths[milestoneid].paths[prop].type === 'start-to-start') {
-                                x1 = params.xo;
-                            }
-                            paths[milestoneid].paths[prop]['x1'] = x1;
-                            paths[milestoneid].paths[prop]['y1'] = y1
-                            paths[milestoneid].paths[prop]['y2'] = y2
-                            paths[milestoneid].paths[prop]['x2'] = params_2.xo
+                          
                             paths[milestoneid].paths[prop]['float'] = 'float';
 
 
@@ -567,7 +540,7 @@ class PM {
                         const enddate = getDateTime(pm.getmilestonebyid.call(this, predessor.predessor).completion)
 
                         if (startdate >= enddate && checklag(startdate, enddate, i, lag)) {
-                            lag = Math.round((startdate - enddate) * (1 / (1000 * 60 * 60 * 24)))
+                            lag = Math.round((startdate - enddate) * (1 / (1000 * 60 * 60 * 24))) - 1
                         }
 
                     })
@@ -581,6 +554,7 @@ class PM {
     getfloatbymilestoneid(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
+        console.log(paths)
         let float = 0;
         let i = 0;
         for (let mypath in paths[milestoneid]['paths']) {
@@ -1642,6 +1616,59 @@ class PM {
         }
     }
 
+    getmilestonecoordbyid(milestoneid) {
+        const pm = new PM();
+        const milestones = pm.getmilestones.call(this)
+      
+            let getcoordinates = {};
+          let projectstart = "";
+            let projectend  = "";
+            milestones.map((milestone,i)=> {
+             const ypos=200*(i+1) + 5
+             
+             if(i === 0) {
+                projectstart = milestone.start
+             }
+              
+           
+              if(milestone.milestoneid === milestoneid) {
+                
+                getcoordinates.milestone = milestone.milestoneid
+                getcoordinates.ypos = ypos
+                getcoordinates.projectstart = projectstart
+                
+                
+              }
+              
+                if(i === milestones.length - 1) {
+               
+               getcoordinates.projectend = milestone.completion
+               
+             }
+             
+              
+            })
+            const scale = getScale(getDateInterval(getcoordinates.projectstart,getcoordinates.projectend))
+            getcoordinates.scale = scale;
+            
+            milestones.map(milestone=> {
+               const xo = 5+(getDateInterval(getcoordinates.projectstart,milestone.start)-1)*getcoordinates.scale
+               const width = (getDateInterval(milestone.start,milestone.completion))*getcoordinates.scale
+               if(milestone.milestoneid === milestoneid) {
+                  getcoordinates.xo = xo;
+                  getcoordinates.width = width
+                  getcoordinates.start = milestone.start
+                  
+                  
+                }
+              
+              
+            })
+            return getcoordinates;
+            
+            
+          
+    }
     getmilestonekeybyid(milestoneid) {
         const pm = new PM();
         let key = false;

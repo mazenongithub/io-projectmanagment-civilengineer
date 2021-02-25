@@ -55,7 +55,7 @@ class CriticalPath {
                         if (predessor) {
                             const k = pm.getpredessorkeybyid.call(this, milestone, milestoneid);
                            
-                            myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.splice(k, 1)
+                            myuser.projects[i].milestones[j].predessors.splice(k, 1)
                             this.props.reduxUser(myuser);
                             this.setState({ render: 'render' })
                         } 
@@ -173,9 +173,9 @@ class CriticalPath {
                             const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
                             const predessor = CreatePredessor(value, 'start-to-start')
                             if (milestone.hasOwnProperty("predessors")) {
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
+                                myuser.projects[i].milestones[j].predessors.push(predessor)
                             } else {
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                                myuser.projects[i].milestones[j].predessors = [predessor]
                             }
                             this.props.reduxUser(myuser);
                             this.setState({ render: 'render' })
@@ -201,7 +201,7 @@ class CriticalPath {
 
             if (myuser) {
 
-                const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                const project = pm.getproject.call(this)
                 if (project) {
                     const i = pm.getprojectkeybyid.call(this, project.projectid)
 
@@ -211,9 +211,9 @@ class CriticalPath {
                             const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
                             const predessor = CreatePredessor(value, 'start-to-finish')
                             if (milestone.hasOwnProperty("predessors")) {
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors.push(predessor)
+                                myuser.projects[i].milestones[j].predessors.push(predessor)
                             } else {
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].predessors = [predessor]
+                                myuser.projects[i].milestones[j].predessors = [predessor]
                             }
                             this.props.reduxUser(myuser);
                             this.setState({ render: 'render' })
@@ -235,51 +235,46 @@ class CriticalPath {
     showmilestones() {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this);
-        const projectinterval = pm.getprojectinterval.call(this)
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
         let mymilestones = [];
-        if (projectinterval) {
-            let ypos = 40;
-            let interval = getDateInterval(projectinterval.start, projectinterval.completion)
-            let scale = getScale(interval)
+   
+       
             if (milestones) {
                 // eslint-disable-next-line
                 milestones.map(milestone => {
-                    let params = false;
-                    if (scale === 'month') {
-
-                        params = calculatemonth(
-                            projectinterval.start,
-                            projectinterval.completion,
-                            milestone.start,
-                            milestone.completion)
-                    } else if (scale === 'year') {
-                        params = calculateyear(
-                            projectinterval.start,
-                            projectinterval.completion,
-                            milestone.start,
-                            milestone.completion)
-                    } else if (scale === 'day') {
-                        params = calculateday( projectinterval.start,
-                            projectinterval.completion,
-                            milestone.start,
-                            milestone.completion)
-                    }
-
+                  
+                    const params = pm.getmilestonecoordbyid.call(this,milestone.milestoneid)
+             
                     mymilestones.push(
                         <g key={`texdft${milestone.milestoneid}`}>
-                            <text style={{ ...regularFont, ...styles.generalFont }} x={params.xo} y={ypos - 10}> {milestone.milestone} {milestoneformatdatestring(milestone.start)} to {milestoneformatdatestring(milestone.completion)}</text>
+                            <text style={{ ...regularFont, ...styles.generalFont }} x={params.xo} y={params.ypos - 10}> {milestone.milestone} {milestoneformatdatestring(milestone.start)} to {milestoneformatdatestring(milestone.completion)}</text>
 
                         </g>)
 
                     mymilestones.push(
                         <g key={`rdfec${milestone.milestoneid}`}>
 
-                            <rect className="showmilestones-8" x={params.xo} y={ypos} width={params.width} height="40.03" />
+                            <rect className="milestonediagram-4" x={params.xo} y={params.ypos} width={params.width} height="80" />
                         </g>)
 
-                    ypos += 100;
+                        if(milestone.hasOwnProperty("predessors")) {
+
+                            mymilestones.push(<polygon className="milestonediagram-6 milestonediagram-4" points={`${params.xo} ${params.ypos} ${params.xo-18.16} ${params.ypos-10.49} ${params.xo-18.16} ${params.ypos+10.49} ${params.xo}`}/>)
+
+                            milestone.predessors.map(predessor=>{
+                                const getpredessor = pm.getmilestonecoordbyid.call(this,predessor.predessor)
+                                const yo = getpredessor.xo + getpredessor.width;
+                               
+                                mymilestones.push(<polyline className="milestonediagram-6" points={`${params.xo} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${getpredessor.ypos} `}/>)                                
+                            })
+                           
+
+                          
+                           
+                        }
+
+    
 
 
                 })
@@ -288,15 +283,16 @@ class CriticalPath {
 
             }
 
-        }
+        
 
-        return mymilestones;
+        return mymilestones.reverse();
     }
 
     showpaths() {
         const pm = new PM();
         const criticalpath = new CriticalPath();
         const paths = pm.getpaths.call(this)
+        console.log(paths)
         let getpaths = [];
 
         for(let myprop in paths) {
@@ -328,56 +324,28 @@ class CriticalPath {
         const criticalpath = new CriticalPath();
         const pm = new PM();
         const styles = MyStylesheet();
-
         const regularFont = pm.getRegularFont.call(this)
-        const milestones = pm.getmilestones.call(this);
-        let yext = 200;
-        if (milestones) {
-            if (milestones.length) {
-                yext = (100 * milestones.length) + 100;
-            }
+        const projectinterval = pm.getprojectinterval.call(this)
+       
+        const days = getDateInterval(projectinterval.start,projectinterval.completion)
 
+        const milestones = pm.getmilestones.call(this)
+      
+        const getHeight = (milestones) => {
+            let height = 266.56 + 200*milestones.length
+            
+        
+            return height;
         }
 
-        let auditmilestones = "";
-        auditmilestones += pm.auditmilestones.call(this,milestones)
+        const getWidth = (days) => {
+            let width = 1810 
+            if(days > 18) {
+                width = 3610
 
-
-        const projectinterval = pm.getprojectinterval.call(this);
-        let interval = '1202.88'
-        let grid = [];
-        let scale = "";
-        if (projectinterval) {
-            interval = getDateInterval(projectinterval.start, projectinterval.completion)
-            scale = getScale(interval)
-            let approxmonth = false;
-            let approxyear = false;
-            if (scale === 'month') {
-
-                approxmonth = Math.round(interval / 30.41)
-                interval = (approxmonth * 200) + 200;
-
-                for (let i = 0; i <= approxmonth; i++) {
-                    grid.push(<line key={`dfdgrid${i}`} className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
-                }
-
-            } else if (scale === 'year') {
-                approxyear = Math.round(interval / 365);
-                interval = (approxyear * 200) + 200;
-                for (let i = 0; i <= approxyear; i++) {
-                    grid.push(<line className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
-                }
-            } else if (scale === 'day') {
-                for (let i = 0; i <= interval; i++) {
-                    grid.push(<line className={`showmilestones-1`} x1={i * 200} x2={i * 200} y1={0} y2={yext} />)
-                }
-                interval = interval * 200 + 200
             }
-
-
-
+            return width;
         }
-
         const activemilestone = () => {
             if (this.state.activemilestoneid) {
                 const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid);
@@ -392,105 +360,143 @@ class CriticalPath {
             }
         }
 
+        const extraRows = (days,milestones) => {
+            let getextrarows = [];
+      
+            if(milestones.length>5) {
 
+                for(let x=6;x<=milestones.length;x++) {
+                  
+                  
+                getextrarows.push(<g>
+                <rect className="milestonediagram-6" x="5" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="205" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="405" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="605" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="805" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="1005" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="1205" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="1405" y={1005 + 200*(x-5)} width="200" height="200"/>
+                <rect className="milestonediagram-6" x="1605" y={1005 + 200*(x-5)} width="200" height="200"/></g>
+                )
 
-        const getLabels = (start, completion, scale) => {
-
-           
-            let offsetstart = getOffsetDate(start);
-            let offsetcompletion = getOffsetDate(completion);
-            let datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-            let monthstart = trailingZeros(datestart.getMonth() + 1)
-            let yearstart = datestart.getFullYear();
-            let daystart = trailingZeros(datestart.getDate());
-            let datestartstring = `${yearstart}-${monthstart}-${daystart}`;
-            const datecompletion = new Date(`${completion.replace(/-/g, '/')} 00:00:00${offsetcompletion}`)
-            let yearcompletion = datecompletion.getFullYear();
-            let monthcompletion = trailingZeros(datecompletion.getMonth() + 1);
-            let daycompletion = trailingZeros(datecompletion.getDate());
-            let datecompletionstring = `${yearcompletion}-${monthcompletion}-${daycompletion}`
-            let datecompletionstringmonth = `${yearcompletion}-${monthcompletion}-01`
-          
-            let x1 = 0;
-            const mylabels = [];
-
-            let intmonth = "";
-            let daystartday = "";
-            let int = datestartstring;
-            if (scale === 'month') {
-
-
-
-                while (intmonth !== datecompletionstringmonth) {
-
-                    int = increaseCalendarDayOneMonth(int);
-                    x1 += 200;
-                    offsetstart = getOffsetDate(int);
-                    let intstart = new Date(`${int.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-                    let month = trailingZeros(intstart.getMonth() + 1)
-                    let year = intstart.getFullYear();
-                    intmonth = `${year}-${month}-01`
-                    mylabels.push(<text key={`cdfdrit${intstart.getTime()}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{monthString(intstart.getMonth())} {intstart.getFullYear()}</text>);
+                if(days>18) {
+                    getextrarows.push(<g><rect className="milestonediagram-6" x="5" y="1005" width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="1805" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="2005" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="2205" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="2405" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="2605" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="2805" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="3005" y={1005 + 200*(x-5)} width="200" height="200"/>
+                    <rect className="milestonediagram-6" x="3205" y={1005 + 200*(x-5)} width="200" height="200"/></g>
+                    )
                 }
-
-
-            } else if (scale === 'year') {
-
-                while (yearstart !== yearcompletion) {
-                    x1 += 200;
-                    yearstart += 1;
-                    let datestartyear = `${yearstart}-${monthstart}-${daystart}`
-                    offsetstart = getOffsetDate(datestartyear)
-                    datestartyear = new Date(`${datestartyear.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-
-                    mylabels.push(<text key={`crdfit${yearstart}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{datestartyear.getFullYear()}</text>);
-
-
-                }
-
-            } else if (scale === 'day') {
-
-                daystartday = datestartstring;
-
-                while (daystartday !== datecompletionstring) {
-                    x1 += 200;
-                    daystartday = increasedatebyoneday(daystartday)
-                    offsetstart = getOffsetDate(daystartday);
-                    let intstart = new Date(`${daystartday.replace(/-/g, '/')} 00:00:00${offsetstart}`)
-                    let month = trailingZeros(intstart.getMonth() + 1)
-                    let year = intstart.getFullYear();
-                    let day = trailingZeros(intstart.getDate());
-                    daystartday = `${year}-${month}-${day}`
-
-                    mylabels.push(<text key={`crdfdfit${day}${x1}`} style={{ textAnchor: 'middle', fontSize: '24pt', ...styles.generalFont }} x={x1} y={yext + 50}>{month}/{day}/{year}</text>);
-
-                }
-
 
 
             }
 
-            return (mylabels)
-
-        }
-
-        const showlabels = () => {
-            if (projectinterval) {
-
-
-                return getLabels(projectinterval.start, projectinterval.completion, scale)
-
             }
-        }
-
-        const auditmessage = (message) => {
-            if(message) {
-                return(<div style={{...styles.generalFont}}><span style={{...regularFont,...styles.redFont}}>{message}</span></div>)
-            }
-
+            return getextrarows;
 
         }
+
         
+        const extraColumns = (days) => {
+            let extracolumns = [];
+            if(days>18) {
+                
+                    for(let x=0;x<9;x++) {
+                        extracolumns.push(   
+                        <g>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="5" width="200" height="200"/>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="205" width="200" height="200"/>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="405" width="200" height="200"/>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="605" width="200" height="200"/>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="805" width="200" height="200"/>
+                            <rect className="milestonediagram-6" x={1805 + x*200} y="1005" width="200" height="200"/>
+                
+                            </g>
+                    )
+
+                    }
+                    return extracolumns;
+                 
+                }
+
+        }
+
+        const showBorder = (days,milestones) => {
+            return(  <rect className="milestonediagram-3" x="5" y="5" width={getWidth(days)-10} height={getHeight(milestones)-66.56}/>)
+        }
+
+        const showgrid = (days) => {
+
+
+            
+           return(<g id="grid">
+            {extraColumns(days)}
+            {extraRows(days,milestones)}
+            <rect className="milestonediagram-6" x="5" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="5" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="5" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="205" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="5" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="405" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="5" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="605" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="5" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="805" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="805" width="200" height="200"/>
+            
+            <rect className="milestonediagram-6" x="5" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="205" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="405" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="605" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="805" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1005" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1205" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1405" y="1005" width="200" height="200"/>
+            <rect className="milestonediagram-6" x="1605" y="1005" width="200" height="200"/>
+        </g>)
+        }
+
+     
+
 
 
 
@@ -499,7 +505,7 @@ class CriticalPath {
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                    {auditmessage(auditmilestones)}
+            
 
                     {activemilestone()}
 
@@ -515,18 +521,23 @@ class CriticalPath {
                         </div>
                     </div>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${interval} ${yext+200}`}>
-                        <g id="Layer_2" data-name="Layer 2">
-                            <g id="lock">
-                               
-                                {showlabels()}
-                                <polyline className="showmilestones-7" points={`2.5 0.38 2.5 ${yext} ${interval} ${yext}`} />
-                                {criticalpath.showmilestones.call(this)}
-                                {criticalpath.showpaths.call(this)}
-                               
-                            </g>
-                        </g>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${getWidth(days)} ${getHeight(milestones)}`}>
+    <defs>
+        <style>
+</style>
+    </defs>
+    <g id="Layer_2" data-name="Layer 2">
+        <g id="Layer_1-2" data-name="Layer 1">
+           
+       
+          
+            {criticalpath.showmilestones.call(this)}
+           
+        </g>
+
+     
+    </g>
+</svg>
 
                 </div>
             </div>

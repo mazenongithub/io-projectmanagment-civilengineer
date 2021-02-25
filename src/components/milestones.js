@@ -130,7 +130,7 @@ class Milestones extends Component {
             const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
-                myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
+                myproject.milestones.map((mymilestone, i) => {
                     if (mymilestone.milestoneid === milestoneid) {
                         key = i;
                     }
@@ -148,7 +148,7 @@ class Milestones extends Component {
             const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
-                myproject.projectmilestones.mymilestone.map((mymilestone) => {
+                myproject.milestones.map((mymilestone) => {
                     if (mymilestone.milestoneid === milestoneid) {
                         milestone = mymilestone;
                     }
@@ -192,12 +192,12 @@ class Milestones extends Component {
                     const completion = `${completionyear}-${completionmonth}-${completionday}`
                     let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
 
-                    if (myproject.hasOwnProperty("projectmilestones")) {
-                        myuser.projects.myproject[i].projectmilestones.mymilestone.push(mymilestone);
+                    if (myproject.hasOwnProperty("milestones")) {
+                        myuser.projects[i].milestones.push(mymilestone);
 
                     } else {
-                        let projectmilestones = { mymilestone: [mymilestone] }
-                        myuser.projects.myproject[i].projectmilestones = projectmilestones;
+                       
+                        myuser.projects[i].milestones = [mymilestone]
                     }
                     this.props.reduxUser(myuser);
                     this.setState({ activemilestoneid: milestoneid, milestone: '' })
@@ -314,9 +314,9 @@ class Milestones extends Component {
                     if (checkmilestone) {
 
                         const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
-                        myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
+                        myuser.projects[i].milestones.splice(j, 1);
                         // eslint-disable-next-line
-                        myuser.projects.myproject[i].projectmilestones.mymilestone.map(mymilestone => {
+                        myuser.projects[i].milestones.map(mymilestone => {
 
                             if (mymilestone.hasOwnProperty("predessors")) {
 
@@ -325,7 +325,7 @@ class Milestones extends Component {
                                     if (predessor.predessor === milestone.milestoneid) {
                                         const k = pm.getmilestonekeybyid.call(this, mymilestone.milestoneid);
                                         const l = pm.getpredessorkeybyid.call(this, mymilestone, predessor.predessor);
-                                        myuser.projects.myproject[i].projectmilestones.mymilestone[k].predessors.splice(l, 1)
+                                        myuser.projects[i].milestones[k].predessors.splice(l, 1)
                                     }
                                 })
                             }
@@ -411,7 +411,7 @@ class Milestones extends Component {
                             {this.loadmilestoneids()}
 
                         
-
+                            {criticalpath.showpath.call(this)}
                             {projectid.showprojectid.call(this)}
 
 

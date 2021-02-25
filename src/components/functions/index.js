@@ -3105,19 +3105,22 @@ export function checkemptyobject(obj) {
    return empty; 
   }
 
-export function getScale(interval) {
-
+export function getScale (interval) {
+		
     let scale = "";
-    if (interval < 180) {
-        scale = "day"
-    } else if (interval <= 730) {
-        scale = "month"
-    } else {
-        scale = "year"
+    if(interval < 36) {
+      scale = 100;
+    } else  {
+      
+      scale = Math.round(100/(Math.ceil(interval/36)))
     }
+      
+      
+    
     return scale;
 
 }
+
 export function calculatemonth(int, compl, start, completion) {
     //int = '2020-04-18'
     //compl = '2022-04-18'
@@ -3336,7 +3339,7 @@ export function calculateday(int, compl, start, completion) {
 }
 
 export function calculateFloat (day_1, day_2) {
-    const date_1 =new Date(`${day_1.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_1)}`)
+    const date_1 =new Date(`${day_1.replace(/-/g, '/')} 23:59:59${getOffsetDate(day_1)}`)
     const date_2 =new Date(`${day_2.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_2)}`)
     const time = date_2.getTime() - date_1.getTime();
     return Math.round(time/(1000*60*60*24))
@@ -3348,11 +3351,11 @@ export function getDateInterval(start, completion) {
     const offsetstart = getOffsetDate(start);
     const datestart = new Date(`${start.replace(/-/g, '/')} 00:00:00${offsetstart}`)
     //const offsetcompletion= getOffsetDate(completion);
-    const datecompletion = new Date(`${completion.replace(/-/g, '/')} 00:00:00${offsetstart}`)
+    const datecompletion = new Date(`${completion.replace(/-/g, '/')} 23:59:59${offsetstart}`)
     const starttime = datestart.getTime();
     const endtime = datecompletion.getTime();
     const interval = (endtime - starttime) / (3600000 * 24);
-    return (interval)
+    return (+Number(interval).toFixed(2))
 }
 export function inputDateStringOutputSeconds(timein) {
     let offset = getOffset()
