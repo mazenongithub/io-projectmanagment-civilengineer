@@ -326,10 +326,11 @@ class CriticalPath {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
         const projectinterval = pm.getprojectinterval.call(this)
-       
+        const milestones = pm.getmilestones.call(this)
+        if(milestones) {
         const days = getDateInterval(projectinterval.start,projectinterval.completion)
 
-        const milestones = pm.getmilestones.call(this)
+       
       
         const getHeight = (milestones) => {
             let height = 266.56 + 200*milestones.length
@@ -544,6 +545,8 @@ class CriticalPath {
 
 
         )
+
+        }
     }
 
 

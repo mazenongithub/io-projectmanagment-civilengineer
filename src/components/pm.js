@@ -2372,11 +2372,11 @@ class PM {
 
     getremoveicon() {
         if (this.state.width > 1200) {
-            return ({ width: '46px', height: 'auto' })
+            return ({ width: '40px', height: 'auto' })
         } else if (this.state.width > 600) {
-            return ({ width: '36px', height: 'auto' })
+            return ({ width: '35px', height: 'auto' })
         } else {
-            return ({ width: '26px', height: 'auto' })
+            return ({ width: '25px', height: 'auto' })
         }
     }
     getteamprofile() {
