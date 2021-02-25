@@ -10,7 +10,8 @@ import MakeID from './makeids'
 import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
 import { LoadAllUsers } from './actions/api';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import ProjectID from './projectid';
 
 
 class Milestones extends Component {
@@ -31,7 +32,7 @@ class Milestones extends Component {
             completiondateday: '',
             completiondatemonth: '',
             completiondateyear: '',
-            spinner:false
+            spinner: false
 
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -165,35 +166,43 @@ class Milestones extends Component {
         let myuser = pm.getuser.call(this);
         if (myuser) {
             let myproject = pm.getproject.call(this)
-            let i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
-            if (this.state.activemilestoneid) {
+            if (myproject) {
+                let i = pm.getprojectkeybyid.call(this, myproject.projectid)
+                if (this.state.activemilestoneid) {
 
-                let j = this.getactivemilestonekey();
-                myuser.projects.myproject[i].projectmilestones.mymilestone[j].milestone = milestone;
-                this.props.reduxUser(myuser);
-                this.setState({ render: 'render' })
+                    const getmilestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
+                    if (getmilestone) {
+                        const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
+                        myuser.projects[i].milestones[j].milestone = milestone;
+                        this.props.reduxUser(myuser);
 
-            } else {
-                let milestoneid = makeID.milestoneid.call(this)
-                const startyear = this.state.startdateyear;
-                const startday = this.state.startdateday;
-                const startmonth = this.state.startdatemonth;
-                const start = `${startyear}-${startmonth}-${startday}`
-                const completionyear = this.state.completiondateyear;
-                const completionday = this.state.completiondateday;
-                const completionmonth = this.state.completiondatemonth;
-                const completion = `${completionyear}-${completionmonth}-${completionday}`
-                let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
+                    }
 
-                if (myproject.hasOwnProperty("projectmilestones")) {
-                    myuser.projects.myproject[i].projectmilestones.mymilestone.push(mymilestone);
+                    this.setState({ render: 'render' })
 
                 } else {
-                    let projectmilestones = { mymilestone: [mymilestone] }
-                    myuser.projects.myproject[i].projectmilestones = projectmilestones;
+                    let milestoneid = makeID.milestoneid.call(this)
+                    const startyear = this.state.startdateyear;
+                    const startday = this.state.startdateday;
+                    const startmonth = this.state.startdatemonth;
+                    const start = `${startyear}-${startmonth}-${startday}`
+                    const completionyear = this.state.completiondateyear;
+                    const completionday = this.state.completiondateday;
+                    const completionmonth = this.state.completiondatemonth;
+                    const completion = `${completionyear}-${completionmonth}-${completionday}`
+                    let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
+
+                    if (myproject.hasOwnProperty("projectmilestones")) {
+                        myuser.projects.myproject[i].projectmilestones.mymilestone.push(mymilestone);
+
+                    } else {
+                        let projectmilestones = { mymilestone: [mymilestone] }
+                        myuser.projects.myproject[i].projectmilestones = projectmilestones;
+                    }
+                    this.props.reduxUser(myuser);
+                    this.setState({ activemilestoneid: milestoneid, milestone: '' })
+
                 }
-                this.props.reduxUser(myuser);
-                this.setState({ activemilestoneid: milestoneid, milestone: '' })
 
             }
 
@@ -202,14 +211,17 @@ class Milestones extends Component {
     }
     getmilestone() {
 
-        let milestone = "";
+        let getmilestone = "";
+        const pm = new PM();
         if (this.state.activemilestoneid) {
-
-            const mymilestone = this.getactivemilestone();
-            milestone = mymilestone.milestone;
+            const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
+            if (milestone) {
+                getmilestone = milestone.milestone;
+            }
 
         }
-        return milestone;
+
+        return getmilestone;
     }
     handleTimes() {
         // const pm = new PM();
@@ -252,17 +264,15 @@ class Milestones extends Component {
     }
     loadmilestoneids() {
         const pm = new PM();
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+        const milestones = pm.getmilestones.call(this);
         let ids = [];
-        if (myproject) {
+        if (milestones) {
 
-            if (myproject.hasOwnProperty("projectmilestones")) {
-                // eslint-disable-next-line
-                myproject.projectmilestones.mymilestone.map(mymilestone => {
-                    ids.push(this.showmilestone(mymilestone))
-                })
+            milestones.map(mymilestone => {
+                ids.push(this.showmilestone(mymilestone))
+            })
 
-            }
+
 
         }
         return ids;
@@ -306,21 +316,21 @@ class Milestones extends Component {
                         const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
                         myuser.projects.myproject[i].projectmilestones.mymilestone.splice(j, 1);
                         // eslint-disable-next-line
-                        myuser.projects.myproject[i].projectmilestones.mymilestone.map(mymilestone=> {
-                           
-                            if(mymilestone.hasOwnProperty("predessors")) {
-                                
+                        myuser.projects.myproject[i].projectmilestones.mymilestone.map(mymilestone => {
+
+                            if (mymilestone.hasOwnProperty("predessors")) {
+
                                 // eslint-disable-next-line
-                                mymilestone.predessors.map(predessor=> {
-                                    if(predessor.predessor === milestone.milestoneid) {
+                                mymilestone.predessors.map(predessor => {
+                                    if (predessor.predessor === milestone.milestoneid) {
                                         const k = pm.getmilestonekeybyid.call(this, mymilestone.milestoneid);
                                         const l = pm.getpredessorkeybyid.call(this, mymilestone, predessor.predessor);
-                                        myuser.projects.myproject[i].projectmilestones.mymilestone[k].predessors.splice(l,1)
+                                        myuser.projects.myproject[i].projectmilestones.mymilestone[k].predessors.splice(l, 1)
                                     }
                                 })
                             }
                         })
-                        
+
                         this.props.reduxUser(myuser)
                         this.setState({ activemilestoneid: false })
 
@@ -341,7 +351,7 @@ class Milestones extends Component {
             if (milestoneid === this.state.activemilestoneid) {
                 return ({ backgroundColor: '#89F786' })
             } else {
-                return;
+                return ({ backgroundColor: '#FFFFFF' })
             }
         }
         return (
@@ -352,7 +362,8 @@ class Milestones extends Component {
 
                 </div>
                 <div style={{ ...styles.flex1 }}>
-                    <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight }} onClick={() => { this.removemilestone(mymilestone) }}>{removeIconSmall()}</button>
+                
+                    <button style={{ ...styles.noBorder,...activebackground(mymilestone.milestoneid), ...removeIcon, ...styles.alignRight }} onClick={() => { this.removemilestone(mymilestone) }}>{removeIconSmall()}</button>
                 </div>
             </div>
         )
@@ -363,56 +374,51 @@ class Milestones extends Component {
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
         const headerFont = pm.getHeaderFont.call(this);
-      
+
         const criticalpath = new CriticalPath();
         const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
         if (myuser) {
             const project = pm.getproject.call(this)
-            if(project) {
-            return (
-                <div style={{ ...styles.generalFlex }}>
-                    <div style={{ ...styles.flex1 }}>
+            if (project) {
+                return (
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1 }}>
+
+
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/milestones`}>  /milestones </Link>
                             </div>
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/milestones`}>  /milestones </Link>
-                            </div>
-
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
-                                Milestone
+                            <div style={{ ...styles.generalFlex }}>
+                                <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+                                    Milestone
                             <input type="text" style={{ ...regularFont, ...styles.generalFont, ...styles.generalField }}
-                                    value={this.getmilestone()}
-                                    onChange={event => { this.handlemilestone(event.target.value) }} />
+                                        value={this.getmilestone()}
+                                        onChange={event => { this.handlemilestone(event.target.value) }} />
+                                </div>
                             </div>
+
+                            {this.handleTimes()}
+
+                            {pm.showsaveproject.call(this)}
+
+                            {this.loadmilestoneids()}
+
+                        
+
+                            {projectid.showprojectid.call(this)}
+
+
                         </div>
-
-                        {this.handleTimes()}
-
-                        {pm.showsaveproject.call(this)}
-
-                        {this.loadmilestoneids()}
-
-                        {criticalpath.showpath.call(this)}
-
-                        {pm.showprojectid.call(this)}
-
-
                     </div>
-                </div>
 
-            )
+                )
 
             } else {
                 return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>

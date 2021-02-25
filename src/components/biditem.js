@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { MyStylesheet } from './styles';
 import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, inputUTCStringForLaborID, calculatetotalhours, formatDateStringDisplay } from './functions'
 import PM from './pm';
+import ProjectID from './projectid'
+import { Link } from 'react-router-dom';
 
 
 class BidItem extends Component {
@@ -22,11 +24,11 @@ class BidItem extends Component {
     }
     componentDidMount() {
         const pm = new PM();
+        const csis = pm.getcsis.call(this);
+        if (!csis) {
+            pm.loadcsis.call(this)
+        }
         this.updateWindowDimensions()
-        const csiid = this.props.match.params.csiid;
-        const csi = pm.getcsibyid.call(this, csiid);
-        this.props.reduxNavigation({ navigation: "biditem", csiid, csi: csi.csi })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
 
 
     }
@@ -55,7 +57,7 @@ class BidItem extends Component {
         if (laboritems.length > 0) {
             // eslint-disable-next-line
             laboritems.map(mylabor => {
-                items.push(this.showlaborid(mylabor))
+                items.push(pm.showlaborid.call(this,mylabor))
             })
 
         }
@@ -105,7 +107,7 @@ class BidItem extends Component {
         if (laboritems.length > 0) {
             // eslint-disable-next-line
             laboritems.map(mymaterial => {
-                items.push(this.showmaterialid(mymaterial))
+                items.push(pm.showmaterialid.call(this,mymaterial))
             })
 
         }
@@ -157,7 +159,7 @@ class BidItem extends Component {
         if (laboritems.length > 0) {
             // eslint-disable-next-line
             laboritems.map(myequipment => {
-                items.push(this.showequipmentid(myequipment))
+                items.push(pm.showequipmentid.call(this,myequipment))
             })
 
         }
@@ -248,28 +250,70 @@ class BidItem extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
-        const csiid = this.props.match.params.csiid;
-        const csis = pm.getcsis.call(this);
-        if(!csis) {
-            pm.loadcsis.call(this)
-        }
-        const csi = pm.getcsibyid.call(this, csiid)
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
+        const regularFont = pm.getRegularFont.call(this)
+        const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
+        if (myuser) {
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont }}>
-                            {csi.csi} - {csi.title}
+            const project = pm.getproject.call(this)
+            if (project) {
+
+                const csi = pm.getcsibyid.call(this, this.props.match.params.csiid);
+
+                if (csi) {
+                    return (
+                        <div style={{ ...styles.generalFlex }}>
+                            <div style={{ ...styles.flex1 }}>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
+                                </div>
+
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bid`}>  /bid </Link>
+                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bid/csi/${csi.csiid}`}>  /{csi.csi} {csi.title} </Link>
+                                </div>
+
+                                {pm.showlinedetail.call(this)}
+                                {projectid.showprojectid.call(this)}
+
+
+                            </div>
+                        </div>)
+
+                } else {
+                    return (
+                        <div style={{ ...styles.generalContainer }}>
+                            <span style={{ ...styles.generalFont, ...regularFont }}>
+                                Spec Not Found
+            </span>
                         </div>
+                    )
+
+                }
+
+            } else {
+                return (
+                    <div style={{ ...styles.generalContainer }}>
+                        <span style={{ ...styles.generalFont, ...regularFont }}>
+                            Project Not Found
+            </span>
                     </div>
+                )
 
-                    {pm.showlinedetail.call(this)}
-                    {pm.showprojectid.call(this)}
+            }
 
-
+        } else {
+            return (
+                <div style={{ ...styles.generalContainer }}>
+                    <span style={{ ...styles.generalFont, ...regularFont }}>
+                        Please Login to View Bid Schedule
+        </span>
                 </div>
-            </div>)
+            )
+        }
 
     }
 

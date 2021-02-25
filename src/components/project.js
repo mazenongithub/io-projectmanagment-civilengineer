@@ -262,7 +262,7 @@ class Project extends Component {
 
       
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
+              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
             </div>
 
 

@@ -1,20 +1,21 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, getDateInterval, getScale, calculatemonth, calculateday, calculateyear, calculateFloat, getDateTime, checkemptyobject } from './functions';
+import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, isEmpty, getDateInterval, getScale, calculatemonth, calculateday, formatDateStringDisplay, calculateyear, calculateFloat, getDateTime, checkemptyobject, calculatetotalhours } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
-import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser } from './actions/api';
+import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser, LoadAllUsers } from './actions/api';
 import { Link } from 'react-router-dom';
 import Spinner from './spinner'
 
 
 class PM {
 
+
     sumOfTransfersByLaborID(laborid) {
         const pm = new PM();
         const transfers = pm.getTransfersByLaborID.call(this, laborid)
-     
+
         let amount = 0;
         if (transfers) {
             // eslint-disable-next-line
@@ -919,11 +920,11 @@ class PM {
     getinvoicekeybyid(invoiceid) {
         const pm = new PM();
         let key = false;
-        let myproject = pm.getprojectbyid.call(this, this.props.match.params.projectid)
+        let myproject = pm.getproject.call(this)
 
         if (myproject.hasOwnProperty("invoices")) {
             // eslint-disable-next-line
-            myproject.invoices.myinvoice.map((myinvoice, i) => {
+            myproject.invoices.map((myinvoice, i) => {
                 if (myinvoice.invoiceid === invoiceid) {
                     key = i;
                 }
@@ -963,39 +964,39 @@ class PM {
     }
     sumOfPaymentsByProjectID(projectid) {
         const pm = new PM();
-        const project = pm.getprojectbyid.call(this,projectid);
+        const project = pm.getprojectbyid.call(this, projectid);
         let amount = 0;
-        if(project) {
-            if(project.hasOwnProperty("actuallabor")) {
+        if (project) {
+            if (project.hasOwnProperty("actuallabor")) {
                 // eslint-disable-next-line
-                project.actuallabor.mylabor.map(mylabor=> {
-                    if(mylabor.hasOwnProperty("scheduletransfers")) {
+                project.actuallabor.mylabor.map(mylabor => {
+                    if (mylabor.hasOwnProperty("scheduletransfers")) {
                         // eslint-disable-next-line
-                        mylabor.scheduletransfers.map(transfer=> {
+                        mylabor.scheduletransfers.map(transfer => {
                             amount += Number(transfer.amount)
                         })
                     }
                 })
             }
 
-            if(project.hasOwnProperty("actualmaterials")) {
+            if (project.hasOwnProperty("actualmaterials")) {
                 // eslint-disable-next-line
-                project.actualmaterials.mymaterial.map(mymaterial=> {
-                    if(mymaterial.hasOwnProperty("scheduletransfers")) {
+                project.actualmaterials.mymaterial.map(mymaterial => {
+                    if (mymaterial.hasOwnProperty("scheduletransfers")) {
                         // eslint-disable-next-line
-                        mymaterial.scheduletransfers.map(transfer=> {
+                        mymaterial.scheduletransfers.map(transfer => {
                             amount += Number(transfer.amount)
                         })
                     }
                 })
             }
 
-            if(project.hasOwnProperty("actualequipment")) {
+            if (project.hasOwnProperty("actualequipment")) {
                 // eslint-disable-next-line
-                project.actualequipment.myequipment.map(myequipment=> {
-                    if(myequipment.hasOwnProperty("scheduletransfers")) {
+                project.actualequipment.myequipment.map(myequipment => {
+                    if (myequipment.hasOwnProperty("scheduletransfers")) {
                         // eslint-disable-next-line
-                        myequipment.scheduletransfers.map(transfer=> {
+                        myequipment.scheduletransfers.map(transfer => {
                             amount += Number(transfer.amount)
                         })
                     }
@@ -1007,19 +1008,19 @@ class PM {
     }
     sumOfChargesByProjectID(projectid) {
         const pm = new PM();
-        const charges = pm.getchargesbyprojectid.call(this,projectid)
+        const charges = pm.getchargesbyprojectid.call(this, projectid)
         let amount = 0;
-        if(charges) {
+        if (charges) {
             // eslint-disable-next-line
-            charges.map(charge=>{
-                amount +=Number(charge.amount)
+            charges.map(charge => {
+                amount += Number(charge.amount)
 
             })
         }
         return amount;
 
     }
-    
+
 
     getchargesbyprojectid(projectid) {
         const pm = new PM()
@@ -1037,17 +1038,198 @@ class PM {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         let getcompany = false;
-        if(myuser) {
-            if(myuser.hasOwnProperty("companys")) {
-                myuser.companys.map(company=> {
-                    if(company.companyid === companyid) {
+        if (myuser) {
+            if (myuser.hasOwnProperty("companys")) {
+                myuser.companys.map(company => {
+                    if (company.companyid === companyid) {
                         getcompany = company;
                     }
                 })
-                
+
             }
         }
         return getcompany;
+    }
+    getcompanymaterialsbyid(materialid) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        let getmaterial = false;
+        if (myuser) {
+            if (myuser.hasOwnProperty("companys")) {
+                myuser.companys.map(company => {
+
+                    if (company.hasOwnProperty("materials")) {
+
+
+                        company.materials.map(material => {
+                            if (material.materialid === materialid) {
+                                getmaterial = material;
+                            }
+                        })
+
+                    }
+
+                })
+
+
+
+            }
+
+        }
+        return getmaterial;
+    }
+
+    getcompanymaterials() {
+        const pm = new PM();
+        const company = pm.getcompany.call(this)
+        let getmaterials = false;
+        if (company) {
+            if (company.hasOwnProperty("materials")) {
+                getmaterials = company.materials;
+            }
+        }
+        return getmaterials;
+    }
+
+    async loadallusers() {
+        try {
+            let response = await LoadAllUsers();
+            console.log(response)
+            if (response.hasOwnProperty("allusers")) {
+                this.props.reduxAllUsers(response.allusers);
+            }
+        } catch (err) {
+            alert(err)
+        }
+
+    }
+
+    showmaterialid(mymaterial) {
+
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+
+
+
+        const material = pm.getcompanymaterialsbyid.call(this, mymaterial.mymaterialid)
+     
+
+        if (material) {
+
+            return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont }} key={mymaterial.materialid}>
+                {material.material} {formatDateStringDisplay(mymaterial.timein)} {mymaterial.quantity}  x ${Number(mymaterial.unitcost).toFixed(2)}/{mymaterial.unit} = ${Number(Number(mymaterial.quantity) * Number(mymaterial.unitcost)).toFixed(2)}
+            </div>)
+
+        }
+
+    }
+
+    getcompanyemployeebyid(providerid) {
+        const pm = new PM();
+        const myuser = pm.getuser.call(this)
+        let getemployee = false;
+        if (myuser.hasOwnProperty("companys")) {
+            myuser.companys.map(company => {
+
+
+                if (company.hasOwnProperty("employees")) {
+                    company.employees.map(employee => {
+                        if (employee.providerid === providerid) {
+                            getemployee = employee;
+                        }
+                    })
+                }
+
+
+            })
+
+        }
+        return getemployee;
+    }
+    getcompanyequipment() {
+        const pm = new PM();
+        const company = pm.getcompany.call(this)
+        let getequipment = false;
+        if (company.hasOwnProperty("equipment")) {
+            getequipment = company.equipment;
+        }
+        return getequipment;
+    }
+
+    getcompanyequipmentbyid(equipmentid) {
+        const pm = new PM();
+        let getequipment = false;
+        const myuser = pm.getuser.call(this)
+        if (myuser) {
+            
+
+            if (myuser.hasOwnProperty("companys")) {
+
+                myuser.companys.map(company => {
+              
+
+                    if (company.hasOwnProperty("equipment")) {
+
+                     
+                        company.equipment.map(equipment => {
+
+                            console.log(equipment, equipmentid)
+
+                            if (equipment.equipmentid === equipmentid) {
+                                getequipment = equipment;
+                            }
+
+                        })
+                    }
+
+                })
+
+            }
+
+        }
+        console.log(getequipment)
+
+        return getequipment;
+    }
+
+    showequipmentid(equipment) {
+     
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+        const amount = Number(calculatetotalhours(equipment.timeout, equipment.timein) * (Number(equipment.equipmentrate))).toFixed(2)
+        const myequipment = pm.getcompanyequipmentbyid.call(this, equipment.myequipmentid)
+        if (myequipment) {
+            return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }} key={equipment.equipmentid}>
+                {myequipment.equipment} From: {inputUTCStringForLaborID(equipment.timein)} to {inputUTCStringForLaborID(equipment.timeout)} ${equipment.equipmentrate} x ${calculatetotalhours(equipment.timeout, equipment.timein)} = ${amount}
+
+            </div>)
+        }
+    }
+
+
+    showlaborid(mylabor) {
+
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this)
+
+        const employee = pm.getcompanyemployeebyid.call(this, mylabor.providerid)
+        console.log(employee)
+        if (employee) {
+
+            let hourlyrate = Number(mylabor.laborrate);
+
+            return (<div key={mylabor.laborid} style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }}>
+
+                {mylabor.firstname} {mylabor.lastname} {mylabor.description}
+            From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}
+            ${Number(hourlyrate).toFixed(2)}/Hr x {Number(calculatetotalhours(mylabor.timeout, mylabor.timein)).toFixed(2)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(hourlyrate)).toFixed(2)}
+
+            </div>)
+
+        }
     }
 
     showlinedetail() {
@@ -1185,7 +1367,32 @@ class PM {
         return responsiveLayouts();
 
     }
- 
+
+    getinvoice() {
+        let invoice = false;
+        const pm = new PM();
+        const company = pm.getcompany.call(this)
+        if (company) {
+            const companyid = company.companyid;
+            const project = pm.getproject.call(this);
+            if (project) {
+
+                if (project.hasOwnProperty("invoices")) {
+                    // eslint-disable-next-line
+                    project.invoices.map((myinvoice, i) => {
+                        if (myinvoice.companyid === companyid) {
+                            invoice = myinvoice;
+                        }
+                    })
+                }
+
+            }
+
+        }
+        return invoice;
+
+    }
+
 
 
     getproposals() {
@@ -1202,7 +1409,7 @@ class PM {
         let invoices = false;
         const myproject = pm.getproject.call(this);
         if (myproject.hasOwnProperty("invoices")) {
-            invoices = myproject.invoices.myinvoice;
+            invoices = myproject.invoices
         }
         return invoices;
     }
@@ -1269,28 +1476,31 @@ class PM {
             return ({ maxWidth: '90px' })
         }
     }
+
     getAllActual() {
         let actuals = [];
         const pm = new PM();
         const myproject = pm.getproject.call(this);
 
         if (myproject) {
-            if (myproject.hasOwnProperty("actuallabor")) {
+
+            if (myproject.hasOwnProperty("invoices")) {
                 // eslint-disable-next-line
-                myproject.actuallabor.mylabor.map(mylabor => {
-                    actuals.push(mylabor)
-                })
-            }
-            if (myproject.hasOwnProperty("actualequipment")) {
-                // eslint-disable-next-line
-                myproject.actualequipment.myequipment.map(myequipment => {
-                    actuals.push(myequipment)
-                })
-            }
-            if (myproject.hasOwnProperty("actualmaterials")) {
-                // eslint-disable-next-line
-                myproject.actualmaterials.mymaterial.map(mymaterial => {
-                    actuals.push(mymaterial)
+                myproject.invoices.map(invoice => {
+
+                    if (invoice.hasOwnProperty("labor")) {
+                        actuals = [...actuals, ...invoice.labor]
+                    }
+
+                    if (invoice.hasOwnProperty("materials")) {
+                        actuals = [...actuals, ...invoice.materials]
+                    }
+
+                    if (invoice.hasOwnProperty("equipment")) {
+                        actuals = [...actuals, ...invoice.equipment]
+                    }
+
+
                 })
 
             }
@@ -1308,23 +1518,26 @@ class PM {
         const myproject = pm.getproject.call(this);
 
 
+
         if (myproject) {
-            if (myproject.hasOwnProperty("schedulelabor")) {
+
+            if (myproject.hasOwnProperty("proposals")) {
                 // eslint-disable-next-line
-                myproject.schedulelabor.mylabor.map(mylabor => {
-                    schedules.push(mylabor)
-                })
-            }
-            if (myproject.hasOwnProperty("scheduleequipment")) {
-                // eslint-disable-next-line
-                myproject.scheduleequipment.myequipment.map(myequipment => {
-                    schedules.push(myequipment)
-                })
-            }
-            if (myproject.hasOwnProperty("schedulematerials")) {
-                // eslint-disable-next-line
-                myproject.schedulematerials.mymaterial.map(mymaterial => {
-                    schedules.push(mymaterial)
+                myproject.proposals.map(proposal => {
+
+                    if (proposal.hasOwnProperty("labor")) {
+                        schedules = [...schedules, ...proposal.labor]
+                    }
+
+                    if (proposal.hasOwnProperty("materials")) {
+                        schedules = [...schedules, ...proposal.materials]
+                    }
+
+                    if (proposal.hasOwnProperty("equipment")) {
+                        schedules = [...schedules, ...proposal.equipment]
+                    }
+
+
                 })
 
             }
@@ -1336,6 +1549,7 @@ class PM {
 
         return schedules;
     }
+
     getengineerkeybyid(engineerid) {
         const pm = new PM();
         const engineers = pm.getengineering.call(this);
@@ -1431,10 +1645,10 @@ class PM {
     getmilestonekeybyid(milestoneid) {
         const pm = new PM();
         let key = false;
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
-        if (myproject.hasOwnProperty("projectmilestones")) {
+        const myproject = pm.getproject.call(this)
+        if (myproject.hasOwnProperty("milestones")) {
             // eslint-disable-next-line
-            myproject.projectmilestones.mymilestone.map((mymilestone, i) => {
+            myproject.milestones.map((mymilestone, i) => {
                 if (mymilestone.milestoneid === milestoneid) {
                     key = i;
                 }
@@ -1446,11 +1660,11 @@ class PM {
     getmilestones() {
 
         const pm = new PM();
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
+        const myproject = pm.getproject.call(this)
         let milestones = false;
         if (myproject) {
-            if (myproject.hasOwnProperty("projectmilestones")) {
-                milestones = myproject.projectmilestones.mymilestone;
+            if (myproject.hasOwnProperty("milestones")) {
+                milestones = myproject.milestones;
             }
         }
         return milestones;
@@ -1753,7 +1967,7 @@ class PM {
         const myproject = pm.getproject.call(this);
         if (myproject.hasOwnProperty("invoices")) {
             // eslint-disable-next-line
-            myproject.invoices.myinvoice.map(myinvoice => {
+            myproject.invoices.map(myinvoice => {
                 if (myinvoice.invoiceid === invoiceid) {
                     invoice = myinvoice;
                 }
@@ -1802,16 +2016,16 @@ class PM {
         const pm = new PM();
         let getcompany = false;
         const myuser = pm.getuser.call(this)
-        if(myuser) {
-            if(myuser.hasOwnProperty("companys")) 
-                myuser.companys.map(company=> {
-                    if(company.url === this.props.match.params.url) {
+        if (myuser) {
+            if (myuser.hasOwnProperty("companys"))
+                myuser.companys.map(company => {
+                    if (company.url === this.props.match.params.url) {
                         getcompany = company;
                     }
                 })
 
-            }
-        
+        }
+
         return getcompany;
 
     }
@@ -1821,19 +2035,19 @@ class PM {
         const pm = new PM();
         const proposals = pm.getproposals.call(this)
         const company = pm.getcompany.call(this)
-        if(company) {
-        if (proposals) {
-            // eslint-disable-next-line
-           proposals.map(myproposal => {
-    
-                if (myproposal.companyid === company.companyid) {
-                    proposal = myproposal;
-                }
-            })
+        if (company) {
+            if (proposals) {
+                // eslint-disable-next-line
+                proposals.map(myproposal => {
+
+                    if (myproposal.companyid === company.companyid) {
+                        proposal = myproposal;
+                    }
+                })
+            }
+
         }
 
-    }
-  
         return proposal;
 
     }
@@ -1853,7 +2067,7 @@ class PM {
                             <td width="12%" style={{ ...styles.alignCenter }}>Quantity</td>
                             <td width="13%" style={{ ...styles.alignCenter }}>Unit</td>
                             <td width="13%" style={{ ...styles.alignCenter }}>Direct Cost</td>
-                            <td width="13%" style={{ ...styles.alignCenter }}> Overhead and Profit %</td>
+                            <td width="13%" style={{ ...styles.alignCenter }}> Profit %</td>
                             <td width="13%" style={{ ...styles.alignCenter }}>Bid Price</td>
                             <td width="12%" style={{ ...styles.alignCenter }}>Unit Price</td>
                         </tr>
@@ -1864,7 +2078,7 @@ class PM {
             )
         } else {
             return (
-                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15,...styles.topMargin15 }}>
+                <div style={{ ...styles.generalFlex, ...styles.bottomMargin15, ...styles.topMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
 
                         {this.showbiditems()}
@@ -1975,10 +2189,11 @@ class PM {
     getbidbyid(csiid) {
         const pm = new PM();
         let myitem = false;
-        const bid = pm.getprojectbid.call(this)
-        if (bid) {
+        const project = pm.getproject.call(this)
+
+        if (project.hasOwnProperty("bid")) {
             // eslint-disable-next-line
-            bid.map(item => {
+            project.bid.map(item => {
                 if (item.csiid === csiid) {
                     myitem = item;
                 }
@@ -2131,7 +2346,7 @@ class PM {
     getremoveicon() {
         if (this.state.width > 1200) {
             return ({ width: '46px', height: 'auto' })
-        } else if (this.state.width>600) {
+        } else if (this.state.width > 600) {
             return ({ width: '36px', height: 'auto' })
         } else {
             return ({ width: '26px', height: 'auto' })
@@ -2143,6 +2358,46 @@ class PM {
         } else {
             return ({ width: '160px', height: '120px' })
         }
+    }
+
+    getteamkeybyid(providerid) {
+        const pm = new PM();
+        const team = pm.getteam.call(this)
+        let key = false;
+        if(team) {
+            team.map((myteam,i)=> {
+                if(myteam.providerid === providerid) {
+                    key = i;
+                }
+            })
+        }
+        return key;
+    }
+
+    getteambyid(providerid) {
+        const pm = new PM();
+        const team = pm.getteam.call(this)
+        let getteam = false;
+        if(team) {
+            team.map(myteam=> {
+                if(myteam.providerid === providerid) {
+                    getteam = myteam;
+                }
+            })
+        }
+        return getteam;
+    }
+
+    getteam() {
+        const pm = new PM();
+        const project = pm.getproject.call(this)
+        let team = false;
+        if(project) {
+            if(project.hasOwnProperty("team")) {
+                team = project.team;
+            }
+        }
+        return team;
     }
     getproviderbyid(providerid) {
         const pm = new PM();
@@ -2254,12 +2509,28 @@ class PM {
             return ({ gridTemplateColumns: 'auto' })
         }
     }
+
+    
+    getuserbyid(providerid) {
+        const pm = new PM();
+        const allusers =pm.getallusers.call(this)
+        let getuser = false;
+        if(allusers) {
+            allusers.map(user=> {
+                if(user.providerid === providerid) {
+                    getuser = user;
+                }
+            })
+        }
+        return getuser;
+    }
+
     getallusers() {
         let allusers = false;
-        if (this.props.allusers) {
-            if (this.props.allusers.hasOwnProperty("myuser")) {
-                allusers = this.props.allusers.myuser;
-            }
+        if (!isEmpty(this.props.allusers)) {
+                
+                allusers = this.props.allusers
+            
 
         }
         return allusers;

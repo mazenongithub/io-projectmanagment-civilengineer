@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric, sortcode } from './functions'
 import PM from './pm';
+import ProjectID from './projectid';
 
 
 class ViewBidSchedule extends Component {
@@ -21,10 +22,13 @@ class ViewBidSchedule extends Component {
 
     }
     componentDidMount() {
+        const pm = new PM();
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
-        this.props.reduxNavigation({ navigation: "bidschedule" })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+        const csis = pm.getcsis.call(this);
+        if (!csis) {
+            pm.loadcsis.call(this)
+        }
 
 
     }
@@ -38,41 +42,24 @@ class ViewBidSchedule extends Component {
     itemsbycsiid(csiid) {
 
         const pm = new PM();
-        let myproject = pm.getproject.call(this);
+        let schedule = pm.getAllSchedule.call(this)
         let items = [];
-        if (myproject.hasOwnProperty("schedulelabor")) {
-            // eslint-disable-next-line
-            myproject.schedulelabor.mylabor.map(mylabor => {
-                if (mylabor.csiid === csiid) {
-                    items.push(mylabor)
+        if (schedule) {
+
+            schedule.map(item => {
+                if (item.csiid === csiid) {
+                    items.push(item)
                 }
+
             })
 
         }
-        if (myproject.hasOwnProperty("schedulematerials")) {
-            // eslint-disable-next-line
-            myproject.schedulematerials.mymaterial.map(mymaterial => {
-                if (mymaterial.csiid === csiid) {
-                    items.push(mymaterial)
-                }
-            })
-
-        }
-        if (myproject.hasOwnProperty("scheduleequipment")) {
-            // eslint-disable-next-line
-            myproject.scheduleequipment.myequipment.map(myequipment => {
-                if (myequipment.csiid === csiid) {
-                    items.push(myequipment)
-                }
-            })
-
-        }
-        items.sort((a, b) => {
-            return sorttimes(a.timein, b.timein)
-        })
         return items;
+
+
     }
     getprofit(csiid) {
+
 
         let profit = 0;
         let directcost = 0;
@@ -115,58 +102,81 @@ class ViewBidSchedule extends Component {
     }
     getdirectcost(csiid) {
         const pm = new PM()
-        let myproject = pm.getproject.call(this)
+        let proposals = pm.getproposals.call(this)
         let directcost = 0;
-        if (myproject) {
-            if (myproject.hasOwnProperty("schedulelabor")) {
-                // eslint-disable-next-line
-                myproject.schedulelabor.mylabor.map(mylabor => {
+        if (proposals) {
 
-                    if (mylabor.csiid === csiid) {
-
-                        directcost += DirectCostForLabor(mylabor)
+            proposals.map(proposal => {
 
 
-                    }
-                })
-            }
+                if (proposal.hasOwnProperty("labor")) {
+                    // eslint-disable-next-line
+                    proposal.labor.map(mylabor => {
 
-            if (myproject.hasOwnProperty("schedulematerials")) {
-                // eslint-disable-next-line
-                myproject.schedulematerials.mymaterial.map(mymaterial => {
-                    if (mymaterial.csiid === csiid) {
-                        directcost += DirectCostForMaterial(mymaterial)
-                    }
+                        if (mylabor.csiid === csiid) {
 
-                })
-            }
-        }
+                            directcost += DirectCostForLabor(mylabor)
 
-        if (myproject.hasOwnProperty("scheduleequipment")) {
-            // eslint-disable-next-line
-            myproject.scheduleequipment.myequipment.map(myequipment => {
-                if (myequipment.csiid === csiid) {
-                    directcost += DirectCostForEquipment(myequipment)
+
+                        }
+                    })
                 }
 
+                if (proposal.hasOwnProperty("materials")) {
+                    // eslint-disable-next-line
+                    proposal.materials.map(mymaterial => {
+                        if (mymaterial.csiid === csiid) {
+                            directcost += DirectCostForMaterial(mymaterial)
+                        }
+
+                    })
+                }
+
+
+                if (proposal.hasOwnProperty("equipment")) {
+                    // eslint-disable-next-line
+                    proposal.equipment.map(myequipment => {
+                        if (myequipment.csiid === csiid) {
+                            directcost += DirectCostForEquipment(myequipment)
+                        }
+
+                    })
+
+
+                }
+
+
             })
+
         }
 
+
         return directcost;
+
+    }
+    gettotalamount() {
+        const items = this.getitems();
+        let amount = 0;
+        if (items) {
+            items.map(item => {
+                amount += this.getbidprice(item.csiid);
+            })
+        }
+        return amount;
 
     }
     getbidprice(csiid) {
 
         let directcost = Number(this.getdirectcost(csiid));
         let profit = Number(this.getprofit(csiid));
-        let overhead = this.getoverhead();
+
 
         if (!profit) {
             profit = 1
         } else {
             profit = 1 + (profit / 100)
         }
-        let bidprice = (directcost * profit) + overhead;
+        let bidprice = (directcost * profit)
         return bidprice;
     }
     getunitprice(csiid) {
@@ -174,56 +184,56 @@ class ViewBidSchedule extends Component {
         let quantity = Number(this.getquantity(csiid));
         let bidprice = Number(this.getbidprice(csiid));
 
-        if (quantity > 0 && bidprice > 0) {
+        if (quantity > 0) {
             return (bidprice / quantity)
 
         } else {
-            return;
+            return `NA`
         }
 
 
     }
     handlequantity(csiid, quantity) {
         const pm = new PM();
-        if(isNumeric(quantity)) {
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
-            const myproject = pm.getproject.call(this);
-            if (myproject) {
-                const i = pm.getprojectkeybyid.call(this, myproject.projectid);
-                const scheduleitems = pm.getbidschedule.call(this)
-                if(scheduleitems) {
+        if (isNumeric(quantity)) {
+            const myuser = pm.getuser.call(this)
+            if (myuser) {
+                const myproject = pm.getproject.call(this);
+                if (myproject) {
+                    const i = pm.getprojectkeybyid.call(this, myproject.projectid);
+                    const scheduleitems = pm.getbidschedule.call(this)
+                    if (scheduleitems) {
 
-                const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
-                if (scheduleitem) {
-                    const j = pm.getbidschedulekeybyid.call(this, csiid)
-                    myuser.projects.myproject[i].bidschedule[j].quantity = quantity;
-                    this.props.reduxUser(myuser);
-                    this.setState({ render: 'render' })
-                   
-                } else {
-                    let newItem = {csiid, quantity, unit:''}
-                    myuser.projects.myproject[i].bidschedule.push(newItem)
-                    this.props.reduxUser(myuser);
-                    this.setState({ render: 'render' })
+                        const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
+                        if (scheduleitem) {
+                            const j = pm.getbidschedulekeybyid.call(this, csiid)
+                            myuser.projects[i].bidschedule[j].quantity = quantity;
+                            this.props.reduxUser(myuser);
+                            this.setState({ render: 'render' })
+
+                        } else {
+                            let newItem = { csiid, quantity, unit: '' }
+                            myuser.projects[i].bidschedule.push(newItem)
+                            this.props.reduxUser(myuser);
+                            this.setState({ render: 'render' })
+                        }
+
+                    } else {
+                        let newItem = { csiid, quantity, unit: '' }
+                        myuser.projects[i].bidschedule = [newItem]
+                        this.props.reduxUser(myuser);
+                        this.setState({ render: 'render' })
+                    }
+
+
+
+
                 }
-
-            } else {
-                let newItem = {csiid, quantity, unit:''}
-                myuser.projects.myproject[i].bidschedule = [newItem]
-                this.props.reduxUser(myuser);
-                this.setState({ render: 'render' })
             }
 
-           
-
-
-            }
+        } else {
+            alert(`${quantity} should be numeric `)
         }
-
-    } else {
-        alert(`${quantity} should be numeric `)
-    }
 
     }
 
@@ -235,30 +245,30 @@ class ViewBidSchedule extends Component {
             if (myproject) {
                 const i = pm.getprojectkeybyid.call(this, myproject.projectid);
                 const scheduleitems = pm.getbidschedule.call(this)
-                if(scheduleitems) {
+                if (scheduleitems) {
 
-                const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
-                if (scheduleitem) {
-                    const j = pm.getbidschedulekeybyid.call(this, csiid)
-                    myuser.projects.myproject[i].bidschedule[j].unit=unit
-                    this.props.reduxUser(myuser);
-                    this.setState({ render: 'render' })
+                    const scheduleitem = pm.getbidschedulebyid.call(this, csiid)
+                    if (scheduleitem) {
+                        const j = pm.getbidschedulekeybyid.call(this, csiid)
+                        myuser.projects[i].bidschedule[j].unit = unit
+                        this.props.reduxUser(myuser);
+                        this.setState({ render: 'render' })
+                    } else {
+
+                        let newItem = { csiid, quantity: '', unit }
+                        myuser.projects[i].bidschedule.push(newItem)
+                        this.props.reduxUser(myuser);
+                        this.setState({ render: 'render' })
+
+                    }
+
                 } else {
-
-                    let newItem = {csiid, quantity:'', unit}
-                    myuser.projects.myproject[i].bidschedule.push(newItem)
+                    let newItem = { csiid, quantity: '', unit }
+                    myuser.projects[i].bidschedule = [newItem]
                     this.props.reduxUser(myuser);
                     this.setState({ render: 'render' })
 
                 }
-
-            } else {
-                let newItem = {csiid, quantity:'', unit}
-                myuser.projects.myproject[i].bidschedule = [newItem]
-                this.props.reduxUser(myuser);
-                this.setState({ render: 'render' })
-
-            }
 
             }
         }
@@ -279,19 +289,17 @@ class ViewBidSchedule extends Component {
     showbiditem(item) {
 
         const pm = new PM();
-        let providerid = this.props.match.params.providerid;
-        let projectid = this.props.match.params.projectid;
-
+     
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
-        const csi = pm.getcsibyid.call(this, item.csiid);
+        
         let profit = () => {
             return (
                 Number(this.getprofit(item.csiid))
             )
         }
         let bidprice = Number(this.getbidprice(item.csiid))
-        let unitprice = this.getunitprice(item.csiid) > 0 ? +Number(this.getunitprice(item.csiid)):0
+        let unitprice = this.getunitprice(item.csiid) > 0 ? `${Number(this.getunitprice(item.csiid)).toFixed(2)}` : this.getunitprice(item.csiid)
         let directcost = Number(this.getdirectcost(item.csiid))
 
         const unit = () => {
@@ -301,7 +309,7 @@ class ViewBidSchedule extends Component {
                     <input type="text"
                         style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
                         value={this.getunit(item.csiid)}
-                        onChange={event => { this.handleunit(item.csiid,event.target.value) }} />
+                        onChange={event => { this.handleunit(item.csiid, event.target.value) }} />
                 </div>)
         }
         const quantity = () => {
@@ -309,15 +317,24 @@ class ViewBidSchedule extends Component {
                 Quantity <br />
                 <input type="text"
                     style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
-                    value={this.getquantity(item.csiid)} onChange={event => { this.handlequantity(item.csiid,event.target.value) }} />
+                    value={this.getquantity(item.csiid)} onChange={event => { this.handlequantity(item.csiid, event.target.value) }} />
 
             </div>)
         }
 
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+
+            const project = pm.getproject.call(this)
+            if(project) {
+
+                const csi = pm.getcsibyid.call(this, item.csiid);
+                if(csi) {
+
         if (this.state.width > 1200) {
             return (
                 <tr key={`item${item.csiid}`}>
-                    <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
+                    <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${myuser.profile}/projects/${project.title}/bidschedule/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
                     <td style={{ ...styles.alignCenter }}>
                         {quantity()}
                     </td>
@@ -325,7 +342,7 @@ class ViewBidSchedule extends Component {
                     <td style={{ ...styles.alignCenter }}>${Number(directcost).toFixed(2)}</td>
                     <td style={{ ...styles.alignCenter }}>{+Number(profit()).toFixed(4)}</td>
                     <td style={{ ...styles.alignCenter }}>${Number(bidprice).toFixed(2)}</td>
-                    <td style={{ ...styles.alignCenter }}>  {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}</td>
+                    <td style={{ ...styles.alignCenter }}>  {`$${unitprice}/${this.getunit(csi.csiid)}`}</td>
                 </tr>)
 
 
@@ -335,7 +352,7 @@ class ViewBidSchedule extends Component {
                     <div style={{ ...styles.flex1 }}>
                         <div style={{ ...styles.generalFlex }}>
                             <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
-                                <Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${providerid}/myprojects/${projectid}/bidschedule/csi/${csi.csiid}`}> Line Item <br />
+                                <Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${myuser.profile}/projects/${project.title}/bidschedule/csi/${csi.csiid}`}> Line Item <br />
                                     {csi.csi}-{csi.title} </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
@@ -343,7 +360,7 @@ class ViewBidSchedule extends Component {
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                               {unit()}
+                                {unit()}
                             </div>
                         </div>
 
@@ -362,11 +379,18 @@ class ViewBidSchedule extends Component {
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
                                 Unit Price
-                                {`$${Number(unitprice).toFixed(2)}/${this.getunit(csi.csiid)}`}
+                                {unitprice}/${this.getunit(csi.csiid)}
                             </div>
                         </div>
                     </div>
                 </div>)
+
+
+            }
+
+        }
+
+        }
         }
     }
     getproposal() {
@@ -430,9 +454,9 @@ class ViewBidSchedule extends Component {
     }
     getitems() {
         const pm = new PM();
-        let payitems = pm.getAllSchedule.call(this)
+        let items = pm.getAllSchedule.call(this)
 
-        let items = [];
+
         const validateNewItem = (items, item) => {
             let validate = true;
             // eslint-disable-next-line
@@ -444,30 +468,9 @@ class ViewBidSchedule extends Component {
             return validate;
         }
         // eslint-disable-next-line
-        payitems.map(item => {
 
-            if (item.hasOwnProperty("laborid")) {
-
-                items.push(item)
-
-
-            }
-            if (item.hasOwnProperty("materialid")) {
-
-                items.push(item)
-
-
-            }
-            if (item.hasOwnProperty("equipmentid")) {
-
-                items.push(item)
-
-
-            }
-
-        })
         let csis = [];
-        if (items.length > 0) {
+        if (items) {
             // eslint-disable-next-line
             items.map(lineitem => {
                 if (validateNewItem(csis, lineitem)) {
@@ -504,46 +507,47 @@ class ViewBidSchedule extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
+        const regularFont = pm.getRegularFont.call(this)
+        const amount = Number(this.gettotalamount()).toFixed(2);
+        
+        const projectid = new ProjectID();
+       
 
-        const csis = pm.getcsis.call(this);
-        if(!csis) {
-            pm.loadcsis.call(this)
-        }
-
-        if(myuser) {
+        if (myuser) {
             const project = pm.getproject.call(this)
-            if(project) {
-        return (
-            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                <div style={{ ...styles.flex1 }}>
+            if (project) {
+                return (
+                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                        <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                        
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bidschedule`}>  /bidschedule </Link>
+                            </div>
+                            {pm.showbidtable.call(this)}
+
+                            <div style={{...styles.generalContainer}}>
+                                <span style={{...styles.generalFont,...regularFont}}>The Project Schedule Amount is ${amount}</span>
                             </div>
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
+                            {pm.showsaveproject.call(this)}
+                            {projectid.showprojectid.call(this)}
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/bidschedule`}>  /bidschedule </Link>
-                            </div>
-                    {pm.showbidtable.call(this)}
-                    {pm.showsaveproject.call(this)}
-                    {pm.showprojectid.call(this)}
-                </div>
-            </div>)
+                            
+                        </div>
+                    </div>)
+
+            } else {
+                return (<div>Project Not Found</div>)
+            }
 
         } else {
-            return(<div>Project Not Found</div>)
-        }
-
-        } else {
-            return(<div>Please Login to View Bid Schedule</div>)
+            return (<div>Please Login to View Bid Schedule</div>)
         }
 
 
@@ -558,7 +562,7 @@ function mapStateToProps(state) {
         project: state.project,
         allusers: state.allusers,
         allcompanys: state.allcompanys,
-        csis:state.csis
+        csis: state.csis
     }
 }
 export default connect(mapStateToProps, actions)(ViewBidSchedule)

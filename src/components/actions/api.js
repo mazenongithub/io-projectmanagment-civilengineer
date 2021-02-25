@@ -26,7 +26,7 @@ export async function LoadSpecifications(projectid) {
 
 export async function LoadAllUsers() {
 
-    let APIURL = `${process.env.REACT_APP_SERVER_API}/construction/loadallusers`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/loadallusers`
 
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 

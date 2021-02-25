@@ -34,7 +34,7 @@ class CompletionDate {
                                 let month = this.state.completiondatemonth;
                                 const timein = `${year}-${month}-${day}`
 
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].completion= timein;
+                                myuser.projects[i].milestones[j].completion= timein;
                                 this.props.reduxUser(myuser)
                                 this.setState({ render: 'render' })
 
@@ -80,7 +80,7 @@ class CompletionDate {
                                 let year = this.state.completiondateyear;
                                 let month = this.state.completiondatemonth;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].completion = timein;
+                                myuser.projects[i].milestones[j].completion = timein;
                                 this.props.reduxUser(myuser)
                                 this.setState({ render: 'render' })
 
@@ -125,7 +125,7 @@ class CompletionDate {
                                 let day = this.state.completiondateday;
                                 let year = this.state.completiondateyear;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects.myproject[i].projectmilestones.mymilestone[j].completion = timein;
+                                myuser.projects[i].milestones[j].completion = timein;
                                 this.props.reduxUser(myuser)
                                 this.setState({ render: 'render' })
 

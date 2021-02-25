@@ -7,8 +7,9 @@ import PM from './pm';
 //import { Link } from 'react-router-dom';
 import { TeamMember, returnCompanyList } from './functions';
 import { removeIconSmall, defaultProfilePhoto } from './svg'
-import {LoadAllUsers} from './actions/api'
-import {Link} from 'react-router-dom'
+import { LoadAllUsers } from './actions/api'
+import { Link } from 'react-router-dom'
+import ProjectID from './projectid';
 
 
 class Team extends Component {
@@ -24,19 +25,18 @@ class Team extends Component {
             search: '',
             message: '',
             role: '',
-            spinner:false
+            spinner: false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxNavigation({ navigation: "team" })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
-        const pm  = new PM();
+        const pm = new PM();
         const allusers = pm.getallusers.call(this)
-        if(!allusers) {
-        this.loadallusers()
+        console.log(allusers)
+        if (!allusers) {
+            pm.loadallusers.call(this)
         }
 
     }
@@ -50,20 +50,7 @@ class Team extends Component {
 
     }
 
-    async loadallusers() {
-        try {
-            let response = await LoadAllUsers();
-            console.log(response)
-            if (response.hasOwnProperty("allusers")) {
-                let companys = returnCompanyList(response.allusers);
-                this.props.reduxAllCompanys(companys)
-                this.props.reduxAllUsers(response.allusers);
-            }
-        } catch (err) {
-            alert(err)
-        }
 
-    }
 
     showsearchresults() {
         const pm = new PM();
@@ -129,7 +116,7 @@ class Team extends Component {
     validateprovider(providerid) {
         let validate = true;
         const pm = new PM();
-        const myteam = pm.getprojectteam.call(this);
+        const myteam = pm.getteam.call(this);
         if (myteam) {
             // eslint-disable-next-line
             myteam.map(myteam => {
@@ -144,7 +131,7 @@ class Team extends Component {
 
         const pm = new PM();
         const myuser = pm.getuser.call(this)
-       
+
         if (myuser) {
 
             const myproject = pm.getproject.call(this);
@@ -175,22 +162,31 @@ class Team extends Component {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            let validate = this.validateprovider(providerid);
-            if (validate) {
-                const myteam = pm.getprojectteam.call(this);
-                const role = this.state.role;
-                let newteam = TeamMember(providerid, role)
-                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
-                if (myteam) {
+            const project = pm.getproject.call(this)
+            if (project) {
+                const i = pm.getprojectkeybyid.call(this, project.projectid);
+               
+                let validate = this.validateprovider(providerid);
 
-                    myuser.projects.myproject[i].projectteam.myteam.push(newteam)
+                if (validate) {
 
-                } else {
-                    let projectteam = { myteam: [newteam] }
-                    myuser.projects.myproject[i].projectteam = projectteam;
+                    const myteam = pm.getteam.call(this);
+                    
+                    const role = ""
+                    let newteam = TeamMember(providerid, role)
+
+                    if (myteam) {
+
+                        myuser.projects[i].team.push(newteam)
+
+                    } else {
+                        
+                        myuser.projects[i].team = [newteam]
+                    }
+                    this.props.reduxUser(myuser);
+                    this.setState({ activeprovider: providerid })
                 }
-                this.props.reduxUser(myuser);
-                this.setState({ activeprovider: providerid })
+
             }
 
         }
@@ -213,10 +209,10 @@ class Team extends Component {
             let contactstate = "";
             let zipcode = "";
             if (myuser.hasOwnProperty("company")) {
-                address = myuser.company.address;
-                city = myuser.company.city;
-                contactstate = myuser.company.contactstate;
-                zipcode = myuser.company.zipcode;
+                address = myuser.address;
+                city = myuser.city;
+                contactstate = myuser.contactstate;
+                zipcode = myuser.zipcode;
                 return (<div style={{ ...styles.generalContainer }}>
                     {address} {city} {contactstate} {zipcode}
                 </div>)
@@ -265,7 +261,7 @@ class Team extends Component {
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...styles.searchphoto }} />)
             } else {
                 return (defaultProfilePhoto())
-             
+
             }
         }
         const location = () => {
@@ -274,10 +270,10 @@ class Team extends Component {
             let contactstate = "";
             let zipcode = "";
             if (myuser.hasOwnProperty("company")) {
-                address = myuser.company.address;
-                city = myuser.company.city;
-                contactstate = myuser.company.contactstate;
-                zipcode = myuser.company.zipcode;
+                address = myuser.address;
+                city = myuser.city;
+                contactstate = myuser.contactstate;
+                zipcode = myuser.zipcode;
                 return (<div style={{ ...styles.generalContainer }}>
                     {address} {city} {contactstate} {zipcode}
                 </div>)
@@ -335,23 +331,31 @@ class Team extends Component {
         }
         return myproviders;
     }
-    showteamids() {
+    getTeam() {
         const pm = new PM();
-        const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid);
-
-        let myproviders = [];
-        if (myproject.hasOwnProperty("projectteam")) {
-            // eslint-disable-next-line
-            myproject.projectteam.myteam.map(myteam => {
-
-                let myuser = pm.getproviderbyid.call(this, myteam.providerid)
-
-                console.log(myuser)
-                myproviders.push(this.showprovider(myuser))
-
-
-            })
+        const project = pm.getproject.call(this)
+        let team = false;
+        if (project) {
+            if (project.hasOwnProperty("team")) {
+                team = project.team;
+            }
         }
+        return team;
+    }
+    showteamids() {
+        const pm = new PM();;
+        const team = this.getTeam();
+        let myproviders = []
+        if (team) {
+            team.map(getteam => {
+
+                myproviders.push(this.showprovider(getteam.providerid))
+            })
+
+
+        }
+
+
         return myproviders;
     }
 
@@ -394,21 +398,21 @@ class Team extends Component {
     }
     removeengineer(providerid) {
         const pm = new PM();
-        const engineer = pm.getproviderbyid.call(this,providerid)
+        const engineer = pm.getproviderbyid.call(this, providerid)
         console.log(engineer)
-        if(window.confirm(`Are you sure you want to remove ${engineer.firstname} ${engineer.lastname} ?`)) {
-           const myuser = pm.getuser.call(this)
-            if(myuser) {
+        if (window.confirm(`Are you sure you want to remove ${engineer.firstname} ${engineer.lastname} ?`)) {
+            const myuser = pm.getuser.call(this)
+            if (myuser) {
                 const project = pm.getproject.call(this)
-                if(project) {
+                if (project) {
                     const projectid = project.projectid;
-                    const i = pm.getprojectkeybyid.call(this,projectid);
-                    const engineer = pm.getengineerbyid.call(this,providerid) 
-                    if(engineer) {
-                    const j = pm.getengineerkeybyid.call(this,providerid);
-                    myuser.projects.myproject[i].engineering.splice(j,1);
-                    this.props.reduxUser(myuser)
-                    this.setState({render:'render'})
+                    const i = pm.getprojectkeybyid.call(this, projectid);
+                    const engineer = pm.getengineerbyid.call(this, providerid)
+                    if (engineer) {
+                        const j = pm.getengineerkeybyid.call(this, providerid);
+                        myuser.projects.myproject[i].engineering.splice(j, 1);
+                        this.props.reduxUser(myuser)
+                        this.setState({ render: 'render' })
 
                     }
 
@@ -419,18 +423,18 @@ class Team extends Component {
     handleengineerrole(role) {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
-        if(myuser) {
+        if (myuser) {
             const project = pm.getproject.call(this)
-            if(project) {
+            if (project) {
                 const projectid = project.projectid;
-                const i = pm.getprojectkeybyid.call(this,projectid);
-                if(this.state.activeengineer) {
-                    const engineer = pm.getengineerbyid.call(this,this.state.activeengineer) 
-                    if(engineer) {
-                    const j = pm.getengineerkeybyid.call(this,this.state.activeengineer);
-                    myuser.projects.myproject[i].engineering[j].role = role;
-                    this.props.reduxUser(myuser);
-                    this.setState({render:'render'})
+                const i = pm.getprojectkeybyid.call(this, projectid);
+                if (this.state.activeengineer) {
+                    const engineer = pm.getengineerbyid.call(this, this.state.activeengineer)
+                    if (engineer) {
+                        const j = pm.getengineerkeybyid.call(this, this.state.activeengineer);
+                        myuser.projects.myproject[i].engineering[j].role = role;
+                        this.props.reduxUser(myuser);
+                        this.setState({ render: 'render' })
                     }
 
                 }
@@ -442,7 +446,7 @@ class Team extends Component {
         const pm = new PM();
         const myproject = pm.getproject.call(this)
         if (myproject) {
- 
+
             if (this.state.activeengineer) {
 
                 const myengineer = pm.getengineerbyid.call(this, this.state.activeengineer)
@@ -458,24 +462,42 @@ class Team extends Component {
     }
 
     getrole() {
-        const myprovider = this.getactiveprovider();
-        if (myprovider) {
-            return (myprovider.role)
-        } else {
-            return;
+        const pm = new PM();
+        let role = "";
+        if (this.state.activeprovider) {
+
+            const myprovider = pm.getteambyid.call(this, this.state.activeprovider)
+            if (myprovider) {
+                role = myprovider.role;
+            }
         }
+        return role;
 
     }
+
     handlerole(role) {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
         if (myuser) {
-            if (this.state.activeprovider) {
-                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
-                const j = this.getactiveproviderkey();
-                myuser.projects.myproject[i].projectteam.myteam[j].role = role;
-                this.props.reduxUser(myuser);
-                this.setState({ render: 'render' })
+            const project = pm.getproject.call(this)
+            if (project) {
+
+                const i = pm.getprojectkeybyid.call(this, project.projectid)
+
+
+                if (this.state.activeprovider) {
+                    const team = pm.getteambyid.call(this, this.state.activeprovider)
+                    if (team) {
+
+                        const j = pm.getteamkeybyid.call(this, this.state.activeprovider)
+                        myuser.projects[i].team[j].role = role;
+                        this.props.reduxUser(myuser);
+                        this.setState({ render: 'render' })
+
+                    }
+
+                }
+
 
             }
 
@@ -491,16 +513,27 @@ class Team extends Component {
     }
     removeprovider(myteam) {
         const pm = new PM();
-        const myuser = pm.getuser.call(this);
+        
+
+        const myuser = pm.getuser.call(this)
         if (myuser) {
+            
+            const myprovider = pm.getuserbyid.call(this,myteam.providerid)
+            if (window.confirm(`Are you sure you want to delete ${myprovider.profile} from the team?`)) {
+                const project = pm.getproject.call(this);
+                if(project) {
+                    const i = pm.getprojectkeybyid.call(this,project.projectid)
+                    const team = pm.getteambyid.call(this,myteam.providerid)
+                    if(team) {
+                        const j = pm.getteamkeybyid.call(this,myteam.providerid)
+                        myuser.projects[i].team.splice(j, 1);
+                        this.props.reduxUser(myuser);
+                        this.setState({ activeprovider: false })
+                    }
 
-            if (window.confirm(`Are you sure you want to delete Provider ${myteam.providerid}?`)) {
-
-                const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid);
-                const j = pm.getproviderkeybyid.call(this, myteam.providerid);
-                myuser.projects.myproject[i].projectteam.myteam.splice(j, 1);
-                this.props.reduxUser(myuser);
-                this.setState({ activeprovider: false })
+                }
+               
+               
 
             }
 
@@ -508,10 +541,10 @@ class Team extends Component {
     }
 
     makeengineeractive(engineerid) {
-        if(this.state.activeengineer === engineerid) {
-            this.setState({activeengineer:false})
+        if (this.state.activeengineer === engineerid) {
+            this.setState({ activeengineer: false })
         } else {
-            this.setState({activeengineer:engineerid})
+            this.setState({ activeengineer: engineerid })
         }
     }
     showengineer(myuser) {
@@ -523,14 +556,14 @@ class Team extends Component {
         const removeIcon = pm.getremoveicon.call(this);
         const company = () => {
             if (myuser.hasOwnProperty("company")) {
-                return myuser.company.company;
+                return myuser.company;
             } else {
                 return;
             }
         }
         const location = () => {
             if (myuser.hasOwnProperty("company")) {
-                return (`${myuser.company.address} ${myuser.company.city} ${myuser.company.contactstate} ${myuser.company.zipcode}  `)
+                return (`${myuser.address} ${myuser.city} ${myuser.contactstate} ${myuser.zipcode}  `)
             } else {
                 return;
             }
@@ -541,7 +574,7 @@ class Team extends Component {
 
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
             } else {
-               return(defaultProfilePhoto())
+                return (defaultProfilePhoto())
             }
         }
         const Role = () => {
@@ -563,7 +596,7 @@ class Team extends Component {
             <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
                 <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeengineer(myuser.providerid) }}>{removeIconSmall()}</button>
             </div>
-        
+
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                 <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
                     {ProfileImage()}
@@ -574,7 +607,7 @@ class Team extends Component {
                 {myuser.firstname} {myuser.lastname}
             </div>
             <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeengineeractive(myuser.providerid) }}>
-                 {company()} {location()}
+                {company()} {location()}
             </div>
 
             {Role()}
@@ -582,7 +615,7 @@ class Team extends Component {
 
         </div>)
     }
-    showprovider(myuser) {
+    showprovider(providerid) {
 
         const styles = MyStylesheet();
         const pm = new PM();
@@ -591,14 +624,14 @@ class Team extends Component {
         const removeIcon = pm.getremoveicon.call(this);
         const company = () => {
             if (myuser.hasOwnProperty("company")) {
-                return myuser.company.company;
+                return myuser.company;
             } else {
                 return;
             }
         }
         const location = () => {
             if (myuser.hasOwnProperty("company")) {
-                return (`${myuser.company.address} ${myuser.company.city} ${myuser.company.contactstate} ${myuser.company.zipcode}  `)
+                return (`${myuser.address} ${myuser.city} ${myuser.contactstate} ${myuser.zipcode}  `)
             } else {
                 return;
             }
@@ -609,7 +642,7 @@ class Team extends Component {
 
                 return (<img src={myuser.profileurl} alt={`${myuser.firstname} ${myuser.lastname}`} style={{ ...teamProfile }} />)
             } else {
-                return(defaultProfilePhoto())
+                return (defaultProfilePhoto())
             }
         }
         const Role = () => {
@@ -627,29 +660,34 @@ class Team extends Component {
             }
         }
 
-        return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }}>
-            
-            <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
-                <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeprovider(myuser) }}>{removeIconSmall()}</button>
-            </div>
-           
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto, ...styles.bottomMargin15 }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
-                    {ProfileImage()}
+        const myuser = pm.getuserbyid.call(this, providerid)
+        if (myuser) {
+
+            return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont, ...styles.showBorder }} key={myuser.profile}>
+
+                <div style={{ ...styles.generalContainer, ...styles.textAlignRight }}>
+                    <button style={{ ...styles.generalButton, ...removeIcon }} onClick={() => { this.removeprovider(myuser) }}>{removeIconSmall()}</button>
                 </div>
-            </div>
 
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
-                {myuser.firstname} {myuser.lastname}
-            </div>
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
-                {company()} {location()}
-            </div>
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                    <div style={{ ...styles.showBorder, ...teamProfile, ...styles.marginAuto, ...styles.bottomMargin15 }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
+                        {ProfileImage()}
+                    </div>
+                </div>
 
-            {Role()}
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
+                    {myuser.firstname} {myuser.lastname}
+                </div>
+                <div style={{ ...styles.generalContainer, ...styles.alignCenter }} onClick={() => { this.makeprovideractive(myuser.providerid) }}>
+                    {company()} {location()}
+                </div>
+
+                {Role()}
 
 
-        </div>)
+            </div>)
+
+        }
     }
     projectteamtitle() {
         const pm = new PM();
@@ -673,102 +711,75 @@ class Team extends Component {
         const regularFont = pm.getRegularFont.call(this);
         const getColumns = pm.getcolumns.call(this);
         const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
 
-        if(myuser) {
+        if (myuser) {
 
 
             const project = pm.getproject.call(this)
 
-            if(project) {
-            
+            if (project) {
 
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/team`}>  /team  </Link>
-                            </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                return (
+                    <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1 }}>
-                            <span style={{ ...headerFont, ...styles.generalFont }}>Construction Team</span>
+
+
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/team`}>  /team  </Link>
+                            </div>
+
+                            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                                <div style={{ ...styles.flex1 }}>
+                                    <span style={{ ...headerFont, ...styles.generalFont }}>Construction Team</span>
+                                </div>
+                            </div>
+
+                            <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
+                                <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
+                                    Construction Search  <br />
+                                    <input type="text"
+                                        value={this.state.search}
+                                        onChange={event => { this.setState({ search: event.target.value }) }}
+                                        style={{ ...styles.generalFont, ...regularFont, ...styles.generalField }} />
+                                </div>
+                            </div>
+                            {this.showsearchresults()}
+
+
+
+                            {this.projectteamtitle()}
+
+
+                            <div style={{ ...styles.generalGrid, ...getColumns }}>
+                                {this.showteamids()}
+                            </div>
+
+
+                            {pm.showsaveproject.call(this)}
+
+                            {projectid.showprojectid.call(this)}
+
                         </div>
                     </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
-                            Construction Search  <br />
-                            <input type="text"
-                                value={this.state.search}
-                                onChange={event => { this.setState({ search: event.target.value }) }}
-                                style={{ ...styles.generalFont, ...regularFont, ...styles.generalField }} />
-                        </div>
-                    </div>
-                    {this.showsearchresults()}
-
-
-
-                    {this.projectteamtitle()}
-
-
-                    <div style={{ ...styles.generalGrid, ...getColumns }}>
-                        {this.showteamids()}
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1 }}>
-                            <span style={{ ...headerFont, ...styles.generalFont }}>Design Team</span>
-                        </div>
-                    </div>
-
-                    <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
-                        <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont }}>
-                            Design Search <br />
-                            <input type="text"
-                                value={this.state.design}
-                                onChange={event => { this.setState({ design: event.target.value }) }}
-                                style={{ ...styles.generalFont, ...regularFont, ...styles.generalField }} />
-                        </div>
-                    </div>
-
-                    {this.showdesignresults()}
-
-   
-                    <div style={{ ...styles.generalGrid, ...getColumns }}>
-                        {this.showdesignteamids()}
-                    </div>
-
-                    {pm.showsaveproject.call(this)}
-
-                    {pm.showprojectid.call(this)}
-
-                </div>
-            </div>
-        )
+                )
 
             } else {
-                return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
-                    <span style={{...styles.generalFont,...regularFont}}>Project Not Found</span>
+                return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                    <span style={{ ...styles.generalFont, ...regularFont }}>Project Not Found</span>
                 </div>)
 
             }
 
         } else {
-            return(<div style={{...styles.generalContainer, ...styles.alignCenter}}>
-                <span style={{...styles.generalFont,...regularFont}}>Please Login to View Team</span>
+            return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View Team</span>
             </div>)
         }
 

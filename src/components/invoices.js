@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import { inputUTCStringForLaborID } from './functions'
 import PM from './pm';
+import ProjectID from './projectid';
 
 class Invoices extends Component {
     constructor(props) {
@@ -20,8 +21,7 @@ class Invoices extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxNavigation({ navigation: "invoices" })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+
     }
 
     componentWillUnmount() {
@@ -35,38 +35,29 @@ class Invoices extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
-        const myprovider = pm.getproviderbyid.call(this, myinvoice.providerid)
-        const providerid = this.props.match.params.providerid;
-        const projectid = this.props.match.params.projectid;
+        const company = pm.getcompanybyid.call(this,myinvoice.companyid)
+       
         const invoiceid = myinvoice.invoiceid;
 
-        
-        const handlemyprovider = () => {
-            if (myprovider) {
-                return (`by ${myprovider.firstname} ${myprovider.lastname}`)
+        const lastupdated = myinvoice.updated ? <span>Last Updated {inputUTCStringForLaborID(myinvoice.updated)}</span> : <span>&nbsp;</span>
+       
+        const lastapproved= () => {
+            if(myinvoice.approved) {
+                return(<span>Last Approved ${inputUTCStringForLaborID(myinvoice.approved)}`</span>)
             } else {
                 return (<span>&nbsp;</span>)
             }
         }
-            const lastupdated = () => {
-                if(myinvoice.updated) {
-                    return(<span>Last Updated {inputUTCStringForLaborID(myinvoice.updated)}</span>)
-                } else {
-                    return (<span>&nbsp;</span>)
-                }
-            }
-            const lastapproved= () => {
-                if(myinvoice.approved) {
-                    return(<span>Last Approved ${inputUTCStringForLaborID(myinvoice.approved)}`</span>)
-                } else {
-                    return (<span>&nbsp;</span>)
-                }
-            }
 
-        
+        const myuser = pm.getuser.call(this)
+        if(myuser) {
+            const project = pm.getproject.call(this)
+
         return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
-            <Link to={`/${providerid}/myprojects/${projectid}/invoices/${invoiceid}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> InvoiceID {invoiceid} {lastupdated()} {lastapproved()} {handlemyprovider()} </Link>
+           <span style={{...regularFont, ...styles.generalFont}}> </span><Link to={`/${myuser.profile}/projects/${project.title}/invoices/${company.url}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> Invoice By:{company.company} {lastupdated} {lastapproved()} </Link>
         </div>)
+
+        }
     }
     showinvoices() {
         let pm = new PM();
@@ -75,7 +66,9 @@ class Invoices extends Component {
         if (myinvoices) {
             // eslint-disable-next-line
             myinvoices.map(myinvoice => {
+
                 invoices.push(this.showinvoice(myinvoice))
+            
             })
 
         }
@@ -83,9 +76,11 @@ class Invoices extends Component {
     }
     render() {
         const styles = MyStylesheet();
+     
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
         if(myuser) {
             const project = pm.getproject.call(this)
             if(project) {
@@ -93,24 +88,17 @@ class Invoices extends Component {
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                           <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/invoices`}>  /invoices </Link>
                             </div>
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/invoices`}>  /invoices </Link>
-                            </div>
                     {this.showinvoices()}
 
-                    {pm.showprojectid.call(this)}
+                    {projectid.showprojectid.call(this)}
 
                 </div>
             </div>)
@@ -130,9 +118,8 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
-        project: state.project,
-        allusers: state.allusers,
-        allcompanys: state.allcompanys
+        csis: state.csis,
+        allusers: state.allusers
     }
 }
 export default connect(mapStateToProps, actions)(Invoices)

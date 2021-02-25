@@ -21,8 +21,7 @@ class Proposals extends Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.props.reduxNavigation({ navigation: "proposals" })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+
     }
 
     componentWillUnmount() {
@@ -88,10 +87,6 @@ class Proposals extends Component {
         return (
             <div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
-
-                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
-                            </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
                                 <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>

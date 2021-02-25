@@ -503,10 +503,6 @@ class Profile {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
 
-                <div style={{ ...styles.generalContainer,  ...styles.bottomMargin15,  ...styles.alignCenter }}>
-                    <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }}>  /{myuser.profile} </Link>
-                </div>
-
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>

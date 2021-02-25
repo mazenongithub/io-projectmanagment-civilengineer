@@ -40,7 +40,7 @@ class ProposalBidItem extends Component {
             // eslint-disable-next-line
             laboritems.map(mylabor => {
 
-                items.push(this.showlaborid(mylabor))
+                items.push(pm.showlaborid.call(this,mylabor))
             })
 
         }
@@ -51,11 +51,11 @@ class ProposalBidItem extends Component {
     getlabor() {
         const pm = new PM();
         const proposal = pm.getproposal.call(this)
-        let labor = false;
         let getlabor = [];
         let csiid = this.props.match.params.csiid;
         if (proposal) {
             if (proposal.hasOwnProperty("labor")) {
+                // eslint-disable-next-line
                 proposal.labor.map(labor => {
                     if (labor.csiid === csiid) {
                         getlabor.push(labor)
@@ -106,14 +106,14 @@ class ProposalBidItem extends Component {
 
 
     getmaterialitems() {
-
+        const pm = new PM();
         const materials = this.getmaterials();
         let items = [];
 
         if (materials) {
             // eslint-disable-next-line
             materials.map(mymaterial => {
-                items.push(this.showmaterialid(mymaterial))
+                items.push(pm.showmaterialid.call(this,mymaterial))
             })
 
 
@@ -136,13 +136,13 @@ class ProposalBidItem extends Component {
         return cost;
     }
     getequipmentitems() {
-
+        const pm = new PM();
         const equipment = this.getequipment()
         let items = [];
         if (equipment) {
             // eslint-disable-next-line
             equipment.map(myequipment => {
-                items.push(this.showequipmentid(myequipment))
+                items.push(pm.showequipmentid.call(this,myequipment))
             })
 
         }

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import { AuthorizeProposal } from './svg'
 import {
-    sorttimes,
     DirectCostForLabor, ProfitForLabor, DirectCostForMaterial,
     ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment,
     UTCTimefromCurrentDate,
@@ -33,10 +32,7 @@ class ViewProposal extends Component {
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
-        this.props.reduxNavigation({ navigation: "viewproposal", proposalid: this.props.match.params.proposalid })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
-
-
+ 
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
@@ -174,9 +170,7 @@ class ViewProposal extends Component {
     }
     showbiditem(item) {
         const pm = new PM();
-        let providerid = this.props.match.params.providerid;
-        let projectid = this.props.match.params.projectid;
-        let proposalid = this.props.match.params.proposalid;
+    
 
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
@@ -207,8 +201,8 @@ class ViewProposal extends Component {
                                 <td style={{ ...styles.alignCenter }}>{unit}</td>
                                 <td style={{ ...styles.alignCenter }}>${directcost}</td>
                                 <td style={{ ...styles.alignCenter }}>{profit}</td>
-                                <td style={{ ...styles.alignCenter }}>{bidprice}</td>
-                                <td style={{ ...styles.alignCenter }}>  {unitprice}</td>
+                                <td style={{ ...styles.alignCenter }}>${bidprice}</td>
+                                <td style={{ ...styles.alignCenter }}> {unitprice}</td>
                             </tr>)
 
 

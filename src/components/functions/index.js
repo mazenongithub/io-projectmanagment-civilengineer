@@ -23,7 +23,9 @@ export function validateMonth(mon) {
     const reg_ex = /^0[1-9]|1[0-2]$/;
     return (reg_ex.test(mon))
 }
-
+export function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
 export function getFirstIsOn(mydate) {
     let monthdisplay = mydate.getMonth() + 1;
     let fullyear = mydate.getFullYear();
