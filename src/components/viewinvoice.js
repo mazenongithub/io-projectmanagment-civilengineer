@@ -498,7 +498,7 @@ class ViewInvoice extends Component {
             if (company) {
                 if (project) {
 
-                    const invoice = pm.getinvoicebyid.call(this, this.props.match.params.companyid);
+                    const invoice = pm.getinvoicebyid.call(this);
                     if (invoice) {
                         const amount = Number(this.getamount()).toFixed(2)
                         return (
@@ -521,7 +521,7 @@ class ViewInvoice extends Component {
                                     {pm.showbidtable.call(this)}
 
                                     <div style={{ ...styles.generalContainer }}>
-                                        <span style={{ ...regularFont, ...styles.generalFont }}>The estimated amount is ${amount}</span>
+                                        <span style={{ ...regularFont, ...styles.generalFont }}>The invoiced amount is ${amount}</span>
                                     </div>
 
                                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>

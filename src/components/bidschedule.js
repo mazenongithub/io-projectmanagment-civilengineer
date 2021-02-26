@@ -305,7 +305,7 @@ class ViewBidSchedule extends Component {
         const unit = () => {
             return (
                 <div style={{ ...styles.generalContainer }}>
-                    Unit <br />
+                 
                     <input type="text"
                         style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
                         value={this.getunit(item.csiid)}
@@ -314,7 +314,7 @@ class ViewBidSchedule extends Component {
         }
         const quantity = () => {
             return (<div style={{ ...styles.generalContainer }}>
-                Quantity <br />
+              
                 <input type="text"
                     style={{ ...regularFont, ...styles.generalFont, ...styles.minWidth90, ...styles.alignCenter }}
                     value={this.getquantity(item.csiid)} onChange={event => { this.handlequantity(item.csiid, event.target.value) }} />
@@ -356,11 +356,11 @@ class ViewBidSchedule extends Component {
                                     {csi.csi}-{csi.title} </Link>
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                {quantity()}
+                            Quantity <br />   {quantity()}
 
                             </div>
                             <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
-                                {unit()}
+                            Unit <br /> {unit()}
                             </div>
                         </div>
 

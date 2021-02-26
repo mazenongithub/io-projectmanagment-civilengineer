@@ -684,78 +684,94 @@ class PM {
         const slides = () => {
             return ([
                 {
-                    title: 'Project Management by civilengineer.io',
+                    title: 'My Projects',
                     id: 'myprojects',
                     url: 'https://civilengineer.io/projectmanagment/slides/myprojects.png',
-                    caption: `Project Management by Civilenginer.io. Project Management construction management administrative program for builders. Successfully administering construction contracts online inside the civilengineer.io network.  `
+                    caption: `Start By Creating A Project  `
 
                 },
                 {
-                    title: 'Profile',
-                    id: 'profile',
-                    url: 'https://civilengineer.io/projectmanagment/slides/profile.png',
-                    caption: `Update your Basic Profile to begin. Add profile photo.   `
+                    title: 'Project',
+                    id: 'Project',
+                    url: 'https://civilengineer.io/projectmanagment/slides/project.png',
+                    caption: `Define the Scope of Work and Location for your Project. Access the project component using the ProjectID links at the bottom    `
 
                 },
-                {
-                    title: 'Project Team',
-                    id: 'myteam',
-                    url: 'https://civilengineer.io/projectmanagment/slides/myteam.png',
-                    caption: `After creating your project, create your project team for Design. Create your project team for Construction. Design furnishes Specs and Cost Estimates. Construction does the work.`
-
-                },
+             
                 {
                     title: 'Milestones',
                     id: 'milestones',
                     url: 'https://civilengineer.io/projectmanagment/slides/milestones.png',
-                    caption: `Project Milestones with Relationships determines paths and critical paths for your project. This makes planning the project easier.`
+                    caption: `Add Milestones for your Project with start and completion dates. Built in formula determines the critical path, float, and lag in days.`
 
                 },
-                {
-                    title: 'Critical Path',
-                    id: 'criticalpath',
-                    url: 'https://civilengineer.io/projectmanagment/slides/criticalpath.png',
-                    caption: `Critical Path is calculated for the milestones. This program solves the classic critical path CPM method in calculating float and total project float `
-
-                },
+               
                 {
                     title: 'Proposals',
                     id: 'proposals',
                     url: 'https://civilengineer.io/projectmanagment/slides/proposals.png',
-                    caption: `Proposals summarizes the schedule in construction format. PM authorizes the proposals  `
+                    caption: `View A Construction Proposal from Each Company on your team. The Construction Proposal contains a schedule of costs for each item.`
 
                 },
                 {
-                    title: 'Invoice',
-                    id: 'invoice',
-                    url: 'https://civilengineer.io/projectmanagment/slides/invoice.png',
-                    caption: `You may settle an invoice when funds are available with respect to the invoice balance. Ensure funds exceed invoice balance proir to making transfer  `
+                    title: 'View Proposal',
+                    id: 'viewproposal',
+                    url: 'https://civilengineer.io/projectmanagment/slides/viewproposal.png',
+                    caption: `Itemized list of scheduled work items submitted from each company. Produces a unit price for each item`
+
+                },
+                {
+                    title: 'Proposal Line Item',
+                    id: 'proposallineitem',
+                    url: 'https://civilengineer.io/projectmanagment/slides/proposallineitem.png',
+                    caption: `Labor, Equipment, Materials breakdown for each item in the proposal`
+
+                },
+                {
+                    title: 'Invoices',
+                    id: 'invoices',
+                    url: 'https://civilengineer.io/projectmanagment/slides/invoices.png',
+                    caption: `View the list of invoices submitted from each company on your project  `
+
+                },
+                {
+                    title: 'View Invoice',
+                    id: 'viewinvoice',
+                    url: 'https://civilengineer.io/projectmanagment/slides/viewinvoice.png',
+                    caption: `Itemized list of actual costs submitted by the company. Produces the actual unit price for construction for each item`
+
+                },
+                {
+                    title: 'Invoice Line Item',
+                    id: 'invoicelineitem',
+                    url: 'https://civilengineer.io/projectmanagment/slides/invoicelineitem.png',
+                    caption: `Labor, Equipment, Materials breakdow for each item in the invoice`
 
                 },
 
                 {
-                    title: 'Labor, Equipment, Materials',
-                    id: 'lem',
-                    url: 'https://civilengineer.io/projectmanagment/slides/lem.png',
-                    caption: `Inside each invoice and inside project bid schedule there are labor, material, and equipment breakdowns for each pay item `
+                    title: 'Bid Schedule',
+                    id: 'bidschedule',
+                    url: 'https://civilengineer.io/projectmanagment/slides/bidschedule.png',
+                    caption: `All entire schedule of costs from all of the companys itemized by Construction code. Track and enter your own Project level schedule to produce project level unit pricing as the PM`
                 },
                 {
-                    title: 'Engineering Cost Estimate',
-                    id: 'costestimate',
-                    url: 'https://civilengineer.io/projectmanagment/slides/costestimate.png',
-                    caption: `The Engineers furnish the PM a cost estimate. They create this inside of Design. This is done to create the table for bid and we use it to negociate the amount. The Cost Estimate uses the Service Providers rates. The Engineers create the cost estimate the same way the Service Providers do.  `
+                    title: 'Bid Schedule Line Item',
+                    id: 'bidschedulelineitem',
+                    url: 'https://civilengineer.io/projectmanagment/slides/bidschedulelineitem.png',
+                    caption: `Labor, Equipment, and Materials breakdown for each item in your project level bidschedule from all the companies`
                 },
                 {
-                    title: 'Construction Specifications',
-                    id: 'specifications',
-                    url: 'https://civilengineer.io/projectmanagment/slides/specifications.png',
-                    caption: `Engineers create construction specifications. These are referenced during construction. The contain important paragraphs relating to the scope of the job. It is important these specs are referenced throughout the job to define the work and place quality standards.  `
+                    title: 'Bid',
+                    id: 'bid',
+                    url: 'https://civilengineer.io/projectmanagment/slides/bidschedule.png',
+                    caption: `Project Level Bid from all of the companies itemized per spec code. Simply enter your quantities and units to produce the project level unit prices from all the Projects as the PM. `
                 },
                 {
-                    title: 'Charges',
-                    id: 'charges',
-                    url: 'https://civilengineer.io/projectmanagment/slides/charges.png',
-                    caption: `Adding charges to  your project is simple using the charge component. Having an available balance allows your to settle your invoices and pay your service providers.   `
+                    title: 'Bid Line Item',
+                    id: 'bidlineitem',
+                    url: 'https://civilengineer.io/projectmanagment/slides/bidlineitem.png',
+                    caption: `Labor, Equipment, and Materials breakdown for each actual item in your bid from all the companys.`
                 }
             ])
         }
@@ -1988,20 +2004,27 @@ class PM {
     }
 
 
-    getinvoicebyid(invoiceid) {
+    getinvoicebyid() {
         let invoice = false;
         const pm = new PM();
-        const myproject = pm.getproject.call(this);
-        if (myproject.hasOwnProperty("invoices")) {
-            // eslint-disable-next-line
-            myproject.invoices.map(myinvoice => {
-                if (myinvoice.invoiceid === invoiceid) {
-                    invoice = myinvoice;
-                }
-            })
+        const invoices = pm.getinvoices.call(this)
+        const company = pm.getcompany.call(this)
+        if (company) {
+            if (invoices) {
+                // eslint-disable-next-line
+                invoices.map(myinvoice => {
+      
+                    if (myinvoice.companyid === company.companyid) {
+                        invoice = myinvoice;
+                    }
+                })
+            }
+      
         }
+      
         return invoice;
-    }
+      
+      }
     getemployeebenefitsbyid(providerid) {
         const pm = new PM();
         const employee = pm.getemployeebyid.call(this, providerid)

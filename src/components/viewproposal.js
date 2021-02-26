@@ -356,8 +356,6 @@ class ViewProposal extends Component {
 
         let getitems = this.getschedule();
 
-
-
         let csis = [];
         if (getitems) {
             // eslint-disable-next-line
@@ -506,7 +504,7 @@ class ViewProposal extends Component {
             if (company) {
                 if (project) {
 
-                    const proposal = pm.getproposalbyid.call(this, this.props.match.params.companyid);
+                    const proposal = pm.getproposalbyid.call(this);
                     if (proposal) {
                         const amount = Number(this.getamount()).toFixed(2)
                         return (
