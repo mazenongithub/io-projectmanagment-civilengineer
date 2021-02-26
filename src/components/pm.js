@@ -180,7 +180,7 @@ class PM {
 
                     }
 
-                    myuser.projects.myproject[i].specifications = specifications;
+                    myuser.projects[i].specifications = specifications;
                     this.props.reduxUser(myuser)
                     this.setState({ render: 'render' })
 
@@ -2130,7 +2130,7 @@ class PM {
         const myuser = pm.getuser.call(this);
         if (myuser) {
             if (myuser.hasOwnProperty("projects")) {
-                allprojects = myuser.projects.myproject;
+                allprojects = myuser.projects;
             }
 
         }
@@ -2657,7 +2657,7 @@ class PM {
 
             if (myuser.hasOwnProperty("projects")) {
                 // eslint-disable-next-line
-                myuser.projects.myproject.map(myproject => {
+                myuser.projects.map(myproject => {
 
                     if (myproject.hasOwnProperty("invalid")) {
                         validate.validate = false;
@@ -2693,22 +2693,13 @@ class PM {
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
-                    if (response.hasOwnProperty("allusers")) {
-                        let companys = returnCompanyList(response.allusers);
-                        this.props.reduxAllCompanys(companys)
-                        this.props.reduxAllUsers(response.allusers);
-
-                    }
+                 
                     if (response.hasOwnProperty("myuser")) {
-                        if (response.hasOwnProperty("replaceids")) {
-                            pm.handlereplaceids.call(this, response)
+                     
                             this.props.reduxUser(response.myuser)
                         }
 
 
-
-
-                    }
 
                     if (response.hasOwnProperty("message")) {
                         let lastupdated = inputUTCStringForLaborID(response.lastupdated)

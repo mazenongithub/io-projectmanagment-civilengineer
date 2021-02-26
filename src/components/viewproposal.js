@@ -8,7 +8,7 @@ import {
     DirectCostForLabor, ProfitForLabor, DirectCostForMaterial,
     ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment,
     UTCTimefromCurrentDate,
-    UTCStringFormatDateforProposal,
+    inputUTCStringForLaborID,
     CreateBidScheduleItem, sortcode
 } from './functions'
 import PM from './pm';
@@ -409,7 +409,7 @@ class ViewProposal extends Component {
                     myuser.projects[i].proposals[j].approved = approved;
                     this.props.reduxUser(myuser)
                     this.setState({render:'render'})
-                    //pm.saveallprofilebyuser.call(this, myuser)
+                    pm.saveallprofile.call(this)
                     }
 
                 }
@@ -423,7 +423,7 @@ class ViewProposal extends Component {
         let updated = "";
         if (proposal) {
             if (proposal.updated) {
-                updated = `Last Updated ${UTCStringFormatDateforProposal(proposal.updated)}`;
+                updated = `Last Updated ${inputUTCStringForLaborID(proposal.updated)}`;
             }
         }
         return updated;
@@ -436,7 +436,7 @@ class ViewProposal extends Component {
 
             if (proposal.approved) {
                 console.log(proposal.approved)
-                approved = `Approved ${UTCStringFormatDateforProposal(proposal.approved)}`;
+                approved = `Approved ${inputUTCStringForLaborID(proposal.approved)}`;
             }
         }
         return approved;

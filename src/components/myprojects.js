@@ -21,9 +21,7 @@ class MyProjects extends Component {
       return "";
     }
   }
-  removemyproject() {
 
-  }
 
   handletitle(title) {
     const pm = new PM();
@@ -90,6 +88,21 @@ class MyProjects extends Component {
 
   }
 
+  removemyproject(myproject) {
+    if(window.confirm(`Are you sure you want to remove ${myproject.title}?`)) {
+      const pm = new PM();
+      const myuser = pm.getuser.call(this);
+      if(myuser) {
+        const project = pm.getprojectbyid.call(this,myproject.projectid);
+        if(project) {
+          const i = pm.getprojectkeybyid.call(this,myproject.projectid)
+          myuser.projects.splice(i,1)
+          this.props.reduxUser(myuser)
+          this.setState({activeprojectid:false})
+        }
+      }
+    }
+  }
 
   showprojectid(myproject) {
     const styles = MyStylesheet();
@@ -126,7 +139,7 @@ class MyProjects extends Component {
                       onClick={() => { myprojects.makeprojectactive.call(this, myproject.projectid) }}
                   >{TouchtoEdit()}</button>
               </div>
-              <div style={{ ...styles.flex1 }} onClick={() => { myproject.removemyproject.call(this, myproject) }}> <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight, ...activebackground(myproject.projectid) }}>{removeIconSmall()} </button></div>
+              <div style={{ ...styles.flex1 }} onClick={() => { myprojects.removemyproject.call(this, myproject) }}> <button style={{ ...styles.generalButton, ...removeIcon, ...styles.alignRight, ...activebackground(myproject.projectid) }}>{removeIconSmall()} </button></div>
           </div>
       </div>)
   
