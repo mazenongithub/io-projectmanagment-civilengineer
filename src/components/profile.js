@@ -422,20 +422,14 @@ class Profile {
         const myuser = pm.getuser.call(this);
         if (myuser) {
             const providerid = myuser.providerid;
-            const values = { providerid: myuser.providerid, client: myuser.client, clientid: myuser.clientid, firstname: myuser.firstname, lastname: myuser.lastname, emailaddress: myuser.emailaddress, phonenumber: myuser.phonenumber, profileurl: myuser.profileurl }
             let formData = new FormData();
             let myfile = document.getElementById("profile-image");
             formData.append("profilephoto", myfile.files[0]);
-            formData.append("myuser", JSON.stringify(values))
+            formData.append("myuser", JSON.stringify(myuser))
             try {
                 let response = await UploadProfileImage(formData, providerid);
                 console.log(response)
-                if (response.hasOwnProperty("allusers")) {
-                    let companys = returnCompanyList(response.allusers);
-                    this.props.reduxAllCompanys(companys)
-                    this.props.reduxAllUsers(response.allusers);
-
-                }
+               
                 if (response.hasOwnProperty("myuser")) {
 
                     this.props.reduxUser(response.myuser)
@@ -499,6 +493,43 @@ class Profile {
                 return;
             }
         }
+
+        const showImage = () => {
+            if(this.state.width>1200) {
+                return( <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex2 }}>
+                        <div style={{ ...styles.generalContainer, ...profileDimensions,  ...styles.marginAuto }}>
+                            {profile.showprofileimage.call(this)}
+                        </div>
+                    </div>
+                    <div style={{ ...styles.flex1,  ...styles.alignBottom, ...styles.margin10 }}>
+                        <input type="file" id="profile-image" />
+                        <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { profile.uploadprofileimage.call(this)}}>
+                            {folderIcon()}
+                        </button>
+                    </div>
+                </div>)
+            } else {
+
+                return( <div style={{ ...styles.generalContainer }}>
+                    <div style={{ ...styles.generalContainer}}>
+
+                        <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.marginAuto}}>
+                            {profile.showprofileimage.call(this)}
+                        </div>
+                    </div>
+                    <div style={{ ...styles.generalContainer, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
+                        <input type="file" id="profile-image" />
+                        <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { profile.uploadprofileimage.call(this)}}>
+                            {folderIcon()}
+                        </button>
+                    </div>
+                </div>)
+
+            }
+        }
+
+
         if (myuser) {
             return (<div style={{ ...styles.generalFlex }}>
                 <div style={{ ...styles.flex1 }}>
@@ -515,19 +546,7 @@ class Profile {
                     </div>
 
 
-                    <div style={{ ...styles.generalFlex }}>
-                        <div style={{ ...styles.flex2 }}>
-                            <div style={{ ...styles.generalContainer, ...profileDimensions, ...styles.showBorder, ...styles.margin10, ...styles.alignRight }}>
-                                {profile.showprofileimage.call(this)}
-                            </div>
-                        </div>
-                        <div style={{ ...styles.flex1, ...styles.showBorder, ...styles.alignBottom, ...styles.margin10 }}>
-                            <input type="file" id="profile-image" />
-                            <button style={{ ...styles.generalButton, ...folderSize }} onClick={() => { profile.uploadprofileimage.call(this) }}>
-                                {folderIcon()}
-                            </button>
-                        </div>
-                    </div>
+                   {showImage()}
 
                     {profile.showprofileurl.call(this)}
 

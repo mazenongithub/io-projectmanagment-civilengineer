@@ -705,6 +705,14 @@ class PM {
                     caption: `Add Milestones for your Project with start and completion dates. Built in formula determines the critical path, float, and lag in days.`
 
                 },
+
+                {
+                    title: 'Team',
+                    id: 'Team',
+                    url: 'https://civilengineer.io/projectmanagment/slides/team.png',
+                    caption: `Add members to your construction team. Define what each members role is the on the project`
+
+                },
                
                 {
                     title: 'Proposals',
