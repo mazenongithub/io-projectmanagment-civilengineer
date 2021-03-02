@@ -37,8 +37,6 @@ class Proposals extends Component {
         const regularFont = pm.getRegularFont.call(this)
         const company = pm.getcompanybyid.call(this,myproposal.companyid)
        
-        const proposalid = myproposal.proposalid;
-
         const lastupdated = myproposal.updated ? <span>Last Updated {inputUTCStringForLaborID(myproposal.updated)}</span> : <span>&nbsp;</span>
        
         const lastapproved= () => {
@@ -53,7 +51,7 @@ class Proposals extends Component {
         if(myuser) {
             const project = pm.getproject.call(this)
 
-        return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
+        return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }} key={myproposal.companyid}>
            <span style={{...regularFont, ...styles.generalFont}}> </span><Link to={`/${myuser.profile}/projects/${project.title}/proposals/${company.url}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> Proposal By:{company.company} {lastupdated} {lastapproved()} </Link>
         </div>)
 

@@ -7,11 +7,13 @@ import {
     DirectCostForLabor, ProfitForLabor, DirectCostForMaterial,
     ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment,
     UTCStringFormatDateforProposal,
-    CreateBidScheduleItem, sortcode
+    CreateBidScheduleItem, sortcode, calculatetotalhours, UTCTimefromCurrentDate, createTransfer
 } from './functions'
 import PM from './pm';
 import Spinner from './spinner'
 import ProjectID from './projectid';
+import MakeID from './makeids'
+import { SettleInvoice } from './actions/api';
 
 
 class ViewInvoice extends Component {
@@ -21,7 +23,8 @@ class ViewInvoice extends Component {
             render: '',
             width: 0,
             height: 0,
-            message: ""
+            message: "",
+            spinner:false
         }
 
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -30,6 +33,12 @@ class ViewInvoice extends Component {
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions()
+        const pm = new PM();
+        const csis = pm.getcsis.call(this);
+        if (!csis) {
+            pm.loadcsis.call(this)
+        }
+
 
 
 
@@ -48,6 +57,7 @@ class ViewInvoice extends Component {
         let invoice = this.getinvoice()
         if (invoice) {
             if (invoice.hasOwnProperty("labor")) {
+                 // eslint-disable-next-line
                 invoice.labor.map(mylabor => {
                     if (mylabor.csiid === csiid) {
                         directcost += DirectCostForLabor(mylabor);
@@ -58,6 +68,7 @@ class ViewInvoice extends Component {
             }
 
             if (invoice.hasOwnProperty("materials")) {
+                 // eslint-disable-next-line
                 invoice.materials.map(mymaterial => {
                     if (mymaterial.csiid === csiid) {
                         directcost += DirectCostForMaterial(mymaterial);
@@ -68,6 +79,7 @@ class ViewInvoice extends Component {
             }
 
             if (invoice.hasOwnProperty("equipment")) {
+                 // eslint-disable-next-line
                 invoice.equipment.map(equipment => {
                     if (equipment.csiid === csiid) {
                         directcost += DirectCostForEquipment(equipment);
@@ -95,7 +107,7 @@ class ViewInvoice extends Component {
 
 
     getdirectcost(csiid) {
-        const pm = new PM()
+ 
         let invoice = this.getinvoice();
         let directcost = 0;
         if (invoice) {
@@ -192,7 +204,7 @@ class ViewInvoice extends Component {
                 if (project) {
                     if (this.state.width > 1200) {
                         return (
-                            <tr>
+                            <tr key={item.csiid}>
                                 <td><Link style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }} to={`/${myuser.profile}/projects/${project.title}/invoices/${company.url}/csi/${csi.csiid}`}>{csi.csi}-{csi.title}</Link></td>
                                 <td style={{ ...styles.alignCenter }}>
                                     {quantity}
@@ -207,7 +219,7 @@ class ViewInvoice extends Component {
 
                     } else {
                         return (
-                            <div style={{ ...styles.generalFlex }} key={csi.csiid}>
+                            <div style={{ ...styles.generalFlex }} key={item.csiid}>
                                 <div style={{ ...styles.flex1 }}>
                                     <div style={{ ...styles.generalFlex }}>
                                         <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
@@ -340,7 +352,7 @@ class ViewInvoice extends Component {
 
     }
     getschedule() {
-        const pm = new PM();
+      
         const invoice = this.getinvoice()
         let getitems = false
         if (invoice.hasOwnProperty("bid")) {
@@ -411,7 +423,7 @@ class ViewInvoice extends Component {
         if (invoice) {
 
             if (invoice.approved) {
-                console.log(invoice.approved)
+            
                 approved = `Approved ${UTCStringFormatDateforProposal(invoice.approved)}`;
             }
         }
@@ -437,12 +449,15 @@ class ViewInvoice extends Component {
         let getcompany = false;
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            if (myuser.hasOwnProperty("companys"))
+            if (myuser.hasOwnProperty("companys")) {
+                 // eslint-disable-next-line
                 myuser.companys.map(company => {
                     if (company.url === this.props.match.params.url) {
                         getcompany = company;
                     }
                 })
+
+            }
 
         }
 
@@ -450,11 +465,383 @@ class ViewInvoice extends Component {
 
     }
 
-    async invoicesettlement() {
+    settleEquipmentID(myuser,equipment,settlement,avail,i,j,k) {
+        const makeid= new MakeID();
+        const pm = new PM();
+        const transferid = makeid.transferid.call(this)
+        const created = UTCTimefromCurrentDate();
+        const amount = settlement;
+        const myequipment =  pm.getcompanyequipmentbyid.call(this,equipment.myequipmentid)
+     
+        let destination = "";
+        if(myequipment) {
+            destination = myequipment.accountid;
+        }
+        const transfer =  createTransfer(transferid,created,amount,destination)
+        
+        let scheduletransfers =pm.getTransfersByEquipmentID.call(this,equipment.equipmentid)
+        if(scheduletransfers) {
+            scheduletransfers = [...scheduletransfers,...transfer]
+            
+        } else {
+    
+            scheduletransfers = [transfer]
+    
+        }
+      
+        myuser.projects[i].invoices[j].equipment[k].scheduletransfers = scheduletransfers;
+        return myuser;
+    
+    }
+    
 
+    settleMaterialID(myuser,material,settlement,avail,i,j,k) {
+        const makeid= new MakeID();
+        const pm = new PM();
+        const transferid = makeid.transferid.call(this)
+        const created = UTCTimefromCurrentDate();
+        const amount = settlement;
+        const mymaterial =  pm.getcompanymaterialsbyid.call(this,material.mymaterialid)
+     
+        let destination;
+        if(mymaterial) {
+            destination = mymaterial.accountid;
+        }
+        const transfer =  createTransfer(transferid,created,amount,destination)
+        
+        let scheduletransfers =pm.getTransfersByMaterialID.call(this,material.materialid)
+        if(scheduletransfers) {
+            scheduletransfers = [...scheduletransfers,...transfer]
+            
+        } else {
+
+            scheduletransfers = [transfer]
+
+        }
+      
+        myuser.projects[i].invoices[j].materials[k].scheduletransfers = scheduletransfers;
+        return myuser;
+
+    }
+
+    settleLaborID(myuser,labor,settlement,avail, i,j,k) {
+  
+       const pm = new PM();
+       const makeid = new MakeID();
+       const company = this.getcompany();
+       if(company) {
+       const accounts = pm.getemployeeaccountratio.call(this,company.companyid,labor.providerid)
+       
+       if(accounts) {
+ // eslint-disable-next-line
+           accounts.map(account=> {
+    
+            const transferid = makeid.transferid.call(this)
+            const created = UTCTimefromCurrentDate();
+            const amount = settlement * account.ratio;
+            const destination = account.accountid;
+            const transfer =  createTransfer(transferid,created,amount,destination)
+            let scheduletransfers = pm.getTransfersByLaborID.call(this,labor.laborid)
+            if(scheduletransfers) {
+               scheduletransfers = [...scheduletransfers,...transfer]
+
+
+            } else {
+               scheduletransfers = [transfer]
+
+            }
+            myuser.projects[i].invoices[j].labor[k].scheduletransfers = scheduletransfers;
+           
+
+           })
+
+         
+       
+       
+       
+        }
+    }
+    return myuser;
+
+    }
+
+    async saveInvoice(myuser) {
+        const pm = new PM();
+        const project = pm.getproject.call(this)
+        const getuser = pm.getuser.call(this)
+        if(getuser) {
+        if(project) {
+            const i = pm.getprojectkeybyid.call(this,project.projectid);
+
+        const getInvoice = (myuser) => {
+
+            const company  = this.getcompany();
+            let getinvoice = false;
+        
+            if(myuser.hasOwnProperty("projects")) {
+                 // eslint-disable-next-line
+                myuser.projects.map(getproject=> {
+                    if(getproject.projectid === project.projectid) {
+                        if(getproject.hasOwnProperty("invoices")) {
+                             // eslint-disable-next-line
+                            getproject.invoices.map(invoice=> {
+                                if(invoice.companyid === company.companyid) {
+                                    getinvoice = invoice;
+                                  
+                                }
+                            })
+
+
+                        }
+
+                    }
+
+                })
+            }
+            return getinvoice;
+
+        }
+     
+           
+
+        const getinvoice = this.getinvoice();
+       
+        if(getinvoice) {
+            const j = pm.getinvoicekeybyid.call(this,getinvoice.companyid)
+
+            const invoice = getInvoice(myuser)
+
+        try {
+            this.setState({spinner:true})
+           let response = await SettleInvoice({invoice})
+        
+           this.setState({spinner:false})
+          console.log(response)
+           if(response.hasOwnProperty("invoice")) {
+            getuser.projects[i].invoices[j] = response.invoice;
+            this.props.reduxUser(getuser)
+           }
+           let message ="";
+
+           if(response.hasOwnProperty("message")) {
+               message = response.message
+               
+           }
+           this.setState({message})
+
+           
+
+
+        } catch(err) {
+            this.setState({spinner:false})
+            alert(err)
+
+        }
 
 
     }
+
+
+}
+
+
+        }
+
+
+    
+
+    }
+
+
+    async invoicesettlement() {
+        const pm = new PM();
+        let myuser = pm.getuser.call(this)
+        const company = this.getcompany();
+        const transferstotal = this.gettransfertotal();
+        
+      
+        if (myuser) {
+
+        if(company) {
+         
+        const project = pm.getproject.call(this)
+        if (project) {
+            const sumcharges = pm.sumOfChargesByProjectID.call(this, project.projectid)
+            let avail = sumcharges - transferstotal;
+        
+            const i = pm.getprojectkeybyid.call(this,project.projectid)
+            const invoice = this.getinvoice();
+          
+                if (invoice) {
+                  
+
+                        const j = pm.getinvoicekeybyid.call(this,company.companyid)
+
+                    if (invoice.hasOwnProperty("labor")) {
+                         // eslint-disable-next-line
+                        invoice.labor.map((labor,k) => {
+
+                            let transferamount = 0;
+                            const amount = calculatetotalhours(labor.timeout,labor.timein)*Number(labor.laborrate)*(1+(Number(labor.profit)/100))
+                            const transfers = pm.getTransfersByLaborID.call(this,labor.laborid)
+                           
+                            if(transfers) {
+                             
+                             transferamount = pm.sumOfTransfersByLaborID.call(this, labor.laborid)
+
+
+                            }
+
+                            let settlement = 0;
+                         
+                            if(transferamount<amount) {
+
+                                settlement  = amount - transferamount;
+                                myuser = this.settleLaborID(myuser,labor,settlement, avail, i, j, k)
+                                avail = avail - settlement;
+                           
+                            }
+
+                        })
+                    }
+
+                    if(invoice.hasOwnProperty("materials")) {
+                        let transfersamount = 0;
+                         // eslint-disable-next-line
+                        invoice.materials.map((material,k)=> {
+                             transfersamount = pm.sumOfTransfersByMaterialID.call(this,material.materialid);
+                             let amount = Number(material.quantity)*Number(material.unitcost)*(1+(Number(material.profit)/100))
+
+                            
+                
+                        let settlement = 0;
+                        if(transfersamount < amount) {
+                            settlement = amount - transfersamount;
+                            myuser = this.settleMaterialID(myuser,material, settlement, avail,i,j,k)
+                            avail =  avail - settlement;
+
+
+                        }
+
+                    })
+
+                    }
+
+                    if(invoice.hasOwnProperty("equipment")) {
+                        let transfersamount = 0;
+                         // eslint-disable-next-line
+                        invoice.equipment.map((equipment,k)=> {
+                             transfersamount = pm.sumOfTransfersByEquipmentID.call(this,equipment.equipmentid);
+                             const amount = calculatetotalhours(equipment.timeout,equipment.timein)*Number(equipment.equipmentrate)*(1+(Number(equipment.profit)/100))
+                    
+                            
+                    
+                        let settlement = 0;
+                        if(transfersamount < amount) {
+                            settlement = amount - transfersamount;
+                            myuser = this.settleEquipmentID(myuser,equipment, settlement, avail, i,j,k)
+                            avail =  avail - settlement;
+                    
+                    
+                        }
+                    
+                    })
+                    
+                    }
+
+                   
+                   
+                    
+                  
+
+                 myuser.projects[i].invoices[j].approved = UTCTimefromCurrentDate();
+                 myuser.projects[i].invoices[j].projectid = project.projectid;
+                 this.saveInvoice(myuser)
+                
+                }
+
+
+
+            }
+
+
+        }
+
+        }
+
+    }
+
+    gettransfers() {
+        const invoice = this.getinvoice();
+        let transfers = [];
+        if (invoice.hasOwnProperty("labor")) {
+             // eslint-disable-next-line
+            invoice.labor.map(labor => {
+                if (labor.hasOwnProperty("scheduletransfers")) {
+
+                    transfers = [...transfers, ...labor.scheduletransfers];
+                }
+            })
+        }
+
+        if (invoice.hasOwnProperty("materials")) {
+             // eslint-disable-next-line
+            invoice.materials.map(material => {
+                if (material.hasOwnProperty("scheduletransfers")) {
+                    transfers = [...transfers, ...material.scheduletransfers]
+                }
+            })
+
+        }
+
+        if (invoice.hasOwnProperty("equipment")) {
+             // eslint-disable-next-line
+            invoice.equipment.map(equipment => {
+                transfers = [...transfers, ...equipment.scheduletransfers]
+            })
+
+
+        }
+        return transfers;
+    }
+
+    getCharges() {
+        const pm = new PM();
+        const project = pm.getproject.call(this)
+        let charges = false;
+        if (project) {
+            charges = pm.getchargesbyprojectid.call(this, project.projectid);
+
+        }
+        return charges;
+
+    }
+
+    getChargesTotal() {
+        const charges = this.getCharges();
+        let amount = 0;
+        if (charges) {
+             // eslint-disable-next-line
+            charges.map(charge => {
+                amount += Number(charge.amount)
+
+            })
+        }
+        return amount;
+    }
+
+    gettransfertotal() {
+        const transfers = this.gettransfers();
+        let amount = 0;
+        if (transfers) {
+             // eslint-disable-next-line
+            transfers.map(transfer => {
+                amount += Number(transfer.amount)
+            })
+        }
+        return amount;
+    }
+
 
 
     render() {
@@ -462,11 +849,10 @@ class ViewInvoice extends Component {
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
-        // const charges = this.getchargestotal();
-        // const transfers = this.gettransfertotal();
-        // const settlementtotal = this.getsettlementtotal()
-        //const amount = Number(this.getamount() / 100)
-        //const amountowed = amount - transfers;
+        const transferstotal = this.gettransfertotal();
+        const amount = this.getamount();
+        const amountowed = amount - transferstotal;
+
         const projectid = new ProjectID();
 
         const settlement = () => {
@@ -485,10 +871,6 @@ class ViewInvoice extends Component {
         }
 
 
-        const csis = pm.getcsis.call(this);
-        if (!csis) {
-            pm.loadcsis.call(this)
-        }
 
 
         const myuser = pm.getuser.call(this)
@@ -498,9 +880,25 @@ class ViewInvoice extends Component {
             if (company) {
                 if (project) {
 
+                    const sumcharges = pm.sumOfChargesByProjectID.call(this, project.projectid)
+
+                    const sumOfCharges = (sumcharges, transfertotal, amountowed) => {
+                        if (amountowed > 0) {
+                            if (sumcharges) {
+
+                                const avail = sumcharges - transfertotal
+                                const showdebt = avail > amountowed ? ` Invoice settlement with capture $${Number(amountowed).toFixed(2)} ` : ` Invoice Settlement will capture up to $${Number(avail).toFixed(2)} `
+
+                                return (` You have posted a total of $${Number(sumcharges).toFixed(2)} in project credits ${showdebt}. You have $${Number(avail).toFixed(2)} available `)
+                            }
+
+                        }
+
+                    }
                     const invoice = pm.getinvoicebyid.call(this);
                     if (invoice) {
                         const amount = Number(this.getamount()).toFixed(2)
+                  
                         return (
                             <div style={{ ...styles.generalFlex }}>
                                 <div style={{ ...styles.flex1 }}>
@@ -521,7 +919,10 @@ class ViewInvoice extends Component {
                                     {pm.showbidtable.call(this)}
 
                                     <div style={{ ...styles.generalContainer }}>
-                                        <span style={{ ...regularFont, ...styles.generalFont }}>The invoiced amount is ${amount}</span>
+                                        <span style={{ ...regularFont, ...styles.generalFont }}>The Total Amount for this Invoice is ${Number(amount).toFixed(2)}.
+                                         The total amount of transfers received is ${Number(transferstotal).toFixed(2)}.
+                                         You Currently Owe, ${Number(amountowed).toFixed(2)}
+                                            {sumOfCharges(sumcharges, transferstotal, amountowed)}</span>
                                     </div>
 
                                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>

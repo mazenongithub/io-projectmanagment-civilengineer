@@ -267,7 +267,7 @@ class Milestones extends Component {
         const milestones = pm.getmilestones.call(this);
         let ids = [];
         if (milestones) {
-
+ // eslint-disable-next-line
             milestones.map(mymilestone => {
                 ids.push(this.showmilestone(mymilestone))
             })

@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { returnCompanyList, sorttimes, inputUTCStringForLaborID, sortpart, isEmpty, getDateInterval, getScale, calculatemonth, calculateday, formatDateStringDisplay, calculateyear, calculateFloat, getDateTime, checkemptyobject, calculatetotalhours } from './functions';
+import {sorttimes, inputUTCStringForLaborID, sortpart, isEmpty, getDateInterval, getScale,  formatDateStringDisplay, calculateFloat, getDateTime, checkemptyobject, calculatetotalhours, getBenefitInterval } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser, LoadAllUsers } from './actions/api';
@@ -235,7 +235,6 @@ class PM {
     getpaths() {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this)
-        const projectinterval = pm.getprojectinterval.call(this);
         let paths = {}
 
 
@@ -289,11 +288,7 @@ class PM {
 
             })
 
-
-
-
-            let interval = getDateInterval(projectinterval.start, projectinterval.completion)
-            let scale = getScale(interval)
+   
             let mymilestones = [];
 
             // eslint-disable-next-line
@@ -313,7 +308,7 @@ class PM {
                         // eslint-disable-next-line
                         Object.getOwnPropertyNames(paths[milestoneid].paths).map(prop => {
 
-                          
+
                             paths[milestoneid].paths[prop]['float'] = 'float';
 
 
@@ -554,7 +549,7 @@ class PM {
     getfloatbymilestoneid(milestoneid) {
         const pm = new PM();
         const paths = pm.getpaths.call(this)
-        console.log(paths)
+
         let float = 0;
         let i = 0;
         for (let mypath in paths[milestoneid]['paths']) {
@@ -697,7 +692,7 @@ class PM {
                     caption: `Define the Scope of Work and Location for your Project. Access the project component using the ProjectID links at the bottom    `
 
                 },
-             
+
                 {
                     title: 'Milestones',
                     id: 'milestones',
@@ -713,7 +708,7 @@ class PM {
                     caption: `Add members to your construction team. Define what each members role is the on the project`
 
                 },
-               
+
                 {
                     title: 'Proposals',
                     id: 'proposals',
@@ -915,7 +910,7 @@ class PM {
 
     }
 
-    getinvoicekeybyid(invoiceid) {
+    getinvoicekeybyid(companyid) {
         const pm = new PM();
         let key = false;
         let myproject = pm.getproject.call(this)
@@ -923,7 +918,7 @@ class PM {
         if (myproject.hasOwnProperty("invoices")) {
             // eslint-disable-next-line
             myproject.invoices.map((myinvoice, i) => {
-                if (myinvoice.invoiceid === invoiceid) {
+                if (myinvoice.companyid === companyid) {
                     key = i;
                 }
             })
@@ -1004,9 +999,12 @@ class PM {
         return amount;
 
     }
+
+
     sumOfChargesByProjectID(projectid) {
         const pm = new PM();
         const charges = pm.getchargesbyprojectid.call(this, projectid)
+
         let amount = 0;
         if (charges) {
             // eslint-disable-next-line
@@ -1020,9 +1018,11 @@ class PM {
     }
 
 
+
     getchargesbyprojectid(projectid) {
         const pm = new PM()
         const project = pm.getprojectbyid.call(this, projectid)
+
         let charges = false;
         if (project) {
             if (project.hasOwnProperty("charges")) {
@@ -1038,6 +1038,7 @@ class PM {
         let getcompany = false;
         if (myuser) {
             if (myuser.hasOwnProperty("companys")) {
+                 // eslint-disable-next-line
                 myuser.companys.map(company => {
                     if (company.companyid === companyid) {
                         getcompany = company;
@@ -1048,17 +1049,103 @@ class PM {
         }
         return getcompany;
     }
+
+    getemployeeaccountratio(companyid, providerid) {
+        const pm = new PM();
+        const benefits = pm.getemployeebenefitinterval.call(this,companyid, providerid)
+        let accounts = [];
+        const validateAccounts =(accounts,accountid) => {
+            let validate = false;
+             // eslint-disable-next-line
+            accounts.map(account=> {
+                
+                if(account.accountid === accountid) {
+                    validate = true;
+                }
+
+            })
+            return validate;
+        }
+
+        const getRatio = (benefits,accountid) => {
+            let totalamount = 0;
+            let benefitamount = 0;
+             // eslint-disable-next-line
+            benefits.map(benefit=> {
+                totalamount += Number(benefit.amount)
+
+            })
+             // eslint-disable-next-line
+            benefits.map(benefit=> {
+                if(benefit.accountid === accountid) {
+                    benefitamount += Number(benefit.amount)
+                }
+            })
+            let ratio = totalamount > 0 ? benefitamount/totalamount : 'No Benefits Entered'
+            return ratio
+        }
+
+        if(benefits) {
+ // eslint-disable-next-line
+            benefits.map(benefit=> {
+
+                if(!validateAccounts(accounts,benefit.accountid)) {
+                    
+                    accounts.push({accountid:benefit.accountid,ratio:getRatio(benefits,benefit.accountid) })
+
+                }
+
+
+            })
+        }
+        return accounts;
+
+    }
+
+    getemployeebenefitinterval(companyid, providerid) {
+        console.log(companyid,providerid)
+        const pm = new PM();
+        let benefits = [];
+        const employees = pm.getcompanyemployeesbyid.call(this, companyid)
+        console.log(employees)
+        if (employees) {
+             // eslint-disable-next-line
+            employees.map(employee=> {
+
+           
+            if (employee.providerid === providerid) {
+
+                if (employee.hasOwnProperty("benefits")) {
+
+                    // eslint-disable-next-line
+                    employee.benefits.map(benefit => {
+                        let interval = getBenefitInterval(benefit.frequency, Number(benefit.amount), benefit.benefit, benefit.accountid)
+                        benefits = [...benefits, ...interval]
+                    })
+                }
+
+
+            }
+
+        })
+
+        }
+
+        return benefits;
+    }
+
     getcompanymaterialsbyid(materialid) {
         const pm = new PM();
         const myuser = pm.getuser.call(this)
         let getmaterial = false;
         if (myuser) {
             if (myuser.hasOwnProperty("companys")) {
+                 // eslint-disable-next-line
                 myuser.companys.map(company => {
 
                     if (company.hasOwnProperty("materials")) {
 
-
+ // eslint-disable-next-line
                         company.materials.map(material => {
                             if (material.materialid === materialid) {
                                 getmaterial = material;
@@ -1111,7 +1198,7 @@ class PM {
 
 
         const material = pm.getcompanymaterialsbyid.call(this, mymaterial.mymaterialid)
-     
+
 
         if (material) {
 
@@ -1128,10 +1215,12 @@ class PM {
         const myuser = pm.getuser.call(this)
         let getemployee = false;
         if (myuser.hasOwnProperty("companys")) {
+             // eslint-disable-next-line
             myuser.companys.map(company => {
 
 
                 if (company.hasOwnProperty("employees")) {
+                     // eslint-disable-next-line
                     company.employees.map(employee => {
                         if (employee.providerid === providerid) {
                             getemployee = employee;
@@ -1160,19 +1249,19 @@ class PM {
         let getequipment = false;
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            
+
 
             if (myuser.hasOwnProperty("companys")) {
-
+ // eslint-disable-next-line
                 myuser.companys.map(company => {
-              
+
 
                     if (company.hasOwnProperty("equipment")) {
 
-                     
+ // eslint-disable-next-line
                         company.equipment.map(equipment => {
 
-                            console.log(equipment, equipmentid)
+
 
                             if (equipment.equipmentid === equipmentid) {
                                 getequipment = equipment;
@@ -1186,13 +1275,13 @@ class PM {
             }
 
         }
-        console.log(getequipment)
+
 
         return getequipment;
     }
 
     showequipmentid(equipment) {
-     
+
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this);
@@ -1214,7 +1303,7 @@ class PM {
         const regularFont = pm.getRegularFont.call(this)
 
         const employee = pm.getcompanyemployeebyid.call(this, mylabor.providerid)
-        console.log(employee)
+
         if (employee) {
 
             let hourlyrate = Number(mylabor.laborrate);
@@ -1643,55 +1732,55 @@ class PM {
     getmilestonecoordbyid(milestoneid) {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this)
-      
-            let getcoordinates = {};
-          let projectstart = "";
-            let projectend  = "";
-            milestones.map((milestone,i)=> {
-             const ypos=200*(i+1) + 5
-             
-             if(i === 0) {
+
+        let getcoordinates = {};
+        let projectstart = "";
+         // eslint-disable-next-line
+        milestones.map((milestone, i) => {
+            const ypos = 200 * (i + 1) + 5
+
+            if (i === 0) {
                 projectstart = milestone.start
-             }
-              
-           
-              if(milestone.milestoneid === milestoneid) {
-                
+            }
+
+
+            if (milestone.milestoneid === milestoneid) {
+
                 getcoordinates.milestone = milestone.milestoneid
                 getcoordinates.ypos = ypos
                 getcoordinates.projectstart = projectstart
-                
-                
-              }
-              
-                if(i === milestones.length - 1) {
-               
-               getcoordinates.projectend = milestone.completion
-               
-             }
-             
-              
-            })
-            const scale = getScale(getDateInterval(getcoordinates.projectstart,getcoordinates.projectend))
-            getcoordinates.scale = scale;
-            
-            milestones.map(milestone=> {
-               const xo = 5+(getDateInterval(getcoordinates.projectstart,milestone.start)-1)*getcoordinates.scale
-               const width = (getDateInterval(milestone.start,milestone.completion))*getcoordinates.scale
-               if(milestone.milestoneid === milestoneid) {
-                  getcoordinates.xo = xo;
-                  getcoordinates.width = width
-                  getcoordinates.start = milestone.start
-                  
-                  
-                }
-              
-              
-            })
-            return getcoordinates;
-            
-            
-          
+
+
+            }
+
+            if (i === milestones.length - 1) {
+
+                getcoordinates.projectend = milestone.completion
+
+            }
+
+
+        })
+        const scale = getScale(getDateInterval(getcoordinates.projectstart, getcoordinates.projectend))
+        getcoordinates.scale = scale;
+ // eslint-disable-next-line
+        milestones.map(milestone => {
+            const xo = 5 + (getDateInterval(getcoordinates.projectstart, milestone.start) - 1) * getcoordinates.scale
+            const width = (getDateInterval(milestone.start, milestone.completion)) * getcoordinates.scale
+            if (milestone.milestoneid === milestoneid) {
+                getcoordinates.xo = xo;
+                getcoordinates.width = width
+                getcoordinates.start = milestone.start
+
+
+            }
+
+
+        })
+        return getcoordinates;
+
+
+
     }
     getmilestonekeybyid(milestoneid) {
         const pm = new PM();
@@ -2021,18 +2110,18 @@ class PM {
             if (invoices) {
                 // eslint-disable-next-line
                 invoices.map(myinvoice => {
-      
+
                     if (myinvoice.companyid === company.companyid) {
                         invoice = myinvoice;
                     }
                 })
             }
-      
+
         }
-      
+
         return invoice;
-      
-      }
+
+    }
     getemployeebenefitsbyid(providerid) {
         const pm = new PM();
         const employee = pm.getemployeebyid.call(this, providerid)
@@ -2047,7 +2136,7 @@ class PM {
     }
     getemployeebyid(providerid) {
         const pm = new PM();
-        const employees = pm.getemployees.call(this)
+        const employees = pm.getemployeebycompanyid.call(this)
         let myemployee = false;
         if (employees) {
             // eslint-disable-next-line
@@ -2060,14 +2149,26 @@ class PM {
         }
         return myemployee;
     }
-    getemployees() {
+
+    getcompanyemployeesbyid(companyid) {
         const pm = new PM();
-        const myproject = pm.getproject.call(this)
-        let employees = false;
-        if (myproject.hasOwnProperty("employees")) {
-            employees = myproject.employees;
+        const myuser = pm.getuser.call(this)
+        let companyemployees = false;
+        if (myuser.hasOwnProperty("companys")) {
+             // eslint-disable-next-line
+            myuser.companys.map(company => {
+                if (company.companyid === companyid) {
+                    if (company.hasOwnProperty("employees")) {
+                        companyemployees = company.employees;
+                    }
+
+
+                }
+            })
+
         }
-        return employees;
+      
+        return companyemployees;
     }
 
     getcompany() {
@@ -2075,12 +2176,15 @@ class PM {
         let getcompany = false;
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            if (myuser.hasOwnProperty("companys"))
+            if (myuser.hasOwnProperty("companys")) {
+             // eslint-disable-next-line
                 myuser.companys.map(company => {
                     if (company.url === this.props.match.params.url) {
                         getcompany = company;
                     }
                 })
+
+            }
 
         }
 
@@ -2422,9 +2526,10 @@ class PM {
         const pm = new PM();
         const team = pm.getteam.call(this)
         let key = false;
-        if(team) {
-            team.map((myteam,i)=> {
-                if(myteam.providerid === providerid) {
+        if (team) {
+             // eslint-disable-next-line
+            team.map((myteam, i) => {
+                if (myteam.providerid === providerid) {
                     key = i;
                 }
             })
@@ -2436,9 +2541,10 @@ class PM {
         const pm = new PM();
         const team = pm.getteam.call(this)
         let getteam = false;
-        if(team) {
-            team.map(myteam=> {
-                if(myteam.providerid === providerid) {
+        if (team) {
+             // eslint-disable-next-line
+            team.map(myteam => {
+                if (myteam.providerid === providerid) {
                     getteam = myteam;
                 }
             })
@@ -2450,8 +2556,8 @@ class PM {
         const pm = new PM();
         const project = pm.getproject.call(this)
         let team = false;
-        if(project) {
-            if(project.hasOwnProperty("team")) {
+        if (project) {
+            if (project.hasOwnProperty("team")) {
                 team = project.team;
             }
         }
@@ -2568,14 +2674,15 @@ class PM {
         }
     }
 
-    
+
     getuserbyid(providerid) {
         const pm = new PM();
-        const allusers =pm.getallusers.call(this)
+        const allusers = pm.getallusers.call(this)
         let getuser = false;
-        if(allusers) {
-            allusers.map(user=> {
-                if(user.providerid === providerid) {
+        if (allusers) {
+             // eslint-disable-next-line
+            allusers.map(user => {
+                if (user.providerid === providerid) {
                     getuser = user;
                 }
             })
@@ -2586,9 +2693,9 @@ class PM {
     getallusers() {
         let allusers = false;
         if (!isEmpty(this.props.allusers)) {
-                
-                allusers = this.props.allusers
-            
+
+            allusers = this.props.allusers
+
 
         }
         return allusers;
@@ -2724,11 +2831,11 @@ class PM {
                     let response = await SaveAllProfile({ myuser });
                     console.log(response)
 
-                 
+
                     if (response.hasOwnProperty("myuser")) {
-                     
-                            this.props.reduxUser(response.myuser)
-                        }
+
+                        this.props.reduxUser(response.myuser)
+                    }
 
 
 
@@ -2888,6 +2995,8 @@ class PM {
             alert(err)
         }
     }
+
+
     async appleSignIn(type) {
         const pm = new PM();
         let provider = new firebase.auth.OAuthProvider('apple.com');

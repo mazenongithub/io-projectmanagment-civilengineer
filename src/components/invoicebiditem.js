@@ -51,11 +51,11 @@ class InvoiceBidItem extends Component {
     getlabor() {
         const pm = new PM();
         const invoice = pm.getinvoice.call(this)
-        let labor = false;
         let getlabor = [];
         let csiid = this.props.match.params.csiid;
         if (invoice) {
             if (invoice.hasOwnProperty("labor")) {
+                // eslint-disable-next-line
                 invoice.labor.map(labor => {
                     if (labor.csiid === csiid) {
                         getlabor.push(labor)

@@ -413,22 +413,7 @@ export function increaseCalendarDayOneMonth(monthstring) {
     return (newDate)
 }
 
-export function increaseCalendarDaybyOneYear(timein) {
-    let offset = getOffset();
-    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`)
-    let currentYear = datein.getFullYear();
-    let increaseYear = currentYear + 1;
-    let month = datein.getMonth() + 1;
-    let day = datein.getDate();
-    if (month < 10) {
-        month = `0${month}`
-    }
-    if (day < 10) {
-        day = `0${day}`
-    }
-    let newDate = `${increaseYear}-${month}-${day}`
-    return (newDate)
-}
+
 export function addoneYearDateObj(datein) {
     let month = datein.getMonth();
     let year = datein.getFullYear();
@@ -531,17 +516,9 @@ export function subtractincDateObj(datein, inc) {
 }
 export function increaseDateStringByOneMonth(timein) {
 
-    let offset = new Date().getTimezoneOffset() / 60;
-    let sym = "";
-    if (offset > 0) {
-        sym = "-";
-    }
-    else {
-        sym = "+";
-        offset = -offset;
-    }
+    const offset = getOffsetDate(timein)
 
-    let datein = new Date(`${timein.replace(/-/g, '/')}${sym}${offset}:00`);
+    let datein = new Date(`${timein} 12:00:00${offset}`);
     let month = datein.getMonth() + 1;
     let year = datein.getFullYear();
     if (month === 12) {
@@ -553,7 +530,6 @@ export function increaseDateStringByOneMonth(timein) {
     }
 
     let date = datein.getDate();
-    let hours = datein.getHours();
 
     if (month < 10) {
         month = `0${month}`;
@@ -562,20 +538,8 @@ export function increaseDateStringByOneMonth(timein) {
     if (date < 10) {
         date = `0${date}`;
     }
-    hours = datein.getHours();
-    if (hours < 10) {
-        hours = `0${hours}`;
-    }
-    let minutes = datein.getMinutes();
-    if (minutes < 10) {
-        minutes = `0${minutes}`;
-    }
-    let seconds = datein.getSeconds();
-    if (seconds < 10) {
-        seconds = `0${seconds}`;
-    }
- 
-    return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
+
+    return (`${year}/${month}/${date}`);
 }
 export function increaseDateStringByOneYear(timein) {
     let offset = new Date().getTimezoneOffset() / 60;
@@ -682,67 +646,7 @@ export function inputTimeDateOutputUTCString(timein) {
     return (`${year}-${month}-${date} ${hours}:${minutes}:${seconds}`);
 }
 
-export function increasedatebyoneday(timein) {
 
-    //let timein = '2020-12-31';
-    let offset = getOffsetDate(timein);
-    let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00${offset}`);
-    let newdate = new Date(datein.getTime())
-    let day = newdate.getDate();
-    let month = newdate.getMonth() + 1;
-    let year = newdate.getFullYear();
-    if (month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12) {
-        if (day === 31) {
-            day = 1;
-            if (month !== 12) {
-                month = month + 1;
-
-            } else {
-                month = 1;
-                year = year + 1;
-            }
-        } else {
-            day = day + 1;
-
-        }
-
-    }
-
-    if (month === 4 || month === 6 || month === 9 || month === 11) {
-
-        if (day === 30) {
-            day = 1;
-            month = month + 1;
-        } else {
-            day = day + 1;
-        }
-    }
-
-
-    if (month === 2) {
-        if (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) {
-            if (day === 29) {
-                day = 1;
-                month = month + 1;
-            }
-        } else {
-            if (day === 28) {
-                day = 1;
-                month = month + 1;
-            }
-        }
-
-    }
-
-    if (day < 10) {
-        day = `0${day}`
-    }
-
-    if (month < 10) {
-        month = `0${month}`
-    }
-    return (`${year}-${month}-${day}`)
-}
 export function increasedateStringbyInc(timein, inc) {
 
     let offset = getOffsetDate(timein)
@@ -3697,6 +3601,244 @@ export function LetterCounter(num) {
     }
 
     return `${Z}${numericAlpha(newnum)}`
+
+}
+
+export function calculateTotalDays(purchasedate, salvagedate) {
+
+    const purchaseDate = new Date(`${purchasedate} 12:00:00${getOffsetDate(purchasedate)}`)
+    const salvageDate = new Date(`${salvagedate} 12:00:00${getOffsetDate(salvagedate)}`)
+
+    const purchasetime = purchaseDate.getTime();
+    const salvagetime = salvageDate.getTime();
+    const interval = salvagetime - purchasetime
+    const days = interval / (1000 * 60 * 60 * 24)
+    return Math.round(days)
+
+}
+
+export function newBenefit(benefitid, detail, purchasedate, amount, accountid) {
+    return ({ benefitid, detail, purchasedate, amount, accountid })
+}
+
+export function increasedatebyoneday(timein) {
+
+    let datein = new Date(timein);
+    let newdate = new Date(datein.getTime())
+    let day = newdate.getDate();
+    let month = newdate.getMonth() + 1;
+    let year = newdate.getFullYear();
+    if (month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12) {
+        if (day === 31) {
+            day = 1;
+            if (month !== 12) {
+                month = month + 1;
+
+
+            } else {
+                month = 1;
+                year = year + 1;
+            }
+        } else {
+            day = day + 1;
+
+        }
+
+    } else if (month === 4 || month === 6 || month === 9 || month === 11) {
+
+        if (day === 30) {
+            day = 1;
+            month = month + 1;
+        } else {
+            day = day + 1;
+        }
+    } else if (month === 2) {
+        if (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) {
+            if (day === 29) {
+                day = 1;
+                month = month + 1;
+            }
+        } else {
+            if (day === 28) {
+                day = 1;
+                month = month + 1;
+            } else {
+                day = day + 1
+            }
+        }
+
+    }
+
+    if (day < 10) {
+        day = `0${day}`
+    }
+
+    if (month < 10) {
+        month = `0${month}`
+    }
+    return (`${year}/${month}/${day}`)
+}
+
+export function calculateTotalWeeks(purchasedate, salvagedate) {
+
+    const purchaseDate = new Date(`${purchasedate} 12:00:00${getOffsetDate(purchasedate)}`)
+    const salvageDate = new Date(`${salvagedate} 12:00:00${getOffsetDate(salvagedate)}`)
+
+    const purchasetime = purchaseDate.getTime();
+    const salvagetime = salvageDate.getTime();
+    const interval = salvagetime - purchasetime
+    const weeks = interval / (1000 * 60 * 60 * 24 * 7)
+    return Math.floor(weeks)
+
+}
+
+export function calculateTotalMonths(purchasedate, saledate) {
+    //     let purchasedate = '2018-05-24';
+    // let saledate = '2025-01-24'
+    const datePurchase = new Date(`${purchasedate.replace(/-/g, '/')} UTC`);
+    const saleDate = new Date(`${saledate.replace(/-/g, '/')} UTC`);
+    const datePurchaseYear = datePurchase.getFullYear();
+    const purchaseMonth = datePurchase.getMonth() + 1;
+    const saleDateYear = saleDate.getFullYear();
+    const saleMonth = saleDate.getMonth() + 1;
+    const yearsinterval = saleDateYear - datePurchaseYear;
+    const monthInterval = saleMonth - purchaseMonth;
+    const totalMonths = (yearsinterval) * 12 + monthInterval;
+    return (totalMonths)
+}
+
+export function calculateTotalYears(purchasedate, salvagedate) {
+    let totalyears = 0;
+    const purchaseyearstr = purchasedate.split('/')
+    const purchaseyear = Number(purchaseyearstr[0]);
+    const purchasemonth = Number(purchaseyearstr[1]);
+    const purchaseday = Number(purchaseyearstr[2]);
+    const salvageyearstr = salvagedate.split('/')
+    const salvageyear = Number(salvageyearstr[0])
+    const salvagemonth = Number(salvageyearstr[1])
+    const salvageday = Number(salvageyearstr[2])
+    if (purchasemonth >= salvagemonth) {
+
+        if (purchasemonth === salvagemonth) {
+
+            if (purchaseday > salvageday) {
+
+                totalyears = salvageyear - purchaseyear - 1
+
+            } else {
+
+                totalyears = salvageyear - purchaseyear
+
+
+            }
+
+
+        }
+
+
+
+    } else {
+        totalyears = salvageyear - purchaseyear
+
+    }
+    return (totalyears)
+
+
+
+
+}
+
+export function increaseCalendarDaybyOneYear(timein) {
+    let offset = getOffsetDate(timein);
+    let datein = new Date(`${timein} 00:00:00${offset}`)
+    let currentYear = datein.getFullYear();
+    let increaseYear = currentYear + 1;
+    let month = datein.getMonth() + 1;
+    let day = datein.getDate();
+    if (month < 10) {
+        month = `0${month}`
+    }
+    if (day < 10) {
+        day = `0${day}`
+    }
+    let newDate = `${increaseYear}-${month}-${day}`
+    return (newDate)
+}
+
+
+export function getBenefitInterval(reoccurring, amount, detail, accountid) {
+
+    const newDate = new Date();
+    const year = newDate.getFullYear();
+    let purchasedate = `${year}/01/01`
+    let salvagedate = `${year + 1}/01/01`
+
+    let period = 0;
+    let x = 0;
+    let benefit = {};
+    let benefitArray = [];
+    switch (reoccurring) {
+        case 'daily':
+            period = calculateTotalDays(purchasedate, salvagedate)
+            console.log(period, purchasedate, salvagedate)
+            for (x = 0; x < period; x++) {
+                benefit = newBenefit(makeID(16), detail, purchasedate, amount, accountid)
+                benefitArray.push(benefit)
+                purchasedate = increasedatebyoneday(purchasedate)
+
+            }
+            break;
+        case 'weekly':
+            period = calculateTotalWeeks(purchasedate, salvagedate)
+            for (x = 0; x < period; x++) {
+                benefit = newBenefit(makeID(16), detail, purchasedate, amount, accountid)
+                benefitArray.push(benefit)
+                purchasedate = increaseDateByOneWeek(purchasedate)
+            }
+            break;
+        case 'monthly':
+            period = calculateTotalMonths(purchasedate, salvagedate)
+            for (x = 0; x < period; x++) {
+                benefit = newBenefit(makeID(16), detail, purchasedate, amount, accountid)
+                benefitArray.push(benefit)
+                purchasedate = increaseDateStringByOneMonth(purchasedate)
+            }
+
+            break;
+        case 'annually':
+            period = calculateTotalYears(purchasedate, salvagedate)
+            for (x = 0; x < period; x++) {
+                benefit = newBenefit(makeID(16), detail, purchasedate, amount, accountid)
+                benefitArray.push(benefit)
+                purchasedate = increaseCalendarDaybyOneYear(purchasedate)
+            }
+
+            break;
+
+
+        default:
+            break
+
+
+    }
+
+    return benefitArray
+
+}
+
+export function increaseDateByOneWeek(timein) {
+    const offset = getOffsetDate(timein);
+    const TimeIn = new Date(`${timein} 12:00:00${offset}`);
+    let datetime = TimeIn.getTime();
+    datetime += (1000 * 60 * 60 * 24 * 7)
+    const oneWeek = new Date(datetime)
+    let month = oneWeek.getMonth() + 1;
+    month = trailingZeros(month)
+    let day = oneWeek.getDate();
+    day = trailingZeros(day)
+    const year = oneWeek.getFullYear();
+    return (`${year}/${month}/${day}`)
+
 
 }
 export function createTransfer(transferid,created,amount,destination) {

@@ -1,6 +1,9 @@
 import PM from './pm'
 import { makeID } from './functions';
 class MakeID {
+    transferid() {
+        return makeID(16)
+    }
 
     projectid() {
         const pm = new PM();

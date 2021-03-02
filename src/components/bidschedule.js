@@ -3,7 +3,7 @@ import * as actions from './actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
-import { sorttimes, DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric, sortcode } from './functions'
+import {  DirectCostForLabor, ProfitForLabor, DirectCostForMaterial, ProfitForMaterial, DirectCostForEquipment, ProfitForEquipment, CreateBidScheduleItem, isNumeric, sortcode } from './functions'
 import PM from './pm';
 import ProjectID from './projectid';
 
@@ -45,7 +45,7 @@ class ViewBidSchedule extends Component {
         let schedule = pm.getAllSchedule.call(this)
         let items = [];
         if (schedule) {
-
+// eslint-disable-next-line
             schedule.map(item => {
                 if (item.csiid === csiid) {
                     items.push(item)
@@ -105,7 +105,7 @@ class ViewBidSchedule extends Component {
         let proposals = pm.getproposals.call(this)
         let directcost = 0;
         if (proposals) {
-
+// eslint-disable-next-line
             proposals.map(proposal => {
 
 
@@ -158,6 +158,7 @@ class ViewBidSchedule extends Component {
         const items = this.getitems();
         let amount = 0;
         if (items) {
+            // eslint-disable-next-line
             items.map(item => {
                 amount += this.getbidprice(item.csiid);
             })

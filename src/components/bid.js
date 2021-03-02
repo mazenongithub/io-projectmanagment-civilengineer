@@ -47,6 +47,7 @@ class Bid extends Component {
         let actuals = pm.getAllActual.call(this);
         let items = [];
         if(actuals) {
+            // eslint-disable-next-line
             actuals.map(item=> {
              
                 if (item.csiid === csiid) {
@@ -97,7 +98,7 @@ class Bid extends Component {
         let directcost = 0;
 
         if (actuals) {
-
+ // eslint-disable-next-line
             actuals.map(item => {
 
                 if (item.hasOwnProperty("laborid")) {
@@ -510,6 +511,7 @@ class Bid extends Component {
         const items = this.getitems();
         let amount = 0;
         if (items) {
+            // eslint-disable-next-line
             items.map(item => {
                 amount += this.getbidprice(item.csiid);
             })

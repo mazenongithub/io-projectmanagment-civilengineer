@@ -1,13 +1,10 @@
 import React from 'react';
 import './profile.css';
-//import { getstatelist } from './functions'
-//import { UploadProfileImage } from './actions/api';
 import { folderIcon, scrollImageDown, purpleCheck } from './svg'
 import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
-import { returnCompanyList, inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
+import { inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
 import { CheckProfile } from './actions/api';
-import {Link} from 'react-router-dom';
 import PM from './pm'
 
 class Profile {

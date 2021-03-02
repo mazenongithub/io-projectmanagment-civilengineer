@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import * as actions from './actions';
 import { connect } from 'react-redux';
-//import { Link } from 'react-router-dom';
 import { MyStylesheet } from './styles';
 import PM from './pm';
-//import { Link } from 'react-router-dom';
-import { TeamMember, returnCompanyList } from './functions';
+import { TeamMember } from './functions';
 import { removeIconSmall, defaultProfilePhoto } from './svg'
-import { LoadAllUsers } from './actions/api'
 import { Link } from 'react-router-dom'
 import ProjectID from './projectid';
 
@@ -343,10 +340,11 @@ class Team extends Component {
         return team;
     }
     showteamids() {
-        const pm = new PM();;
+
         const team = this.getTeam();
         let myproviders = []
         if (team) {
+             // eslint-disable-next-line
             team.map(getteam => {
 
                 myproviders.push(this.showprovider(getteam.providerid))

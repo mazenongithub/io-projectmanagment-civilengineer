@@ -48,6 +48,7 @@ class ViewProposal extends Component {
         let proposal = this.getproposal()
         if (proposal) {
             if (proposal.hasOwnProperty("labor")) {
+                // eslint-disable-next-line
                 proposal.labor.map(mylabor => {
                     if (mylabor.csiid === csiid) {
                         directcost += DirectCostForLabor(mylabor);
@@ -58,6 +59,7 @@ class ViewProposal extends Component {
             }
 
             if (proposal.hasOwnProperty("materials")) {
+                // eslint-disable-next-line
                 proposal.materials.map(mymaterial => {
                     if (mymaterial.csiid === csiid) {
                         directcost += DirectCostForMaterial(mymaterial);
@@ -68,6 +70,7 @@ class ViewProposal extends Component {
             }
 
             if (proposal.hasOwnProperty("equipment")) {
+                // eslint-disable-next-line
                 proposal.equipment.map(equipment => {
                     if (equipment.csiid === csiid) {
                         directcost += DirectCostForEquipment(equipment);
@@ -95,7 +98,6 @@ class ViewProposal extends Component {
 
 
     getdirectcost(csiid) {
-        const pm = new PM()
         let proposal = this.getproposal();
         let directcost = 0;
         if (proposal) {
@@ -174,7 +176,7 @@ class ViewProposal extends Component {
 
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this);
-        const bidField = pm.getbidfield.call(this)
+   
         const csi = pm.getcsibyid.call(this, item.csiid);
         let profit = +Number(this.getprofit(item.csiid)).toFixed(4)
         let unit = this.getunit(csi.csiid);
@@ -341,7 +343,7 @@ class ViewProposal extends Component {
 
     }
     getschedule() {
-        const pm = new PM();
+      
         const proposal = this.getproposal()
         let getitems = false
         if (proposal.hasOwnProperty("bidschedule")) {
@@ -459,12 +461,15 @@ class ViewProposal extends Component {
         let getcompany = false;
         const myuser = pm.getuser.call(this)
         if(myuser) {
-            if(myuser.hasOwnProperty("companys")) 
+            if(myuser.hasOwnProperty("companys")) {
+// eslint-disable-next-line
                 myuser.companys.map(company=> {
                     if(company.url === this.props.match.params.url) {
                         getcompany = company;
                     }
                 })
+
+            }
 
             }
         

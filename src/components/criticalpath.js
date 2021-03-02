@@ -2,7 +2,7 @@ import React from 'react'
 import { MyStylesheet } from './styles';
 import PM from './pm'
 import { removeIconSmall } from './svg';
-import { CreatePredessor, getDateInterval, trailingZeros, getOffsetDate, monthString, increaseCalendarDayOneMonth, calculatemonth, milestoneformatdatestring, getScale, calculateyear, increasedatebyoneday, calculateday,getRandomColor} from './functions'
+import { CreatePredessor, getDateInterval, milestoneformatdatestring, getRandomColor} from './functions'
 
 class CriticalPath {
 
@@ -260,13 +260,13 @@ class CriticalPath {
 
                         if(milestone.hasOwnProperty("predessors")) {
 
-                            mymilestones.push(<polygon className="milestonediagram-6 milestonediagram-4" points={`${params.xo} ${params.ypos} ${params.xo-18.16} ${params.ypos-10.49} ${params.xo-18.16} ${params.ypos+10.49} ${params.xo}`}/>)
-
+                            mymilestones.push(<polygon key={`${milestone.milestoneid}arrow`} className="milestonediagram-6 milestonediagram-4" points={`${params.xo} ${params.ypos} ${params.xo-18.16} ${params.ypos-10.49} ${params.xo-18.16} ${params.ypos+10.49} ${params.xo}`}/>)
+// eslint-disable-next-line
                             milestone.predessors.map(predessor=>{
                                 const getpredessor = pm.getmilestonecoordbyid.call(this,predessor.predessor)
-                                const yo = getpredessor.xo + getpredessor.width;
+                             
                                
-                                mymilestones.push(<polyline className="milestonediagram-6" points={`${params.xo} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${getpredessor.ypos} `}/>)                                
+                                mymilestones.push(<polyline key={`${milestone.milestoneid}${predessor.predessor}`} className="milestonediagram-6" points={`${params.xo} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${params.ypos} ${getpredessor.xo+getpredessor.width-23.87} ${getpredessor.ypos} `}/>)                                
                             })
                            
 
@@ -426,11 +426,11 @@ class CriticalPath {
                 }
 
         }
-
+ // eslint-disable-next-line
         const showBorder = (days,milestones) => {
             return(  <rect className="milestonediagram-3" x="5" y="5" width={getWidth(days)-10} height={getHeight(milestones)-66.56}/>)
         }
-
+ // eslint-disable-next-line
         const showgrid = (days) => {
 
 

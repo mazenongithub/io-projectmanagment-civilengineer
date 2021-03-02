@@ -36,14 +36,12 @@ class Invoices extends Component {
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
         const company = pm.getcompanybyid.call(this,myinvoice.companyid)
-       
-        const invoiceid = myinvoice.invoiceid;
 
         const lastupdated = myinvoice.updated ? <span>Last Updated {inputUTCStringForLaborID(myinvoice.updated)}</span> : <span>&nbsp;</span>
        
         const lastapproved= () => {
             if(myinvoice.approved) {
-                return(<span>Last Approved ${inputUTCStringForLaborID(myinvoice.approved)}`</span>)
+                return(<span>Last Approved {inputUTCStringForLaborID(myinvoice.approved)}</span>)
             } else {
                 return (<span>&nbsp;</span>)
             }
@@ -53,7 +51,7 @@ class Invoices extends Component {
         if(myuser) {
             const project = pm.getproject.call(this)
 
-        return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }}>
+        return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }} key={myinvoice.companyid}>
            <span style={{...regularFont, ...styles.generalFont}}> </span><Link to={`/${myuser.profile}/projects/${project.title}/invoices/${company.url}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> Invoice By:{company.company} {lastupdated} {lastapproved()} </Link>
         </div>)
 
@@ -73,6 +71,10 @@ class Invoices extends Component {
 
         }
         return invoices;
+    }
+
+    getCharges() {
+        
     }
     render() {
         const styles = MyStylesheet();

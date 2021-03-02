@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { MyStylesheet } from './styles';
 import PM from './pm';
-import { purpleCheck, goToIcon, TouchtoEdit, removeIconSmall } from './svg';
+import { goToIcon, TouchtoEdit, removeIconSmall } from './svg';
 import { CreateProject } from './functions';
 import { Link } from 'react-router-dom';
-import { CheckProjectID } from './actions/api'
 import { validateTitle } from './functions';
 import MakeID from './makeids';
-import Profile from './profile';
+
 
 
 class MyProjects extends Component {
@@ -107,7 +106,6 @@ class MyProjects extends Component {
   showprojectid(myproject) {
     const styles = MyStylesheet();
     const pm = new PM();
-    const headerFont = pm.getHeaderFont.call(this);
     const regularFont = pm.getRegularFont.call(this);
     const myuser = pm.getuser.call(this);
     const touchtoedit = pm.touchtoedit.call(this);
@@ -230,7 +228,6 @@ showprojectmenu() {
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
     const myuser = pm.getuser.call(this)
-    const headerFont = pm.getHeaderFont.call(this)
     const myprojects = new MyProjects();
     if (myuser) {
       return (
