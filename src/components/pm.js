@@ -12,10 +12,10 @@ import Spinner from './spinner'
 class PM {
 
 
-    sumOfTransfersByLaborID(laborid) {
+    sumOfTransfersByLaborID(companyid, laborid) {
         const pm = new PM();
-        const transfers = pm.getTransfersByLaborID.call(this, laborid)
-
+        const transfers = pm.getTransfersByLaborID.call(this, companyid, laborid)
+        console.log(transfers)
         let amount = 0;
         if (transfers) {
             // eslint-disable-next-line
@@ -30,29 +30,29 @@ class PM {
 
     }
 
-    getTransfersByLaborID(laborid) {
+    getTransfersByLaborID(companyid,laborid) {
         const pm = new PM();
-        const project = pm.getproject.call(this)
+        
 
 
         let transfers = false;
-        if (project) {
-            const mylabor = pm.getactuallaborbyid.call(this, project.projectid, laborid)
+ 
+            const mylabor = pm.getactuallaborbyid.call(this, companyid, laborid)
 
             if (mylabor) {
                 if (mylabor.hasOwnProperty("scheduletransfers")) {
                     transfers = mylabor.scheduletransfers;
                 }
             }
-        }
+        
         return transfers;
 
     }
 
-    sumOfTransfersByMaterialID(materialid) {
+    sumOfTransfersByMaterialID(companyid, materialid) {
         const pm = new PM();
         let amount = 0;
-        const transfers = pm.getTransfersByMaterialID.call(this, materialid)
+        const transfers = pm.getTransfersByMaterialID.call(this, companyid, materialid)
         if (transfers) {
             // eslint-disable-next-line
 
@@ -72,14 +72,14 @@ class PM {
 
     }
 
-    getTransfersByMaterialID(materialid) {
+    getTransfersByMaterialID(companyid,materialid) {
         const pm = new PM();
         const project = pm.getproject.call(this)
         let transfers = false;
         if (project) {
 
-            const mymaterial = pm.getactualmaterialbyid.call(this, project.projectid, materialid)
-
+            const mymaterial = pm.getactualmaterialbyid.call(this, companyid, materialid)
+            console.log(mymaterial)
             if (mymaterial) {
                 if (mymaterial.hasOwnProperty("scheduletransfers")) {
                     transfers = mymaterial.scheduletransfers;
@@ -90,9 +90,10 @@ class PM {
 
     }
 
-    sumOfTransfersByEquipmentID(equipmentid) {
+    sumOfTransfersByEquipmentID(companyid,equipmentid) {
         const pm = new PM();
-        const transfers = pm.getTransfersByEquipmentID.call(this, equipmentid)
+        const transfers = pm.getTransfersByEquipmentID.call(this, companyid, equipmentid)
+        console.log(transfers)
         let amount = 0;
         if (transfers) {
             // eslint-disable-next-line
@@ -113,12 +114,11 @@ class PM {
 
     }
 
-    getTransfersByEquipmentID(equipmentid) {
+    getTransfersByEquipmentID(companyid,equipmentid) {
         const pm = new PM();
         let transfers = false;
-        const project = pm.getproject.call(this)
-        if (project) {
-            const myequipment = pm.getactualequipmentbyid.call(this, equipmentid)
+   
+            const myequipment = pm.getactualequipmentbyid.call(this, companyid,equipmentid)
 
             if (myequipment) {
                 if (myequipment.hasOwnProperty("scheduletransfers")) {
@@ -126,7 +126,7 @@ class PM {
                 }
             }
 
-        }
+        
         return transfers;
 
     }
@@ -1872,18 +1872,24 @@ class PM {
         return key;
     }
 
-    getactuallaborbyid(projectid, laborid) {
+    getactuallaborbyid(companyid, laborid) {
         const pm = new PM();
-        const labors = pm.getactuallaborbyproject.call(this, projectid);
+        const invoice = pm.getinvoicebyid.call(this,companyid);
         let mylabor = false;
-        if (labors) {
-            // eslint-disable-next-line
-            labors.map(labor => {
-                if (labor.laborid === laborid) {
-                    mylabor = labor;
-                }
-            })
+        if(invoice) {
+            if(invoice.hasOwnProperty("labor")) {
+                 // eslint-disable-next-line
+                invoice.labor.map(labor => {
+                    if (labor.laborid === laborid) {
+                        mylabor = labor;
+                    }
+                })
+
+
+            }
+
         }
+        
         return mylabor;
     }
 
@@ -1926,21 +1932,24 @@ class PM {
         }
         return key;
     }
-    getactualmaterialbyid(projectid, materialid) {
+    getactualmaterialbyid(companyid, materialid) {
         const pm = new PM();
-        const materials = pm.getactualmaterialsbyproject.call(this, projectid);
-        let mymaterial = false;
-        if (materials) {
-            // eslint-disable-next-line
-            materials.map(material => {
-
-                if (material.materialid === materialid) {
-                    mymaterial = material;
-                }
-            })
+        const invoice =  pm.getinvoicebyid.call(this,companyid)
+        let getmaterial = false;
+        if(invoice) {
+            if(invoice.hasOwnProperty("materials")) {
+                 // eslint-disable-next-line
+                invoice.materials.map(material=> {
+                    if(material.materialid === materialid) {
+                        getmaterial = material;
+                    }
+                })
+            }
         }
+        
+        
 
-        return mymaterial;
+        return getmaterial;
     }
 
     getactualequipmentbyproject(projectid) {
@@ -1969,18 +1978,22 @@ class PM {
         }
         return key;
     }
-    getactualequipmentbyid(projectid, equipmentid) {
+    getactualequipmentbyid(companyid, equipmentid) {
         const pm = new PM();
-        const equipments = pm.getactualequipmentbyproject.call(this, projectid);
+        const invoice = pm.getinvoicebyid.call(this,companyid)
+      
         let myequipment = false;
-        if (equipments) {
+        if (invoice) {
+            if(invoice.hasOwnProperty("equipment")) {
             // eslint-disable-next-line
-            equipments.map(equipment => {
+            invoice.equipment.map(equipment => {
                 if (equipment.equipmentid === equipmentid) {
                     myequipment = equipment;
                 }
             })
         }
+
+    }
         return myequipment;
     }
 

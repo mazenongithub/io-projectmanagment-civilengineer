@@ -466,17 +466,19 @@ class ViewInvoice extends Component {
     }
 
     settleEquipmentID(myuser,equipment,settlement,avail,i,j,k) {
+        console.log("settleequipmentid")
         const makeid= new MakeID();
         const pm = new PM();
         const transferid = makeid.transferid.call(this)
         const created = UTCTimefromCurrentDate();
         const amount = settlement;
         const myequipment =  pm.getcompanyequipmentbyid.call(this,equipment.myequipmentid)
-     
+        console.log(myequipment)
         let destination = "";
         if(myequipment) {
             destination = myequipment.accountid;
         }
+        console.log(destination)
         const transfer =  createTransfer(transferid,created,amount,destination)
         
         let scheduletransfers =pm.getTransfersByEquipmentID.call(this,equipment.equipmentid)
@@ -498,11 +500,13 @@ class ViewInvoice extends Component {
     settleMaterialID(myuser,material,settlement,avail,i,j,k) {
         const makeid= new MakeID();
         const pm = new PM();
+        console.log("settlematerialid")
         const transferid = makeid.transferid.call(this)
         const created = UTCTimefromCurrentDate();
         const amount = settlement;
         const mymaterial =  pm.getcompanymaterialsbyid.call(this,material.mymaterialid)
-     
+        const company = this.getcompany();
+        if(company) {
         let destination;
         if(mymaterial) {
             destination = mymaterial.accountid;
@@ -520,12 +524,14 @@ class ViewInvoice extends Component {
         }
       
         myuser.projects[i].invoices[j].materials[k].scheduletransfers = scheduletransfers;
+
+    }
         return myuser;
 
     }
 
     settleLaborID(myuser,labor,settlement,avail, i,j,k) {
-  
+        console.log("settle laborid")
        const pm = new PM();
        const makeid = new MakeID();
        const company = this.getcompany();
@@ -653,11 +659,13 @@ class ViewInvoice extends Component {
     }
 
 
+
     async invoicesettlement() {
         const pm = new PM();
         let myuser = pm.getuser.call(this)
         const company = this.getcompany();
         const transferstotal = this.gettransfertotal();
+        let totalsettlement = 0;
         
       
         if (myuser) {
@@ -671,6 +679,7 @@ class ViewInvoice extends Component {
         
             const i = pm.getprojectkeybyid.call(this,project.projectid)
             const invoice = this.getinvoice();
+
           
                 if (invoice) {
                   
@@ -683,22 +692,23 @@ class ViewInvoice extends Component {
 
                             let transferamount = 0;
                             const amount = calculatetotalhours(labor.timeout,labor.timein)*Number(labor.laborrate)*(1+(Number(labor.profit)/100))
-                            const transfers = pm.getTransfersByLaborID.call(this,labor.laborid)
+                            const transfers = pm.getTransfersByLaborID.call(this,company.companyid,labor.laborid)
                            
                             if(transfers) {
                              
-                             transferamount = pm.sumOfTransfersByLaborID.call(this, labor.laborid)
-
+                             transferamount = pm.sumOfTransfersByLaborID.call(this, company.companyid,labor.laborid)
+                                
 
                             }
 
                             let settlement = 0;
                          
-                            if(transferamount<amount) {
+                            if(Number(Number(transferamount).toFixed(2))<Number(Number(amount).toFixed(2))) {
 
                                 settlement  = amount - transferamount;
+                                totalsettlement+=settlement;
                                 myuser = this.settleLaborID(myuser,labor,settlement, avail, i, j, k)
-                                avail = avail - settlement;
+                              
                            
                             }
 
@@ -709,14 +719,16 @@ class ViewInvoice extends Component {
                         let transfersamount = 0;
                          // eslint-disable-next-line
                         invoice.materials.map((material,k)=> {
-                             transfersamount = pm.sumOfTransfersByMaterialID.call(this,material.materialid);
+                             transfersamount = pm.sumOfTransfersByMaterialID.call(this,company.companyid, material.materialid);
                              let amount = Number(material.quantity)*Number(material.unitcost)*(1+(Number(material.profit)/100))
 
                             
                 
                         let settlement = 0;
-                        if(transfersamount < amount) {
+                        console.log(transfersamount,amount)
+                        if(Number(Number(transfersamount).toFixed(2)) < Number(Number(amount).toFixed(2))) {
                             settlement = amount - transfersamount;
+                            totalsettlement+=settlement;
                             myuser = this.settleMaterialID(myuser,material, settlement, avail,i,j,k)
                             avail =  avail - settlement;
 
@@ -731,14 +743,16 @@ class ViewInvoice extends Component {
                         let transfersamount = 0;
                          // eslint-disable-next-line
                         invoice.equipment.map((equipment,k)=> {
-                             transfersamount = pm.sumOfTransfersByEquipmentID.call(this,equipment.equipmentid);
+                             transfersamount = pm.sumOfTransfersByEquipmentID.call(this,company.companyid,equipment.equipmentid);
                              const amount = calculatetotalhours(equipment.timeout,equipment.timein)*Number(equipment.equipmentrate)*(1+(Number(equipment.profit)/100))
                     
                             
                     
                         let settlement = 0;
-                        if(transfersamount < amount) {
+                        console.log(transfersamount,amount)
+                        if(Number(Number(transfersamount).toFixed(2)) < Number(Number(amount).toFixed(2))) {
                             settlement = amount - transfersamount;
+                            totalsettlement+=settlement;
                             myuser = this.settleEquipmentID(myuser,equipment, settlement, avail, i,j,k)
                             avail =  avail - settlement;
                     
@@ -756,7 +770,16 @@ class ViewInvoice extends Component {
 
                  myuser.projects[i].invoices[j].approved = UTCTimefromCurrentDate();
                  myuser.projects[i].invoices[j].projectid = project.projectid;
-                 this.saveInvoice(myuser)
+                 if(avail>totalsettlement && totalsettlement>0) {
+                    this.saveInvoice(myuser)
+                 } else {
+                     if(totalsettlement<=0) {
+                         alert(`There is nothing to settle on this invoice!`)
+                     } else if (avail<totalsettlement) {
+                         alert(`You dont have available ${avail}. You tried to settle the invoice for ${totalsettlement}. Please add more money to the project`)
+                     }
+                 }
+               
                 
                 }
 
