@@ -15,7 +15,7 @@ class PM {
     sumOfTransfersByLaborID(companyid, laborid) {
         const pm = new PM();
         const transfers = pm.getTransfersByLaborID.call(this, companyid, laborid)
-        console.log(transfers)
+    
         let amount = 0;
         if (transfers) {
             // eslint-disable-next-line
@@ -79,7 +79,7 @@ class PM {
         if (project) {
 
             const mymaterial = pm.getactualmaterialbyid.call(this, companyid, materialid)
-            console.log(mymaterial)
+         
             if (mymaterial) {
                 if (mymaterial.hasOwnProperty("scheduletransfers")) {
                     transfers = mymaterial.scheduletransfers;
@@ -93,7 +93,7 @@ class PM {
     sumOfTransfersByEquipmentID(companyid,equipmentid) {
         const pm = new PM();
         const transfers = pm.getTransfersByEquipmentID.call(this, companyid, equipmentid)
-        console.log(transfers)
+ 
         let amount = 0;
         if (transfers) {
             // eslint-disable-next-line
@@ -569,10 +569,10 @@ class PM {
 
     getuser() {
         let user = false;
-        if (this.props.myusermodel) {
-            if (this.props.myusermodel.hasOwnProperty("providerid")) {
+        if (!isEmpty(this.props.myusermodel)) {
+           
                 user = this.props.myusermodel;
-            }
+            
         }
         return user;
     }
@@ -939,7 +939,7 @@ class PM {
 
     getsettlementsbyinvoiceid(invoiceid) {
         const pm = new PM();
-        const invoice = pm.getinvoicebyid.call(this, invoiceid);
+        const invoice = pm.getinvoicebyid.call(this);
         let settlements = false;
         if (invoice.hasOwnProperty("settlements")) {
             settlements = invoice.settlements;
@@ -1103,11 +1103,11 @@ class PM {
     }
 
     getemployeebenefitinterval(companyid, providerid) {
-        console.log(companyid,providerid)
+      
         const pm = new PM();
         let benefits = [];
         const employees = pm.getcompanyemployeesbyid.call(this, companyid)
-        console.log(employees)
+
         if (employees) {
              // eslint-disable-next-line
             employees.map(employee=> {
@@ -2114,23 +2114,22 @@ class PM {
     }
 
 
-    getinvoicebyid() {
+    getinvoicebyid(companyid) {
         let invoice = false;
         const pm = new PM();
         const invoices = pm.getinvoices.call(this)
-        const company = pm.getcompany.call(this)
-        if (company) {
+ 
             if (invoices) {
                 // eslint-disable-next-line
                 invoices.map(myinvoice => {
 
-                    if (myinvoice.companyid === company.companyid) {
+                    if (myinvoice.companyid === companyid) {
                         invoice = myinvoice;
                     }
                 })
             }
 
-        }
+        
 
         return invoice;
 
