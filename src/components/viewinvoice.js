@@ -554,7 +554,7 @@ class ViewInvoice extends Component {
                     const destination = account.accountid;
             
                     const transfer = createTransfer(transferid, created, amount, destination)
-                    const getlabor = pm.getactuallaborbyid.call(this,company.companyid,labor.laborid)
+                    
              
                     let scheduletransfers = pm.getTransfersByLaborID.call(this,company.companyid, labor.laborid)
                    
@@ -672,7 +672,7 @@ class ViewInvoice extends Component {
 
 
 
-    async invoicesettlement() {
+    invoicesettlement() {
 
         const pm = new PM();
         let myuser = pm.getuser.call(this)
@@ -724,7 +724,7 @@ class ViewInvoice extends Component {
 
                                     settlement = amount - transferamount;
                                     totalsettlement += settlement;
-                                   
+                                    console.log(this.getinvoice())
                                      myuser = this.settleLaborID(myuser, labor, settlement, avail, i, j, k)
                                      avail = avail - settlement;
 
@@ -926,19 +926,7 @@ class ViewInvoice extends Component {
 
                     const sumcharges = pm.sumOfChargesByProjectID.call(this, project.projectid)
 
-                    const sumOfCharges = (sumcharges, transfertotal, amountowed) => {
-                        if (amountowed > 0) {
-                            if (sumcharges) {
-
-                                const avail = sumcharges - transfertotal
-                                const showdebt = avail > amountowed ? ` Invoice settlement with capture $${Number(amountowed).toFixed(2)} ` : ` Invoice Settlement will capture up to $${Number(avail).toFixed(2)} `
-
-                                return (` You have posted a total of $${Number(sumcharges).toFixed(2)} in project credits ${showdebt}. You have $${Number(avail).toFixed(2)} available `)
-                            }
-
-                        }
-
-                    }
+                
                     const invoice = this.getinvoice();
                     if (invoice) {
                      
@@ -965,10 +953,10 @@ class ViewInvoice extends Component {
                                     {pm.showbidtable.call(this)}
 
                                     <div style={{ ...styles.generalContainer }}>
-                                        <span style={{ ...regularFont, ...styles.generalFont }}>The Total Amount for this Invoice is ${Number(amount).toFixed(2)}.
-                                         The total amount of transfers posted ${Number(transferstotal).toFixed(2)}.
-                                         The Current Balance is ${Number(amountowed).toFixed(2)}
-                                            {sumOfCharges(sumcharges, transferstotal, amountowed)}</span>
+                                        <span style={{ ...regularFont, ...styles.generalFont }}>Invoice Total: ${Number(amount).toFixed(2)}.
+                                         You have posted ${Number(sumcharges).toFixed(2)} in Charges of which ${Number(transferstotal).toFixed(2)} has been transferred.
+                                         The Current Settlement Amount  is ${Number(amountowed).toFixed(2)}
+                                          </span>
                                     </div>
 
                                     <div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...styles.alignCenter }}>
