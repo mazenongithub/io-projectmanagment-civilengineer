@@ -24,6 +24,7 @@ class ProjectID {
 
                           
                             <Link to={`/${myuser.profile}/projects/${project.title}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink, ...styles.marginLeft30 }}>Create Milestones</Link>
+                            <Link to={`/${myuser.profile}/projects/${project.title}/charges`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink, ...styles.marginLeft30 }}>Add Charges</Link>
                         </div>
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
                             <span style={{ ...headerFont, ...styles.generalFont }}>Engineering</span>

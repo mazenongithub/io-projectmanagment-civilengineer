@@ -7,6 +7,7 @@ import { AddCharge } from './actions/api'
 import { inputUTCStringForLaborID } from './functions'
 import {Link} from 'react-router-dom';
 import PM from './pm';
+import ProjectID from './projectid';
 
 class Charges extends Component {
     constructor(props) {
@@ -55,7 +56,7 @@ class Charges extends Component {
                     console.log(response)
                     if (response.hasOwnProperty("charges")) {
 
-                        myuser.projects.myproject[i].charges = response.charges;
+                        myuser.projects[i].charges = response.charges;
                         this.props.reduxUser(myuser)
                         this.setState({ render: 'render' })
 
@@ -284,30 +285,25 @@ class Charges extends Component {
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
         const myuser =pm.getuser.call(this)
+        const projectid = new ProjectID();
         if(myuser) {
 
         if (project) {
 
        
-            const projectid = project.projectid;
+          
             return (
                 <div style={{ ...styles.generalFont }}>
                     <div style={{ ...styles.flex1 }}>
 
+
+
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...headerFont, ...styles.generalLink, ...styles.boldFont, ...styles.generalFont }}>  /{myuser.profile} </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
                             </div>
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects`}>  /myprojects  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
-
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/myprojects/${project.title}/charges`}>  /charges  </Link>
+                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/charges`}>  /charges  </Link>
                             </div>
 
                
@@ -342,25 +338,21 @@ class Charges extends Component {
                             {this.showchargesummary()}
 
                         </div>
-                        <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
-                            {this.transferSummary()}
-                        </div>
-                        <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
-                            {this.balanacesummary()}
-                        </div>
-
-                        {pm.showprojectid.call(this)}
+                       
+                        {projectid.showprojectid.call(this)}
 
                     </div>
                 </div>
             )
 
         } else {
-            return(<div>Project Not Found</div>)
+            return(<div style={{...styles.generalContainer}}>
+            <span style={{...regularFont, ...styles.generalFont}}>Project Not Found</span></div>)
         }
 
         } else {
-            return (<div>Please Login To View Charges</div>)
+            return(<div style={{...styles.generalContainer}}>
+                <span style={{...regularFont, ...styles.generalFont}}>Please Login to View Charges</span></div>)
         }
     }
 

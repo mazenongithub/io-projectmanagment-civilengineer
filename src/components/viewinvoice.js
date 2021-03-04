@@ -786,8 +786,12 @@ class ViewInvoice extends Component {
                         myuser.projects[i].invoices[j].approved = UTCTimefromCurrentDate();
                         myuser.projects[i].invoices[j].projectid = project.projectid;
                         if (avail > 0  && totalsettlement > 0) {
+
+                            if(window.confirm(`Are you sure you want to settle Invoice? This will attempt to transfer $${Number(totalsettlement).toFixed(2)}`)) {
                         
-                           this.saveInvoice(myuser)
+                            this.saveInvoice(myuser)
+
+                            }
                         
                         } else {
                             if (totalsettlement <= 0) {

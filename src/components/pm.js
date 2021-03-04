@@ -775,6 +775,12 @@ class PM {
                     id: 'bidlineitem',
                     url: 'https://civilengineer.io/projectmanagment/slides/bidlineitem.png',
                     caption: `Labor, Equipment, and Materials breakdown for each actual item in your bid from all the companys.`
+                },
+                {
+                    title: 'Charges',
+                    id: 'charges',
+                    url: 'https://civilengineer.io/projectmanagment/slides/charges.png',
+                    caption: `Add charges to your project to be able to settle invoices. Manage your own payments online easy using Stripe Checkout `
                 }
             ])
         }
