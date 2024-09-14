@@ -32,9 +32,18 @@ class Project extends Component {
     const projectid = this.props.match.params.projectid;
     const userid = this.props.match.params.userid;
 
+    let server_api = process.env.REACT_APP_SERVER_API
+
+    const stripHttp = (server_api) => {
+
+        return server_api.replace(/^https?:\/\//, '')
+
+    }
+
+    server_api = stripHttp(server_api)
 
 
-    const socket = new WebSocket(`ws://localhost:8081/projects/${projectid}/websocketapi`)
+    const socket = new WebSocket(`ws://${server_api}/projects/${projectid}/websocketapi`)
 
     socket.onopen = (evt) => {
 
