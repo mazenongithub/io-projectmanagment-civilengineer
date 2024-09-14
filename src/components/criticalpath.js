@@ -41,12 +41,13 @@ class CriticalPath {
         const predessor = pm.getmilestonebyid.call(this, predessors.predessor)
         if (window.confirm(`Are you sure you want to remove predessor ${predessor.milestone} from ${milestone.milestone}?`)) {
             const pm = new PM();
-            const myuser = pm.getuser.call(this)
-            if (myuser) {
+         
+            const myprojects = pm.getProjects.call(this)
+            if(myprojects) {
 
-                const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                const myproject = pm.getproject.call(this)
                 if (myproject) {
-                    const i = pm.getprojectkeybyid.call(this, myproject.projectid)
+                    const i = pm.getProjectKeyByID.call(this, myproject.project_id)
                     const mymilestone = pm.getmilestonebyid.call(this, milestone.milestoneid);
                     if (mymilestone) {
                         const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid)
@@ -55,8 +56,8 @@ class CriticalPath {
                         if (predessor) {
                             const k = pm.getpredessorkeybyid.call(this, milestone, milestoneid);
                            
-                            myuser.projects[i].milestones[j].predessors.splice(k, 1)
-                            this.props.reduxUser(myuser);
+                            myprojects[i].milestones[j].predessors.splice(k, 1)
+                            this.props.reduxProjects(myprojects);
                             this.setState({ render: 'render' })
                         } 
 
@@ -158,14 +159,14 @@ class CriticalPath {
     }
     createstartstart(value) {
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
+        const myprojects = pm.getProjects.call(this)
         if (value) {
 
-            if (myuser) {
+            if(myprojects) {
 
                 const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
                 if (project) {
-                    const i = pm.getprojectkeybyid.call(this, project.projectid)
+                    const i = pm.getMyProjectKeyByID.call(this,project.ProjectID)
 
                     if (this.state.activemilestoneid) {
                         const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
@@ -173,11 +174,11 @@ class CriticalPath {
                             const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
                             const predessor = CreatePredessor(value, 'start-to-start')
                             if (milestone.hasOwnProperty("predessors")) {
-                                myuser.projects[i].milestones[j].predessors.push(predessor)
+                                myprojects[i].milestones[j].predessors.push(predessor)
                             } else {
-                                myuser.projects[i].milestones[j].predessors = [predessor]
+                                myprojects[i].milestones[j].predessors = [predessor]
                             }
-                            this.props.reduxUser(myuser);
+                            this.props.reduxProjects(myprojects);
                             this.setState({ render: 'render' })
 
 
@@ -196,14 +197,15 @@ class CriticalPath {
 
     createstartfinish(value) {
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
+        const myprojects = pm.getProjects.call(this)
         if (value) {
 
-            if (myuser) {
+            if(myprojects) {
 
                 const project = pm.getproject.call(this)
                 if (project) {
-                    const i = pm.getprojectkeybyid.call(this, project.projectid)
+                   
+                    const i = pm.getMyProjectKeyByID.call(this,project.ProjectID)
 
                     if (this.state.activemilestoneid) {
                         const milestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
@@ -211,11 +213,12 @@ class CriticalPath {
                             const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
                             const predessor = CreatePredessor(value, 'start-to-finish')
                             if (milestone.hasOwnProperty("predessors")) {
-                                myuser.projects[i].milestones[j].predessors.push(predessor)
+                                myprojects[i].milestones[j].predessors.push(predessor)
                             } else {
-                                myuser.projects[i].milestones[j].predessors = [predessor]
+                                myprojects[i].milestones[j].predessors = [predessor]
                             }
-                            this.props.reduxUser(myuser);
+                         
+                            this.props.reduxProjects(myprojects);
                             this.setState({ render: 'render' })
 
 
@@ -325,9 +328,10 @@ class CriticalPath {
         const pm = new PM();
         const styles = MyStylesheet();
         const regularFont = pm.getRegularFont.call(this)
-        const projectinterval = pm.getprojectinterval.call(this)
+     
         const milestones = pm.getmilestones.call(this)
-        if(milestones) {
+        if(milestones && milestones.length >0) {
+        const projectinterval = pm.getprojectinterval.call(this)
         const days = getDateInterval(projectinterval.start,projectinterval.completion)
 
        

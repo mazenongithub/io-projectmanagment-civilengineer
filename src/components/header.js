@@ -52,8 +52,8 @@ class Header {
         }
 
         const link_1 = (myuser) => {
-            if (myuser) {
-                return (<Link to={`/${myuser.profile}/profile`} className="nav-link" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}>  /{myuser.profile} </Link>);
+            if(myuser.hasOwnProperty("User_ID")) {
+                return (<Link to={`/${myuser.UserID}/profile`} className="nav-link" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}>  /{myuser.UserID} </Link>);
             } else {
                 return (<Link to="/" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> / </Link>);
             }
@@ -67,9 +67,9 @@ class Header {
 
 
         const link_2 = (myuser) => {
-            if (myuser) {
+            if(myuser.hasOwnProperty("User_ID")) {
                 return (<Link onClick={() => { header.handleProjects.call(this) }}
-                    style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} to={`/${myuser.providerid}/projects`}>  /projects  </Link>);
+                    style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} to={`/${myuser.UserID}/projects`}>  /projects  </Link>);
             } else {
                 return (<Link to="/providers/register" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> /register </Link>);
             }
@@ -79,7 +79,7 @@ class Header {
 
 
         const link_3 = (myuser) => {
-            if (myuser) {
+            if(myuser.hasOwnProperty("User_ID")) {
                 return (<div className="linkhover" style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }} onClick={() => { pm.logoutuser.call(this) }}> logout </div>);
             } else {
                 return (<Link to={`/providers/login`} style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.fontBold }}> /login </Link>);
@@ -157,11 +157,11 @@ class Header {
         const myuser = pm.getuser.call(this)
         const headerFont = pm.getHeaderFont.call(this)
         const styles = MyStylesheet();
-        if (myuser) {
+        if(myuser.hasOwnProperty("User_ID")) {
             return (
                 <div style={{ ...styles.generalContainer, ...styles.alignCenter}}>
                     <Link
-                        to={`/${myuser.profile}/profile`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /{myuser.profile}</Link>
+                        to={`/${myuser.UserID}/profile`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /{myuser.UserID}</Link>
                 </div>)
         }
 
@@ -181,7 +181,7 @@ class Header {
                     return( 
                         <div style={{ ...styles.generalContainer, ...styles.alignCenter}}>
                             <Link
-                                to={`/${myuser.profile}/projects`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /projects </Link>
+                                to={`/${myuser.UserID}/projects`} style={{ ...headerFont, ...styles.generalFont, ...styles.generalLink, ...styles.boldFont }}> /projects </Link>
                         </div>)
           
                  

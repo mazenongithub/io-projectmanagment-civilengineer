@@ -6,7 +6,7 @@ import { MyStylesheet } from './styles';
 import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, inputUTCStringForLaborID, calculatetotalhours, formatDateStringDisplay } from './functions'
 import PM from './pm';
 import ProjectID from './projectid'
-import { Link } from 'react-router-dom';
+import { a } from 'react-router-dom';
 
 
 class BidScheduleItem extends Component {
@@ -24,11 +24,7 @@ class BidScheduleItem extends Component {
     }
     componentDidMount() {
         const pm = new PM();
-        const csis = pm.getcsis.call(this);
-        if (!csis) {
-            pm.loadcsis.call(this)
-        }
-
+   
 
 
         this.updateWindowDimensions()
@@ -47,8 +43,8 @@ class BidScheduleItem extends Component {
 
     getlaboritems() {
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        let csiid = this.props.csiid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
@@ -57,6 +53,8 @@ class BidScheduleItem extends Component {
                 laboritems.push(item)
             }
         })
+
+        console.log(laboritems)
 
         if (laboritems.length > 0) {
             // eslint-disable-next-line
@@ -69,8 +67,9 @@ class BidScheduleItem extends Component {
     }
     getlabor() {
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        
+        let csiid = this.props.csiid;
         let laboritems = [];
 
         // eslint-disable-next-line
@@ -96,8 +95,8 @@ class BidScheduleItem extends Component {
     }
     getmaterialitems() {
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        let csiid = this.props.csiid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
@@ -119,8 +118,8 @@ class BidScheduleItem extends Component {
     }
     getmaterial() {
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        let csiid = this.props.csiid;
         let materialitems = [];
         // eslint-disable-next-line
         schedule.map(item => {
@@ -147,8 +146,8 @@ class BidScheduleItem extends Component {
     getequipmentitems() {
 
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        let csiid = this.props.csiid;
 
         let laboritems = [];
         let items = [];
@@ -172,8 +171,8 @@ class BidScheduleItem extends Component {
     getequipment() {
 
         const pm = new PM();
-        const schedule = pm.getAllSchedule.call(this)
-        let csiid = this.props.match.params.csiid;
+        const schedule = pm.getSchedule.call(this)
+        let csiid = this.props.csiid;
         let laboritems = [];
         // eslint-disable-next-line
         schedule.map(item => {
@@ -242,9 +241,11 @@ class BidScheduleItem extends Component {
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this);
 
+        const myequipment = pm.getcompanyequipmentbyid.call(this,this.props.company_id,equipment.myequipmentid)
+
         const amount = Number(calculatetotalhours(equipment.timeout, equipment.timein) * (Number(equipment.equipmentrate))).toFixed(2)
         return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }} key={equipment.equipmentid}>
-            {equipment.equipment} From: {inputUTCStringForLaborID(equipment.timein)} to {inputUTCStringForLaborID(equipment.timeout)} ${equipment.equipmentrate} x ${calculatetotalhours(equipment.timeout, equipment.timein)} = ${amount}
+            {myequipment.equipment} From: {inputUTCStringForLaborID(equipment.timein)} to {inputUTCStringForLaborID(equipment.timeout)} ${equipment.equipmentrate} x ${calculatetotalhours(equipment.timeout, equipment.timein)} = ${amount}
 
         </div>)
     }
@@ -262,7 +263,7 @@ class BidScheduleItem extends Component {
             const project = pm.getproject.call(this)
             if(project) {
 
-            const csi = pm.getcsibyid.call(this,this.props.match.params.csiid);
+            const csi = pm.getcsibyid.call(this,this.props.csiid);
 
             if(csi) {
             return (
@@ -270,19 +271,13 @@ class BidScheduleItem extends Component {
                     <div style={{ ...styles.flex1 }}>
 
 
+           
                         <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                            <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
-                        </div>
-
-                        <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                            <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bidschedule`}>  /bidschedule </Link>
-                        </div>
-                        <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                            <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bidschedule/csi/${csi.csiid}`}>  /{csi.csi} {csi.title} </Link>
+                            <a style={{ ...styles.generalFont, ...headerFont, ...styles.generala, ...styles.boldFont }}>  /{csi.csi} {csi.title} </a>
                         </div>
 
                         {pm.showlinedetail.call(this)}
-                        {projectid.showprojectid.call(this)}
+                     
 
                     </div>
                 </div>)
@@ -327,10 +322,12 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
-        project: state.project,
+        csis: state.csis,
         allusers: state.allusers,
-        allcompanys: state.allcompanys,
-        csis: state.csis
+        projectsockets: state.projectsockets,
+        myprojects: state.myprojects,
+        projects: state.projects,
+        allcompanys: state.allcompanys
     }
 }
 export default connect(mapStateToProps, actions)(BidScheduleItem)

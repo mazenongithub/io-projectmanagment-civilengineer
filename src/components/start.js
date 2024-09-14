@@ -11,15 +11,17 @@ class StartDate {
     handleyear(year) {
         this.setState({ startdateyear: year })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
-
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+        
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) {
+       
+            
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
-
-                const i = pm.getprojectkeybyid.call(this, projectid);
+                  const project_id = project.project_id
+                
+                const i = pm.getProjectKeyByID.call(this,project_id);
                 if (year.length === 4) {
 
                     if(validateYear(year)) {
@@ -34,8 +36,9 @@ class StartDate {
                                 let month = this.state.startdatemonth;
                                 const timein = `${year}-${month}-${day}`
 
-                                myuser.projects[i].milestones[j].start= timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].start= timein;
+                                
+                                this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 
@@ -58,15 +61,15 @@ class StartDate {
         day = day.toString();
         this.setState({ startdateday: day })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
+                  const project_id = project.project_id
 
-                const i = pm.getprojectkeybyid.call(this, projectid);
+                const i = pm.getProjectKeyByID.call(this,project_id);
                 if (day.length === 2) {
 
             
@@ -80,8 +83,8 @@ class StartDate {
                                 let year = this.state.startdateyear;
                                 let month = this.state.startdatemonth;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects[i].milestones[j].start = timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].start = timein;
+                                this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 
@@ -104,15 +107,15 @@ class StartDate {
     handlemonth(month) {
         this.setState({ startdatemonth: month })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
+                  const project_id = project.project_id
 
-                const i = pm.getprojectkeybyid.call(this, projectid);
+                const i = pm.getProjectKeyByID.call(this,project_id);
                 if (month.length === 2) {
 
                     if(validateMonth(month)) {
@@ -125,8 +128,8 @@ class StartDate {
                                 let day = this.state.startdateday;
                                 let year = this.state.startdateyear;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects[i].milestones[j].start = timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].start = timein;
+                                this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 

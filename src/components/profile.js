@@ -1,10 +1,11 @@
 import React from 'react';
 import './profile.css';
-import { folderIcon, scrollImageDown, purpleCheck } from './svg'
+import { folderIcon, scrollImageDown, purpleCheck, saveProfileIcon } from './svg'
 import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
 import { inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
 import { CheckProfile } from './actions/api';
+import Spinner from './spinner';
 import PM from './pm'
 
 class Profile {
@@ -100,7 +101,7 @@ class Profile {
     getprofileurl() {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
-        return myuser.profileurl;
+        return myuser.ProfileURL;
 
 
     }
@@ -137,13 +138,13 @@ class Profile {
   getfirstname() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
-        return myuser.firstname;
+        return myuser.FirstName;
     }
     handlefirstname(firstname) {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
         if (myuser) {
-            myuser.firstname = firstname;
+            myuser.FirstName = firstname;
             this.props.reduxUser(myuser);
             this.setState({ render: 'render' })
         }
@@ -152,7 +153,7 @@ class Profile {
     getemailaddress() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
-        return myuser.emailaddress;
+        return myuser.EmailAddress;
     }
     handleemailaddress(emailaddress) {
         const pm = new PM();
@@ -161,7 +162,7 @@ class Profile {
         
         if (myuser) {
             
-            myuser.emailaddress = emailaddress;
+            myuser.EmailAddress = emailaddress;
             if(errmsg) {
                 myuser.invalidemail = emailaddress;
                 this.props.reduxUser(myuser);
@@ -181,13 +182,13 @@ class Profile {
     getlastname() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
-        return myuser.lastname;
+        return myuser.LastName;
     }
     handlelastname(lastname) {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
         if (myuser) {
-            myuser.lastname = lastname;
+            myuser.LastName = lastname;
             this.props.reduxUser(myuser);
             this.setState({ render: 'render' })
         }
@@ -256,13 +257,13 @@ class Profile {
     getphonenumber() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
-        return myuser.phonenumber;
+        return myuser.PhoneNumber;
     }
     handlephonenumber(phonenumber) {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
         if (myuser) {
-            myuser.phonenumber = phonenumber;
+            myuser.PhoneNumber = phonenumber;
             this.props.reduxUser(myuser);
             this.setState({ render: 'render' })
         }
@@ -279,13 +280,13 @@ class Profile {
                 delete myuser.invalid;
             }
             if (myuser) {
-                myuser.profile = profile;
+                myuser.UserID = profile;
                 this.props.reduxUser(myuser);
                 this.setState({ message: '' })
             }
 
         } else {
-            myuser.profile = profile;
+            myuser.UserID = profile;
             myuser.invalid = validate;
             this.props.reduxUser(myuser);
             this.setState({ message: validate })
@@ -297,15 +298,15 @@ class Profile {
     getprofile() {
         const pm = new PM();
         let myuser = pm.getuser.call(this);
-        return myuser.profile;
+        return myuser.UserID;
     }
     async checkemailaddress() {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
-        const errmsg = validateEmail(myuser.emailaddress);
+        const errmsg = validateEmail(myuser.EmailAddress);
        
         if (!errmsg) {
-            const response = await CheckEmailAddress(myuser.emailaddress)
+            const response = await CheckEmailAddress(myuser.EmailAddress)
             if (response.hasOwnProperty("invalid")) {
                 myuser.invalidemail = `${response.invalid}`
                 this.props.reduxUser(myuser)
@@ -320,7 +321,7 @@ class Profile {
 
 
         } else {
-            myuser.invalidemail = myuser.emailaddress;
+            myuser.invalidemail = myuser.EmailAddress;
             this.props.reduxUser(myuser)
             this.setState({ render: 'render' })
         }
@@ -334,7 +335,7 @@ class Profile {
         const goIcon = pm.getGoIcon.call(this)
         const profile = new Profile();
         const emailicon = () => {
-            if (!myuser.hasOwnProperty("invalidemail") && myuser.emailaddress) {
+            if (!myuser.hasOwnProperty("invalidemail") && myuser.EmailAddress) {
             return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
             }
         }
@@ -407,8 +408,8 @@ class Profile {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
         const profileImage = pm.getprofiledimensions.call(this)
-        if (myuser.profileurl) {
-            return (<img src={myuser.profileurl} style={{ ...profileImage }} alt={`${myuser.firstname} ${myuser.lastname}`} />)
+        if (myuser.ProfileURL) {
+            return (<img src={myuser.ProfileURL} style={{ ...profileImage }} alt={`${myuser.FirstName} ${myuser.LastName}`} />)
         } else {
             return;
         }
@@ -418,7 +419,7 @@ class Profile {
         const pm = new PM();
         const myuser = pm.getuser.call(this);
         if (myuser) {
-            const providerid = myuser.providerid;
+            const providerid = myuser.UserID;
             let formData = new FormData();
             let myfile = document.getElementById("profile-image");
             formData.append("profilephoto", myfile.files[0]);
@@ -470,6 +471,31 @@ class Profile {
 
         }
     }
+
+
+
+    showsaveprofile() {
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this);
+        const saveprojecticon = pm.getsaveprojecticon.call(this);
+        const styles = MyStylesheet();
+        if (!this.state.spinner) {
+            return (
+                <div style={{ ...styles.generalContainer }}>
+                    <div style={{ ...styles.generalContainer, ...styles.alignCenter, ...styles.generalFont, ...regularFont, ...styles.topMargin15, ...styles.bottomMargin15 }}>
+                        {this.state.message}
+                    </div>
+    
+                    <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                        <button style={{ ...styles.generalButton, ...saveprojecticon }} onClick={() => { pm.savemyprofile.call(this) }}>{saveProfileIcon()}</button>
+                    </div>
+                </div>)
+    
+        } else {
+            return (<Spinner />)
+        }
+    }
+
     showProfile() {
         const pm = new PM();
         const styles = MyStylesheet();
@@ -484,7 +510,7 @@ class Profile {
 
         const showButton = () => {
 
-            if (!myuser.hasOwnProperty("invalid") && myuser.profile) {
+            if (!myuser.hasOwnProperty("invalid") && myuser.UserID) {
                 return (<button style={{ ...styles.generalButton, ...goIcon }}>{purpleCheck()}</button>)
             } else {
                 return;
@@ -534,7 +560,7 @@ class Profile {
 
                     <div style={{ ...styles.generalFlex }}>
                         <div style={{ ...styles.flex1, ...styles.generalFont, ...headerFont, ...styles.fontBold, ...styles.alignCenter }}>
-                            /<input type="text" value={myuser.profile}
+                            /<input type="text" value={myuser.UserID}
                                 onChange={event => { profile.handleprofile.call(this,event.target.value) }}
                                 style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
                                 onBlur={event => { profile.checkprofile.call(this,event.target.value) }}
@@ -567,7 +593,9 @@ class Profile {
 
                     {profile.showadditional.call(this)}
 
-                    {pm.showsaveproject.call(this)}
+                    {profile.showsaveprofile.call(this)}
+
+              
 
 
 

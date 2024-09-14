@@ -6,7 +6,7 @@ import { MyStylesheet } from './styles';
 import { DirectCostForLabor, DirectCostForMaterial, DirectCostForEquipment, inputUTCStringForLaborID, calculatetotalhours, formatDateStringDisplay } from './functions'
 import PM from './pm';
 import ProjectID from './projectid'
-import { Link } from 'react-router-dom';
+
 
 
 class BidItem extends Component {
@@ -24,11 +24,11 @@ class BidItem extends Component {
     }
     componentDidMount() {
         const pm = new PM();
-        const csis = pm.getcsis.call(this);
-        if (!csis) {
-            pm.loadcsis.call(this)
-        }
+   
+
+
         this.updateWindowDimensions()
+
 
 
     }
@@ -43,8 +43,9 @@ class BidItem extends Component {
 
     getlaboritems() {
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+    
+        let csiid = this.props.csiid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
@@ -54,9 +55,12 @@ class BidItem extends Component {
             }
         })
 
+     
+
         if (laboritems.length > 0) {
             // eslint-disable-next-line
             laboritems.map(mylabor => {
+            
                 items.push(pm.showlaborid.call(this,mylabor))
             })
 
@@ -65,9 +69,9 @@ class BidItem extends Component {
     }
     getlabor() {
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-       
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+        
+        let csiid = this.props.csiid;
         let laboritems = [];
 
         // eslint-disable-next-line
@@ -93,8 +97,8 @@ class BidItem extends Component {
     }
     getmaterialitems() {
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+        let csiid = this.props.csiid;
         let laboritems = [];
         let items = [];
         // eslint-disable-next-line
@@ -116,8 +120,8 @@ class BidItem extends Component {
     }
     getmaterial() {
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+        let csiid = this.props.csiid;
         let materialitems = [];
         // eslint-disable-next-line
         actual.map(item => {
@@ -144,8 +148,8 @@ class BidItem extends Component {
     getequipmentitems() {
 
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+        let csiid = this.props.csiid;
 
         let laboritems = [];
         let items = [];
@@ -159,7 +163,7 @@ class BidItem extends Component {
         if (laboritems.length > 0) {
             // eslint-disable-next-line
             laboritems.map(myequipment => {
-                items.push(pm.showequipmentid.call(this,myequipment))
+                items.push(this.showequipmentid(myequipment))
             })
 
         }
@@ -169,8 +173,8 @@ class BidItem extends Component {
     getequipment() {
 
         const pm = new PM();
-        const actual = pm.getAllActual.call(this)
-        let csiid = this.props.match.params.csiid;
+        const actual = pm.getActual.call(this)
+        let csiid = this.props.csiid;
         let laboritems = [];
         // eslint-disable-next-line
         actual.map(item => {
@@ -238,9 +242,12 @@ class BidItem extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this);
+
+        const myequipment = pm.getcompanyequipmentbyid.call(this,this.props.company_id,equipment.myequipmentid)
+
         const amount = Number(calculatetotalhours(equipment.timeout, equipment.timein) * (Number(equipment.equipmentrate))).toFixed(2)
         return (<div style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }} key={equipment.equipmentid}>
-            {equipment.equipment} From: {inputUTCStringForLaborID(equipment.timein)} to {inputUTCStringForLaborID(equipment.timeout)} ${equipment.equipmentrate} x ${calculatetotalhours(equipment.timeout, equipment.timein)} = ${amount}
+            {myequipment.equipment} From: {inputUTCStringForLaborID(equipment.timein)} to {inputUTCStringForLaborID(equipment.timeout)} ${equipment.equipmentrate} x ${calculatetotalhours(equipment.timeout, equipment.timein)} = ${amount}
 
         </div>)
     }
@@ -250,58 +257,52 @@ class BidItem extends Component {
         const pm = new PM();
         const styles = MyStylesheet();
         const headerFont = pm.getHeaderFont.call(this)
-        const regularFont = pm.getRegularFont.call(this)
-        const myuser = pm.getuser.call(this)
         const projectid = new ProjectID();
+        const myuser = pm.getuser.call(this)
+        const regularFont = pm.getRegularFont.call(this)
         if (myuser) {
 
             const project = pm.getproject.call(this)
-            if (project) {
+            if(project) {
 
-                const csi = pm.getcsibyid.call(this, this.props.match.params.csiid);
+            const csi = pm.getcsibyid.call(this,this.props.csiid);
 
-                if (csi) {
-                    return (
-                        <div style={{ ...styles.generalFlex }}>
-                            <div style={{ ...styles.flex1 }}>
-
-                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
-                                </div>
-
-                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bid`}>  /bid </Link>
-                                </div>
-                                <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                    <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/bid/csi/${csi.csiid}`}>  /{csi.csi} {csi.title} </Link>
-                                </div>
-
-                                {pm.showlinedetail.call(this)}
-                                {projectid.showprojectid.call(this)}
+            if(csi) {
+            return (
+                <div style={{ ...styles.generalFlex }}>
+                    <div style={{ ...styles.flex1 }}>
 
 
-                            </div>
-                        </div>)
-
-                } else {
-                    return (
-                        <div style={{ ...styles.generalContainer }}>
-                            <span style={{ ...styles.generalFont, ...regularFont }}>
-                                Spec Not Found
-            </span>
+           
+                        <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                            <a style={{ ...styles.generalFont, ...headerFont, ...styles.generala, ...styles.boldFont }}>  /{csi.csi} {csi.title} </a>
                         </div>
+
+                        {pm.showlinedetail.call(this)}
+                     
+
+                    </div>
+                </div>)
+
+            } else {
+                return (
+                    <div style={{ ...styles.generalContainer }}>
+                        <span style={{ ...styles.generalFont, ...regularFont }}>
+                           Spec Not Found
+                        </span>
+                    </div>
                     )
 
-                }
+            }
 
             } else {
                 return (
                     <div style={{ ...styles.generalContainer }}>
                         <span style={{ ...styles.generalFont, ...regularFont }}>
                             Project Not Found
-            </span>
+                        </span>
                     </div>
-                )
+                    )
 
             }
 
@@ -310,9 +311,9 @@ class BidItem extends Component {
                 <div style={{ ...styles.generalContainer }}>
                     <span style={{ ...styles.generalFont, ...regularFont }}>
                         Please Login to View Bid Schedule
-        </span>
+                    </span>
                 </div>
-            )
+                )
         }
 
     }
@@ -323,10 +324,12 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
-        project: state.project,
+        csis: state.csis,
         allusers: state.allusers,
-        allcompanys: state.allcompanys,
-        csis: state.csis
+        projectsockets: state.projectsockets,
+        myprojects: state.myprojects,
+        projects: state.projects,
+        allcompanys: state.allcompanys
     }
 }
 export default connect(mapStateToProps, actions)(BidItem)

@@ -7,6 +7,8 @@ import { MyStylesheet } from './styles';
 import { inputUTCStringForLaborID } from './functions'
 import PM from './pm';
 import ProjectID from './projectid';
+import { rightArrow } from './svg';
+import BidSchedule from './bidschedule'
 
 class Proposals extends Component {
     constructor(props) {
@@ -14,7 +16,8 @@ class Proposals extends Component {
         this.state = {
             render: '',
             width: 0,
-            height: 0
+            height: 0,
+            activecompanyid: false
         }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
@@ -30,83 +33,139 @@ class Proposals extends Component {
 
     updateWindowDimensions() {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
+
     }
-    showproposal(myproposal) {
+
+    showproposal(company) {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
-        const company = pm.getcompanybyid.call(this,myproposal.companyid)
-       
-        const lastupdated = myproposal.updated ? <span>Last Updated {inputUTCStringForLaborID(myproposal.updated)}</span> : <span>&nbsp;</span>
-       
-        const lastapproved= () => {
-            if(myproposal.approved) {
-                return(<span>Last Approved ${inputUTCStringForLaborID(myproposal.approved)}`</span>)
+        
+
+        const buttonWidth = () => {
+            if (this.state.width > 800) {
+                return ({ width: '100px' })
             } else {
-                return (<span>&nbsp;</span>)
+                return ({ width: '60px' })
+
             }
         }
 
-        const myuser = pm.getuser.call(this)
-        if(myuser) {
-            const project = pm.getproject.call(this)
+        return (
+            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }} onClick={() => { this.setState({ activecompanyid: company._id }) }} key={company._id}>
 
-        return (<div style={{ ...styles.generalFont, ...regularFont, ...styles.generalContainer, ...styles.bottomMargin15 }} key={myproposal.companyid}>
-           <span style={{...regularFont, ...styles.generalFont}}> </span><Link to={`/${myuser.profile}/projects/${project.title}/proposals/${company.url}`} style={{ ...styles.generalFont, ...regularFont, ...styles.generalLink }}> Proposal By:{company.company} {lastupdated} {lastapproved()} </Link>
-        </div>)
+                <span style={{ ...regularFont }}>{company.company}</span> <button style={{ ...styles.generalButton, ...buttonWidth() }}>{rightArrow()}</button>
+            </div>
+        )
 
-        }
     }
     showproposals() {
-        let pm = new PM();
-        let myproposals = pm.getproposals.call(this);
+        const pm = new PM();
+        const construction = pm.getConstruction.call(this)
         let proposals = [];
-        if (myproposals) {
-            // eslint-disable-next-line
-            myproposals.map(myproposal => {
+        if (construction) {
+            construction.map(myproject => {
 
-                proposals.push(this.showproposal(myproposal))
-            
+                console.log(myproject)
+
+                const company_id = myproject.company_id;
+                const company = pm.getcompanybyid.call(this, company_id)
+                proposals.push(this.showproposal(company))
+
+
+
+
             })
-
         }
+
+
         return proposals;
+
+
     }
+
+    showDefault() {
+        const styles = MyStylesheet();
+
+        const pm = new PM();
+
+        const regularFont = pm.getRegularFont.call(this)
+        
+        return (
+
+            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }}>
+
+                <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }}>
+                    <span style={{ ...regularFont }}>View Team Proposal Bid Schedule</span>
+
+                </div>
+
+
+                {this.showproposals()}
+
+            </div>
+        )
+    }
+
+
+
+
+    handleProposals() {
+
+    if(this.state.activecompanyid) {
+
+        const company_id = this.state.activecompanyid;
+
+        return (<BidSchedule project_id={this.props.project_id} company_id={company_id} key={Math.random()} />)
+
+
+    } else {
+
+    return (this.showDefault())
+
+
+
+    }
+
+
+
+    }
+
     render() {
         const styles = MyStylesheet();
-     
+
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const myuser = pm.getuser.call(this)
         const projectid = new ProjectID();
-        if(myuser) {
+        const regularFont = pm.getRegularFont.call(this)
+        if (myuser) {
             const project = pm.getproject.call(this)
-            if(project) {
-        return (
-            <div style={{ ...styles.generalFlex }}>
-                <div style={{ ...styles.flex1 }}>
+            if (project) {
+                return (
+                    <div style={{ ...styles.generalFlex }}>
+                        <div style={{ ...styles.flex1 }}>
+
+
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
+                                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { this.setState({ activecompanyid: false }) }}>  /proposals </a>
                             </div>
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/proposals`}>  /proposals </Link>
-                            </div>
+                            {this.handleProposals()}
 
-                    {this.showproposals()}
 
-                    {projectid.showprojectid.call(this)}
 
-                </div>
-            </div>)
 
-        } else {
-            return(<div>Project Not Found</div>)
-        }
+                        </div>
+                    </div>)
+
+            } else {
+                return (<div>Project Not Found</div>)
+            }
 
         } else {
-            return(<div>Please Login to View Proposals</div>)
+            return (<div>Please Login to View Proposals</div>)
         }
 
     }
@@ -117,7 +176,11 @@ function mapStateToProps(state) {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
         csis: state.csis,
-        allusers: state.allusers
+        allusers: state.allusers,
+        projectsockets: state.projectsockets,
+        myprojects: state.myprojects,
+        projects: state.projects,
+        allcompanys: state.allcompanys
     }
 }
 export default connect(mapStateToProps, actions)(Proposals)

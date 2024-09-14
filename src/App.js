@@ -22,7 +22,7 @@ import Invoices from './components/invoices';
 import Team from './components/team';
 //import ViewProfile from './components/viewprofile';
 import { connect } from 'react-redux';
-import { CheckUserLogin } from './components/actions/api'
+import { CheckUserLogin, LoadMyProjects } from './components/actions/api'
 import Landing from './components/landing'
 import firebase from 'firebase'
 import { firebaseconfig } from './components/firebase'
@@ -32,6 +32,7 @@ import Specifications from './components/specifications';
 import Specification from './components/specification';
 import Charges from './components/charges'
 import { MyStylesheet } from './components/styles';
+import PM from './components/pm'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -57,6 +58,7 @@ class App extends Component {
     }
 
     async checkuserlogin() {
+        const pm = new PM();
         //let response = TestUser();
         try {
 
@@ -66,7 +68,15 @@ class App extends Component {
      
             if (response.hasOwnProperty("myuser")) {
 
+                const user_id = response.myuser.User_ID;
                 this.props.reduxUser(response.myuser)
+                const getmyprojects = await LoadMyProjects(user_id)
+              
+                this.props.reduxMyProjects(getmyprojects.myprojects)
+                this.setState({render:'render'})
+          
+            
+
             }
         } catch (err) {
             alert(err)
@@ -108,31 +118,31 @@ class App extends Component {
                             <Route exact path="/" render={showlanding} />
                             <Route exact path="/providers/register" render={showRegister} />
                             <Route exact path="/providers/login" render={showLogin} />
-                            <Route exact path="/:providerid/profile" render={showProfile} />
-                            <Route exact path="/:providerid/projects" render={showProjects} />
-                            <Route exact path="/:providerid/projects/:projectid" component={Project} />
+                            <Route exact path="/:userid/profile" render={showProfile} />
+                            <Route exact path="/:userid/projects" render={showProjects} />
+                            <Route exact path="/:userid/projects/:projectid" component={Project} />
 
-                            <Route exact path="/:providerid/projects/:projectid/charges" component={Charges} />
-                            <Route exact path="/:providerid/projects/:projectid/team" component={Team} />
-                            <Route exact path="/:providerid/projects/:projectid/milestones" component={Milestones} />
+                            <Route exact path="/:userid/projects/:projectid/charges" component={Charges} />
+                            <Route exact path="/:userid/projects/:projectid/team" component={Team} />
+                            <Route exact path="/:userid/projects/:projectid/milestones" component={Milestones} />
                             
                             
-                            <Route exact path="/:providerid/projects/:projectid/specifications" component={Specifications} />
-                            <Route exact path="/:providerid/projects/:projectid/specifications/:csiid" component={Specification} />
-                            <Route exact path="/:providerid/projects/:projectid/costestimate" component={CostEstimate} />
-                            <Route exact path="/:providerid/projects/:projectid/costestimate/:csiid" component={LineItem} />
+                            <Route exact path="/:userid/projects/:projectid/specifications" component={Specifications} />
+                            <Route exact path="/:userid/projects/:projectid/specifications/:csiid" component={Specification} />
+                            <Route exact path="/:userid/projects/:projectid/costestimate" component={CostEstimate} />
+                            <Route exact path="/:userid/projects/:projectid/costestimate/:csiid" component={LineItem} />
 
-                            <Route exact path="/:providerid/projects/:projectid/bidschedule" component={BidSchedule} />
-                            <Route exact path="/:providerid/projects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />                          
-                            <Route exact path="/:providerid/projects/:projectid/bid" component={Bid} />
-                            <Route exact path="/:providerid/projects/:projectid/bid/csi/:csiid" component={BidItem} />
+                            <Route exact path="/:userid/projects/:projectid/bidschedule" component={BidSchedule} />
+                            <Route exact path="/:userid/projects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />                          
+                            <Route exact path="/:userid/projects/:projectid/bid" component={Bid} />
+                            <Route exact path="/:userid/projects/:projectid/bid/csi/:csiid" component={BidItem} />
 
-                            <Route exact path="/:providerid/projects/:projectid/proposals" component={Proposals} />
-                            <Route exact path="/:providerid/projects/:projectid/proposals/:url" component={ViewProposal} />
-                            <Route exact path="/:providerid/projects/:projectid/proposals/:url/csi/:csiid" component={ProposalBidItem} />
-                            <Route exact path="/:providerid/projects/:projectid/invoices" component={Invoices} />
-                            <Route exact path="/:providerid/projects/:projectid/invoices/:url" component={ViewInvoice} />
-                            <Route exact path="/:providerid/projects/:projectid/invoices/:url/csi/:csiid" component={InvoiceBidItem} />
+                            <Route exact path="/:userid/projects/:projectid/proposals" component={Proposals} />
+                            <Route exact path="/:userid/projects/:projectid/proposals/:url" component={ViewProposal} />
+                            <Route exact path="/:userid/projects/:projectid/proposals/:url/csi/:csiid" component={ProposalBidItem} />
+                            <Route exact path="/:userid/projects/:projectid/invoices" component={Invoices} />
+                            <Route exact path="/:userid/projects/:projectid/invoices/:url" component={ViewInvoice} />
+                            <Route exact path="/:userid/projects/:projectid/invoices/:url/csi/:csiid" component={InvoiceBidItem} />
                         </Switch>
                     </div>
 
@@ -147,7 +157,11 @@ function mapStateToProps(state) {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
         csis: state.csis,
-        allusers:state.allusers
+        allusers:state.allusers,
+        myprojects:state.myprojects,
+        projects:state.projects,
+        allusers:state.allusers,
+        allcompanys:state.allcompanys
     }
 }
 

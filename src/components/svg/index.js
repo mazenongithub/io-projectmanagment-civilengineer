@@ -5,6 +5,11 @@ export function AppleSigninIcon() {
     <rect className="applesign-1" x="1" y="1" width="436.53" height="100.5" rx="15.97"/><path className="applesign-2" d="M348.39,41.39a18.93,18.93,0,0,1,4-1,38.67,38.67,0,0,1,4.62-.51,30.54,30.54,0,0,1,5,.13,42.18,42.18,0,0,1,5.4,1.14c4.16,1,4.38,1.2,5.68,1.32a20.3,20.3,0,0,0,5.69-.38c4.07-.67,4.45-1.45,7.67-2.08a30,30,0,0,1,9.38-.19A33.9,33.9,0,0,1,404.66,42c3.56,1.42,6.77,3.54,6.25,4.18-.15.18-.51.1-1.42.38a8.16,8.16,0,0,0-2.28,1.13,20.43,20.43,0,0,0-3.12,2.47,10.08,10.08,0,0,0-2.28,2.65,16.33,16.33,0,0,0-1.08,3,10.15,10.15,0,0,0-.34,2.13,7.38,7.38,0,0,0,0,2.09,9.4,9.4,0,0,0,1.14,3.22,14.1,14.1,0,0,0,3.41,4,20.41,20.41,0,0,0,6,3.41l2.27.76s-.26,1-.28,1.14a7.2,7.2,0,0,1-2,3c-2.17,2.47-1.32,2.53-3.13,4.36-1.33,1.35-1.17,1.37-3.36,3.37A13.52,13.52,0,0,1,401,85.75a25.17,25.17,0,0,1-4.26,1.9c-1,.37-1.67.61-2.28.76-3.72.9-6.74-1.32-13.64-2.28a28.76,28.76,0,0,0-4.54-.38c-6.29,0-8,2.44-14.21,2.66a20.56,20.56,0,0,1-6.82-.76c-2.39-.74-3.74-1.79-7.11-4.93-4.46-4.17-6.69-6.25-8-8a28.17,28.17,0,0,1-4.26-8.16c-1.12-3.54-2.56-8.11,0-13.46a18.48,18.48,0,0,1,4.91-6.77c1.09-1,2-1.7,3.69-3A20.07,20.07,0,0,1,348.39,41.39Z"/>
     <path className="applesign-2" d="M388.88,13.88c4-1.15,5.57-1.14,5.69-.9,0,0,0,0,0,.3v2.41a17.82,17.82,0,0,1-.38,3.63,13.41,13.41,0,0,1-1.51,3.62,24.4,24.4,0,0,1-4.18,5.74,27.4,27.4,0,0,1-5.31,4.22,26.72,26.72,0,0,1-6.07,2.72,22.45,22.45,0,0,1-2.66.6c-2.26.41-4.49.81-5.32,0-.21-.2-.26-.54-.37-1.2a6.23,6.23,0,0,1,0-2.12A16.66,16.66,0,0,1,369.9,29a24.19,24.19,0,0,1,3.8-5.74,25.48,25.48,0,0,1,8.35-6.94A35.52,35.52,0,0,1,388.88,13.88Z"/><text className="applesign-3" transform="translate(23.66 79.48) scale(0.75 1)"><tspan className="applesign-4">A</tspan><tspan x="53.4" y="0">pple Sign</tspan></text></g></g></svg>)
 }
+
+export function saveProfileIcon() {
+    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453.31 94.31"><defs><style></style></defs><title>saveprofile</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="saveprofileicon-1" x="0.5" y="0.5" width="452.31" height="87.31" rx="16.03" /><text className="saveprofileicon-2" transform="translate(33.67 69.92)">Sa<tspan className="saveprofileicon-3" x="83.66" y="0">v</tspan><tspan className="saveprofileicon-4" x="120.6" y="0">e </tspan><tspan className="saveprofileicon-5" x="177.69" y="0">Pr</tspan><tspan className="saveprofileicon-6" x="249.55" y="0">o</tspan><tspan x="290.01" y="0">file</tspan></text></g></g></svg>)
+}
+
 export function actualmajorDownIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.5 52.5"> <title>calendarIcon</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="calendarIcon-2" x="0.25" y="0.25" width="48" height="7" /><rect className="calendarIcon-2" x="0.25" y="7.25" width="10.71" height="6.43" /><rect className="calendarIcon-2" x="10.96" y="7.25" width="10.71" height="6.43" /><rect className="calendarIcon-2" x="21.68" y="7.25" width="10.71" height="6.43" /><rect className="calendarIcon-2" x="32.39" y="7.25" width="10.71" height="6.43" />
         <rect className="calendarIcon-2" x="43.11" y="7.25" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="53.82" y="7.25" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="64.54" y="7.25" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="0.25" y="13.68" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="10.96" y="13.68" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="21.68" y="13.68" width="10.71" height="6.43" /> <rect className="calendarIcon-2" x="32.39" y="13.68" width="10.71" height="6.43" /><rect className="calendarIcon-2" x="43.11" y="13.68" width="10.71" height="6.43" />
@@ -134,15 +139,29 @@ export function FacebookLogin() {
             <defs><style>
             </style></defs><title>facebooklogin</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="facebooklogin-1" x="1.5" y="1.5" width="343" height="58" rx="5.61" /><text className="facebooklogin-2" transform="translate(30.4 34.65)"><tspan className="facebooklogin-3">L</tspan><tspan x="16.17" y="0">ogin With </tspan><tspan className="facebooklogin-4" x="157.11" y="0">F</tspan><tspan className="facebooklogin-5" x="173.37" y="0">acebook</tspan></text></g></g></svg>)
 }
+
+export function updateProjects()  {
+    return(<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.29 64.99"><defs>
+        <style>
+        </style></defs><g id="Layout"><rect className="updateprojects-1" x=".98" y=".5" width="191.81" height="63.99" rx="7.42" ry="7.42"/><path d="M185.37,1c3.82,0,6.92,3.1,6.92,6.92v49.15c0,3.82-3.1,6.92-6.92,6.92H8.4c-3.82,0-6.92-3.1-6.92-6.92V7.92c0-3.82,3.1-6.92,6.92-6.92h176.97M185.37,0H8.4C4.03,0,.48,3.55.48,7.92v49.15c0,4.37,3.55,7.92,7.92,7.92h176.97c4.37,0,7.92-3.55,7.92-7.92V7.92c0-4.37-3.55-7.92-7.92-7.92h0Z"/></g><g id="titleText"><text className="updateprojects-2" transform="translate(16.8 44.9)"><tspan x="0" y="0">Update </tspan></text></g></svg>)
+}
+
+export function rightArrow() {
+    return(<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110.96 51.34"><defs><style></style></defs><g id="titleText"><polygon className="rightarrow-1" points="67.01 50.48 67.01 35.99 .5 35.99 .5 15.36 67.01 15.36 67.01 .87 109.96 25.68 67.01 50.48"/></g>
+</svg>)
+}
+
+export function addIcon() {
+    return(<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92.56 87.82"><defs><style></style></defs><g id="titleText"><polygon className="addicon-2" points="91.56 31.31 91.56 59.75 61.28 59.75 61.28 86.82 31.27 86.82 31.27 59.75 1 59.75 1 31.31 31.27 31.31 31.27 1 61.28 1 61.28 31.31 91.56 31.31"/><text className="addicon-1" transform="translate(16.44 53.96) scale(1.06 1)"><tspan x="0" y="0">ADD</tspan></text></g>
+</svg>)
+}
 export function yahooIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 547 121"><defs><style></style></defs><title>yahoo</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="yahoo-1" x="2.5" y="2.5" width="530" height="116" rx="29.6" /><text className="yahoo-2" transform="translate(78.5 76.62)"><tspan className="yahoo-3">L</tspan><tspan x="22.73" y="0">o</tspan><tspan className="yahoo-4" x="46.17" y="0">g</tspan><tspan x="70.02" y="0">in In </tspan><tspan className="yahoo-5" x="165.55" y="0">w</tspan><tspan className="yahoo-6" x="199.53" y="0">i</tspan><tspan x="212.13" y="0">th </tspan><tspan className="yahoo-7" x="262.8" y="0">Y</tspan><tspan x="283.99" y="0">ahoo!</tspan></text></g></g></svg>)
 }
 export function CompleteProfileIcon() {
     return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 523 107"><defs><style></style></defs><title>completeprofile</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect className="completeprofile-1" x="1" y="1" width="521" height="105" rx="8.34" /><text className="completeprofile-2" transform="translate(113.76 56.7)"><tspan className="completeprofile-3">C</tspan><tspan x="26.68" y="0">ompl</tspan><tspan className="completeprofile-4" x="115.52" y="0">e</tspan><tspan x="136.48" y="0">te </tspan><tspan className="completeprofile-5" x="181.48" y="0">Pr</tspan><tspan className="completeprofile-6" x="220.6" y="0">o</tspan><tspan className="completeprofile-7" x="242.76" y="0">file</tspan></text></g></g></svg>
 }
-export function saveProfileIcon() {
-    return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.38 63"><defs><style></style></defs><title>saveprofile</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="saveprofile-1" x="16.88" y="1.5" width="152" height="60" rx="5.44" /><text className="saveprofile-2" transform="translate(54.96 36.27)">Sa<tspan className="saveprofile-3" x="34.41" y="0">v</tspan><tspan x="49.65" y="0">e</tspan></text></g></g></svg>)
-}
+
 export function StripeConnectIcon() {
     return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 296 72"><defs><style></style></defs><title>stripeconnect_1</title><g id="Layer_2" data-name="Layer 2"><g id="guides"><rect className="stripeconnect-1" width="296" height="72" rx="5.78" /><text className="stripeconnect-2" transform="translate(33.45 41.57)">C<tspan className="stripeconnect-3" x="18.41" y="0">onne</tspan><tspan className="stripeconnect-4" x="81.24" y="0">c</tspan><tspan className="stripeconnect-3" x="95.16" y="0">t </tspan><tspan className="stripeconnect-5" x="114.31" y="0">T</tspan><tspan className="stripeconnect-6" x="129.24" y="0">o </tspan><tspan className="stripeconnect-7" x="153.55" y="0">S</tspan><tspan className="stripeconnect-6" x="170.69" y="0">tripe</tspan></text></g></g></svg>)
 }

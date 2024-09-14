@@ -45,7 +45,7 @@ class Login  {
                 </div>
             )
         }
-        if (myuser) {
+        if (myuser.hasOwnProperty("User_ID")) {
             return (profile.showProfile.call(this))
         } else {
             return (Login())

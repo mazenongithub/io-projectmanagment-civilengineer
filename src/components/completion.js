@@ -11,16 +11,15 @@ class CompletionDate {
     handleyear(year) {
         this.setState({ completiondateyear: year })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) { 
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
+                const project_id = project.project_id
 
-                const i = pm.getprojectkeybyid.call(this, projectid);
-                if (year.length === 4) {
+                const i = pm.getProjectKeyByID.call(this,project_id);;                if (year.length === 4) {
 
                     if(validateYear(year)) {
 
@@ -34,8 +33,8 @@ class CompletionDate {
                                 let month = this.state.completiondatemonth;
                                 const timein = `${year}-${month}-${day}`
 
-                                myuser.projects[i].milestones[j].completion= timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].completion= timein;
+                               this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 
@@ -58,15 +57,19 @@ class CompletionDate {
         day = day.toString();
         this.setState({ completiondateday: day })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
+            
 
-                const i = pm.getprojectkeybyid.call(this, projectid);
+                const project_id = project.project_id
+
+                
+
+                const i = pm.getProjectKeyByID.call(this,project_id);
                 if (day.length === 2) {
 
             
@@ -76,12 +79,15 @@ class CompletionDate {
                             const mymilestone = pm.getmilestonebyid.call(this,  this.state.activemilestoneid);
                             if (mymilestone) {
 
+
+                             
                                 const j = pm.getmilestonekeybyid.call(this,this.state.activemilestoneid)
+                                console.log(i,j)
                                 let year = this.state.completiondateyear;
                                 let month = this.state.completiondatemonth;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects[i].milestones[j].completion = timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].completion = timein;
+                                this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 
@@ -104,15 +110,15 @@ class CompletionDate {
     handlemonth(month) {
         this.setState({ completiondatemonth: month })
         const pm = new PM();
-        const myuser = pm.getuser.call(this)
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        if(myprojects) {
 
-            const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const project = pm.getproject.call(this)
             if (project) {
 
-                const projectid = project.projectid
+                const project_id = project.project_id
 
-                const i = pm.getprojectkeybyid.call(this, projectid);
+                const i = pm.getProjectKeyByID.call(this,project_id);;
                 if (month.length === 2) {
 
                     if(validateMonth(month)) {
@@ -125,8 +131,8 @@ class CompletionDate {
                                 let day = this.state.completiondateday;
                                 let year = this.state.completiondateyear;
                                 const timein = `${year}-${month}-${day}`
-                                myuser.projects[i].milestones[j].completion = timein;
-                                this.props.reduxUser(myuser)
+                                myprojects[i].milestones[j].completion = timein;
+                               this.props.reduxProjects(myprojects)
                                 this.setState({ render: 'render' })
 
 

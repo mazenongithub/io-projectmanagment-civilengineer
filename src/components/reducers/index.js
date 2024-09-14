@@ -1,15 +1,20 @@
 import { combineReducers } from 'redux';
 import myusermodel from './myusermodelreducer';
 import navigation from './navigationreducer';
-import project from './projectreducer';
+import myprojects from './myprojectreducer';
 import allusers from './allusersreducer';
 import allcompanys from './allcompanysreducer';
-import csis from './csireducer'
+import csis from './csireducer';
+import projectsockets from './projectsocketreducer';
+import projects from './projectreducer';
+
 export default combineReducers({
     myusermodel,
     navigation,
-    project,
+    myprojects,
     allusers,
     allcompanys,
-    csis
+    csis,
+    projectsockets,
+    projects
 })

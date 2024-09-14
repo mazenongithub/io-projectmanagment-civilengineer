@@ -24,10 +24,7 @@ class LineItem extends Component {
     componentDidMount() {
         const pm = new PM();
         this.updateWindowDimensions()
-        const csiid = this.props.match.params.csiid;
-        const csi = pm.getactualcsibyid.call(this, csiid);
-        this.props.reduxNavigation({ navigation: "biditem", csiid, csi: csi.csi })
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
+   
 
 
     }
@@ -42,7 +39,7 @@ class LineItem extends Component {
 
     getlaboritems() {
         const labor = this.getlabor();
-        let csiid = this.props.match.params.csiid;
+        let csiid = this.props.csiid
         let items = [];
         if (labor) {
             // eslint-disable-next-line
@@ -86,7 +83,7 @@ class LineItem extends Component {
     }
     getmaterialitems() {
         const materials = this.getmaterial();
-        const csiid = this.props.match.params.csiid;
+        const csiid = this.props.csiid
         let items = [];
         if (materials) {
             // eslint-disable-next-line
@@ -126,7 +123,7 @@ class LineItem extends Component {
     getequipment() {
         const pm = new PM();
         const estimate = pm.getcostestimate.call(this);
-        const csiid = this.props.match.params.csiid;
+        const csiid = this.props.csiid
         let equipment = [];
         if (estimate) {
             if (estimate.hasOwnProperty("equipment")) {
@@ -151,7 +148,7 @@ class LineItem extends Component {
 
         const pm = new PM();
         const estimate = pm.getcostestimate.call(this)
-        let csiid = this.props.match.params.csiid;
+        let csiid = this.props.csiid
         let equipmentitems = [];
         if (estimate.hasOwnProperty("equipment")) {
             // eslint-disable-next-line

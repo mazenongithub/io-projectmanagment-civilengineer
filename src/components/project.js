@@ -3,35 +3,179 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 import { MyStylesheet } from './styles';
 import PM from './pm';
-import { TouchIcon } from './svg';
-import {Link} from 'react-router-dom';
+import { TouchIcon, updateProjects } from './svg';
+import { a } from 'react-router-dom';
 import ProjectID from './projectid'
+import Milestones from './milestones';
+import Team from './team'
+import { LoadAllCompanys } from './actions/api';
+import Proposals from './proposals';
+import Invoices from './invoices';
+
 
 class Project extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false, spinner:false
+      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false, spinner: false, activecomponent: 'default'
     }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
 
 
   }
   componentDidMount() {
+
     window.addEventListener('resize', this.updateWindowDimensions);
+
     this.updateWindowDimensions();
     const pm = new PM();
-    const navigation = pm.getnavigation.call(this)
-    if(navigation) {
-      navigation.projectid = this.props.match.params.projectid;
-      navigation.navigation = 'project'
-      this.props.reduxNavigation(navigation)
-      this.setState({render:'render'})
+    const projectid = this.props.match.params.projectid;
+    const userid = this.props.match.params.userid;
+
+
+
+    const socket = new WebSocket(`ws://localhost:8081/projects/${projectid}/websocketapi`)
+
+    socket.onopen = (evt) => {
+
+      const data = { type: "join", userid, application: "pm" };
+      socket.send(JSON.stringify(data));
+      console.log("Project Web Socket Open", data)
+
     }
+
+    socket.onmessage = (evt) => {
+      const response = JSON.parse(evt.data);
+      console.log(response)
+
+      if (response.type === "join" && response.application === "pm") {
+  
+
+
+        if (response.hasOwnProperty("myproject")) {
+
+          let getproject = response.myproject;
+          let project_id = getproject.project_id;
+          let projects = pm.getProjects.call(this)
+
+
+
+          const findproject = pm.getProjectByID.call(this, getproject.project_id)
+
+          if (findproject) {
+
+            let i = pm.getProjectKeyByID.call(this, project_id)
+
+            projects[i] = getproject
+            // projects[i].team = getproject.team;
+            // projects[i].construction = getproject.construction;
+            // appending project on client
+
+          } else {
+
+            if (!projects) {
+              projects = [getproject];
+            } else {
+              projects.push(getproject)
+            } // else condition company projects exists
+
+          } // else condition creating new project
+
+          this.props.reduxProjects(projects)
+          this.setState({ render: 'render' })
+
+        } // if myproject
+
+      } else if (response.type === "pm") {
+
+        console.log("89", response)
+
+      } else if (response.type === "construction") {
+        console.log("construction")
+
+        let projects = pm.getProjects.call(this)
+        console.log(projects)
+
+
+          let findproject = pm.getProjectByID.call(this,response.myproject.project_id)
+          if(findproject) {
+            console.log(findproject)
+            let i = pm.getProjectKeyByID.call(this, response.myproject.project_id)
+            let construction = pm.getConstructionbyID.call(this,response.company_id, response.myproject.project_id)
+
+            if(construction) {
+              console.log(construction)
+            
+              let j = pm.getConstructionKeybyID.call(this, response.company_id, response.myproject.project_id)
+              console.log(j, response.myproject)
+              projects[i].construction[j] = response.myproject;
+              this.props.reduxProjects(projects)
+              this.setState({render:'render'})
+
+            }
+      
+        
+        
+         }
+      
+
+
+
+      } else {
+        console.log(response.type)
+      } // end response type pm
+
+    } // end of socket message
+
+    socket.onerror = (evt) => {
+      console.log("SOMETHING WENT WRONG!");
+      console.log(evt);
+    };
+
+    socket.onclose = (evt) => {
+      console.log("WEB SOCKET HAS BEEN CLOSED!!!!");
+    };
+
+    let websockets = pm.getProjectSockets.call(this)
+    if (websockets) {
+      const websocket = pm.getProjectSocketByID.call(this, projectid)
+      if (!websocket) {
+        websockets.push({ projectid, socket })
+      }
+
+
+    } else {
+      websockets = [{ projectid, socket }]
+    }
+
+    this.props.reduxProjectSockets(websockets)
+
+    const allcompanys = pm.getallcompanys.call(this)
+    if(!allcompanys) {
+      pm.loadAllCompanys.call(this)
+    }
+
+    const allusers = pm.getallusers.call(this)
+    if(!allusers) {
+      pm.loadallusers.call(this)
+    }
+
+    const csis = pm.getcsis.call(this);
+    if (!csis) {
+        pm.loadcsis.call(this)
+    }
+    
   
  
 
+    this.setState({ render: 'render' })
+
+
+
+
   }
+
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
@@ -40,34 +184,31 @@ class Project extends Component {
   }
 
 
-  showactiveprojectid(projectid) {
+
+
+
+
+  getProject() {
     const pm = new PM();
-    const styles = MyStylesheet();
-    const regularFont = pm.getRegularFont.call(this)
-    let myproject = pm.getproject.call(this)
-    const touchIcon = pm.gettouchicon.call(this)
-    let activebackground = pm.getactiveprojectbackground.call(this, projectid)
-    if (myproject.projectid === projectid) {
-      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject(false) }}>
-        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>Active Project ID is {projectid}, Touch to Make unactive
-      </div>)
-    } else {
-      return (<div style={{ ...styles.generalContainer, ...regularFont, ...styles.generalFont, ...activebackground }} onClick={() => { this.props.reduxProject({ projectid }) }}>
-        <button style={{ ...styles.generalButton, ...touchIcon }}>{TouchIcon()} </button>   Touch to Make Active
-      </div>)
-    }
+    const projectid = this.props.match.params.projectid;
+    const myproject = pm.getMyProjectByID.call(this, projectid)
+    return myproject;
   }
+
+
+
 
 
   handlescope(scope) {
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
-      const myproject = pm.getproject.call(this)
+    const myprojects = pm.getMyProjects.call(this)
+    if (myprojects) {
+      let myproject = this.getProject();
       if (myproject) {
-        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
-        myuser.projects[i].scope = scope;
-        this.props.reduxUser(myuser)
+
+        let i = pm.getMyProjectKeyByID.call(this, myproject.ProjectID);;
+        myprojects[i].Scope = scope;
+        this.props.reduxMyProjects(myprojects)
         this.setState({ render: 'render' })
 
       }
@@ -77,22 +218,23 @@ class Project extends Component {
   }
   getscope() {
     let pm = new PM();
-    let myproject = pm.getproject.call(this)
+    let myproject = this.getProject();
+    let scope = "";
     if (myproject) {
-      return (myproject.scope)
-    } else {
-      return this.state.scope;
+      scope = myproject.Scope
     }
+    return scope;
   }
   handleaddress(address) {
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
-      const myproject = pm.getproject.call(this)
+    const myprojects = pm.getMyProjects.call(this)
+
+    if (myprojects) {
+      let myproject = this.getProject();
       if (myproject) {
-        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
-        myuser.projects[i].address = address;
-        this.props.reduxUser(myuser)
+        let i = pm.getMyProjectKeyByID.call(this, myproject.ProjectID);;
+        myprojects[i].Address = address;
+        this.props.reduxMyProjects(myprojects)
         this.setState({ render: 'render' })
 
       }
@@ -102,23 +244,23 @@ class Project extends Component {
   }
   getaddress() {
     let pm = new PM();
-    let myproject = pm.getproject.call(this)
+    let myproject = this.getProject();
+    let address = "";
     if (myproject) {
-      return (myproject.address)
-    } else {
-      return this.state.address;
+      address = myproject.Address;
     }
+    return address;
   }
 
   handlecity(city) {
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
-      const myproject = pm.getproject.call(this)
+    const myprojects = pm.getMyProjects.call(this)
+    if (myprojects) {
+      let myproject = this.getProject();
       if (myproject) {
-        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
-        myuser.projects[i].city = city;
-        this.props.reduxUser(myuser)
+        let i = pm.getMyProjectKeyByID.call(this, myproject.ProjectID);;
+        myprojects[i].City = city;
+        this.props.reduxMyProjects(myprojects)
         this.setState({ render: 'render' })
 
       }
@@ -128,22 +270,22 @@ class Project extends Component {
   }
   getcity() {
     let pm = new PM();
-    let myproject = pm.getproject.call(this)
+    let myproject = this.getProject();
+    let city = "";
     if (myproject) {
-      return (myproject.city)
-    } else {
-      return this.state.city;
+      city = myproject.city;
     }
+    return city;
   }
   handleprojectstate(projectstate) {
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
-      const myproject = pm.getproject.call(this)
+    const myprojects = pm.getMyProjects.call(this)
+    if (myprojects) {
+      let myproject = this.getProject();
       if (myproject) {
-        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
-        myuser.projects[i].projectstate = projectstate;
-        this.props.reduxUser(myuser)
+        let i = pm.getMyProjectKeyByID.call(this, myproject.ProjectID);;
+        myprojects[i].ProjectState = projectstate;
+        this.props.reduxMyProjects(myprojects)
         this.setState({ render: 'render' })
 
       }
@@ -153,22 +295,25 @@ class Project extends Component {
   }
   getprojectstate() {
     let pm = new PM();
-    let myproject = pm.getproject.call(this)
+    let myproject = this.getProject();
+    let projectstate = "";
     if (myproject) {
-      return (myproject.projectstate)
-    } else {
-      return this.state.projectstate;
+      projectstate = myproject.projectstate;
     }
+
+
+    return projectstate;
   }
+
   handlezipcode(zipcode) {
     const pm = new PM();
-    const myuser = pm.getuser.call(this);
-    if (myuser) {
-      const myproject = pm.getproject.call(this)
+    const myprojects = pm.getMyProjects.call(this)
+    if (myprojects) {
+      let myproject = this.getProject();
       if (myproject) {
-        let i = pm.getprojectkeybyid.call(this,myproject.projectid);
-        myuser.projects[i].zipcode = zipcode;
-        this.props.reduxUser(myuser)
+        let i = pm.getMyProjectKeyByID.call(this, myproject.ProjectID);;
+        myprojects[i].Zipcode = zipcode;
+        this.props.reduxMyProjects(myprojects)
         this.setState({ render: 'render' })
 
       }
@@ -178,16 +323,17 @@ class Project extends Component {
   }
   getzipcode() {
     let pm = new PM();
-    let myproject = pm.getproject.call(this)
+    let myproject = this.getProject();
+    let zipcode = "";
     if (myproject) {
-      return (myproject.zipcode)
-    } else {
-      return this.state.zipcode;
+      zipcode = myproject.Zipcode;
     }
+
+    return zipcode;
   }
   showprojectform() {
     const pm = new PM();
-    const myproject = pm.getproject.call(this);
+    let myproject = this.getProject()
     const styles = MyStylesheet();
     const regularFont = pm.getRegularFont.call(this)
     if (myproject) {
@@ -242,6 +388,92 @@ class Project extends Component {
     }
   }
 
+  handleComponenets() {
+    const nav = this.state.activecomponent;
+    const projectid = new ProjectID();
+    const styles = MyStylesheet();
+    const pm = new PM();
+
+
+    const project = pm.getMyProjectByID.call(this, this.props.match.params.projectid)
+
+    if (project) {
+
+
+      const project_id = project.Project_ID;
+
+      switch (nav) {
+        case "milestones":
+          return (<Milestones project_id={project_id} key={Math.random()} />)
+        case "team":
+          return (<Team project_id={project_id} key={Math.random()} />)
+        case "proposals":
+          return( <Proposals project_id={project_id} key={Math.random()} />)
+        case "invoices":
+          return (<Invoices project_id={project_id} key={Math.random()} /> )
+        default:
+          return (
+            <div style={{ ...styles.generalContainer }}>
+              {this.showprojectform()}
+              {projectid.showprojectid.call(this)}
+            </div>)
+
+      }
+
+    }
+
+  }
+
+  updateMyProjects() {
+
+    const pm = new PM();
+    try {
+
+
+      const myproject = pm.getMyProjectByID.call(this, this.props.match.params.projectid)
+
+
+      if (myproject) {
+
+        const project_id = myproject.Project_ID;
+        const project = pm.getProjectByID.call(this, project_id)
+
+        if (project) {
+
+          const projectsocket = pm.getProjectSocketByID.call(this, this.props.match.params.projectid)
+          if (projectsocket) {
+
+            const socket = projectsocket.socket;
+            const payload = JSON.stringify({ type: "pm", project });
+            socket.send(payload)
+
+          }
+
+
+        }
+        // const savemyproject = await SaveMyProject(this.props.project_id, myproject);
+        // console.log(savemyproject)
+        //     if(savemyproject.hasOwnProperty("myproject")) {
+        // myprojects[i]= savemyproject.myproject;
+        // this.props.reduxMyProjects(myprojects)
+
+        //  }
+
+
+
+      }
+
+
+    } catch (err) {
+      alert(`Could not save my Project ${err}`)
+    }
+
+
+  }
+
+
+
+
 
 
 
@@ -252,46 +484,49 @@ class Project extends Component {
     const myuser = pm.getuser.call(this)
     const headerFont = pm.getHeaderFont.call(this)
     const projectid = new ProjectID();
-    if(myuser) {
-      const project = pm.getproject.call(this)
-      if(project) {
-    return (
+    const projectIcon = pm.projectIcon.call(this)
+    if (myuser) {
+      const project = this.getProject()
+      if (project) {
+        return (
 
-      <div style={{ ...styles.generalFlex }}>
-        <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
+          <div style={{ ...styles.generalFlex }}>
+            <div style={{ ...styles.flex1, ...styles.generalFont, ...regularFont }}>
 
-      
-            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-              <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
+
+              <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { this.setState({ activecomponent: 'default' }) }}>  /{project.ProjectID}  </a>
+              </div>
+
+
+              {this.handleComponenets()}
+
+              <div style={{ ...styles.generalContainer, ...styles.bottomMargin15, ...styles.alignCenter }}>
+
+                <button style={{ ...styles.generalButton, ...projectIcon }} onClick={() => { this.updateMyProjects() }}>{updateProjects()}</button>
+
+              </div>
+
             </div>
-
-
-          {this.showprojectform()}
-
-          {pm.showsaveproject.call(this)}
-
-          {projectid.showprojectid.call(this)}
-
-        </div>
-      </div>)
+          </div>)
 
       } else {
 
         return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
           <span style={{ ...styles.generalFont, ...regularFont }}>Project Not Found </span>
-      </div>)
+        </div>)
 
       }
 
     } else {
 
-     return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
+      return (<div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
         <span style={{ ...styles.generalFont, ...regularFont }}>Please Login to View Project</span>
-    </div>)
+      </div>)
     }
 
   }
-  
+
 }
 
 function mapStateToProps(state) {
@@ -299,7 +534,11 @@ function mapStateToProps(state) {
     myusermodel: state.myusermodel,
     navigation: state.navigation,
     csis: state.csis,
-    allusers:state.allusers
+    allusers: state.allusers,
+    projectsockets: state.projectsockets,
+    myprojects: state.myprojects,
+    projects: state.projects,
+    allcompanys:state.allcompanys
   }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { MyStylesheet } from './styles';
 import PM from './pm'
-import { Link } from 'react-router-dom';
+import { a } from 'react-router-dom';
 
 class ProjectID {
 
@@ -12,7 +12,7 @@ class ProjectID {
         const regularFont = pm.getRegularFont.call(this)
         const myuser = pm.getuser.call(this)
         if (myuser) {
-            const project = pm.getproject.call(this)
+            const project = this.getProject();
             if (project) {
                 return (
                     <div style={{ ...styles.generalContainer }}>
@@ -20,11 +20,23 @@ class ProjectID {
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
                             <span style={{ ...headerFont, ...styles.generalFont }}>Project Management</span>
                         </div>
-                        <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
+                        <div style={{ ...styles.generalFlex, ...styles.bottomMargin10 }}>
 
-                          
-                            <Link to={`/${myuser.profile}/projects/${project.title}/milestones`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink, ...styles.marginLeft30 }}>Create Milestones</Link>
-                            <Link to={`/${myuser.profile}/projects/${project.title}/charges`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink, ...styles.marginLeft30 }}>Add Charges</Link>
+                            <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => { this.setState({ activecomponent: 'milestones' }) }}>Create Milestones</a>
+                                </div>
+                               
+
+                            </div>
+
+                            <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin15}}>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Add Charges</a>
+                                </div>
+                         
+
+                            </div>
                         </div>
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
                             <span style={{ ...headerFont, ...styles.generalFont }}>Engineering</span>
@@ -32,35 +44,37 @@ class ProjectID {
 
                         <div style={{ ...styles.generalFlex, ...styles.bottomMargin10 }}>
                             <div style={{ ...styles.flex1 }}>
+                              
                                 <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter }}>
-                                    <Link to={`/${myuser.profile}/projects/${project.title}/bidschedule`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Bid Schedule</Link>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</a>
                                 </div>
-                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter }}>
-                                    <Link to={`/${myuser.profile}/projects/${project.title}/specifications`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Specifications</Link>
+                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter, ...styles.bottomMargin15 }}>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Bid Schedule</a>
                                 </div>
                             </div>
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
+                               
                                 <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter }}>
-                                    <Link to={`/${myuser.profile}/projects/${project.title}/bid`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Project Bid</Link>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Engineers Estimate</a>
                                 </div>
-                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter }}>
-                                    <Link to={`/${myuser.profile}/projects/${project.title}/estimate`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Engineers Estimate</Link>
-                                </div>
+                                <div style={{ ...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter, ...styles.bottomMargin15 }}>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Bid</a>
+                                </div> 
 
                             </div>
                         </div>
 
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
-                            <span style={{...headerFont, ...styles.generalFont  }}>Construction</span>  <Link to={`/${myuser.profile}/projects/${project.title}/team`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}> - Add Construction Team</Link>
+                            <span style={{ ...headerFont, ...styles.generalFont }}>Construction</span>  <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => { this.setState({ activecomponent: 'team' }) }}> - Add Construction Team</a>
                         </div>
 
                         <div style={{ ...styles.generalFlex, ...styles.bottomMargin10 }}>
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                            <Link to={`/${myuser.profile}/projects/${project.title}/proposals`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Authorize Proposals</Link>
+                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{this.setState({activecomponent:"proposals"})}}>View Proposals</a>
 
                             </div>
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                            <Link to={`/${myuser.profile}/projects/${project.title}/invoices`} style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }}>Pay Invoices</Link>
+                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{this.setState({activecomponent:"invoices"})}}>View Invoices</a>
                             </div>
                         </div>
 

@@ -28,26 +28,26 @@ class MakeID {
 
     milestoneid() {
         const pm = new PM();
-        const myuser = pm.getuser.call(this);
+        const myprojects = pm.getMyProjects.call(this)
         let milestoneid = false;
         while (!milestoneid) {
             milestoneid = makeID(16)
-            if (myuser) {
-                if (myuser.hasOwnProperty("projects")) {
+       
+            
                     // eslint-disable-next-line
-                    myuser.projects.map(myproject => {
-                        if (myproject.hasOwnProperty("projectmilestones")) {
+                    myprojects.map(myproject => {
+                        if (myproject.hasOwnProperty("milestones")) {
                             // eslint-disable-next-line
-                            myproject.projectmilestones.mymilestone.map(mymilestone => {
+                            myproject.milestones.map(mymilestone => {
                                 if (mymilestone.milestoneid === milestoneid) {
                                     milestoneid = false;
                                 }
                             })
                         }
                     })
-                }
+                
 
-            }
+            
         }
         return milestoneid;
     }

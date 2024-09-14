@@ -5,6 +5,65 @@ export function formatDate(timein) {
 
 }
 
+export function formatTimeString(timein) {
+
+    let ampm = 'am'
+    timein = timein.split(' ')
+    timein[1] = timein[1].split(':')
+
+    if (timein[1][0] >= 12) {
+
+
+        ampm = 'pm'
+
+        if (timein[1][0] > 12) {
+
+            timein[1][0] = timein[1][0] - 12;
+        }
+
+    }
+    timein[1][1] = trailingZeros(timein[1][1])
+    timein[1][2] = timein[1][2].split("-")
+    timein[1][2][0] = trailingZeros(timein[1][2][0])
+
+    return `${timein[1][0]}:${timein[1][1]}:${timein[1][2][0]} ${ampm}`
+
+
+}
+
+export function getOffsetTime(timein) {
+    let datein = new Date(`${timein}`)
+    let offset = datein.getTimezoneOffset() / 60;
+
+    let sym = "+";
+    if (offset > 0) {
+        sym = "-";
+    }
+    if (Math.abs(offset) < 10) {
+        offset = `0${offset}`
+    }
+    return (`${sym}${offset}:00`)
+
+}
+
+
+export function convertUTCTime(timein) {
+    if (timein) {
+
+        let datein = new Date(`${timein.replace(/-/g, '/')} UTC`)
+        const year = datein.getFullYear();
+        const month = trailingZeros(datein.getMonth() + 1);
+        const day = trailingZeros(datein.getDate());
+        const seconds = trailingZeros(datein.getSeconds());
+        const hours = trailingZeros(datein.getHours());
+        const minutes = trailingZeros(datein.getMinutes());
+        const offset = getOffsetTime(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`)
+
+        return (`${year}/${month}/${day} ${hours}:${minutes}:${seconds}${offset}`)
+    }
+
+}
+
 export function CreatePredessor(predessor, type) {
     return ({ predessor, type })
 }
@@ -594,7 +653,7 @@ export function milestoneformatdatestring(datein) {
 
 }
 export function inputDateTimeOutDateObj(timein) {
-   
+
     let newDate = new Date(`${timein.replace(/-/g, '/')} UTC`);
     return (newDate)
 }
@@ -650,7 +709,7 @@ export function inputTimeDateOutputUTCString(timein) {
 export function increasedateStringbyInc(timein, inc) {
 
     let offset = getOffsetDate(timein)
-    
+
     let datein = new Date(`${timein.replace(/-/g, '/')}${offset}`);
     let newdate = new Date(datein.getTime() + inc)
 
@@ -929,17 +988,15 @@ export function calchoursdateobj(dateout, datein) {
     let hours = (dateout.getTime() - datein.getTime()) / (1000 * 60 * 60)
     return hours;
 }
+
 export function inputUTCStringForLaborID(timein) {
 
-    let datein = new Date(`${timein.replace(/-/g, '/')}-00:00`)
+    let datein = new Date(timein)
     let hours = datein.getHours();
-    let ampm
+    let ampm = "";
     if (hours > 12) {
         hours = hours - 12;
         ampm = "PM"
-    }
-    else if (hours < 12) {
-        ampm = "AM"
     }
     else if (hours === 0) {
         hours = 12;
@@ -947,6 +1004,9 @@ export function inputUTCStringForLaborID(timein) {
     }
     else if (hours === 12) {
         ampm = "PM"
+    }
+    else if (hours < 12) {
+        ampm = "AM"
     }
     let minutes = datein.getMinutes();
     if (minutes < 10) {
@@ -961,10 +1021,7 @@ export function inputUTCStringForLaborID(timein) {
     if (month < 10) {
         month = `0${month}`
     }
-    let seconds = datein.getSeconds();
-    if (seconds < 10) {
-        seconds = `0${seconds}`
-    }
+    const seconds = trailingZeros(datein.getSeconds())
     return (`${month}/${date}/${year} ${hours}:${minutes}:${seconds} ${ampm}`)
 
 }
@@ -1196,11 +1253,12 @@ export function calculateamount(quantity, unitprice) {
 
 export function calculatetotalhours(timeout, timein) {
 
-    let datein = new Date(`${timein.replace(/-/g, '/')}`)
-    let dateout = new Date(`${timeout.replace(/-/g, '/')}`)
-    let totalhours = (dateout.getTime() - datein.getTime()) / (1000 * 60 * 60)
+    let datein = new Date(`${timein}`)
+    let dateout = new Date(`${timeout}`)
+    let totalhours = ((dateout.getTime() - datein.getTime()) / (1000 * 60 * 60))
     return totalhours;
 }
+
 export function inputDateObjStripTimeOutputObj(dateobj) {
     let day = dateobj.getDate();
     let year = dateobj.getFullYear();
@@ -2347,6 +2405,8 @@ export function inputDateStringOutputObj(datestring) {
     }
     return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
 }
+
+
 export function dbUTCoutputdateobject(datestring) {
     let dateobj = new Date(datestring);
     let gettime = dateobj.getTime();
@@ -2356,8 +2416,8 @@ export function dbUTCoutputdateobject(datestring) {
     let mytime = new Date(gettime);
     return mytime;
 }
-export function CreateProject(providerid, projectid, title, scope, address, city, projectstate, zipcode) {
-    return ({ providerid, projectid, title, scope, address, city, projectstate, zipcode })
+export function CreateProject(UserID, ProjectID, ProjectNumber, Title, Scope, Address, City, ProjectState, Zipcode) {
+    return ({ UserID, ProjectID, ProjectNumber, Title, Scope, Address, City, ProjectState, Zipcode })
 }
 export function UsStates() {
     return ([
@@ -2415,8 +2475,8 @@ export function UsStates() {
         { name: 'WYOMING', abbreviation: 'WY' }
     ])
 }
-export function MyUserModel(providerid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl) {
-    return ({ providerid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl })
+export function MyUserModel(userid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl) {
+    return ({ userid, client, clientid, firstname, lastname, address, city, contactstate, zipcode, emailaddress, phonenumber, profileurl })
 }
 export function getampm(dateobj) {
     let hours = dateobj.getHours();
@@ -2440,24 +2500,24 @@ export function formatMinutes(minutes) {
 
 
 
-export function getMyCurrentTime () {
+export function getMyCurrentTime() {
     const newDate = new Date();
     const year = newDate.getFullYear();
-    const month = trailingZeros(newDate.getMonth()+1);
+    const month = trailingZeros(newDate.getMonth() + 1);
     const day = trailingZeros(newDate.getDate())
     const hours = trailingZeros(newDate.getHours())
     const minutes = trailingZeros(newDate.getMinutes())
     const seconds = trailingZeros(newDate.getSeconds())
-    let offset =newDate.getTimezoneOffset()/60
+    let offset = newDate.getTimezoneOffset() / 60
     let sym = "+";
-    if(offset>0) {
-    sym = '-';
+    if (offset > 0) {
+        sym = '-';
     }
-    offset =trailingZeros(Math.abs(offset))
+    offset = trailingZeros(Math.abs(offset))
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}${sym}${offset}:00`
-    
-    
-  }
+
+
+}
 
 export function trailingzero(num) {
     let reg_ex = /^0\d$/;
@@ -2779,7 +2839,7 @@ export function CreateBidScheduleItem(csiid, unit, quantity) {
 
 export function validateTitle(value) {
     value = value.trim();
-    const reg_ex =  /^[ a-zA-Z0-9_-]*$/
+    const reg_ex = /^[ a-zA-Z0-9_-]*$/
     const test = reg_ex.test(value);
     let errmsg = "";
     if (!value) {
@@ -2992,35 +3052,35 @@ export function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
     for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+        color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
-  }
-  
-  
+}
+
+
 export function checkemptyobject(obj) {
     let empty = true;
     // eslint-disable-next-line
-    for(let x in obj) {
-      empty = false;
-      
-    }
-    
-   return empty; 
-  }
+    for (let x in obj) {
+        empty = false;
 
-export function getScale (interval) {
-		
-    let scale = "";
-    if(interval < 36) {
-      scale = 100;
-    } else  {
-      
-      scale = Math.round(100/(Math.ceil(interval/36)))
     }
-      
-      
-    
+
+    return empty;
+}
+
+export function getScale(interval) {
+
+    let scale = "";
+    if (interval < 36) {
+        scale = 100;
+    } else {
+
+        scale = Math.round(100 / (Math.ceil(interval / 36)))
+    }
+
+
+
     return scale;
 
 }
@@ -3097,8 +3157,8 @@ export function randomString(len) {
 
     return randomString;
 }
-export function MyProjectModel(providerid, projectid, title, scope, address, city, projectstate, zipcode) {
-    let myproject = { providerid, projectid, title, scope, address, city, projectstate, zipcode }
+export function MyProjectModel(userid, projectid, title, scope, address, city, projectstate, zipcode) {
+    let myproject = { userid, projectid, title, scope, address, city, projectstate, zipcode }
     return myproject;
 }
 export function returnCompanyList(allusers) {
@@ -3202,11 +3262,11 @@ export function trailingZeros(num) {
 }
 
 
-export function getDateTime (datestr)  {
+export function getDateTime(datestr) {
     let offset = getOffsetDate(datestr)
     let datein = new Date(`${datestr.replace(/-/g, '/')} 00:00:00${offset}`)
     return datein.getTime();
-  }
+}
 
 export function getOffsetDate(timein) {
     let datein = new Date(`${timein.replace(/-/g, '/')} 00:00:00 UTC`)
@@ -3228,7 +3288,7 @@ export function calculateday(int, compl, start, completion) {
     let xo = int.split('-');
     let x1 = xo[0];
     let x2 = xo[1];
-  	let x3 = xo[2]
+    let x3 = xo[2]
 
     let initime = `${x1}-${x2}-${x3}`
 
@@ -3242,13 +3302,13 @@ export function calculateday(int, compl, start, completion) {
     return { width, xo, initime }
 }
 
-export function calculateFloat (day_1, day_2) {
-    const date_1 =new Date(`${day_1.replace(/-/g, '/')} 23:59:59${getOffsetDate(day_1)}`)
-    const date_2 =new Date(`${day_2.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_2)}`)
+export function calculateFloat(day_1, day_2) {
+    const date_1 = new Date(`${day_1.replace(/-/g, '/')} 23:59:59${getOffsetDate(day_1)}`)
+    const date_2 = new Date(`${day_2.replace(/-/g, '/')} 00:00:00${getOffsetDate(day_2)}`)
     const time = date_2.getTime() - date_1.getTime();
-    return Math.round(time/(1000*60*60*24))
-    
-  }
+    return Math.round(time / (1000 * 60 * 60 * 24))
+
+}
 
 export function getDateInterval(start, completion) {
 
@@ -3328,22 +3388,22 @@ export function stateArray() {
         { name: 'WYOMING', abbreviation: 'WY' }
     ])
 }
-export function ScheduleLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid) {
-    return ({ providerid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid })
+export function ScheduleLabor(userid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid) {
+    return ({ userid, description, laborid, milestoneid, laborrate, timein, timeout, proposalid })
 
 }
-export function ActualLabor(providerid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid) {
-    return ({ providerid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid })
+export function ActualLabor(userid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid) {
+    return ({ userid, description, laborid, milestoneid, laborrate, timein, timeout, invoiceid })
 
 }
-export function ScheduleMaterial(materialid, providerid, projectid, timein, quantity, unit, unitcost, description, milestoneid, proposalid) {
+export function ScheduleMaterial(materialid, userid, projectid, timein, quantity, unit, unitcost, description, milestoneid, proposalid) {
     return ({
         description,
         materialid,
         milestoneid,
         projectid,
         proposalid,
-        providerid,
+        userid,
         quantity,
         timein,
         unit,
@@ -3364,14 +3424,14 @@ export function formatDateStringDisplay(timein) {
     }
     return (`${month}/${day}/${year}`)
 }
-export function ActualMaterial(materialid, providerid, projectid, timein, quantity, unit, unitcost, description, milestoneid, invoiceid) {
+export function ActualMaterial(materialid, userid, projectid, timein, quantity, unit, unitcost, description, milestoneid, invoiceid) {
     return ({
         description,
         materialid,
         milestoneid,
         projectid,
         invoiceid,
-        providerid,
+        userid,
         quantity,
         timein,
         unit,
@@ -3392,9 +3452,9 @@ export function RomanLower(num) {
     if (isNaN(num))
         return NaN;
     var digits = String(+num).split(""),
-        key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
-               "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
-               "","I","II","III","IV","V","VI","VII","VIII","IX"],
+        key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
+            "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
+            "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
         roman = "",
         i = 3;
     while (i--)
@@ -3404,20 +3464,20 @@ export function RomanLower(num) {
 }
 
 
-export function getListNumber(listType,num,i) {
-  
+export function getListNumber(listType, num, i) {
+
     let listnumber = "";
-    switch(listType) {
+    switch (listType) {
         case "Part":
-            return(PartNumber(num))
+            return (PartNumber(num))
         case "1.01":
             return `${i}.${trailingZeros(num)}`
         case "A.B.C":
-            return(`${LetterCounter(num)}.`)
+            return (`${LetterCounter(num)}.`)
         case "1.2.3":
-            return(`${num}.`)
+            return (`${num}.`)
         case "a.b.c":
-            return(`${LetterCounterLower(num)}.`)
+            return (`${LetterCounterLower(num)}.`)
         case "i.ii.iii":
             return (`${RomanLower(num)}.`)
         default:
@@ -3428,7 +3488,7 @@ export function getListNumber(listType,num,i) {
 }
 
 export function PartNumber(num) {
-    return(`Part ${num}`)
+    return (`Part ${num}`)
 }
 
 export function LetterCounterLower(num) {
@@ -3841,8 +3901,8 @@ export function increaseDateByOneWeek(timein) {
 
 
 }
-export function createTransfer(transferid,created,amount,destination) {
-    return({transferid,created,amount,destination})
+export function createTransfer(transferid, created, amount, destination) {
+    return ({ transferid, created, amount, destination })
 }
 export function ProfitForMaterial(item) {
     return (Number(item.quantity) * Number(item.unitcost)) * (Number(item.profit) / 100)
@@ -3851,6 +3911,8 @@ export function DirectCostForMaterial(item) {
     return (Number(item.quantity) * Number(item.unitcost))
 }
 export function DirectCostForLabor(item) {
+console.log(item,calculatetotalhours(item.timeout, item.timein), item.laborrate)
+ 
     return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.laborrate))
 }
 export function DirectCostForEquipment(item) {
@@ -3864,9 +3926,11 @@ export function ProfitForEquipment(item) {
 export function ProfitForLabor(item) {
     return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.laborrate)) * (Number(item.profit) / 100)
 }
-export function TeamMember(providerid, role) {
-    return ({ providerid, role })
+
+export function TeamMember(User_ID, Role) {
+    return ({ User_ID, Role })
 }
+
 export function makeID(length) {
     let result = '';
     let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -3878,7 +3942,7 @@ export function makeID(length) {
 }
 export function TestUser() {
     return ({
-        providerid: "stevenatwater",
+        userid: "stevenatwater",
         client: "google",
         clientid: "109676734658243948537",
         firstname: "Steven",
@@ -3903,7 +3967,7 @@ export function TestUser() {
                     projectteam: {
                         myteam: [
                             {
-                                providerid: "mazen",
+                                userid: "mazen",
                                 role: "Lead App Developer"
                             }
                         ]
@@ -3924,7 +3988,7 @@ export function TestUser() {
                                 projectid: "constructionapp",
                                 milestoneid: "F7HX5X",
                                 milestone: "",
-                                providerid: "mazen",
+                                userid: "mazen",
                                 laborid: "03AZLOPT",
                                 firstname: "Steven",
                                 lastname: "Atwater",
@@ -3944,7 +4008,7 @@ export function TestUser() {
                                 projectid: "constructionapp",
                                 milestoneid: "F7HX5X",
                                 milestone: "",
-                                providerid: "",
+                                userid: "",
                                 laborid: "C9JXIHOD",
                                 firstname: "Steven",
                                 lastname: "Atwater",
@@ -3964,7 +4028,7 @@ export function TestUser() {
                                 materialid: "myfirstmaterial",
                                 mymaterialid: "myfirstmaterial",
                                 material: "myfirstmaterial",
-                                providerid: "stevenatwater",
+                                userid: "stevenatwater",
                                 csiid: "yyyyyy",
                                 timein: "2019-12-08",
                                 milestoneid: "F7HX5X",
@@ -3982,7 +4046,7 @@ export function TestUser() {
                                 materialid: "myfirstmaterial",
                                 mymaterialid: "myfirstmaterial",
                                 material: "myfirstmaterial",
-                                providerid: "stevenatwater",
+                                userid: "stevenatwater",
                                 csiid: "yyyyyy",
                                 timein: "2019-12-08",
                                 milestoneid: "F7HX5X",
@@ -4042,7 +4106,7 @@ export function TestUser() {
                         myproposal: [
                             {
                                 proposalid: "R4WQ",
-                                providerid: "mazen",
+                                userid: "mazen",
                                 updated: "2019-12-08 21:09:55",
                                 approved: "2019-12-08 21:10:35",
                                 bidschedule: {
@@ -4064,7 +4128,7 @@ export function TestUser() {
                         myinvoice: [
                             {
                                 invoiceid: "POQV",
-                                providerid: "mazen",
+                                userid: "mazen",
                                 updated: "2019-12-08 21:10:04",
                                 approved: "2019-12-27 13:39:52",
                                 bid: {
@@ -4088,7 +4152,7 @@ export function TestUser() {
         allusers: {
             myuser: [
                 {
-                    providerid: "stevenatwater",
+                    userid: "stevenatwater",
                     companyid: {},
                     emailaddress: "immaisoncrosby@gmail.com",
                     firstname: "Steven",
@@ -4099,7 +4163,7 @@ export function TestUser() {
                     stripe: ""
                 },
                 {
-                    providerid: "mazen",
+                    userid: "mazen",
                     companyid: {},
                     emailaddress: "mazen@civilengineer.io",
                     firstname: "Mazen",
@@ -4119,7 +4183,7 @@ export function TestUser() {
                     }
                 },
                 {
-                    providerid: "gusgfk",
+                    userid: "gusgfk",
                     companyid: {},
                     emailaddress: "gus.gfk@gmail.com",
                     firstname: "Gus",
@@ -4130,7 +4194,7 @@ export function TestUser() {
                     stripe: ""
                 },
                 {
-                    providerid: "gordonlum",
+                    userid: "gordonlum",
                     companyid: {},
                     emailaddress: "gocatlum@att.net",
                     firstname: "Gordon",
@@ -4150,7 +4214,7 @@ export function TestUser() {
                     }
                 },
                 {
-                    providerid: "selene",
+                    userid: "selene",
                     companyid: {},
                     emailaddress: "ibarrolaselene5@gmail.com",
                     firstname: "Selene",
@@ -4170,7 +4234,7 @@ export function TestUser() {
                     }
                 },
                 {
-                    providerid: "allinone",
+                    userid: "allinone",
                     companyid: {},
                     emailaddress: "michaelicay@gmail.com",
                     firstname: "Michael",

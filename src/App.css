@@ -18,7 +18,11 @@
 .addStroke{
   -webkit-text-stroke-width: 1px;
 -webkit-text-stroke-color: black;
-} 
+}
+.updateprojects-1{fill:#a00;}.updateprojects-2{fill:#fff;font-family:NunitoSans-SemiBold, 'Nunito Sans';font-size:48px;font-weight:600;stroke:#000;stroke-miterlimit:10;}
+.rightarrow-1{fill:#003831;stroke:#000;stroke-miterlimit:10;}
+.addicon-1{font-family:NunitoSans-Regular, Nunito Sans;;font-size:27.15px;}.addicon-2{fill:#999;stroke:#000;stroke-miterlimit:10;stroke-width:2px;}
+.saveprofileicon-1{fill:#db9f19;}.saveprofileicon-1,.saveprofileicon-2{stroke:#000;stroke-miterlimit:10;}.saveprofileicon-2{font-size:72px;fill:#f9f7f7;stroke-width:0.25px;font-family:NunitoSans-SemiBold, Nunito Sans;font-weight:600;}.saveprofileicon-3{letter-spacing:-0.01em;}.saveprofileicon-4{letter-spacing:0em;}.saveprofileicon-5{letter-spacing:-0.01em;}.saveprofileicon-6{letter-spacing:0em;}
 .applogo-1,.applogo-3{fill:#8c1837;}.applogo-1,.applogo-2{stroke:#000;stroke-miterlimit:10;}.applogo-1{stroke-width:2px;}.applogo-2{fill:none;}.applogo-4{font-size:21.44px;font-family:NunitoSans-Regular, Nunito Sans;}.applogo-5{letter-spacing:-0.01em;}.applogo-6{letter-spacing:0em;}.applogo-7{letter-spacing:0em;}.applogo-8{letter-spacing:0.06em;}.applogo-9{letter-spacing:-0.04em;}.applogo-10{letter-spacing:-0.06em;}.applogo-11{letter-spacing:-0.02em;}.applogo-12{letter-spacing:-0.02em;}
 .menuicon-1{fill:#8c1837;}.menuicon-1,.menuicon-2{stroke:#000;stroke-miterlimit:10;}
 .menuicon-2{stroke-width:2px;}

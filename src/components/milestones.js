@@ -10,7 +10,7 @@ import MakeID from './makeids'
 import CriticalPath from './criticalpath'
 import { removeIconSmall } from './svg';
 import { LoadAllUsers } from './actions/api';
-import { Link } from 'react-router-dom';
+import { a } from 'react-router-dom';
 import ProjectID from './projectid';
 
 
@@ -39,8 +39,7 @@ class Milestones extends Component {
     }
     componentDidMount() {
         this.updateWindowDimensions();
-        this.props.reduxProject({ projectid: this.props.match.params.projectid })
-        this.props.reduxNavigation({ navigation: "milestones" })
+
         window.addEventListener('resize', this.updateWindowDimensions);
         this.reset()
 
@@ -127,7 +126,7 @@ class Milestones extends Component {
         if (this.state.activemilestoneid) {
             let milestoneid = this.state.activemilestoneid;
             const pm = new PM();
-            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const myproject = pm.getproject.call(this)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
                 myproject.milestones.map((mymilestone, i) => {
@@ -145,7 +144,7 @@ class Milestones extends Component {
         if (this.state.activemilestoneid) {
             let milestoneid = this.state.activemilestoneid;
             const pm = new PM();
-            const myproject = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+            const myproject = pm.getproject.call(this)
             if (myproject.hasOwnProperty("projectmilestones")) {
                 // eslint-disable-next-line
                 myproject.milestones.map((mymilestone) => {
@@ -163,18 +162,20 @@ class Milestones extends Component {
     handlemilestone(milestone) {
         let pm = new PM();
         const makeID = new MakeID();
-        let myuser = pm.getuser.call(this);
-        if (myuser) {
+        
+        let myprojects = pm.getProjects.call(this);
+        if(myprojects) {
             let myproject = pm.getproject.call(this)
             if (myproject) {
-                let i = pm.getprojectkeybyid.call(this, myproject.projectid)
+               
+                 let i = pm.getProjectKeyByID.call(this,myproject.project_id)
                 if (this.state.activemilestoneid) {
 
                     const getmilestone = pm.getmilestonebyid.call(this, this.state.activemilestoneid)
                     if (getmilestone) {
                         const j = pm.getmilestonekeybyid.call(this, this.state.activemilestoneid)
-                        myuser.projects[i].milestones[j].milestone = milestone;
-                        this.props.reduxUser(myuser);
+                        myprojects[i].milestones[j].milestone = milestone;
+                        this.props.reduxProjects(myprojects);
 
                     }
 
@@ -193,13 +194,13 @@ class Milestones extends Component {
                     let mymilestone = MyMilestone(milestoneid, milestone, start, completion)
 
                     if (myproject.hasOwnProperty("milestones")) {
-                        myuser.projects[i].milestones.push(mymilestone);
+                        myprojects[i].milestones.push(mymilestone);
 
                     } else {
                        
-                        myuser.projects[i].milestones = [mymilestone]
+                        myprojects[i].milestones = [mymilestone]
                     }
-                    this.props.reduxUser(myuser);
+                    this.props.reduxProjects(myprojects);
                     this.setState({ activemilestoneid: milestoneid, milestone: '' })
 
                 }
@@ -228,7 +229,7 @@ class Milestones extends Component {
         const start = new StartDate();
         const completion = new CompletionDate();
         const styles = MyStylesheet();
-        if (this.state.width > 1200) {
+        if (this.state.width > 1070) {
             return (
                 <div style={{ ...styles.generalFlex, ...styles.bottomMargin15 }}>
                     <div style={{ ...styles.flex1 }}>
@@ -266,7 +267,7 @@ class Milestones extends Component {
         const pm = new PM();
         const milestones = pm.getmilestones.call(this);
         let ids = [];
-        if (milestones) {
+        if (milestones && milestones.length>0) {
  // eslint-disable-next-line
             milestones.map(mymilestone => {
                 ids.push(this.showmilestone(mymilestone))
@@ -303,20 +304,22 @@ class Milestones extends Component {
     }
     removemilestone(milestone) {
         const pm = new PM();
-        const myuser = pm.getuser.call(this);
-        if (myuser) {
+        const myprojects = pm.getProjects.call(this)
+        
+        if (myprojects) {
 
             if (window.confirm(`Are you sure you want to delete milestone ${milestone.milestone}?`)) {
-                const project = pm.getprojectbytitle.call(this, this.props.match.params.projectid)
+                const project = pm.getproject.call(this)
                 if (project) {
-                    const i = pm.getprojectkeytitle.call(this, this.props.match.params.projectid)
+                   
+                    const i = pm.getProjectKeyByID.call(this,project.ProjectID)
                     const checkmilestone = pm.getmilestonebyid.call(this, milestone.milestoneid)
                     if (checkmilestone) {
 
                         const j = pm.getmilestonekeybyid.call(this, milestone.milestoneid);
-                        myuser.projects[i].milestones.splice(j, 1);
+                        myprojects[i].milestones.splice(j, 1);
                         // eslint-disable-next-line
-                        myuser.projects[i].milestones.map(mymilestone => {
+                        myprojects[i].milestones.map(mymilestone => {
 
                             if (mymilestone.hasOwnProperty("predessors")) {
 
@@ -325,13 +328,13 @@ class Milestones extends Component {
                                     if (predessor.predessor === milestone.milestoneid) {
                                         const k = pm.getmilestonekeybyid.call(this, mymilestone.milestoneid);
                                         const l = pm.getpredessorkeybyid.call(this, mymilestone, predessor.predessor);
-                                        myuser.projects[i].milestones[k].predessors.splice(l, 1)
+                                        myprojects[i].milestones[k].predessors.splice(l, 1)
                                     }
                                 })
                             }
                         })
-
-                        this.props.reduxUser(myuser)
+                        
+                        this.props.reduxProjects(myprojects)
                         this.setState({ activemilestoneid: false })
 
                     }
@@ -379,7 +382,8 @@ class Milestones extends Component {
         const myuser = pm.getuser.call(this)
         const projectid = new ProjectID();
         if (myuser) {
-            const project = pm.getproject.call(this)
+            const project = pm.getProjectByID.call(this, this.props.project_id)
+   
             if (project) {
                 return (
                     <div style={{ ...styles.generalFlex }}>
@@ -387,12 +391,10 @@ class Milestones extends Component {
 
 
 
-                            <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}`}>  /{project.title}  </Link>
-                            </div>
+                   
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <Link style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} to={`/${myuser.profile}/projects/${project.title}/milestones`}>  /milestones </Link>
+                                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }}>  /milestones </a>
                             </div>
 
                             <div style={{ ...styles.generalFlex }}>
@@ -405,15 +407,9 @@ class Milestones extends Component {
                             </div>
 
                             {this.handleTimes()}
-
-                            {pm.showsaveproject.call(this)}
-
                             {this.loadmilestoneids()}
-
-                        
                             {criticalpath.showpath.call(this)}
-                            {projectid.showprojectid.call(this)}
-
+                        
 
                         </div>
                     </div>
@@ -440,8 +436,9 @@ function mapStateToProps(state) {
     return {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
-        project: state.project,
+        myprojects: state.myprojects,
         allusers: state.allusers,
+        projects:state.projects
     }
 }
 

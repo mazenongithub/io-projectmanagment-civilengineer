@@ -1,9 +1,8 @@
-import { PROJECTS } from '../actions/types';
+import { PROJECTSOCKETS } from '../actions/types';
 
 export default function (state = {}, action) {
-
     switch (action.type) {
-        case PROJECTS:
+        case PROJECTSOCKETS:
             return action.payload;
         default:
             return state;
