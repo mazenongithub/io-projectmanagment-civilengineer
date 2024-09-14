@@ -47,7 +47,7 @@ class App extends Component {
         this.checkuserlogin();
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions();
-        console.log(`Server API`, process.env.REACT_APP_SERVER_API)
+        console.log(`Server API Rebuild`, process.env.REACT_APP_SERVER_API)
 
     }
 
