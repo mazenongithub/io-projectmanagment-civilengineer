@@ -4,7 +4,6 @@ import { folderIcon, scrollImageDown, purpleCheck, saveProfileIcon } from './svg
 import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
 import { inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
-import { CheckProfile } from './actions/api';
 import Spinner from './spinner';
 import PM from './pm'
 
@@ -443,34 +442,7 @@ class Profile {
             }
         }
     }
-    async checkprofile(profile) {
-        const pm = new PM();
-        const myuser = pm.getuser.call(this);
 
-        if (myuser) {
-            let validate = validateProviderID(profile)
-            if (profile && !validate) {
-                try {
-                    let response = await CheckProfile(profile);
-                    console.log(response)
-                    if (response.hasOwnProperty("invalid")) {
-                        myuser.invalid = response.invalid;
-                        this.props.reduxUser(myuser);
-                        this.setState({ message: response.invalid})
-                    } else if (response.hasOwnProperty("valid")) {
-
-                        if (myuser.hasOwnProperty("invalid")) {
-                            delete myuser.invalid;
-                            this.setState({ message: '' })
-                        }
-                    }
-                } catch (err) {
-                    alert(err)
-                }
-            }
-
-        }
-    }
 
 
 
@@ -563,7 +535,6 @@ class Profile {
                             /<input type="text" value={myuser.UserID}
                                 onChange={event => { profile.handleprofile.call(this,event.target.value) }}
                                 style={{ ...styles.generalFont, ...headerFont, ...styles.fontBold }}
-                                onBlur={event => { profile.checkprofile.call(this,event.target.value) }}
                             /> {showButton()}
                         </div>
                     </div>

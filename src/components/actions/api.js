@@ -275,11 +275,10 @@ export async function LogoutUser(providerid) {
     })
 }
 
-export async function SaveProfile(values) {
+export async function SaveProfile(myuser) {
 
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/myuser/saveuser`;
-    console.log(APIURL);
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',
@@ -287,7 +286,7 @@ export async function SaveProfile(values) {
             'Content-Type': 'application/json',
         }),
 
-        body: JSON.stringify(values)
+        body: JSON.stringify({myuser})
     })
         .then(resp => {
 

@@ -1187,13 +1187,13 @@ class PM {
         }
     }
 
-    getcompanyequipmentbyid(company_id,equipmentid) {
+    getcompanyequipmentbyid(company_id, equipmentid) {
         const pm = new PM();
-        const equipment = pm.getcompanyequipment.call(this,company_id)
+        const equipment = pm.getcompanyequipment.call(this, company_id)
         let getequipment = false;
-        if(equipment) {
-            equipment.map(eq=> {
-                if(eq.equipmentid === equipmentid) {
+        if (equipment) {
+            equipment.map(eq => {
+                if (eq.equipmentid === equipmentid) {
                     getequipment = eq;
                 }
             })
@@ -1203,10 +1203,10 @@ class PM {
 
     getcompanyequipment(company_id) {
         const pm = new PM();
-        const company = pm.getcompanybyid.call(this,company_id)
+        const company = pm.getcompanybyid.call(this, company_id)
         let getequipment = false;
-        if(company) {
-            if(company.hasOwnProperty("equipment")) {
+        if (company) {
+            if (company.hasOwnProperty("equipment")) {
                 getequipment = company.equipment;
 
             }
@@ -1319,22 +1319,22 @@ class PM {
 
     getcompanymaterialsbyid(materialid) {
         const pm = new PM();
-        const company = pm.getcompanybyid.call(this,this.props.company_id)
+        const company = pm.getcompanybyid.call(this, this.props.company_id)
         let getmaterial = false;
         if (company) {
-    
+
+            // eslint-disable-next-line
+
+            if (company.hasOwnProperty("materials")) {
+
                 // eslint-disable-next-line
-             
-                    if (company.hasOwnProperty("materials")) {
-
-                        // eslint-disable-next-line
-                        company.materials.map(material => {
-                            if (material.materialid === materialid) {
-                                getmaterial = material;
-                            }
-                        })
-
+                company.materials.map(material => {
+                    if (material.materialid === materialid) {
+                        getmaterial = material;
                     }
+                })
+
+            }
 
         }
         return getmaterial;
@@ -1420,7 +1420,7 @@ class PM {
         return getequipment;
     }
 
-  
+
 
     showequipmentid(equipment) {
 
@@ -1445,7 +1445,7 @@ class PM {
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
 
-        const employee = pm.getuserbyid.call(this,mylabor.user_id)
+        const employee = pm.getuserbyid.call(this, mylabor.user_id)
 
         if (employee) {
 
@@ -1453,7 +1453,7 @@ class PM {
 
             return (<div key={mylabor.laborid} style={{ ...styles.generalContainer, ...styles.generalFont, ...regularFont }}>
 
-                {employee.FirstName} {employee.LastName} 
+                {employee.FirstName} {employee.LastName}
                 From {inputUTCStringForLaborID(mylabor.timein)} to {inputUTCStringForLaborID(mylabor.timeout)}
                 ${Number(hourlyrate).toFixed(2)}/Hr x {Number(calculatetotalhours(mylabor.timeout, mylabor.timein)).toFixed(2)} Hrs = ${(Number(calculatetotalhours(mylabor.timeout, mylabor.timein)) * Number(hourlyrate)).toFixed(2)}
 
@@ -2243,7 +2243,7 @@ class PM {
         return items;
     }
 
-    
+
 
     getSchedule() {
         const pm = new PM();
@@ -2359,15 +2359,15 @@ class PM {
         let getcompany = false;
         const allcompanys = pm.getallcompanys.call(this)
         if (allcompanys) {
-   
-                // eslint-disable-next-line
-                allcompanys.map(company => {
-                    if (company._id === this.props.company_id) {
-                        getcompany = company;
-                    }
-                })
 
-            
+            // eslint-disable-next-line
+            allcompanys.map(company => {
+                if (company._id === this.props.company_id) {
+                    getcompany = company;
+                }
+            })
+
+
 
         }
 
@@ -2457,15 +2457,15 @@ class PM {
     getConstructionKeybyID(company_id, project_id) {
 
         const pm = new PM();
-        if(!project_id) {
+        if (!project_id) {
             project_id = this.props.project_id
         }
         const construction = pm.getConstruction.call(this, project_id)
-      
+
         let key = false;
-        if(construction) {
-            construction.map((company,i)=> {
-                if(company.company_id === company_id) {
+        if (construction) {
+            construction.map((company, i) => {
+                if (company.company_id === company_id) {
                     key = i
                 }
             })
@@ -2480,15 +2480,15 @@ class PM {
 
     getConstructionbyID(company_id, project_id) {
         const pm = new PM();
-        if(!project_id) {
+        if (!project_id) {
             project_id = this.props.project_id
         }
         const construction = pm.getConstruction.call(this, project_id)
         console.log(construction, company_id)
         let getcompany = false;
-        if(construction) {
-            construction.map(company=> {
-                if(company.company_id === company_id) {
+        if (construction) {
+            construction.map(company => {
+                if (company.company_id === company_id) {
                     getcompany = company;
                 }
             })
@@ -2611,11 +2611,11 @@ class PM {
     getbidbyid(csiid) {
         const pm = new PM();
         let myitem = false;
-     
-        let project = pm.getConstructionbyID.call(this,this.props.company_id)
+
+        let project = pm.getConstructionbyID.call(this, this.props.company_id)
         let bid = false;
-        if(project.hasOwnProperty("actual")) {
-            if(project.actual.hasOwnProperty("bid")) {
+        if (project.hasOwnProperty("actual")) {
+            if (project.actual.hasOwnProperty("bid")) {
                 bid = project.actual.bid
             }
 
@@ -2635,11 +2635,11 @@ class PM {
     getbidschedulebyid(csiid) {
         const pm = new PM();
         let myitem = false;
-     
-        let project = pm.getConstructionbyID.call(this,this.props.company_id)
+
+        let project = pm.getConstructionbyID.call(this, this.props.company_id)
         let bidschedule = false;
-        if(project.hasOwnProperty("schedule")) {
-            if(project.schedule.hasOwnProperty("bidschedule")) {
+        if (project.hasOwnProperty("schedule")) {
+            if (project.schedule.hasOwnProperty("bidschedule")) {
                 bidschedule = project.schedule.bidschedule
             }
 
@@ -3224,30 +3224,44 @@ class PM {
     }
 
     async savemyprofile() {
-        try {
-            let pm = new PM();
-            let myuser = pm.getuser.call(this)
-            let user = { userid: myuser.userid, _id: myuser._ID, firstname: myuser.FirstName, lastname: myuser.LastName, emailaddress: myuser.EmailAddress, phonenumber: myuser.PhoneNumber, profileurl: myuser.ProfileURL, profile: myuser.profile, userid: myuser.UserID }
-            this.setState({ spinner: true })
-            let response = await SaveProfile({ myuser: user })
-            console.log(response)
+        let pm = new PM();
+        let myuser = pm.getuser.call(this)
+        if (!myuser.hasOwnProperty("invalid")) {
 
-            if (response.hasOwnProperty("myuser")) {
+            try {
 
-                this.props.reduxUser(response.myuser)
+
+
+                this.setState({ spinner: true })
+                let response = await SaveProfile(myuser)
+                console.log(response)
+
+
+
+                if (response.hasOwnProperty("myuser")) {
+
+                    this.props.reduxUser(response.myuser)
+                }
+
+                let message = "";
+                if (response.hasOwnProperty("message")) {
+
+                    message += `${response.message}`
+
+                }
+
+                if (response.hasOwnProperty("lastupdated")) {
+                    let lastupdated = formatTimeString(convertUTCTime(response.lastupdated))
+                    message += ` Last updated ${lastupdated}`
+                }
+
+                this.setState({ message, spinner: false })
+
+            } catch (err) {
+                alert(err)
+                this.setState({ spinner: false })
             }
 
-            let message = "";
-            if (response.hasOwnProperty("message")) {
-                let lastupdated = formatTimeString(convertUTCTime(response.lastupdated))
-                message = `${response.message} Last updated ${lastupdated}`
-
-            }
-            this.setState({ message, spinner: false })
-
-        } catch (err) {
-            alert(err)
-            this.setState({ spinner: false })
         }
 
     }
@@ -3274,40 +3288,84 @@ class PM {
             return (<Spinner />)
         }
     }
+
+    async handleLoginResponse(response) {
+        if (response.hasOwnProperty("myuser")) {
+            let user_id = response.myuser.User_ID;
+            let getmyprojects = await LoadMyProjects(user_id)
+            if (getmyprojects.myprojects) {
+                this.props.reduxMyProjects(getmyprojects.myprojects)
+            }
+            this.props.reduxUser(response.myuser)
+            this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner: false, initialized: true })
+        } else if (response.hasOwnProperty("message")) {
+            this.setState({ message: response.message, spinner: false, client: '', clientid: '', emailaddress: '', initialized: true })
+        } else {
+            this.setState({ spinner: false, client: '', clientid: '', emailaddress: '', initialized: true })
+        }
+
+    }
     async clientlogin() {
         const pm = new PM();
+
+
+        let apple = this.state.apple;
+        let google = this.state.google;
+        let firstname = this.state.firstname;
+        let lastname = this.state.lastname;
+        let emailaddress = this.state.emailaddress;
+        let profileurl = this.state.profileurl;
+        let phonenumber = this.state.phonumber;
+        let profile = this.state.profile
+        let myuser = { apple, google, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
+
         try {
 
-            let apple = this.state.apple;
-            let google = this.state.google;
-            let firstname = this.state.firstname;
-            let lastname = this.state.lastname;
-            let emailaddress = this.state.emailaddress;
-            let profileurl = this.state.profileurl;
-            let phonenumber = this.state.phonumber;
-            let profile = this.state.profile
-            let myuser = { apple, google, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
             this.setState({ spinner: true })
-            const response = await AppleLogin(myuser);
-            console.log(response)
 
-            if (response.hasOwnProperty("myuser")) {
-                const user_id = response.myuser.User_ID;
-                const getmyprojects = await LoadMyProjects(user_id)
-                this.props.reduxMyProjects(getmyprojects.myprojects)
-                this.props.reduxUser(response.myuser)
-
-                this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner: false })
-            } else if (response.hasOwnProperty("message")) {
-                this.setState({ message: response.message, spinner: false, client: '', clientid: '', emailaddress: '' })
-            } else {
-                this.setState({ spinner: false, client: '', clientid: '', emailaddress: '' })
+            let response = await AppleLogin(myuser);
+            if (response) {
+                this.handleLoginResponse(response)
             }
 
+
+
         } catch (err) {
-            this.setState({ spinner: false, client: '', clientid: '', emailaddress: '' })
-            alert(err)
-        }
+
+            // retry_1
+
+            this.setState({ spinner: false, message: `Azure Server Timeout, retrying` })
+
+
+            setTimeout(async () => {
+                if (!this.state.initialized) {
+                    try {
+
+                        this.setState({ spinner: true })
+                        let response = await AppleLogin(myuser);
+                        console.log(response)
+                        this.handleLoginResponse(response)
+
+                    } catch (err) {
+
+                        this.setState({ spinner: false, client: '', clientid: '', emailaddress: '' })
+                        alert(err)
+
+                    }
+
+                }
+
+
+            }, 35000)
+
+
+
+
+
+
+        } // end of catch error_1
+
+
     }
 
 

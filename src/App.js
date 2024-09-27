@@ -36,7 +36,7 @@ import PM from './components/pm'
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', activeslideid: 'myprojects', menu:'closed', client:'', clientid:'', firstname:'', lastname:'', emailaddress:'', phonenumber:'',profileurl:'',profilecheck: false,profile:'', spinner:false, activeprojectid:'' }
+        this.state = { render: '', activeslideid: 'myprojects', menu:'closed', client:'', clientid:'', firstname:'', lastname:'', emailaddress:'', phonenumber:'',profileurl:'',profilecheck: false,profile:'', spinner:false, activeprojectid:'', initialized:false }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
 
