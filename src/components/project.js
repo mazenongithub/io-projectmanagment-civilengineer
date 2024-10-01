@@ -97,26 +97,26 @@ class Project extends Component {
 
       } else if (response.type === "pm") {
 
-        console.log("89", response)
+        console.log(response)
 
       } else if (response.type === "construction") {
-        console.log("construction")
+  
 
         let projects = pm.getProjects.call(this)
-        console.log(projects)
+
 
 
           let findproject = pm.getProjectByID.call(this,response.myproject.project_id)
           if(findproject) {
-            console.log(findproject)
+      
             let i = pm.getProjectKeyByID.call(this, response.myproject.project_id)
             let construction = pm.getConstructionbyID.call(this,response.company_id, response.myproject.project_id)
 
             if(construction) {
-              console.log(construction)
+          
             
               let j = pm.getConstructionKeybyID.call(this, response.company_id, response.myproject.project_id)
-              console.log(j, response.myproject)
+        
               projects[i].construction[j] = response.myproject;
               this.props.reduxProjects(projects)
               this.setState({render:'render'})

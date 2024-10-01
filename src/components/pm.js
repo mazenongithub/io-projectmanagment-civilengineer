@@ -3318,6 +3318,7 @@ class PM {
         let phonenumber = this.state.phonumber;
         let profile = this.state.profile
         let myuser = { apple, google, firstname, lastname, emailaddress, profileurl, phonenumber, profile }
+        
 
         try {
 
@@ -3325,7 +3326,7 @@ class PM {
 
             let response = await AppleLogin(myuser);
             if (response) {
-                this.handleLoginResponse(response)
+                pm.handleLoginResponse.call(this,response)
             }
 
 
@@ -3337,14 +3338,14 @@ class PM {
             this.setState({ spinner: false, message: `Azure Server Timeout, retrying` })
 
 
-            setTimeout(async () => {
+            setInterval(async () => {
                 if (!this.state.initialized) {
                     try {
 
                         this.setState({ spinner: true })
                         let response = await AppleLogin(myuser);
                         console.log(response)
-                        this.handleLoginResponse(response)
+                        pm.handleLoginResponse.call(this,response)
 
                     } catch (err) {
 
@@ -3378,6 +3379,7 @@ class PM {
             let result = await firebase.auth().signInWithPopup(provider)
             // The signed-in user info.
             var user = result.user;
+            console.log(user)
 
             let firstname = "";
             let lastname = "";
@@ -3387,8 +3389,12 @@ class PM {
             let emailaddress = "";
             let google = "";
             if (user.providerData[0]) {
+
+                if(user.providerData[0].displayName) {
                 firstname = user.providerData[0].displayName.split(' ')[0]
                 lastname = user.providerData[0].displayName.split(' ')[1]
+
+                }
                 phonenumber = user.providerData[0].phoneNumber
                 profileurl = user.providerData[0].photoURL;
                 apple = user.providerData[0].uid;
