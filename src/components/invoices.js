@@ -40,6 +40,7 @@ class Invoices extends Component {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
+       
         
 
         const buttonWidth = () => {
@@ -52,7 +53,7 @@ class Invoices extends Component {
         }
 
         return (
-            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }} onClick={() => { this.setState({ activecompanyid: company._id }) }} key={company._id}>
+            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }} onClick={() => { this.handleActiveInvoice(company._id) }} key={company._id}>
 
                 <span style={{ ...regularFont }}>{company.company}</span> <button style={{ ...styles.generalButton, ...buttonWidth() }}>{rightArrow()}</button>
             </div>
@@ -108,13 +109,26 @@ class Invoices extends Component {
     }
 
 
+    
+    handleActiveInvoice(company_id) {
+        const pm = new PM();
+        const nav = pm.getnavigation.call(this)
+        nav.activecompanyid = company_id;
+        this.props.reduxNavigation(nav)
+        this.setState({render:'render'})
+
+    }
+
+
 
 
     handleInvoices() {
+        const pm = new PM();
+        const nav = pm.getnavigation.call(this)
 
-    if(this.state.activecompanyid) {
+    if(nav.activecompanyid) {
 
-        const company_id = this.state.activecompanyid;
+        const company_id = nav.activecompanyid;
 
         return (<Bid project_id={this.props.project_id} company_id={company_id} key={Math.random()} />)
 

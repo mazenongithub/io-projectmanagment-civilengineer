@@ -3,8 +3,9 @@
 
 export async function HandleMyProjects(user_id, myprojects) {
 
+
     const APIURL = `${process.env.REACT_APP_SERVER_API}/pm/${user_id}/handlemyprojects`
-    console.log(APIURL)
+
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',
@@ -57,7 +58,7 @@ export async function LoadSpecifications(projectid) {
 export async function LoadMyProjects(user_id) {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/pm/${user_id}/loadmyprojects`
-    console.log(APIURL)
+
 
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
@@ -127,7 +128,7 @@ export async function LoadAllUsers() {
 export async function SettleInvoice(values) {
 
     const APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/settleinvoice`
-    console.log(values, APIURL)
+
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',

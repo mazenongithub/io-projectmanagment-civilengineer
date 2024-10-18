@@ -36,10 +36,21 @@ class Proposals extends Component {
 
     }
 
+    makeProposalActive(company) {
+        const pm = new PM();
+        let nav = pm.getnavigation.call(this)
+         nav.activeproposal = company.companyid;
+         this.props.reduxNavigation(nav)
+         this.setState({render:'render'})
+
+
+    }
+
     showproposal(company) {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
+        const nav = pm.getnavigation.call(this)
         
 
         const buttonWidth = () => {
@@ -52,7 +63,7 @@ class Proposals extends Component {
         }
 
         return (
-            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }} onClick={() => { this.setState({ activecompanyid: company._id }) }} key={company._id}>
+            <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15 }} onClick={() => { this.handleActiveProposal(company._id ) }} key={company._id}>
 
                 <span style={{ ...regularFont }}>{company.company}</span> <button style={{ ...styles.generalButton, ...buttonWidth() }}>{rightArrow()}</button>
             </div>
@@ -107,14 +118,27 @@ class Proposals extends Component {
         )
     }
 
+    handleActiveProposal(company_id) {
+        const pm = new PM();
+        const nav = pm.getnavigation.call(this)
+        nav.activecompanyid = company_id;
+        this.props.reduxNavigation(nav)
+        this.setState({render:'render'})
+
+    }
+
 
 
 
     handleProposals() {
+        const pm = new PM();
+        const nav = pm.getnavigation.call(this)
 
-    if(this.state.activecompanyid) {
+        if(nav.activecompanyid) {
 
-        const company_id = this.state.activecompanyid;
+        
+
+        const company_id = this.props.navigation.activecompanyid;
 
         return (<BidSchedule project_id={this.props.project_id} company_id={company_id} key={Math.random()} />)
 
@@ -149,7 +173,7 @@ class Proposals extends Component {
 
 
                             <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { this.setState({ activecompanyid: false }) }}>  /proposals </a>
+                                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { this.handleActiveProposal(false) }}>  /proposals </a>
                             </div>
 
                             {this.handleProposals()}

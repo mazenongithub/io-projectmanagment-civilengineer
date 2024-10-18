@@ -278,6 +278,16 @@ class Bid extends Component {
 
 
     }
+
+    handleActiveCSI(csiid) {
+        const pm = new PM();
+        const nav = pm.getnavigation.call(this)
+        nav.activecsiid = csiid
+        this.props.reduxNavigation(nav)
+        this.setState({render:'render'})
+
+    }
+
     getunit(csiid) {
         let unit = "";
         const pm = new PM();
@@ -338,7 +348,7 @@ class Bid extends Component {
                         return (
                             <tr key={`item${item.csiid}`}>
                                 <td><a style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }}
-                                    onClick={() => { this.setState({ activecsiid: csi.csiid }) }}>{csi.csi}-{csi.title}</a></td>
+                                    onClick={() => { this.handleActiveCSI(csi.csiid) }}>{csi.csi}-{csi.title}</a></td>
                                 <td style={{ ...styles.alignCenter }}>
                                     {quantity()}
                                 </td>
@@ -357,7 +367,7 @@ class Bid extends Component {
                                     <div style={{ ...styles.generalFlex }}>
                                         <div style={{ ...styles.flex2, ...regularFont, ...styles.generalFont, ...styles.showBorder }}>
                                             <a style={{ ...styles.generalLink, ...regularFont, ...styles.generalFont }}
-                                                onClick={() => { this.setState({ activecsiid: csi.csiid }) }}> Line Item <br />
+                                                onClick={() => { this.handleActiveCSI(csi.csiid) }}> Line Item <br />
                                                 {csi.csi}-{csi.title} </a>
                                         </div>
                                         <div style={{ ...styles.flex1, ...regularFont, ...styles.generalFont, ...styles.showBorder, ...styles.alignCenter }}>
@@ -526,13 +536,15 @@ class Bid extends Component {
         return lineids;
     }
 
-    handleBidSchedule() {
+    handleBid() {
         const styles = MyStylesheet();
         const pm = new PM();
         const regularFont = pm.getRegularFont.call(this)
+        const nav = pm.getnavigation.call(this)
+        
 
-        if (this.state.activecsiid) {
-            return (<BidItem project_id={this.props.project_id} company_id={this.props.company_id} csiid={this.state.activecsiid} />)
+        if (nav.activecsiid) {
+            return (<BidItem project_id={this.props.project_id} company_id={this.props.company_id} csiid={nav.activecsiid} />)
 
         } else {
 
@@ -594,10 +606,10 @@ class Bid extends Component {
 
 
                                 <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                                    <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={()=>{this.setState({activecsiid:false})}}>  /bid </a>
+                                    <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={()=>{this.handleActiveCSI(false)}}>  /bid </a>
                                 </div>
 
-                                {this.handleBidSchedule()}
+                                {this.handleBid()}
 
 
 

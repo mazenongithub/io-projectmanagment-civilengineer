@@ -97,7 +97,39 @@ class Project extends Component {
 
       } else if (response.type === "pm") {
 
-        console.log(response)
+        if(response.hasOwnProperty("myproject")) {
+
+          let projects = pm.getProjects.call(this)
+
+          let project_id = response.myproject.project_id;
+
+          let getproject = pm.getProjectByID.call(this,project_id)
+          if(getproject) {
+            let i = pm.getProjectKeyByID.call(this,project_id)
+            projects[i] = response.myproject;
+            this.props.reduxProjects(projects)
+          }
+
+
+
+        }
+
+
+        if(response.hasOwnProperty("project")) {
+          let project_id = response.project.Project_ID;
+          let myprojects = pm.getMyProjects.call(this)
+          let getproject = pm.getMyProjectByID.call(this,project_id)
+          if(getproject) {
+            let i = pm.getMyProjectKeyByID.call(this,project_id)
+
+            myprojects[i] = response.project;
+            this.props.reduxMyProjects(myprojects)
+          }
+        }
+
+        this.setState({render:'render'})
+
+
 
       } else if (response.type === "construction") {
   
@@ -159,21 +191,6 @@ class Project extends Component {
 
     this.props.reduxProjectSockets(websockets)
 
-    const allcompanys = pm.getallcompanys.call(this)
-    if(!allcompanys) {
-      pm.loadAllCompanys.call(this)
-    }
-
-    const allusers = pm.getallusers.call(this)
-    if(!allusers) {
-      pm.loadallusers.call(this)
-    }
-
-    const csis = pm.getcsis.call(this);
-    if (!csis) {
-        pm.loadcsis.call(this)
-    }
-    
   
  
 
@@ -282,7 +299,7 @@ class Project extends Component {
     let myproject = this.getProject();
     let city = "";
     if (myproject) {
-      city = myproject.city;
+      city = myproject.City;
     }
     return city;
   }
@@ -307,7 +324,7 @@ class Project extends Component {
     let myproject = this.getProject();
     let projectstate = "";
     if (myproject) {
-      projectstate = myproject.projectstate;
+      projectstate = myproject.ProjectState;
     }
 
 
@@ -398,11 +415,13 @@ class Project extends Component {
   }
 
   handleComponenets() {
-    const nav = this.state.activecomponent;
+    
     const projectid = new ProjectID();
     const styles = MyStylesheet();
     const pm = new PM();
 
+    const nav = pm.getnavigation.call(this)
+    const activecomponent = nav.activecomponent;
 
     const project = pm.getMyProjectByID.call(this, this.props.match.params.projectid)
 
@@ -411,7 +430,7 @@ class Project extends Component {
 
       const project_id = project.Project_ID;
 
-      switch (nav) {
+      switch (activecomponent) {
         case "milestones":
           return (<Milestones project_id={project_id} key={Math.random()} />)
         case "team":
@@ -446,11 +465,20 @@ class Project extends Component {
 
         const project_id = myproject.Project_ID;
         const project = pm.getProjectByID.call(this, project_id)
+        project.Scope = myproject.Scope;
+        project.Address = myproject.Address;
+        project.City = myproject.City;
+        project.ProjectState = myproject.ProjectState;
+        project.Zipcode = myproject.Zipcode;
+        project.ProjectNumber = myproject.ProjectNumber;
+        project.Title = myproject.Title;
 
         if (project) {
 
           const projectsocket = pm.getProjectSocketByID.call(this, this.props.match.params.projectid)
           if (projectsocket) {
+
+            console.log(project)
 
             const socket = projectsocket.socket;
             const payload = JSON.stringify({ type: "pm", project });
@@ -504,7 +532,7 @@ class Project extends Component {
 
 
               <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { this.setState({ activecomponent: 'default' }) }}>  /{project.ProjectID}  </a>
+                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => {projectid.handleComponents.call(this,"default") }}>  /{project.ProjectID}  </a>
               </div>
 
 

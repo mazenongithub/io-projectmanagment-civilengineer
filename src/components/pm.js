@@ -3289,14 +3289,35 @@ class PM {
         }
     }
 
+    showMessage() {
+        const styles = MyStylesheet();
+        const pm = new PM();
+        const regularFont = pm.getRegularFont.call(this)
+
+        return(
+            <div style={{...styles.generalContainer, ...styles.bottomMargin15, ...styles.alignCenter}}>
+                <span style={{...styles.generalFont}}>{this.state.message}</span>
+            </div>
+        )
+    }
+
     async handleLoginResponse(response) {
         if (response.hasOwnProperty("myuser")) {
-            let user_id = response.myuser.User_ID;
-            let getmyprojects = await LoadMyProjects(user_id)
-            if (getmyprojects.myprojects) {
-                this.props.reduxMyProjects(getmyprojects.myprojects)
-            }
+
             this.props.reduxUser(response.myuser)
+
+            if (response.myprojects) {
+                this.props.reduxMyProjects(response.myprojects)
+            }
+
+            if(response.allusers) {
+                this.props.reduxAllUsers(response.allusers)
+            }
+
+            if(response.allcompanys) {
+                this.props.reduxAllCompanys(response.allcompanys)
+            }
+
             this.setState({ client: '', clientid: '', emailaddress: '', message: '', spinner: false, initialized: true })
         } else if (response.hasOwnProperty("message")) {
             this.setState({ message: response.message, spinner: false, client: '', clientid: '', emailaddress: '', initialized: true })

@@ -36,7 +36,7 @@ import PM from './components/pm'
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { render: '', activeslideid: 'myprojects', menu:'closed', client:'', clientid:'', firstname:'', lastname:'', emailaddress:'', phonenumber:'',profileurl:'',profilecheck: false,profile:'', spinner:false, activeprojectid:'', initialized:false }
+        this.state = { message: '', render: '', activeslideid: 'myprojects', menu: 'closed', client: '', clientid: '', firstname: '', lastname: '', emailaddress: '', phonenumber: '', profileurl: '', profilecheck: false, profile: '', spinner: false, activeprojectid: '', initialized: false }
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
     }
 
@@ -58,30 +58,59 @@ class App extends Component {
         this.setState({ width: window.innerWidth, height: window.innerHeight });
     }
 
-    async checkuserlogin() {
-        const pm = new PM();
-        //let response = TestUser();
-        try {
+    handleResponse(response) {
+
+        if (response.hasOwnProperty("myuser")) {
 
 
-            let response = await CheckUserLogin();
-            console.log(response)
-     
-            if (response.hasOwnProperty("myuser")) {
+            this.props.reduxUser(response.myuser)
 
-                const user_id = response.myuser.User_ID;
-                this.props.reduxUser(response.myuser)
-                const getmyprojects = await LoadMyProjects(user_id)
-              
-                this.props.reduxMyProjects(getmyprojects.myprojects)
-                this.setState({render:'render'})
-          
-            
+            if (response.hasOwnProperty("myprojects")) {
+
+                this.props.reduxMyProjects(response.myprojects)
 
             }
-        } catch (err) {
-            alert(err)
+
+            if (response.hasOwnProperty("allusers")) {
+                this.props.reduxAllUsers(response.allusers)
+            }
+
+            if (response.hasOwnProperty("allcompanys")) {
+
+
+                this.props.reduxAllCompanys(response.allcompanys)
+
+            }
+
+
+            this.setState({ render: 'render', initialized: true })
+
+
+
         }
+    }
+
+    async checkuserlogin() {
+        const pm = new PM();
+
+        setTimeout(async () => {
+
+
+            //let response = TestUser();
+            try {
+
+                let response = await CheckUserLogin();
+                console.log(response)
+                this.handleResponse(response)
+            } catch (err) {
+
+                alert(`Error: Could not checkuser, retrying ${err}`)
+
+
+
+            }
+
+        }, 0)
 
     }
     render() {
@@ -93,24 +122,24 @@ class App extends Component {
         const styles = MyStylesheet();
         const myprojects = new MyProjects();
         const showlanding = () => {
-        
-        return (landing.showlanding.call(this))  
+
+            return (landing.showlanding.call(this))
 
         }
         const showRegister = () => {
-            return(register.showRegister.call(this))
+            return (register.showRegister.call(this))
         }
         const showLogin = () => {
-            return(login.showLogin.call(this))
+            return (login.showLogin.call(this))
         }
         const showProfile = () => {
             return (profile.showProfile.call(this))
         }
         const showProjects = () => {
-            return(myprojects.showProjects.call(this))
+            return (myprojects.showProjects.call(this))
         }
         return (
-            <div style={{...styles.generalContainer}}>
+            <div style={{ ...styles.generalContainer }}>
                 <BrowserRouter>
                     <div>
                         {header.showheader.call(this)}
@@ -126,15 +155,15 @@ class App extends Component {
                             <Route exact path="/:userid/projects/:projectid/charges" component={Charges} />
                             <Route exact path="/:userid/projects/:projectid/team" component={Team} />
                             <Route exact path="/:userid/projects/:projectid/milestones" component={Milestones} />
-                            
-                            
+
+
                             <Route exact path="/:userid/projects/:projectid/specifications" component={Specifications} />
                             <Route exact path="/:userid/projects/:projectid/specifications/:csiid" component={Specification} />
                             <Route exact path="/:userid/projects/:projectid/costestimate" component={CostEstimate} />
                             <Route exact path="/:userid/projects/:projectid/costestimate/:csiid" component={LineItem} />
 
                             <Route exact path="/:userid/projects/:projectid/bidschedule" component={BidSchedule} />
-                            <Route exact path="/:userid/projects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />                          
+                            <Route exact path="/:userid/projects/:projectid/bidschedule/csi/:csiid" component={BidScheduleItem} />
                             <Route exact path="/:userid/projects/:projectid/bid" component={Bid} />
                             <Route exact path="/:userid/projects/:projectid/bid/csi/:csiid" component={BidItem} />
 
@@ -158,11 +187,11 @@ function mapStateToProps(state) {
         myusermodel: state.myusermodel,
         navigation: state.navigation,
         csis: state.csis,
-        allusers:state.allusers,
-        myprojects:state.myprojects,
-        projects:state.projects,
-        allusers:state.allusers,
-        allcompanys:state.allcompanys
+        allusers: state.allusers,
+        myprojects: state.myprojects,
+        projects: state.projects,
+        allusers: state.allusers,
+        allcompanys: state.allcompanys
     }
 }
 

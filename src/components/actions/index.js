@@ -1,7 +1,7 @@
 import { MYUSERMODEL, NAVIGATION, MYPROJECTS, ALLUSERS, ALLCOMPANYS, CSIS, PROJECTSOCKETS, PROJECTS} from './types';
 
 export const reduxUser = (myusermodel) => async dispatch => {
-console.log(myusermodel)
+
     dispatch({ type: MYUSERMODEL, payload: myusermodel })
 }
 

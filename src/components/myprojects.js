@@ -10,7 +10,9 @@ import { HandleMyProjects } from './actions/api';
 
 
 
-class MyProjects extends Component {
+class MyProjects {
+
+
 
   gettitle() {
     const pm = new PM();
@@ -27,18 +29,28 @@ class MyProjects extends Component {
     try {
 
       const myuser = pm.getuser.call(this)
-      const user_id = myuser._ID;
+      const user_id = myuser.User_ID;
 
       if (myuser) {
         const myprojects = pm.getMyProjects.call(this)
         if (myprojects) {
           const response = await HandleMyProjects(user_id, myprojects)
-          if (response.hasOwnProperty("myprojects")) {
-            const getmyprojects = response.myprojects
+          console.log(response)
+          if (response.hasOwnProperty("myprojectsdb")) {
+            const getmyprojects = response.myprojectsdb
             this.props.reduxMyProjects(getmyprojects)
-            this.setState({ render: 'render' })
+           
 
           }
+          let message = '';
+          if(response.hasOwnProperty("response")) {
+            console.log(response.response)
+            if(response.response.message) {
+             message = response.response.message;
+            }
+          }
+
+          this.setState({  message })
 
         }
 
@@ -65,7 +77,7 @@ class MyProjects extends Component {
 
         if (this.state.projectid) {
 
-          let UserID = myuser._ID;
+          let UserID = myuser.User_ID;
           let Scope = ""
           let Address = ""
           let City = ""
@@ -83,15 +95,27 @@ class MyProjects extends Component {
         }
 
         try {
-          const user_id = myuser._ID;
+          const user_id = myuser.User_ID;
           const response = await HandleMyProjects(user_id, myprojects)
           console.log(response)
           if (response.hasOwnProperty("myprojects")) {
             const getmyprojects = response.myprojects
             this.props.reduxMyProjects(getmyprojects)
-            this.setState({ render: 'render' })
+        
 
           }
+
+
+          let message = '';
+          if(response.hasOwnProperty("response")) {
+            console.log(response.response)
+            if(response.response.message) {
+             message = response.response.message;
+            }
+          }
+
+          this.setState({  message })
+
 
 
         } catch (err) {
@@ -337,6 +361,9 @@ class MyProjects extends Component {
 
 
           {myprojects.showprojectids.call(this)}
+
+
+          {pm.showMessage.call(this)}
 
 
 

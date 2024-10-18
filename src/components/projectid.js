@@ -5,12 +5,21 @@ import { a } from 'react-router-dom';
 
 class ProjectID {
 
+
+    handleComponents(activecomponent) {
+
+        this.props.reduxNavigation({activecomponent})
+        this.setState({render:'render'})
+
+    }
+
     showprojectid() {
         const styles = MyStylesheet();
         const pm = new PM();
         const headerFont = pm.getHeaderFont.call(this)
         const regularFont = pm.getRegularFont.call(this)
         const myuser = pm.getuser.call(this)
+        const projectid = new ProjectID();
         if (myuser) {
             const project = this.getProject();
             if (project) {
@@ -24,7 +33,7 @@ class ProjectID {
 
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
                                 <div style={{ ...styles.generalContainer, ...styles.bottomMargin15 }}>
-                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => { this.setState({ activecomponent: 'milestones' }) }}>Create Milestones</a>
+                                    <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => { projectid.handleComponents.call(this,"milestones")  }}>Create Milestones</a>
                                 </div>
                                
 
@@ -70,11 +79,11 @@ class ProjectID {
 
                         <div style={{ ...styles.generalFlex, ...styles.bottomMargin10 }}>
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{this.setState({activecomponent:"proposals"})}}>View Proposals</a>
+                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{ projectid.handleComponents.call(this,"proposals")}}>View Proposals</a>
 
                             </div>
                             <div style={{ ...styles.flex1, ...styles.alignCenter }}>
-                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{this.setState({activecomponent:"invoices"})}}>View Invoices</a>
+                                <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={()=>{ projectid.handleComponents.call(this,"invoices")}}>View Invoices</a>
                             </div>
                         </div>
 
