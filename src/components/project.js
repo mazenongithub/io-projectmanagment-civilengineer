@@ -8,7 +8,7 @@ import { a } from 'react-router-dom';
 import ProjectID from './projectid'
 import Milestones from './milestones';
 import Team from './team'
-import { LoadAllCompanys } from './actions/api';
+import { LoadProject } from './actions/api';
 import Proposals from './proposals';
 import Invoices from './invoices';
 
@@ -23,27 +23,122 @@ class Project extends Component {
 
 
   }
+
   componentDidMount() {
+    const projectid = this.props.match.params.projectid;
+    this.loadProject(projectid)
 
-    window.addEventListener('resize', this.updateWindowDimensions);
 
-    this.updateWindowDimensions();
+  }
+
+  async loadProject(projectid) {
+
+
+    try {
+      const pm = new PM()
+      let myproject = await LoadProject(projectid)
+
+      if (myproject.hasOwnProperty("myproject")) {
+
+        const project_id = myproject.myproject.project_id;
+
+        this.createWebSocket(project_id)
+        let projects = pm.getProjects.call(this)
+
+
+        if (projects) {
+
+          const getproject = pm.getProjectByID.call(this,project_id)
+
+          if (getproject) {
+
+            const i = pm.getProjectKeyByID.call(this, project_id)
+            projects[i] = myproject.myproject
+
+          } else {
+            projects.push(myproject.myproject)
+          }
+
+        } else {
+          projects = [myproject.myproject]
+        }
+        this.props.reduxProjects(projects)
+        this.setState({ render: 'render' })
+
+
+      }
+
+    } catch (err) {
+      alert(`Error: Could Not load Project ${err}`)
+    }
+
+
+
+
+
+  }
+
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+
+  createWebSocket(project_id) {
+
+    const pm = new PM();
+    const projectid = this.props.match.params.projectid;
+
+    let websockets = pm.getProjectSockets.call(this)
+    if (websockets) {
+      const websocket = pm.getProjectSocketByID.call(this, projectid)
+      if (!websocket) {
+
+        let socket = this.createNewWebSocket(project_id)
+        websockets.push({ projectid, socket })
+     
+ 
+     
+      }
+
+
+    } else {
+
+      let socket = this.createNewWebSocket(project_id)
+      websockets = [{ projectid, socket }]
+    }
+
+    this.props.reduxProjectSockets(websockets)
+
+  
+ 
+
+    this.setState({ render: 'render' })
+  }
+
+
+
+
+
+  createNewWebSocket(project_id) {
+    console.log("createnewwebsocket", project_id)
     const pm = new PM();
     const projectid = this.props.match.params.projectid;
     const userid = this.props.match.params.userid;
-
     let server_api = process.env.REACT_APP_SERVER_API
 
     const stripHttp = (server_api) => {
 
-        return server_api.replace(/^https?:\/\//, '')
+      return server_api.replace(/^https?:\/\//, '')
 
     }
 
     server_api = stripHttp(server_api)
 
+    const socket = new WebSocket(`ws://${server_api}/projects/${project_id}/websocketapi`)
 
-    const socket = new WebSocket(`ws://${server_api}/projects/${projectid}/websocketapi`)
 
     socket.onopen = (evt) => {
 
@@ -57,43 +152,9 @@ class Project extends Component {
       const response = JSON.parse(evt.data);
       console.log(response)
 
-      if (response.type === "join" && response.application === "pm") {
-  
+      if (response.type === "join") {
+       
 
-
-        if (response.hasOwnProperty("myproject")) {
-
-          let getproject = response.myproject;
-          let project_id = getproject.project_id;
-          let projects = pm.getProjects.call(this)
-
-
-
-          const findproject = pm.getProjectByID.call(this, getproject.project_id)
-
-          if (findproject) {
-
-            let i = pm.getProjectKeyByID.call(this, project_id)
-
-            projects[i] = getproject
-            // projects[i].team = getproject.team;
-            // projects[i].construction = getproject.construction;
-            // appending project on client
-
-          } else {
-
-            if (!projects) {
-              projects = [getproject];
-            } else {
-              projects.push(getproject)
-            } // else condition company projects exists
-
-          } // else condition creating new project
-
-          this.props.reduxProjects(projects)
-          this.setState({ render: 'render' })
-
-        } // if myproject
 
       } else if (response.type === "pm") {
 
@@ -168,6 +229,7 @@ class Project extends Component {
 
     } // end of socket message
 
+
     socket.onerror = (evt) => {
       console.log("SOMETHING WENT WRONG!");
       console.log(evt);
@@ -177,36 +239,13 @@ class Project extends Component {
       console.log("WEB SOCKET HAS BEEN CLOSED!!!!");
     };
 
-    let websockets = pm.getProjectSockets.call(this)
-    if (websockets) {
-      const websocket = pm.getProjectSocketByID.call(this, projectid)
-      if (!websocket) {
-        websockets.push({ projectid, socket })
-      }
 
+    return socket;
 
-    } else {
-      websockets = [{ projectid, socket }]
-    }
-
-    this.props.reduxProjectSockets(websockets)
-
-  
  
 
-    this.setState({ render: 'render' })
-
-
-
-
-  }
-
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWindowDimensions);
-  }
-  updateWindowDimensions() {
-    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  
+  
   }
 
 
@@ -415,7 +454,7 @@ class Project extends Component {
   }
 
   handleComponenets() {
-    
+
     const projectid = new ProjectID();
     const styles = MyStylesheet();
     const pm = new PM();
@@ -436,9 +475,9 @@ class Project extends Component {
         case "team":
           return (<Team project_id={project_id} key={Math.random()} />)
         case "proposals":
-          return( <Proposals project_id={project_id} key={Math.random()} />)
+          return (<Proposals project_id={project_id} key={Math.random()} />)
         case "invoices":
-          return (<Invoices project_id={project_id} key={Math.random()} /> )
+          return (<Invoices project_id={project_id} key={Math.random()} />)
         default:
           return (
             <div style={{ ...styles.generalContainer }}>
@@ -532,7 +571,7 @@ class Project extends Component {
 
 
               <div style={{ ...styles.generalContainer, ...styles.alignCenter }}>
-                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => {projectid.handleComponents.call(this,"default") }}>  /{project.ProjectID}  </a>
+                <a style={{ ...styles.generalFont, ...headerFont, ...styles.generalLink, ...styles.boldFont }} onClick={() => { projectid.handleComponents.call(this, "default") }}>  /{project.ProjectID}  </a>
               </div>
 
 
@@ -575,7 +614,7 @@ function mapStateToProps(state) {
     projectsockets: state.projectsockets,
     myprojects: state.myprojects,
     projects: state.projects,
-    allcompanys:state.allcompanys
+    allcompanys: state.allcompanys
   }
 }
 

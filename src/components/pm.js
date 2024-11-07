@@ -53,6 +53,7 @@ class PM {
     getProjects() {
         let projects = false;
         if (this.props.projects) {
+         
 
             if (this.props.projects.hasOwnProperty("length")) {
                 projects = this.props.projects;

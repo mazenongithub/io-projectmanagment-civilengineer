@@ -74,7 +74,7 @@ class ProjectID {
                         </div>
 
                         <div style={{ ...styles.generalContainer, ...styles.bottomMargin10 }}>
-                            <span style={{ ...headerFont, ...styles.generalFont }}>Construction</span>  <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => { this.setState({ activecomponent: 'team' }) }}> - Add Construction Team</a>
+                            <span style={{ ...headerFont, ...styles.generalFont }}>Construction</span>  <a style={{ ...regularFont, ...styles.generalFont, ...styles.generalLink }} onClick={() => {  projectid.handleComponents.call(this,"team") }}> - Add Construction Team</a>
                         </div>
 
                         <div style={{ ...styles.generalFlex, ...styles.bottomMargin10 }}>

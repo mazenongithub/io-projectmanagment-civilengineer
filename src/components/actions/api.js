@@ -33,6 +33,29 @@ export async function HandleMyProjects(user_id, myprojects) {
 }
 
 
+export async function LoadProject(projectid) {
+
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/pm/${projectid}/loadproject`
+
+    return fetch(APIURL, { credentials: 'include' }).then(resp => {
+
+        if (!resp.ok) {
+            if (resp.status >= 400 && resp.status < 500) {
+                return resp.json().then(data => {
+                    throw data.message
+                })
+            }
+            else {
+                let err = 'No network connection or the Server is not responding';
+                throw err;
+            }
+        }
+
+        return resp.json();
+    })
+}
+
+
 export async function LoadSpecifications(projectid) {
 
     let APIURL = `${process.env.REACT_APP_SERVER_API}/projectmanagement/${projectid}/specifications`
