@@ -47,6 +47,8 @@ class App extends Component {
         this.checkuserlogin();
         window.addEventListener('resize', this.updateWindowDimensions);
         this.updateWindowDimensions();
+        const pm = new PM();
+        pm.loadcsis.call(this)
         console.log(`Server API Rebuild`, process.env.REACT_APP_SERVER_API)
 
     }
@@ -93,7 +95,7 @@ class App extends Component {
     async checkuserlogin() {
         const pm = new PM();
 
-        setTimeout(async () => {
+       
 
 
             //let response = TestUser();
@@ -101,7 +103,7 @@ class App extends Component {
 
                 let response = await CheckUserLogin();
                 console.log(response)
-                this.handleResponse(response)
+                pm.handleLoginResponse.call(this,response)
             } catch (err) {
 
                 alert(`Error: Could not checkuser, retrying ${err}`)
@@ -110,7 +112,7 @@ class App extends Component {
 
             }
 
-        }, 0)
+   
 
     }
     render() {

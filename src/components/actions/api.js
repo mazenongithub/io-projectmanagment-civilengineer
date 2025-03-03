@@ -257,7 +257,7 @@ export async function LoadCSIs() {
 
 export async function CheckUserLogin() {
 
-    let APIURL = `${process.env.REACT_APP_SERVER_API}/myuser/checkuser`
+    let APIURL = `${process.env.REACT_APP_SERVER_API}/pm/checkuser`
 
     return fetch(APIURL, { credentials: 'include' }).then(resp => {
 
@@ -394,7 +394,7 @@ export async function CheckEmailAddress(emailaddress) {
 }
 export async function AppleLogin(values) {
 
-    var APIURL = `${process.env.REACT_APP_SERVER_API}/myuser/loginuser`
+    var APIURL = `${process.env.REACT_APP_SERVER_API}/pm/loginuser`
     return fetch(APIURL, {
         method: 'post',
         credentials: 'include',

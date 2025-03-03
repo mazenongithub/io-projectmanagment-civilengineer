@@ -11,13 +11,14 @@ import Team from './team'
 import { LoadProject } from './actions/api';
 import Proposals from './proposals';
 import Invoices from './invoices';
+import { showGetTime } from './functions';
 
 
 class Project extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      render: '', message: '', projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false, spinner: false, activecomponent: 'default'
+      render: '', message: [], projectid: '', width: 0, height: 0, title: '', scope: '', address: '', city: '', projectstate: '', zipcode: '', projectidcheck: false, spinner: false, activecomponent: 'default'
     }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
 
@@ -123,7 +124,6 @@ class Project extends Component {
 
 
   createNewWebSocket(project_id) {
-    console.log("createnewwebsocket", project_id)
     const pm = new PM();
     const projectid = this.props.match.params.projectid;
     const userid = this.props.match.params.userid;
@@ -137,7 +137,9 @@ class Project extends Component {
 
     server_api = stripHttp(server_api)
 
-    const socket = new WebSocket(`ws://${server_api}/projects/${project_id}/websocketapi`)
+    
+
+    const socket = new WebSocket(`ws://${server_api}/projects/${project_id}/websocketapi/${projectid}`)
 
 
     socket.onopen = (evt) => {
@@ -151,8 +153,28 @@ class Project extends Component {
     socket.onmessage = (evt) => {
       const response = JSON.parse(evt.data);
       console.log(response)
-
+      let getmessages = this.state.message;
       if (response.type === "join") {
+      
+        let message = "";
+        if(response.hasOwnProperty("text")) {
+          message+=response.text;
+        }
+
+        if(response.hasOwnProperty("gettime")) {
+
+           let gettime = showGetTime(response.gettime)
+           message+= ` ${gettime}`
+
+        }
+
+       
+
+
+
+        getmessages.unshift(message)
+
+        this.setState({message:getmessages})
        
 
 
@@ -174,6 +196,20 @@ class Project extends Component {
 
 
         }
+        let getmessage = '';
+        let messages = this.state.message;
+        if(response.hasOwnProperty("text")) {
+         
+          getmessage+= response.text;
+      
+        }
+
+        if(response.hasOwnProperty("gettime")) {
+          getmessage+= ` ${showGetTime(response.gettime)}`
+        }
+
+        messages.unshift(getmessage)
+        this.setState({message:messages})
 
 
         if(response.hasOwnProperty("project")) {
@@ -219,6 +255,22 @@ class Project extends Component {
         
         
          }
+
+         let getmessage = '';
+         let messages = this.state.message;
+         if(response.hasOwnProperty("text")) {
+          
+           getmessage+= response.text;
+       
+         }
+ 
+         if(response.hasOwnProperty("gettime")) {
+           getmessage+= ` ${showGetTime(response.gettime)}`
+         }
+ 
+         messages.unshift(getmessage)
+         this.setState({message:messages})
+ 
       
 
 
@@ -548,6 +600,31 @@ class Project extends Component {
   }
 
 
+  showMessages() {
+
+    const styles = MyStylesheet();
+    const pm = new PM();
+    const regularFont = pm.getRegularFont.call(this)
+
+    const messages = this.state.message;
+    let getMessages = [];
+
+    const showMessage = (message) => {
+      return(<div style={{...styles.generalContainer, ...styles.bottomMargin10, ...styles.alignCenter, ...styles.generalFont}} key={Math.random()}>
+        <span style={{...regularFont}}>{message}</span>
+      </div>)
+    }
+
+    for(let message of messages) {
+      getMessages.push(showMessage(message))
+
+    }
+
+    return (getMessages)
+
+  }
+
+
 
 
 
@@ -576,6 +653,12 @@ class Project extends Component {
 
 
               {this.handleComponenets()}
+
+              
+
+                {this.showMessages()}
+
+             
 
               <div style={{ ...styles.generalContainer, ...styles.bottomMargin15, ...styles.alignCenter }}>
 

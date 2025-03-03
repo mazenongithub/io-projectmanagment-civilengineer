@@ -5,6 +5,25 @@ export function formatDate(timein) {
 
 }
 
+export function showGetTime(gettime) {
+
+    gettime = new Date(gettime)
+    let hours = gettime.getHours();
+    let ampm = 'am'
+    if (hours > 12) {
+        hours = hours - 12
+        ampm = 'pm'
+    }
+  
+    let minutes = gettime.getMinutes();
+    minutes = trailingZeros(minutes)
+    let seconds = gettime.getSeconds();
+    seconds = trailingZeros(seconds)
+
+    return (` ${hours}:${minutes}:${seconds} ${ampm}`)
+
+}
+
 export function formatTimeString(timein) {
 
     let ampm = 'am'
@@ -3911,8 +3930,8 @@ export function DirectCostForMaterial(item) {
     return (Number(item.quantity) * Number(item.unitcost))
 }
 export function DirectCostForLabor(item) {
-console.log(item,calculatetotalhours(item.timeout, item.timein), item.laborrate)
- 
+    console.log(item, calculatetotalhours(item.timeout, item.timein), item.laborrate)
+
     return (Number(calculatetotalhours(item.timeout, item.timein)) * Number(item.laborrate))
 }
 export function DirectCostForEquipment(item) {

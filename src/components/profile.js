@@ -5,6 +5,7 @@ import { MyStylesheet } from './styles'
 import { UploadProfileImage, CheckEmailAddress } from './actions/api';
 import { inputUTCStringForLaborID, validateProviderID, validateEmail } from './functions';
 import Spinner from './spinner';
+import Connecting from './connecting';
 import PM from './pm'
 
 class Profile {
@@ -464,7 +465,7 @@ class Profile {
                 </div>)
     
         } else {
-            return (<Spinner />)
+            return (<Connecting />)
         }
     }
 

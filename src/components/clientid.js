@@ -3,6 +3,7 @@ import { MyStylesheet } from './styles';
 import PM from './pm';
 import { GoogleSigninIcon, AppleSigninIcon } from './svg';
 import Spinner from './spinner'
+import Connecting from './connecting';
 class ClientID {
 
     showclientid(type) {
@@ -118,7 +119,7 @@ class ClientID {
             </div>)
 
         } else {
-            return <Spinner/>
+            return <Connecting />
         }
     }
 

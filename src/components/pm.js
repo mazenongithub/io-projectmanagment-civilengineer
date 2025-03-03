@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { sorttimes, inputUTCStringForLaborID, sortpart, isEmpty, getDateInterval, getScale, formatDateStringDisplay, calculateFloat, getDateTime, checkemptyobject, calculatetotalhours, getBenefitInterval, formatTimeString, convertUTCTime } from './functions';
+import { sorttimes, inputUTCStringForLaborID, sortpart, isEmpty, getDateInterval, getScale, formatDateStringDisplay, calculateFloat, getDateTime, checkemptyobject, calculatetotalhours, getBenefitInterval, formatTimeString, convertUTCTime, trailingZeros } from './functions';
 import { MyStylesheet } from './styles';
 import { projectSaveAll } from './svg';
 import { SaveAllProfile, CheckEmailAddress, CheckProfile, AppleLogin, LoadSpecifications, LoadCSIs, LogoutUser, LoadAllUsers, LoadMyProjects, LoadAllCompanys } from './actions/api';
@@ -3227,8 +3227,21 @@ class PM {
     async savemyprofile() {
         let pm = new PM();
         let myuser = pm.getuser.call(this)
-        if (!myuser.hasOwnProperty("invalid")) {
+        const firstname = myuser.FirstName;
+        const lastname = myuser.LastName;
+        const user_id = myuser.User_ID;
+        const emailaddress = myuser.EmailAddress;
+        const phonenumber = myuser.PhoneNumber;
+        const userid = myuser.UserID;
+        const profileurl = myuser.ProfileURL;
 
+        const getuser =(user_id, userid, firstname, lastname, emailaddress, phonenumber, profileurl)=> {
+            return({user_id, userid, firstname, lastname, emailaddress, phonenumber, profileurl})
+        }
+
+      
+        if (!myuser.hasOwnProperty("invalid")) {
+            myuser = getuser (user_id, userid,firstname, lastname, emailaddress, phonenumber, profileurl )
             try {
 
 
@@ -3251,12 +3264,26 @@ class PM {
 
                 }
 
-                if (response.hasOwnProperty("lastupdated")) {
-                    let lastupdated = formatTimeString(convertUTCTime(response.lastupdated))
-                    message += ` Last updated ${lastupdated}`
+                if(response.hasOwnProperty("gettime")) {
+                    let gettime = new Date(response.gettime)
+                    let hours = gettime.getHours();
+                    let ampm = 'am'
+                    if(hours > 12) {
+                        hours = hours - 12
+                        ampm = 'pm'
+                    }
+                    hours = trailingZeros(hours)
+                    let minutes = gettime.getMinutes();
+                    minutes = trailingZeros(minutes)
+                    let seconds = gettime.getSeconds();
+                    seconds = trailingZeros(seconds)
+
+                    message+= ` ${hours}:${minutes}:${seconds} ${ampm}`
                 }
 
-                this.setState({ message, spinner: false })
+               
+
+                this.setState({ message, spinner:false })
 
             } catch (err) {
                 alert(err)

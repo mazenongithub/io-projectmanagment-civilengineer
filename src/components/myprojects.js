@@ -4,9 +4,10 @@ import PM from './pm';
 import { goToIcon, TouchtoEdit, removeIconSmall, addIcon, updateProjects } from './svg';
 import { CreateProject } from './functions';
 import { Link } from 'react-router-dom';
-import { validateTitle } from './functions';
+import { validateTitle, trailingZeros } from './functions';
 import MakeID from './makeids';
 import { HandleMyProjects } from './actions/api';
+import Connecting from './connecting';
 
 
 
@@ -34,23 +35,46 @@ class MyProjects {
       if (myuser) {
         const myprojects = pm.getMyProjects.call(this)
         if (myprojects) {
+          this.setState({ spinner: true })
           const response = await HandleMyProjects(user_id, myprojects)
           console.log(response)
           if (response.hasOwnProperty("myprojectsdb")) {
             const getmyprojects = response.myprojectsdb
             this.props.reduxMyProjects(getmyprojects)
-           
+
 
           }
           let message = '';
-          if(response.hasOwnProperty("response")) {
-            console.log(response.response)
-            if(response.response.message) {
-             message = response.response.message;
+          if (response.hasOwnProperty("response")) {
+        
+            if (response.response.message) {
+              message = response.response.message;
             }
           }
 
-          this.setState({  message })
+          if (response.hasOwnProperty("message")) {
+            message += response.message
+          }
+
+
+          if (response.hasOwnProperty("gettime")) {
+            let gettime = new Date(response.gettime)
+            let hours = gettime.getHours();
+            let ampm = 'am'
+            if (hours > 12) {
+              hours = hours - 12
+              ampm = 'pm'
+            }
+            hours = trailingZeros(hours)
+            let minutes = gettime.getMinutes();
+            minutes = trailingZeros(minutes)
+            let seconds = gettime.getSeconds();
+            seconds = trailingZeros(seconds)
+
+            message += ` ${hours}:${minutes}:${seconds} ${ampm}`
+          }
+
+          this.setState({ spinner: false, message })
 
         }
 
@@ -58,6 +82,7 @@ class MyProjects {
 
 
     } catch (err) {
+      this.setState({ spinner: false })
       alert(`Could not handle Projects ${err}`)
     }
 
@@ -96,29 +121,53 @@ class MyProjects {
 
         try {
           const user_id = myuser.User_ID;
+          this.setState({ spinner: true })
           const response = await HandleMyProjects(user_id, myprojects)
           console.log(response)
-          if (response.hasOwnProperty("myprojects")) {
-            const getmyprojects = response.myprojects
+          this.setState({ spinner: false })
+          if (response.hasOwnProperty("myprojectsdb")) {
+            const getmyprojects = response.myprojectsdb
             this.props.reduxMyProjects(getmyprojects)
-        
+
 
           }
 
 
           let message = '';
-          if(response.hasOwnProperty("response")) {
-            console.log(response.response)
-            if(response.response.message) {
-             message = response.response.message;
+          if (response.hasOwnProperty("response")) {
+        
+            if (response.response.message) {
+              message += response.response.message;
             }
           }
 
-          this.setState({  message })
+          if(response.hasOwnProperty("message")) {
+             message+= ` ${response.message}`
+          }
+
+          if (response.hasOwnProperty("gettime")) {
+            let gettime = new Date(response.gettime)
+            let hours = gettime.getHours();
+            let ampm = 'am'
+            if (hours > 12) {
+              hours = hours - 12
+              ampm = 'pm'
+            }
+            hours = trailingZeros(hours)
+            let minutes = gettime.getMinutes();
+            minutes = trailingZeros(minutes)
+            let seconds = gettime.getSeconds();
+            seconds = trailingZeros(seconds)
+
+            message += ` ${hours}:${minutes}:${seconds} ${ampm}`
+          }
+
+          this.setState({ message })
 
 
 
         } catch (err) {
+          this.setState({ spinner: false })
           alert(`Could not handle Projects ${err}`)
         }
 
@@ -314,6 +363,15 @@ class MyProjects {
             <span style={{ ...regularFont }}>Project ID</span>
           </div>
 
+
+          <div style={{ ...styles.generalContainer, ...styles.generalFont, ...styles.bottomMargin15, ...styles.alignCenter }}>
+            <span style={{ ...regularFont }}>{this.state.message}</span>
+          </div>
+
+
+
+
+
           <div style={{ ...styles.generalContainer, ...styles.textAlignRight, ...styles.bottomMargin15 }}>
             <button style={{ ...styles.generalButton, ...buttonWidth }} onClick={() => { myprojects.addMyProject.call(this) }}>{addIcon()}</button>
           </div>
@@ -326,6 +384,12 @@ class MyProjects {
 
     }
 
+  }
+
+  showSpinner() {
+    if (this.state.spinner) {
+      return (<Connecting />)
+    }
   }
 
 
@@ -357,6 +421,8 @@ class MyProjects {
             <button style={{ ...styles.generalButton, ...projectIcon() }} onClick={() => { myprojects.updateMyProjects.call(this) }}>{updateProjects()}</button>
 
           </div>
+
+          {myprojects.showSpinner.call(this)}
 
 
 
